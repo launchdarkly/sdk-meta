@@ -18,6 +18,7 @@ jobs:
         run: |
           ./scripts/ci/format-json.sh
           if ! git diff-index --quiet HEAD; then
+            git diff-index HEAD
             echo "Run ./scripts/ci/format-json.sh to reformat the JSON data"
             exit 1
           fi
