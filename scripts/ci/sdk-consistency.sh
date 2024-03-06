@@ -2,7 +2,7 @@
 
 # Checks that for each SDK ID defined in sdks.json, all other files have an entry for that ID.
 # If not, outputs a diff containing the missing IDs and exits with a non-zero status.
-#
+
 cleanup() {
   rm ./data/*.json.keys
 }

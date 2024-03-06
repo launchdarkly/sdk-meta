@@ -14,13 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate JSON Formatting
+      - name: Format JSON
         run: |
           ./scripts/ci/format-json.sh
-      - name: Run git diff
-        run: |
-          git status
-          git diff
+      - name: Ensure no formatting changes needed
+        run: git diff --exit-code
       - name: Validate JSON schemas
         run: |
           ./scripts/ci/check-json-schemas.sh
