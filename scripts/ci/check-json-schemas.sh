@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 mapfile -t schemas < <(git grep -Fl 'https://json-schema.org' '**/*.json')
 
 function runTest() {
