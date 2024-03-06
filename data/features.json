@@ -22,7 +22,7 @@
   "apex-server-sdk": {},
   "cpp-client-sdk": {
     "u2c": {
-      "introduced": "v3.0"
+      "introduced": "3.0"
     }
   },
   "cpp-server-sdk": {
