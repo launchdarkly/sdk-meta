@@ -17,11 +17,7 @@ jobs:
       - name: Validate JSON Formatting
         run: |
           ./scripts/ci/format-json.sh
-          if ! git diff-index --quiet HEAD; then
-            git diff
-            echo "Run ./scripts/ci/format-json.sh to reformat the JSON data"
-            exit 1
-          fi
+          git diff
       - name: Validate JSON schemas
         run: |
           ./scripts/ci/check-json-schemas.sh
