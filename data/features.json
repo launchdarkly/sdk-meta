@@ -30,8 +30,7 @@
       "introduced": "3.0"
     }
   },
-
-  "cloudflare"  :    {},
+  "cloudflare": {},
   "electron": {},
   "erlang-server-sdk": {
     "u2c": {
