@@ -17,6 +17,9 @@ jobs:
       - name: Validate JSON Formatting
         run: |
           ./scripts/ci/format-json.sh
+      - name: Run git diff
+        run: |
+          git status
           git diff
       - name: Validate JSON schemas
         run: |
