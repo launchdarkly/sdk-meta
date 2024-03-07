@@ -24,3 +24,4 @@ runTest ./schemas/features.json ./data/features.json
 runTest ./schemas/types.json ./data/types.json
 runTest ./schemas/names.json ./data/names.json
 runTest ./schemas/languages.json ./data/languages.json
+runTest ./schemas/repos.json ./data/repos.json

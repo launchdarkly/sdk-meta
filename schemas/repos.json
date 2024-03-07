@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://launchdarkly.com/sdk-meta/repos.json",
+  "title": "SDK Repos",
+  "description": "List of SDK source repositories",
+  "type": "object",
+  "$defs": {
+    "SDKRepoMap" : {
+      "type": "object",
+      "description": "Map of source repositories for an SDK",
+      "required" : ["github"],
+      "properties": {
+        "github": {
+          "$ref": "#/$defs/GithubRepoPath"
+        }
+      }
+    },
+    "GithubRepoPath" : {
+      "type": "string",
+      "description": "An individual Github repo identifier of the form org/repo",
+      "pattern": "^[a-z-]+/[a-z-]+$"
+    }
+  },
+  "patternProperties" : {
+    "^[a-z-]+$" : {
+      "$ref" : "#/$defs/SDKRepoMap"
+    }
+  }
+}

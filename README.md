@@ -11,6 +11,7 @@ The data is intended for consumption by downstream products and services.
 | [SDK Types](./data/types.json)         | SDK types for categorization.                          |
 | [SDK Features](./data/features.json)   | SDK features, including version introduced/deprecated. |
 | [SDK Languages](./data/languages.json) | Programming languages associated with SDKs.            |
+| [SDK Repos](./data/repos.json)         | SDK source repositories                                |
 
 
 ## structure
