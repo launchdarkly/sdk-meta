@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://launchdarkly.com/sdk-meta/languages.json",
+  "title": "SDK Languages",
+  "description": "The programming languages associated with each SDK",
+  "type": "object",
+  "$defs": {
+    "SDKLanguage" : {
+      "type" : "string",
+      "description" : "Name of a programming language",
+      "pattern" : "^[+A-Za-z#]+$"
+    }
+  },
+  "patternProperties" : {
+    "^[a-z-]+$" : {
+      "type" : "array",
+      "items" : { "$ref" : "#/$defs/SDKLanguage" }
+    }
+  }
+}
