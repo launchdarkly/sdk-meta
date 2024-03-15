@@ -1,8 +1,8 @@
 {
-  "react-native": "client-side",
-  "node-server": "server-side",
-  "vercel": "edge",
   "akamai-base": "edge",
   "akamai-edgekv": "edge",
-  "cloudflare": "edge"
+  "cloudflare": "edge",
+  "node-server": "server-side",
+  "react-native": "client-side",
+  "vercel": "edge"
 }

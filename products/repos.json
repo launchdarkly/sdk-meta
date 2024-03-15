@@ -1,13 +1,4 @@
 {
-  "react-native": {
-    "github": "launchdarkly/js-core"
-  },
-  "node-server": {
-    "github": "launchdarkly/js-core"
-  },
-  "vercel": {
-    "github": "launchdarkly/js-core"
-  },
   "akamai-base": {
     "github": "launchdarkly/js-core"
   },
@@ -15,6 +6,15 @@
     "github": "launchdarkly/js-core"
   },
   "cloudflare": {
+    "github": "launchdarkly/js-core"
+  },
+  "node-server": {
+    "github": "launchdarkly/js-core"
+  },
+  "react-native": {
+    "github": "launchdarkly/js-core"
+  },
+  "vercel": {
     "github": "launchdarkly/js-core"
   }
 }

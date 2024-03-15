@@ -1,16 +1,4 @@
 {
-  "react-native": [
-    "JavaScript",
-    "TypeScript"
-  ],
-  "node-server": [
-    "JavaScript",
-    "TypeScript"
-  ],
-  "vercel": [
-    "JavaScript",
-    "TypeScript"
-  ],
   "akamai-base": [
     "JavaScript",
     "TypeScript"
@@ -20,6 +8,18 @@
     "TypeScript"
   ],
   "cloudflare": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "node-server": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "react-native": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "vercel": [
     "JavaScript",
     "TypeScript"
   ]
