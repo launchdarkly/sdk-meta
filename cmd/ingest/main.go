@@ -12,6 +12,7 @@ import (
 	"golang.org/x/oauth2"
 	"os"
 	"os/exec"
+	"time"
 )
 
 type metadataV1 struct {
@@ -155,7 +156,7 @@ func run(args *args) error {
 			if err != nil {
 				return err
 			}
-			return insertReleases(tx, sdkId, filteredReleases)
+			return insertReleases(tx, sdkId, releases.CalculateEOLs(filteredReleases))
 		}
 	}
 
@@ -238,14 +239,14 @@ func insertFeatures(tx *sql.Tx, id string, metadata *metadataV1) error {
 	return nil
 }
 
-func insertReleases(tx *sql.Tx, id string, release []releases.Release) error {
+func insertReleases(tx *sql.Tx, id string, release []releases.ReleaseWithEOL) error {
 	stmt, err := tx.Prepare("INSERT INTO sdk_releases (id, version, date, eol) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 	for _, release := range release {
-		_, err = stmt.Exec(id, release.Version, release.Date, false)
+		_, err = stmt.Exec(id, release.MajorMinor(), release.Date.Format(time.RFC3339), release.MaybeEOL())
 		if err != nil {
 			return err
 		}

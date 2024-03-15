@@ -50,7 +50,7 @@ CREATE TABLE sdk_releases (
     id TEXT NOT NULL,
     version TEXT NOT NULL,
     date TEXT NOT NULL,
-    eol INTEGER NOT NULL CHECK (eol IN (0, 1)),
+    eol TEXT,
     PRIMARY KEY(id, version)
 );
 
