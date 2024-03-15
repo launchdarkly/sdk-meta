@@ -22,10 +22,6 @@ jobs:
       - name: Validate JSON schemas
         run: |
           ./scripts/ci/check-json-schemas.sh
-  go-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
@@ -34,9 +30,9 @@ jobs:
         run: go build ./cmd/ingest
       - name: Sanity test
         run: |
-          sqlite3 metadata.sqlite3 < ./schemas/sdk_metadata.sql
-          ./ingest -db metadata.sqlite3 -metadata ./metadata/launchdarkly_js-core.json -repo launchdarkly/js-core
-          length=$(sqlite3 -json metadata.sqlite3 "SELECT * from sdk_repos;" | jq '. | length')
+          sqlite3 test.sqlite3 < ./schemas/sdk_metadata.sql
+          ./ingest -db test.sqlite3 -metadata ./metadata/launchdarkly_js-core.json -repo launchdarkly/js-core
+          length=$(sqlite3 -json test.sqlite3 "SELECT * from sdk_repos;" | jq '. | length')
           if [ $length -ne 6 ]; then
             echo "Expected 6 rows in sdk_repos, got $length"
             exit 1
