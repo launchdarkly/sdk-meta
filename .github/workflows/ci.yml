@@ -30,8 +30,7 @@ jobs:
         run: go build ./cmd/ingest
       - name: Sanity test
         run: |
-          sqlite3 test.sqlite3 < ./schemas/sdk_metadata.sql
-          ./ingest -db test.sqlite3 -metadata ./metadata/launchdarkly_js-core.json -repo launchdarkly/js-core
+          ./ingest -db test.sqlite3 -create -offline -repo launchdarkly/js-core -metadata ./metadata/launchdarkly_js-core.json 
           length=$(sqlite3 -json test.sqlite3 "SELECT * from sdk_repos;" | jq '. | length')
           if [ $length -ne 6 ]; then
             echo "Expected 6 rows in sdk_repos, got $length"
