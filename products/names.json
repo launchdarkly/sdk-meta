@@ -1,30 +1,20 @@
 {
-  "akamai": "Akamai SDK",
-  "android-client-sdk": "Android Client SDK",
-  "apex-server-sdk": "Apex Server SDK",
-  "cloudflare": "Cloudflare SDK",
-  "cpp-client-sdk": "C++ Client SDK",
-  "cpp-server-sdk": "C++ Server SDK",
-  "dotnet-client-sdk": ".NET Client SDK",
-  "dotnet-server-sdk": ".NET Server SDK",
-  "electron": "Electron SDK",
-  "erlang-server-sdk": "Erlang Server SDK",
-  "flutter-client-sdk": "Flutter Client SDK",
-  "go-server-sdk": "Go Server SDK",
-  "haskell-server-sdk": "Haskell Server SDK",
-  "ios-client-sdk": "iOS Client SDK",
-  "java-server-sdk": "Java Server SDK",
-  "javascript-client-sdk": "JavaScript Client SDK",
-  "lua-server-sdk": "Lua Server SDK",
-  "node-client-sdk": "Node.js Client SDK",
-  "node-server-sdk": "Node.js Server SDK",
-  "php-server-sdk": "PHP Server SDK",
-  "python-server-sdk": "Python Server SDK",
-  "react-client-sdk": "React Client SDK",
-  "react-native-client-sdk": "React Native Client SDK",
-  "roku-client-sdk": "Roku Client SDK",
-  "ruby-server-sdk": "Ruby Server SDK",
-  "rust-server-sdk": "Rust Server SDK",
-  "vercel-client-sdk": "Vercel SDK",
-  "vue-client-sdk": "Vue SDK"
+  "react-native": [
+    "React Native SDK"
+  ],
+  "node-server": [
+    "Node.js SDK"
+  ],
+  "vercel": [
+    "Vercel Edge SDK"
+  ],
+  "akamai-base": [
+    "Akamai SDK"
+  ],
+  "akamai-edgekv": [
+    "Akamai SDK for EdgeKV"
+  ],
+  "cloudflare": [
+    "Cloudflare SDK"
+  ]
 }

@@ -1,86 +1,20 @@
 {
-  "akamai": {
+  "react-native": {
     "github": "launchdarkly/js-core"
   },
-  "android-client-sdk": {
-    "github": "launchdarkly/android-client-sdk"
+  "node-server": {
+    "github": "launchdarkly/js-core"
   },
-  "apex-server-sdk": {
-    "github": "launchdarkly/apex-server-sdk"
+  "vercel": {
+    "github": "launchdarkly/js-core"
+  },
+  "akamai-base": {
+    "github": "launchdarkly/js-core"
+  },
+  "akamai-edgekv": {
+    "github": "launchdarkly/js-core"
   },
   "cloudflare": {
     "github": "launchdarkly/js-core"
-  },
-  "cpp-client-sdk": {
-    "github": "launchdarkly/cpp-sdks"
-  },
-  "cpp-server-sdk": {
-    "github": "launchdarkly/cpp-sdks"
-  },
-  "dotnet-client-sdk": {
-    "github": "launchdarkly/dotnet-client-sdk"
-  },
-  "dotnet-server-sdk": {
-    "github": "launchdarkly/dotnet-server-sdk"
-  },
-  "electron": {
-    "github": "launchdarkly/electron-client-sdk"
-  },
-  "erlang-server-sdk": {
-    "github": "launchdarkly/erlang-server-sdk"
-  },
-  "flutter-client-sdk": {
-    "github": "launchdarkly/flutter-client-sdk"
-  },
-  "go-server-sdk": {
-    "github": "launchdarkly/go-server-sdk"
-  },
-  "haskell-server-sdk": {
-    "github": "launchdarkly/haskell-server-sdk"
-  },
-  "ios-client-sdk": {
-    "github": "launchdarkly/ios-client-sdk"
-  },
-  "java-server-sdk": {
-    "github": "launchdarkly/java-server-sdk"
-  },
-  "javascript-client-sdk": {
-    "github": "launchdarkly/js-client-sdk"
-  },
-  "lua-server-sdk": {
-    "github": "launchdarkly/lua-server-sdk"
-  },
-  "node-client-sdk": {
-    "github": "launchdarkly/node-client-sdk"
-  },
-  "node-server-sdk": {
-    "github": "launchdarkly/js-core"
-  },
-  "php-server-sdk": {
-    "github": "launchdarkly/php-server-sdk"
-  },
-  "python-server-sdk": {
-    "github": "launchdarkly/python-server-sdk"
-  },
-  "react-client-sdk": {
-    "github": "launchdarkly/react-client-sdk"
-  },
-  "react-native-client-sdk": {
-    "github": "launchdarkly/js-core"
-  },
-  "roku-client-sdk": {
-    "github": "launchdarkly/roku-client-sdk"
-  },
-  "ruby-server-sdk": {
-    "github": "launchdarkly/ruby-server-sdk"
-  },
-  "rust-server-sdk": {
-    "github": "launchdarkly/rust-server-sdk"
-  },
-  "vercel-client-sdk": {
-    "github": "launchdarkly/js-core"
-  },
-  "vue-client-sdk": {
-    "github": "launchdarkly/vue-client-sdk"
   }
 }

@@ -1,88 +1,26 @@
 {
-  "akamai": [
-    "JavaScript"
+  "react-native": [
+    "JavaScript",
+    "TypeScript"
   ],
-  "android-client-sdk": [
-    "Java"
+  "node-server": [
+    "JavaScript",
+    "TypeScript"
   ],
-  "apex-server-sdk": [
-    "Apex"
+  "vercel": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "akamai-base": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "akamai-edgekv": [
+    "JavaScript",
+    "TypeScript"
   ],
   "cloudflare": [
-    "JavaScript"
-  ],
-  "cpp-client-sdk": [
-    "C++",
-    "C"
-  ],
-  "cpp-server-sdk": [
-    "C++",
-    "C"
-  ],
-  "dotnet-client-sdk": [
-    "C#"
-  ],
-  "dotnet-server-sdk": [
-    "C#"
-  ],
-  "electron": [
-    "JavaScript"
-  ],
-  "erlang-server-sdk": [
-    "Erlang"
-  ],
-  "flutter-client-sdk": [
-    "Dart"
-  ],
-  "go-server-sdk": [
-    "Go"
-  ],
-  "haskell-server-sdk": [
-    "Haskell"
-  ],
-  "ios-client-sdk": [
-    "Swift"
-  ],
-  "java-server-sdk": [
-    "Java"
-  ],
-  "javascript-client-sdk": [
-    "JavaScript"
-  ],
-  "lua-server-sdk": [
-    "Lua"
-  ],
-  "node-client-sdk": [
-    "JavaScript"
-  ],
-  "node-server-sdk": [
-    "JavaScript"
-  ],
-  "php-server-sdk": [
-    "PHP"
-  ],
-  "python-server-sdk": [
-    "Python"
-  ],
-  "react-client-sdk": [
-    "JavaScript"
-  ],
-  "react-native-client-sdk": [
-    "JavaScript"
-  ],
-  "roku-client-sdk": [
-    "BrightScript"
-  ],
-  "ruby-server-sdk": [
-    "Ruby"
-  ],
-  "rust-server-sdk": [
-    "Rust"
-  ],
-  "vercel-client-sdk": [
-    "JavaScript"
-  ],
-  "vue-client-sdk": [
-    "JavaScript"
+    "JavaScript",
+    "TypeScript"
   ]
 }

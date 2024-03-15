@@ -1,30 +1,20 @@
 {
-  "akamai": "edge",
-  "android-client-sdk": "client-side",
-  "apex-server-sdk": "server-side",
-  "cloudflare": "edge",
-  "cpp-client-sdk": "client-side",
-  "cpp-server-sdk": "server-side",
-  "dotnet-client-sdk": "client-side",
-  "dotnet-server-sdk": "server-side",
-  "electron": "client-side",
-  "erlang-server-sdk": "server-side",
-  "flutter-client-sdk": "client-side",
-  "go-server-sdk": "server-side",
-  "haskell-server-sdk": "server-side",
-  "ios-client-sdk": "client-side",
-  "java-server-sdk": "server-side",
-  "javascript-client-sdk": "client-side",
-  "lua-server-sdk": "server-side",
-  "node-client-sdk": "client-side",
-  "node-server-sdk": "server-side",
-  "php-server-sdk": "server-side",
-  "python-server-sdk": "server-side",
-  "react-client-sdk": "client-side",
-  "react-native-client-sdk": "client-side",
-  "roku-client-sdk": "client-side",
-  "ruby-server-sdk": "server-side",
-  "rust-server-sdk": "server-side",
-  "vercel-client-sdk": "client-side",
-  "vue-client-sdk": "client-side"
+  "react-native": [
+    "client-side"
+  ],
+  "node-server": [
+    "server-side"
+  ],
+  "vercel": [
+    "edge"
+  ],
+  "akamai-base": [
+    "edge"
+  ],
+  "akamai-edgekv": [
+    "edge"
+  ],
+  "cloudflare": [
+    "edge"
+  ]
 }
