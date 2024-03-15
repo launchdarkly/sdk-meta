@@ -46,6 +46,13 @@ CREATE TABLE sdk_feature_info (
     description TEXT NOT NULL
 );
 
+CREATE TABLE sdk_releases {
+    id TEXT PRIMARY KEY,
+    version TEXT NOT NULL,
+    date DATE NOT NULL,
+    eol
+    }
+
 
 INSERT INTO sdk_type_info (type, description) VALUES
                                               ('client-side', 'Primarily used for user-facing application.'),

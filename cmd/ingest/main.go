@@ -6,67 +6,12 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/launchdarkly/sdk-meta/lib/releases"
 	_ "github.com/mattn/go-sqlite3"
 	gh "github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
 	"os"
-	"strings"
 )
-
-type releasesQuery struct {
-	Repository struct {
-		Releases struct {
-			Nodes []struct {
-				TagName     string
-				PublishedAt string
-			}
-		} `graphql:"releases(last: 100)"`
-	} `graphql:"repository(owner: $org, name: $repo)"`
-}
-
-func releases(client *gh.Client, org string, repo string) (*releasesQuery, error) {
-	var releasesQuery releasesQuery
-	err := client.Query(context.Background(), &releasesQuery, map[string]interface{}{
-		"org":  gh.String(org),
-		"repo": gh.String(repo),
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &releasesQuery, nil
-}
-
-func run2() error {
-	// Parse arg for -repo using flag package.
-
-	repoPath := flag.String("repo", "", "The repository to crawl (org/repo syntax)")
-	flag.Parse()
-	if *repoPath == "" {
-		flag.Usage()
-		os.Exit(1)
-	}
-
-	parts := strings.Split(*repoPath, "/")
-	if len(parts) != 2 {
-		return fmt.Errorf("invalid repo path: %s", *repoPath)
-	}
-
-	org := parts[0]
-	repo := parts[1]
-
-	src := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
-	)
-	httpClient := oauth2.NewClient(context.Background(), src)
-	client := gh.NewClient(httpClient)
-
-	rels, err := releases(client, org, repo)
-	if err != nil {
-		return err
-	}
-	fmt.Println(rels)
-	return nil
-}
 
 type metadataV1 struct {
 	Name      string   `json:"name"`
@@ -91,6 +36,7 @@ type args struct {
 	metadataPath string
 	dbPath       string
 	repo         string
+	offline      bool
 }
 
 func main() {
@@ -102,12 +48,16 @@ func main() {
 	dbPath := flag.String("db", "sdk_metadata.sqlite3", "Path to database file")
 
 	repo := flag.String("repo", "", "Github repo associated with the given metadata.json file in the form 'org/repo'")
+
+	offline := flag.Bool("offline", false, "Don't fetch metadata that requires network access")
+
 	flag.Parse()
 
 	args := &args{
 		*metadataPath,
 		*dbPath,
 		*repo,
+		*offline,
 	}
 
 	if err := run(args); err != nil {
@@ -173,6 +123,22 @@ func run(args *args) error {
 			return nil
 		},
 		"features": insertFeatures,
+	}
+
+	if !args.offline {
+		src := oauth2.StaticTokenSource(
+			&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
+		)
+		httpClient := oauth2.NewClient(context.Background(), src)
+		client := gh.NewClient(httpClient)
+
+		inserters["releases"] = func(tx *sql.Tx, sdkId string, metadata *metadataV1) error {
+			releases, err := releases.Fetch(client, args.repo, metadata.Releases.TagPrefix)
+			if err != nil {
+				return err
+			}
+			return insertReleases(tx, sdkId, releases)
+		}
 	}
 
 	tx, err := db.Begin()
@@ -252,4 +218,18 @@ func insertFeatures(tx *sql.Tx, id string, metadata *metadataV1) error {
 		}
 	}
 	return nil
+}
+
+func insertReleases(tx *sql.Tx, id string, release []string) error {
+	stmt, err := tx.Prepare("INSERT INTO sdk_releases (id, feature, introduced, deprecated, removed) VALUES (?, ?, ?, ?, ?)")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	for feature, info := range metadata.Features {
+		_, err = stmt.Exec(id, feature, info.Introduced, info.Deprecated, info.Removed)
+		if err != nil {
+			return err
+		}
+	}
 }
