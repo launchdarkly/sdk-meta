@@ -46,12 +46,12 @@ CREATE TABLE sdk_feature_info (
     description TEXT NOT NULL
 );
 
-CREATE TABLE sdk_releases {
+CREATE TABLE sdk_releases (
     id TEXT PRIMARY KEY,
     version TEXT NOT NULL,
-    date DATE NOT NULL,
-    eol
-    }
+    date TEXT NOT NULL,
+    eol INTEGER NOT NULL CHECK (eol IN (0, 1))
+);
 
 
 INSERT INTO sdk_type_info (type, description) VALUES
