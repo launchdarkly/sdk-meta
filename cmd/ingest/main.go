@@ -11,6 +11,7 @@ import (
 	gh "github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
 	"os"
+	"os/exec"
 )
 
 type metadataV1 struct {
@@ -35,6 +36,7 @@ type metadataCollection struct {
 type args struct {
 	metadataPath string
 	dbPath       string
+	createDb     bool
 	repo         string
 	offline      bool
 }
@@ -45,7 +47,9 @@ func main() {
 		flag.Usage()
 		os.Exit(1)
 	}
-	dbPath := flag.String("db", "sdk_metadata.sqlite3", "Path to database file")
+	dbPath := flag.String("db", "metadata.sqlite3", "Path to database file. If not provided, a temp database will be used and discarded.")
+
+	createDb := flag.Bool("create", false, "Create database if it does not exist")
 
 	repo := flag.String("repo", "", "Github repo associated with the given metadata.json file in the form 'org/repo'")
 
@@ -56,6 +60,7 @@ func main() {
 	args := &args{
 		*metadataPath,
 		*dbPath,
+		*createDb,
 		*repo,
 		*offline,
 	}
@@ -96,13 +101,23 @@ func parseMetadata(path string) (map[string]*metadataV1, error) {
 	}
 }
 
+func createOrOpen(path string, create bool) (*sql.DB, error) {
+	if create {
+		_ = os.Remove(path)
+		if err := exec.Command("sh", "-c", fmt.Sprintf("sqlite3 %s < ./schemas/sdk_metadata.sql", path)).Run(); err != nil {
+			return nil, fmt.Errorf("couldn't create new database: %v", err)
+		}
+	}
+	return sql.Open("sqlite3", fmt.Sprintf("file:%s?_foreign_keys=true&mode=rw&sync=full", path))
+}
+
 func run(args *args) error {
 	metadata, err := parseMetadata(args.metadataPath)
 	if err != nil {
 		return err
 	}
 
-	db, err := sql.Open("sqlite3", fmt.Sprintf("file:%s?_foreign_keys=true&mode=rw&sync=full", args.dbPath))
+	db, err := createOrOpen(args.dbPath, args.createDb)
 	if err != nil {
 		return err
 	}
@@ -126,6 +141,9 @@ func run(args *args) error {
 	}
 
 	if !args.offline {
+		if args.repo == "" {
+			return fmt.Errorf("'repo' arg is required to run in online mode")
+		}
 		src := oauth2.StaticTokenSource(
 			&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
 		)
@@ -133,11 +151,11 @@ func run(args *args) error {
 		client := gh.NewClient(httpClient)
 
 		inserters["releases"] = func(tx *sql.Tx, sdkId string, metadata *metadataV1) error {
-			releases, err := releases.Fetch(client, args.repo, metadata.Releases.TagPrefix)
+			filteredReleases, err := releases.Fetch(client, args.repo, metadata.Releases.TagPrefix)
 			if err != nil {
 				return err
 			}
-			return insertReleases(tx, sdkId, releases)
+			return insertReleases(tx, sdkId, filteredReleases)
 		}
 	}
 
@@ -220,16 +238,17 @@ func insertFeatures(tx *sql.Tx, id string, metadata *metadataV1) error {
 	return nil
 }
 
-func insertReleases(tx *sql.Tx, id string, release []string) error {
-	stmt, err := tx.Prepare("INSERT INTO sdk_releases (id, feature, introduced, deprecated, removed) VALUES (?, ?, ?, ?, ?)")
+func insertReleases(tx *sql.Tx, id string, release []releases.Release) error {
+	stmt, err := tx.Prepare("INSERT INTO sdk_releases (id, version, date, eol) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
-	for feature, info := range metadata.Features {
-		_, err = stmt.Exec(id, feature, info.Introduced, info.Deprecated, info.Removed)
+	for _, release := range release {
+		_, err = stmt.Exec(id, release.Version, release.Date, false)
 		if err != nil {
 			return err
 		}
 	}
+	return nil
 }
