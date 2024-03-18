@@ -13,24 +13,24 @@ func TestFilterPrefixes(t *testing.T) {
 
 	cases := []struct {
 		prefix   string
-		expected []Release
+		expected []Parsed
 	}{
 		{
 			prefix: "foobar-",
-			expected: []Release{
+			expected: []Parsed{
 				{Version: "v1.2.3", Date: timestamp},
 			},
 		},
 		{
 			prefix: "some-cool-sdk-",
-			expected: []Release{
+			expected: []Parsed{
 				{Version: "v1.2.4", Date: timestamp},
 				{Version: "v1.2.3", Date: timestamp},
 			},
 		},
 		{
 			prefix: "",
-			expected: []Release{
+			expected: []Parsed{
 				{Version: "v1.2.3", Date: timestamp},
 				{Version: "v1.0.1", Date: timestamp},
 				{Version: "v1.0.0-beta.1", Date: timestamp},

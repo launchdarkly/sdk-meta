@@ -11,17 +11,36 @@ import (
 	"time"
 )
 
+// How long we support the latest SDK version.
+const supportWindowYears = 1
+
+// Raw is the raw tag data returned from the github GraphQL releases query.
 type Raw struct {
 	Tag  string `graphql:"tagName"`
 	Date string `graphql:"publishedAt"`
 }
 
-type Release struct {
+// Parsed is the post-processed version of a Raw structure, with the version extracted and date
+// parsed.
+type Parsed struct {
 	Version string
 	Date    time.Time
 }
 
-func (r Release) WithMajor() (WithMajor, error) {
+// WithMajor annotates a parsed release with a comparable major version.
+type WithMajor struct {
+	Parsed
+	Major int
+}
+
+// WithEOL annotates a parsed release with an optional EOL date. If nil, this release has no EOL.
+type WithEOL struct {
+	Parsed
+	EOL *time.Time
+}
+
+// WithMajor extracts the major version of a release and returns a WithMajor containing it.
+func (r Parsed) WithMajor() (WithMajor, error) {
 	major, err := strconv.Atoi(strings.TrimPrefix(semver.Major(r.Version), "v"))
 	if err != nil {
 		return WithMajor{}, err
@@ -29,14 +48,33 @@ func (r Release) WithMajor() (WithMajor, error) {
 	return WithMajor{r, major}, nil
 }
 
-type WithMajor struct {
-	Release
-	Major int
+// AsCurrent marks this release as current.
+func (r Parsed) AsCurrent() WithEOL {
+	return WithEOL{r, nil}
 }
 
-type WithEOL struct {
-	Release
-	EOL *time.Time
+// AsExpiring marks this release as eventually going EOL on a timestamp.
+func (r Parsed) AsExpiring(t time.Time) WithEOL {
+	return WithEOL{r, &t}
+}
+
+// SupportWindow returns the point in time where this release would expire, if it were current.
+func (r Parsed) SupportWindow() time.Time {
+	return r.Date.AddDate(supportWindowYears, 0, 0)
+}
+
+// MajorMinor returns a slice containing the major and minor version, e.g. ["1" (major), "2" (minor)]
+func (r WithEOL) MajorMinor() []string {
+	return strings.Split(strings.TrimPrefix(semver.MajorMinor(r.Version), "v"), ".")
+}
+
+// MaybeEOL returns an RFC3339 timestamp of the EOL date of this release, or nil if there is no EOL.
+func (r WithEOL) MaybeEOL() *string {
+	if r.EOL == nil {
+		return nil
+	}
+	formatted := r.EOL.Format(time.RFC3339)
+	return &formatted
 }
 
 type releasesQuery struct {
@@ -49,29 +87,6 @@ type releasesQuery struct {
 			}
 		} `graphql:"releases(first: 100, after: $cursor)"`
 	} `graphql:"repository(owner: $org, name: $repo)"`
-}
-
-func (r WithEOL) MajorMinor() []string {
-	return strings.Split(strings.TrimPrefix(semver.MajorMinor(r.Version), "v"), ".")
-}
-
-func (r WithEOL) MaybeEOL() *string {
-	if r.EOL == nil {
-		return nil
-	}
-	formatted := r.EOL.Format(time.RFC3339)
-	return &formatted
-}
-func (r Release) Current() WithEOL {
-	return WithEOL{r, nil}
-}
-
-func (r Release) WithEOL(t time.Time) WithEOL {
-	return WithEOL{r, &t}
-}
-
-func (r Release) EOLPlusOneYear() time.Time {
-	return r.Date.AddDate(1, 0, 0)
 }
 
 func Query(client *gh.Client,
@@ -108,9 +123,12 @@ func Query(client *gh.Client,
 	return releases, nil
 }
 
-type Parser interface {
+type TagParser interface {
+	// Relevant returns true if the given tag is relevant to the parser, or should be skipped.
 	Relevant(tag string) bool
-	Parse(tag string) (string, error)
+	// ParseSemver returns the semantic version associated with the tag, or an error. The semver should contain
+	// a leading 'v'.
+	ParseSemver(tag string) (string, error)
 }
 
 // basicParser parses tags of the form v[SEMVER] or [SEMVER].
@@ -120,7 +138,7 @@ func (p *basicParser) Relevant(tag string) bool {
 	return semver.IsValid(tag) || semver.IsValid("v"+tag)
 }
 
-func (p *basicParser) Parse(tag string) (string, error) {
+func (p *basicParser) ParseSemver(tag string) (string, error) {
 	if strings.HasPrefix(tag, "v") {
 		return semver.Canonical(tag), nil
 	}
@@ -136,28 +154,27 @@ func (p *monorepoParser) Relevant(tag string) bool {
 	return strings.HasPrefix(tag, p.prefix) && semver.IsValid(strings.TrimPrefix(tag, p.prefix))
 }
 
-func (p *monorepoParser) Parse(tag string) (string, error) {
+func (p *monorepoParser) ParseSemver(tag string) (string, error) {
 	return semver.Canonical(strings.TrimPrefix(tag, p.prefix)), nil
 }
 
-func Filter(releases []Raw, prefix string) ([]Release, error) {
+func Filter(releases []Raw, prefix string) ([]Parsed, error) {
 
-	//const timeFormat = "2006-01-02T15:04:05Z"
 	const timeFormat = time.RFC3339
 
-	var parser Parser
+	var parser TagParser
 	if prefix == "" {
 		parser = &basicParser{}
 	} else {
 		parser = &monorepoParser{prefix: prefix}
 	}
 
-	var processed []Release
+	var processed []Parsed
 	for _, r := range releases {
 		if !parser.Relevant(r.Tag) {
 			continue
 		}
-		version, err := parser.Parse(r.Tag)
+		version, err := parser.ParseSemver(r.Tag)
 		if err != nil {
 			return nil, err
 		}
@@ -165,17 +182,17 @@ func Filter(releases []Raw, prefix string) ([]Release, error) {
 		if err != nil {
 			return nil, fmt.Errorf("invalid release date for %s: %v", r.Tag, r.Date)
 		}
-		processed = append(processed, Release{Version: semver.Canonical(version), Date: date})
+		processed = append(processed, Parsed{Version: semver.Canonical(version), Date: date})
 	}
 
-	slices.SortFunc(processed, func(a Release, b Release) int {
+	slices.SortFunc(processed, func(a Parsed, b Parsed) int {
 		return -semver.Compare(a.Version, b.Version)
 	})
 
 	return processed, nil
 }
 
-func ExtractMajors(releases []Release) ([]WithMajor, error) {
+func ExtractMajors(releases []Parsed) ([]WithMajor, error) {
 	var withMajors []WithMajor
 	for _, r := range releases {
 		withMajor, err := r.WithMajor()

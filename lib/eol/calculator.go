@@ -58,7 +58,7 @@ func CalculateEOLs(releases []release.WithMajor) []release.WithEOL {
 func eol(i int, releases []release.WithMajor) release.WithEOL {
 	this := releases[i]
 	if i == 0 {
-		return this.Current()
+		return this.AsCurrent()
 	}
 
 	nextMajor := getNextMajor(releases, i)
@@ -67,20 +67,20 @@ func eol(i int, releases []release.WithMajor) release.WithEOL {
 	// If this is a version within the currently supported major version,
 	// then the EOL date is the next release + 1 year.
 	if nextMajor == i {
-		return this.WithEOL(releases[nextRelease].EOLPlusOneYear())
+		return this.AsExpiring(releases[nextRelease].SupportWindow())
 	}
 
 	// Otherwise, there's another major version out: cap the EOL date
 	// at min(nextMajor + 1 year, nextRelease + 1 year). Otherwise, releases
 	// to old major branches will indefinitely extend the support window.
 
-	nextMajorEOL := releases[nextMajor].EOLPlusOneYear()
-	nextReleaseEOL := releases[nextRelease].EOLPlusOneYear()
+	nextMajorEOL := releases[nextMajor].SupportWindow()
+	nextReleaseEOL := releases[nextRelease].SupportWindow()
 
 	if nextMajorEOL.Compare(nextReleaseEOL) == -1 {
-		return this.WithEOL(nextMajorEOL)
+		return this.AsExpiring(nextMajorEOL)
 	}
-	return this.WithEOL(nextReleaseEOL)
+	return this.AsExpiring(nextReleaseEOL)
 }
 
 func getNextMajor(releases []release.WithMajor, i int) int {
