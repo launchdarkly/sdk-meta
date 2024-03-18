@@ -149,10 +149,11 @@ func run(args *args) error {
 			&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
 		)
 		httpClient := oauth2.NewClient(context.Background(), src)
-		client := gh.NewClient(httpClient)
+
+		fetcher := releases.New(gh.NewClient(httpClient))
 
 		inserters["releases"] = func(tx *sql.Tx, sdkId string, metadata *metadataV1) error {
-			filteredReleases, err := releases.Fetch(client, args.repo, metadata.Releases.TagPrefix)
+			filteredReleases, err := fetcher.Fetch(args.repo, metadata.Releases.TagPrefix)
 			if err != nil {
 				return err
 			}

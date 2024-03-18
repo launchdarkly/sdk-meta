@@ -56,7 +56,19 @@ func (r Release) eolPlusOneYear() time.Time {
 	return r.Date.AddDate(1, 0, 0)
 }
 
-func Fetch(client *gh.Client, repoPath string, tagPrefix string) ([]Release, error) {
+type Fetcher struct {
+	client *gh.Client
+	cache  map[string]*releasesQuery
+}
+
+func New(client *gh.Client) *Fetcher {
+	return &Fetcher{
+		client: client,
+		cache:  make(map[string]*releasesQuery),
+	}
+}
+
+func (f *Fetcher) Fetch(repoPath string, tagPrefix string) ([]Release, error) {
 	parts := strings.Split(repoPath, "/")
 	if len(parts) != 2 {
 		return nil, fmt.Errorf("invalid repo path: %s", repoPath)
@@ -65,20 +77,24 @@ func Fetch(client *gh.Client, repoPath string, tagPrefix string) ([]Release, err
 	org := parts[0]
 	repo := parts[1]
 
-	var releasesQuery releasesQuery
-	err := client.Query(context.Background(), &releasesQuery, map[string]interface{}{
-		"org":  gh.String(org),
-		"repo": gh.String(repo),
-	})
-	if err != nil {
-		return nil, err
+	_, ok := f.cache[repoPath]
+	if !ok {
+		var releasesQuery releasesQuery
+		err := f.client.Query(context.Background(), &releasesQuery, map[string]interface{}{
+			"org":  gh.String(org),
+			"repo": gh.String(repo),
+		})
+		if err != nil {
+			return nil, err
+		}
+		f.cache[repoPath] = &releasesQuery
 	}
 
 	var releases []Release
 
 	const timeFormat = "2006-01-02T15:04:05Z"
 
-	for _, node := range releasesQuery.Repository.Releases.Nodes {
+	for _, node := range f.cache[repoPath].Repository.Releases.Nodes {
 		withoutPrefix := strings.TrimPrefix(node.TagName, tagPrefix)
 		if semver.IsValid(withoutPrefix) {
 			parsedDate, err := time.Parse(timeFormat, node.PublishedAt)
