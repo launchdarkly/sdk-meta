@@ -6,7 +6,8 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/launchdarkly/sdk-meta/lib/releases"
+	"github.com/launchdarkly/sdk-meta/lib/eol"
+	"github.com/launchdarkly/sdk-meta/lib/release"
 	_ "github.com/mattn/go-sqlite3"
 	gh "github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
@@ -150,14 +151,14 @@ func run(args *args) error {
 		)
 		httpClient := oauth2.NewClient(context.Background(), src)
 
-		fetcher := releases.New(gh.NewClient(httpClient))
+		calculator := eol.NewCalculator(gh.NewClient(httpClient))
 
 		inserters["releases"] = func(tx *sql.Tx, sdkId string, metadata *metadataV1) error {
-			filteredReleases, err := fetcher.Fetch(args.repo, metadata.Releases.TagPrefix)
+			releases, err := calculator.Calculate(args.repo, metadata.Releases.TagPrefix)
 			if err != nil {
 				return err
 			}
-			return insertReleases(tx, sdkId, releases.CalculateEOLs(filteredReleases))
+			return insertReleases(tx, sdkId, releases)
 		}
 	}
 
@@ -240,7 +241,7 @@ func insertFeatures(tx *sql.Tx, id string, metadata *metadataV1) error {
 	return nil
 }
 
-func insertReleases(tx *sql.Tx, id string, release []releases.ReleaseWithEOL) error {
+func insertReleases(tx *sql.Tx, id string, release []release.WithEOL) error {
 	stmt, err := tx.Prepare("INSERT INTO sdk_releases (id, version, date, eol) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		return err
