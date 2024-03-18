@@ -18,8 +18,16 @@ golden_dir=$2
 temp_dir="new_$2"
 rm -rf "$temp_dir"
 
+backfill_dir="backfill"
+
 sqlite3 "$temp_db" < ./schemas/sdk_metadata.sql
 mkdir "$temp_dir"
+
+jq -r '.backfill[]' < config.json | while read -r repo; do
+  sanitized_repo=$(echo "$repo" | tr '/' '_')
+  echo "Backfilling $repo from $backfill_dir/$sanitized_repo.json"
+  ./ingest -metadata "$backfill_dir/$sanitized_repo.json" -db "$temp_db" -repo "$repo"
+done
 
 jq -r '.repos[]' < config.json | while read -r repo; do
   echo "Fetching metadata.json for $repo"
@@ -28,6 +36,7 @@ jq -r '.repos[]' < config.json | while read -r repo; do
   echo "Ingesting metadata.json for $repo"
   ./ingest -metadata "$temp_dir/$sanitized_repo.json" -db "$temp_db" -repo "$repo"
 done
+
 
 
 mv "$temp_db" "$golden_db"

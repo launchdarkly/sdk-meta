@@ -133,9 +133,9 @@ func run(args *args) error {
 		"languages": insertLanguages,
 		"type":      insertType,
 		"name":      insertName,
-		"repo": func(tx *sql.Tx, sdkId string, metadata *metadataV1) error {
+		"repo": func(tx *sql.Tx, sdkID string, metadata *metadataV1) error {
 			if args.repo != "" {
-				return insertRepo(tx, sdkId, args.repo)
+				return insertRepo(tx, sdkID, args.repo)
 			}
 			return nil
 		},
@@ -179,7 +179,10 @@ func run(args *args) error {
 	return tx.Commit()
 }
 
-func insertLanguages(tx *sql.Tx, id string, metadata *metadataV1) error {
+func insertLanguages(tx *sql.Tx, sdkID string, metadata *metadataV1) error {
+	if len(metadata.Languages) == 0 {
+		return nil
+	}
 	stmt, err := tx.Prepare("INSERT INTO sdk_languages (id, language) VALUES (?, ?)")
 	if err != nil {
 		return err
@@ -187,7 +190,7 @@ func insertLanguages(tx *sql.Tx, id string, metadata *metadataV1) error {
 	defer stmt.Close()
 
 	for _, language := range metadata.Languages {
-		if _, err := stmt.Exec(id, language); err != nil {
+		if _, err := stmt.Exec(sdkID, language); err != nil {
 			return err
 		}
 	}
@@ -195,37 +198,43 @@ func insertLanguages(tx *sql.Tx, id string, metadata *metadataV1) error {
 	return nil
 }
 
-func insertType(tx *sql.Tx, id string, metadata *metadataV1) error {
+func insertType(tx *sql.Tx, sdkID string, metadata *metadataV1) error {
+	if metadata.Type == "" {
+		return nil
+	}
 	stmt, err := tx.Prepare("INSERT INTO sdk_types (id, type) VALUES (?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(id, metadata.Type)
+	_, err = stmt.Exec(sdkID, metadata.Type)
 	return err
 }
 
-func insertName(tx *sql.Tx, id string, metadata *metadataV1) error {
+func insertName(tx *sql.Tx, sdkID string, metadata *metadataV1) error {
+	if metadata.Name == "" {
+		return nil
+	}
 	stmt, err := tx.Prepare("INSERT INTO sdk_names (id, name) VALUES (?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(id, metadata.Name)
+	_, err = stmt.Exec(sdkID, metadata.Name)
 	return err
 }
 
-func insertRepo(tx *sql.Tx, id string, repo string) error {
+func insertRepo(tx *sql.Tx, sdkID string, repo string) error {
 	stmt, err := tx.Prepare("INSERT INTO sdk_repos (id, github) VALUES (?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(id, repo)
+	_, err = stmt.Exec(sdkID, repo)
 	return err
 }
 
-func insertFeatures(tx *sql.Tx, id string, metadata *metadataV1) error {
+func insertFeatures(tx *sql.Tx, sdkID string, metadata *metadataV1) error {
 	// Todo: how to handle the empty string/nil values
 	stmt, err := tx.Prepare("INSERT INTO sdk_features (id, feature, introduced, deprecated, removed) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
@@ -233,7 +242,7 @@ func insertFeatures(tx *sql.Tx, id string, metadata *metadataV1) error {
 	}
 	defer stmt.Close()
 	for feature, info := range metadata.Features {
-		_, err = stmt.Exec(id, feature, info.Introduced, info.Deprecated, info.Removed)
+		_, err = stmt.Exec(sdkID, feature, info.Introduced, info.Deprecated, info.Removed)
 		if err != nil {
 			return err
 		}
@@ -241,7 +250,8 @@ func insertFeatures(tx *sql.Tx, id string, metadata *metadataV1) error {
 	return nil
 }
 
-func insertReleases(tx *sql.Tx, id string, release []release.WithEOL) error {
+
+func insertReleases(tx *sql.Tx, sdkID string, release []release.WithEOL) error {
 	stmt, err := tx.Prepare("INSERT INTO sdk_releases (id, major, minor, date, eol) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
@@ -249,7 +259,7 @@ func insertReleases(tx *sql.Tx, id string, release []release.WithEOL) error {
 	defer stmt.Close()
 	for _, release := range release {
 		majorMinor := release.MajorMinor()
-		_, err = stmt.Exec(id, majorMinor[0], majorMinor[1], release.Date.Format(time.RFC3339), release.MaybeEOL())
+		_, err = stmt.Exec(sdkID, majorMinor[0], majorMinor[1], release.Date.Format(time.RFC3339), release.MaybeEOL())
 		if err != nil {
 			return err
 		}

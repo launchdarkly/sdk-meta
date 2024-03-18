@@ -1,5 +1,8 @@
 {
   "repos" : [
     "launchdarkly/js-core"
+  ],
+  "backfill": [
+    "launchdarkly/node-server-sdk"
   ]
 }

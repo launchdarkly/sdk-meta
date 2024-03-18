@@ -4,8 +4,9 @@ CREATE TABLE sdk_names (
 );
 
 CREATE TABLE sdk_repos (
-    id TEXT PRIMARY KEY,
-    github TEXT NOT NULL
+    id TEXT,
+    github TEXT NOT NULL,
+    PRIMARY KEY (id, github)
 );
 
 CREATE TABLE sdk_languages (
