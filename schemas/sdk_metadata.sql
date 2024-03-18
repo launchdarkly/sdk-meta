@@ -48,10 +48,11 @@ CREATE TABLE sdk_feature_info (
 
 CREATE TABLE sdk_releases (
     id TEXT NOT NULL,
-    version TEXT NOT NULL,
+    major TEXT NOT NULL,
+    minor TEXT NOT NULL,
     date TEXT NOT NULL,
     eol TEXT,
-    PRIMARY KEY(id, version)
+    PRIMARY KEY(id, major, minor)
 );
 
 

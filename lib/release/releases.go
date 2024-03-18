@@ -51,8 +51,8 @@ type releasesQuery struct {
 	} `graphql:"repository(owner: $org, name: $repo)"`
 }
 
-func (r WithEOL) MajorMinor() string {
-	return strings.TrimPrefix(semver.MajorMinor(r.Version), "v")
+func (r WithEOL) MajorMinor() []string {
+	return strings.Split(strings.TrimPrefix(semver.MajorMinor(r.Version), "v"), ".")
 }
 
 func (r WithEOL) MaybeEOL() *string {

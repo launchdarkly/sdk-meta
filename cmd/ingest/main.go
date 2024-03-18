@@ -242,13 +242,14 @@ func insertFeatures(tx *sql.Tx, id string, metadata *metadataV1) error {
 }
 
 func insertReleases(tx *sql.Tx, id string, release []release.WithEOL) error {
-	stmt, err := tx.Prepare("INSERT INTO sdk_releases (id, version, date, eol) VALUES (?, ?, ?, ?)")
+	stmt, err := tx.Prepare("INSERT INTO sdk_releases (id, major, minor, date, eol) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 	for _, release := range release {
-		_, err = stmt.Exec(id, release.MajorMinor(), release.Date.Format(time.RFC3339), release.MaybeEOL())
+		majorMinor := release.MajorMinor()
+		_, err = stmt.Exec(id, majorMinor[0], majorMinor[1], release.Date.Format(time.RFC3339), release.MaybeEOL())
 		if err != nil {
 			return err
 		}
