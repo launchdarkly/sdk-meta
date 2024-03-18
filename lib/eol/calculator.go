@@ -40,13 +40,25 @@ func (e *Calculator) Calculate(repo string, prefix string) ([]release.WithEOL, e
 }
 
 func CalculateEOLs(releases []release.WithMajor) []release.WithEOL {
-	releases = slices.CompactFunc(releases, func(a release.WithMajor, b release.WithMajor) bool {
-		return semver.MajorMinor(a.Version) == semver.MajorMinor(b.Version)
-	})
+	// First, delete irrelvant releases (those before major version 1)
 
 	releases = slices.DeleteFunc(releases, func(a release.WithMajor) bool {
 		return a.Major == 0
 	})
+
+	// Second, sort ascending so that older releases come first in the array.
+	// This is necessary so that the CompactFunc keeps the *oldest* which is relevant for the EOL
+	// calculation.
+	slices.SortFunc(releases, func(a release.WithMajor, b release.WithMajor) int {
+		return semver.Compare(a.Version, b.Version)
+	})
+
+	releases = slices.CompactFunc(releases, func(a release.WithMajor, b release.WithMajor) bool {
+		return semver.MajorMinor(a.Version) == semver.MajorMinor(b.Version)
+	})
+
+	// Before running the EOL algorithm, reverse it so that the first entry is the latest release.
+	slices.Reverse(releases)
 
 	var releasesWithEOL []release.WithEOL
 	for i := range releases {

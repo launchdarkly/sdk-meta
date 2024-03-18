@@ -5,7 +5,6 @@ import (
 	"fmt"
 	gh "github.com/shurcooL/githubv4"
 	"golang.org/x/mod/semver"
-	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -184,10 +183,6 @@ func Filter(releases []Raw, prefix string) ([]Parsed, error) {
 		}
 		processed = append(processed, Parsed{Version: semver.Canonical(version), Date: date})
 	}
-
-	slices.SortFunc(processed, func(a Parsed, b Parsed) int {
-		return -semver.Compare(a.Version, b.Version)
-	})
 
 	return processed, nil
 }
