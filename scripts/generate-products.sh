@@ -18,5 +18,5 @@ sqlite3 -json metadata.sqlite3 "SELECT * from sdk_types;" |
 sqlite3 -json metadata.sqlite3 "SELECT * from sdk_repos;" |
   jq -S 'reduce .[] as $item ({}; .[$item.id] += {github: $item.github})' > products/repos.json
 
-sqlite3 -json metadata.sqlite3 "SELECT * FROM sdk_releases;" |
+sqlite3 -json metadata.sqlite3 "SELECT * FROM sdk_releases ORDER BY date DESC;" |
   jq 'group_by(.id) | map({(.[0].id): map({major: .major, minor: .minor, date: .date, eol: .eol})}) | add' > products/releases.json
