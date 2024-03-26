@@ -2,6 +2,8 @@
   "akamai-base": "Akamai SDK",
   "akamai-edgekv": "Akamai SDK for EdgeKV",
   "cloudflare": "Cloudflare SDK",
+  "cpp-client-sdk": "C++ Client SDK",
+  "cpp-server-sdk": "C++ Server SDK",
   "node-server": "Node.js SDK",
   "react-native": "React Native SDK",
   "vercel": "Vercel Edge SDK"
