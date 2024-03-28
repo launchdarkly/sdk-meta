@@ -8,6 +8,12 @@
   "cloudflare": {
     "github": "launchdarkly/js-core"
   },
+  "cpp-client-sdk": {
+    "github": "launchdarkly/cpp-sdks"
+  },
+  "cpp-server-sdk": {
+    "github": "launchdarkly/cpp-sdks"
+  },
   "node-server": {
     "github": "launchdarkly/js-core"
   },

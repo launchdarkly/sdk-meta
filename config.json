@@ -1,6 +1,7 @@
 {
   "repos" : [
-    "launchdarkly/js-core"
+    "launchdarkly/js-core",
+    "launchdarkly/cpp-sdks"
   ],
   "backfill": [
     "launchdarkly/node-server-sdk"
