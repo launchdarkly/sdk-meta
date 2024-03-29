@@ -9,6 +9,7 @@ if [ -z "$1" ]; then
 fi
 
 go build ./cmd/ingest
+go build ./cmd/enumerate
 
 temp_db=$1
 rm -f "$temp_db"
@@ -19,10 +20,13 @@ rm -rf "$temp_dir"
 sqlite3 "$temp_db" < ./schemas/sdk_metadata.sql
 mkdir "$temp_dir"
 
-jq -r '.repos[]' < config.json | while read -r repo; do
-  echo "Fetching metadata.json for $repo"
+./enumerate | jq -r '.[]' | while read -r repo; do
+  echo "checking $repo"
   sanitized_repo=$(echo "$repo" | tr '/' '_')
-  gh api "repos/$repo/contents/.sdk_metadata.json" -q '.content' | base64 --decode > "$temp_dir/$sanitized_repo.json"
-  echo "Ingesting metadata.json for $repo"
+  metadata=$(gh api "repos/$repo/contents/.sdk_metadata.json" -q '.content') || {
+    continue
+  }
+  echo "$metadata" | base64 --decode > "$temp_dir/$sanitized_repo.json"
+  echo "found metadata in $repo"
   ./ingest -metadata "$temp_dir/$sanitized_repo.json" -db "$temp_db" -repo "$repo"
 done
