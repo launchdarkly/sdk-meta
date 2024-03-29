@@ -142,6 +142,17 @@ func run(args *args) error {
 		"features": insertFeatures,
 	}
 
+	// TODO: Plan on how to deal with backfilling.
+	// First, change it so that the release fetching just does the raw GraphQL querying. Put the releases in a table
+	// with date, verison, id. Do that for all SDKs plus the backfills.
+	// Then, have a separate command like: ./cmd/products/releases/main.go that:
+	//  - Queries the database for all releases on a given ID
+	//  - Runs the EOL calculator
+	//  - Spews the output as JSON directly to stdout.
+	// THen the shell script can pipe it to a data product file.
+	// Alternatively, just put them back into a new table, so we;d have
+	// sdk_releases and sdk_release_eols. It might be useful for people to be able to query that. Hmm.
+	// Feels icky though, having that be in the DB - since it's not actually from an authoritative source.
 	if !args.offline {
 		if args.repo == "" {
 			return fmt.Errorf("'repo' arg is required to run in online mode")
@@ -249,7 +260,6 @@ func insertFeatures(tx *sql.Tx, sdkID string, metadata *metadataV1) error {
 	}
 	return nil
 }
-
 
 func insertReleases(tx *sql.Tx, sdkID string, release []release.WithEOL) error {
 	stmt, err := tx.Prepare("INSERT INTO sdk_releases (id, major, minor, date, eol) VALUES (?, ?, ?, ?, ?)")
