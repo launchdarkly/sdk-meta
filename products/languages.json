@@ -11,14 +11,6 @@
     "JavaScript",
     "TypeScript"
   ],
-  "cpp-client-sdk": [
-    "C++",
-    "C"
-  ],
-  "cpp-server-sdk": [
-    "C++",
-    "C"
-  ],
   "node-server": [
     "JavaScript",
     "TypeScript"

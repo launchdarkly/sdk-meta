@@ -2,8 +2,6 @@
   "akamai-base": "edge",
   "akamai-edgekv": "edge",
   "cloudflare": "edge",
-  "cpp-client-sdk": "client-side",
-  "cpp-server-sdk": "server-side",
   "node-server": "server-side",
   "react-native": "client-side",
   "vercel": "edge"
