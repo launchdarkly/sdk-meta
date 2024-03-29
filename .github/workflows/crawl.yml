@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         # First we take the existing sqlite3 database and dump it to a file. This way we
         # can detect if the crawling had any effect (a direct comparison of the raw database
         # will not be deterministic.)
