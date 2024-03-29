@@ -12,6 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
+      - name: Install sqldiff (sqlite tool from apt)
+        run: sudo apt-get install -y sqldiff
       - name: Crawl repos
         id: crawl
         env:
