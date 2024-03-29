@@ -30,6 +30,8 @@ jobs:
         id: diff
         run: |
           sqlite3 ${{ env.DB_NAME }} .dump > ${{ env.DB_NAME }}.new.sql
+          set +x
+          diff  ${{ env.DB_NAME }}.sql ${{ env.DB_NAME }}.new.sql
           diff --brief ${{ env.DB_NAME }}.sql ${{ env.DB_NAME }}.new.sql
           echo "changed=$?" >> $GITHUB_OUTPUT
         # If the database changed, generate the data products (json files).
