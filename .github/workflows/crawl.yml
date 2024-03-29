@@ -25,12 +25,18 @@ jobs:
       - name: Diff against previous crawl
         id: diff
         run: |
-          sqldiff --primarykey ${{ env.DB_NAME }} ${{ env.DB_NAME }}.new
-          echo "changed=$?" >> $GITHUB_OUTPUT
-        # If the database changed, generate the data products (json files).
+          changes=$(sqldiff --primarykey ${{ env.DB_NAME }} ${{ env.DB_NAME }}.new)
+          if [ -z "$changes" ]; then
+            echo "No changes detected."
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected!"
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Update data
         id: update
-        if: steps.diff.outputs.changed == '1'
+        if: steps.diff.outputs.changed == 'true'
         run: |
           mv ${{ env.DB_NAME }}.new ${{ env.DB_NAME }}
           rm -rf ${{ env.METADATA_DIR }}
