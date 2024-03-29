@@ -11,16 +11,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Crawl
+        # First we take the existing sqlite3 database and dump it to a file. This way we
+        # can detect if the crawling had any effect (a direct comparison of the raw database
+        # will not be deterministic.)
+      - name: Generate dump for comparison
+        run: |
+          sqlite3 ${{ env.DB_NAME }} .dump > ${{ env.DB_NAME }}.sql
+        # Download metadata from each configured repo (config.json) and ingest into
+        # a fresh database. This step will overwrite the existing db.
+      - name: Crawl repos
         id: crawl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./scripts/crawl.sh ${{ env.DB_NAME }} ${{ env.METADATA_DIR }}
+        # Determine if we anything changed. If not, no need to create a PR.
+      - name: Diff against previous crawl
+        id: diff
+        run: |
+          sqlite3 ${{ env.DB_NAME }} .dump > ${{ env.DB_NAME }}.new.sql
+          diff --brief ${{ env.DB_NAME }}.sql ${{ env.DB_NAME }}.new.sql
+          echo "changed=$?" >> $GITHUB_OUTPUT
+        # If the database changed, generate the data products (json files).
       - name: Generate products
+        id: generate
+        if: steps.diff.outputs.changed == '1'
         run: |
           ./scripts/generate-products.sh
       - name: Create PR
+        if: steps.generate.outcome == 'success'
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
