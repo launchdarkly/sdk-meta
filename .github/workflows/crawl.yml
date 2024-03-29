@@ -12,6 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
+        with:
+            go-version: 1.22
       - name: Install sqldiff (sqlite tool from apt)
         run: sudo apt-get install -y sqlite3-tools
       - name: Crawl repos
@@ -23,7 +25,7 @@ jobs:
       - name: Diff against previous crawl
         id: diff
         run: |
-          sqldiff ${{ env.DB_NAME }} ${{ env.DB_NAME }}.new
+          sqldiff --primarykey ${{ env.DB_NAME }} ${{ env.DB_NAME }}.new
           echo "changed=$?" >> $GITHUB_OUTPUT
         # If the database changed, generate the data products (json files).
       - name: Update data
