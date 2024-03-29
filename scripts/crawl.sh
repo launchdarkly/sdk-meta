@@ -10,12 +10,10 @@ fi
 
 go build ./cmd/ingest
 
-golden_db=$1
-temp_db="new_$1"
+temp_db=$1
 rm -f "$temp_db"
 
-golden_dir=$2
-temp_dir="new_$2"
+temp_dir=$2
 rm -rf "$temp_dir"
 
 sqlite3 "$temp_db" < ./schemas/sdk_metadata.sql
@@ -28,9 +26,3 @@ jq -r '.repos[]' < config.json | while read -r repo; do
   echo "Ingesting metadata.json for $repo"
   ./ingest -metadata "$temp_dir/$sanitized_repo.json" -db "$temp_db" -repo "$repo"
 done
-
-
-mv "$temp_db" "$golden_db"
-
-rm -rf "$golden_dir"
-mv "$temp_dir" "$golden_dir"
