@@ -9,7 +9,6 @@ if [ -z "$1" ]; then
 fi
 
 go build ./cmd/ingest
-go build ./cmd/enumerate
 
 temp_db=$1
 rm -f "$temp_db"
@@ -20,7 +19,7 @@ rm -rf "$temp_dir"
 sqlite3 "$temp_db" < ./schemas/sdk_metadata.sql
 mkdir "$temp_dir"
 
-./enumerate | jq -r '.[]' | while read -r repo; do
+./scripts/repos.sh | while read -r repo; do
   echo "checking $repo"
   sanitized_repo=$(echo "$repo" | tr '/' '_')
   metadata=$(gh api "repos/$repo/contents/.sdk_metadata.json" -q '.content') || {
