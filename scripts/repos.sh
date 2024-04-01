@@ -3,19 +3,13 @@
 gh api --paginate graphql -f query='{
   search(
     type: REPOSITORY
-    query: """
-    topic:launchdarkly-sdk
-    AND -topic:launchdarkly-sdk-component
-    AND -topic:sdk-examples
-    AND org:launchdarkly
-    """
+    query: """topic:launchdarkly-sdk -topic:launchdarkly-sdk-component -topic:sdk-examples org:launchdarkly is:public"""
     first: 100
   ) {
     repositoryCount
     nodes {
       ... on Repository {
         nameWithOwner
-        isPrivate
         repositoryTopics(first: 100) {
           nodes {
             topic {
@@ -26,4 +20,4 @@ gh api --paginate graphql -f query='{
       }
     }
   }
-}' --jq '.data.search.nodes[] | select(.isPrivate | not) | .nameWithOwner'
+}' --jq '.data.search.nodes[] | .nameWithOwner'
