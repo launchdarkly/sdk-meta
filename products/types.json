@@ -4,6 +4,7 @@
   "cloudflare": "edge",
   "cpp-client-sdk": "client-side",
   "cpp-server-sdk": "server-side",
+  "flutter-client-sdk": "client-side",
   "node-server": "server-side",
   "react-native": "client-side",
   "vercel": "edge"
