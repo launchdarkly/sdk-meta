@@ -1,7 +1,7 @@
 package eol
 
 import (
-	"github.com/launchdarkly/sdk-meta/lib/release"
+	"github.com/launchdarkly/sdk-meta/lib/releases"
 	gh "github.com/shurcooL/githubv4"
 	"golang.org/x/mod/semver"
 	"slices"
@@ -9,65 +9,65 @@ import (
 
 type Calculator struct {
 	client *gh.Client
-	cache  map[string][]release.Raw
+	cache  map[string][]releases.Raw
 }
 
 func NewCalculator(client *gh.Client) *Calculator {
 	return &Calculator{
 		client: client,
-		cache:  make(map[string][]release.Raw),
+		cache:  make(map[string][]releases.Raw),
 	}
 }
 
-func (e *Calculator) Calculate(repo string, prefix string) ([]release.WithEOL, error) {
+func (e *Calculator) Calculate(repo string, prefix string) ([]releases.WithEOL, error) {
 	_, ok := e.cache[repo]
 	if !ok {
-		rawReleases, err := release.Query(e.client, repo)
+		rawReleases, err := releases.Query(e.client, repo)
 		if err != nil {
 			return nil, err
 		}
 		e.cache[repo] = rawReleases
 	}
-	filteredReleases, err := release.Filter(e.cache[repo], prefix)
+	filteredReleases, err := releases.Filter(e.cache[repo], prefix)
 	if err != nil {
 		return nil, err
 	}
-	releasesWithMajors, err := release.ExtractMajors(filteredReleases)
+	releasesWithMajors, err := releases.ExtractMajors(filteredReleases)
 	if err != nil {
 		return nil, err
 	}
 	return CalculateEOLs(releasesWithMajors), nil
 }
 
-func CalculateEOLs(releases []release.WithMajor) []release.WithEOL {
+func CalculateEOLs(releases []releases.WithMajor) []releases.WithEOL {
 	// First, delete irrelvant releases (those before major version 1)
 
-	releases = slices.DeleteFunc(releases, func(a release.WithMajor) bool {
+	releases = slices.DeleteFunc(releases, func(a releases.WithMajor) bool {
 		return a.Major == 0
 	})
 
 	// Second, sort ascending so that older releases come first in the array.
 	// This is necessary so that the CompactFunc keeps the *oldest* which is relevant for the EOL
 	// calculation.
-	slices.SortFunc(releases, func(a release.WithMajor, b release.WithMajor) int {
+	slices.SortFunc(releases, func(a releases.WithMajor, b releases.WithMajor) int {
 		return semver.Compare(a.Version, b.Version)
 	})
 
-	releases = slices.CompactFunc(releases, func(a release.WithMajor, b release.WithMajor) bool {
+	releases = slices.CompactFunc(releases, func(a releases.WithMajor, b releases.WithMajor) bool {
 		return semver.MajorMinor(a.Version) == semver.MajorMinor(b.Version)
 	})
 
 	// Before running the EOL algorithm, reverse it so that the first entry is the latest release.
 	slices.Reverse(releases)
 
-	var releasesWithEOL []release.WithEOL
+	var releasesWithEOL []releases.WithEOL
 	for i := range releases {
 		releasesWithEOL = append(releasesWithEOL, eol(i, releases))
 	}
 	return releasesWithEOL
 }
 
-func eol(i int, releases []release.WithMajor) release.WithEOL {
+func eol(i int, releases []releases.WithMajor) releases.WithEOL {
 	this := releases[i]
 	if i == 0 {
 		return this.AsCurrent()
@@ -95,7 +95,7 @@ func eol(i int, releases []release.WithMajor) release.WithEOL {
 	return this.AsExpiring(nextReleaseEOL)
 }
 
-func getNextMajor(releases []release.WithMajor, i int) int {
+func getNextMajor(releases []releases.WithMajor, i int) int {
 	currentMajor := releases[i].Major
 
 	for j := i - 1; j >= 0; j-- {

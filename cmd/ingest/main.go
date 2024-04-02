@@ -6,8 +6,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/launchdarkly/sdk-meta/lib/eol"
-	"github.com/launchdarkly/sdk-meta/lib/release"
+	"github.com/launchdarkly/sdk-meta/lib/releases"
 	_ "github.com/mattn/go-sqlite3"
 	gh "github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
@@ -162,14 +161,24 @@ func run(args *args) error {
 		)
 		httpClient := oauth2.NewClient(context.Background(), src)
 
-		calculator := eol.NewCalculator(gh.NewClient(httpClient))
+		client := gh.NewClient(httpClient)
+		releaseCache := make(map[string][]releases.Raw)
 
 		inserters["releases"] = func(tx *sql.Tx, sdkId string, metadata *metadataV1) error {
-			releases, err := calculator.Calculate(args.repo, metadata.Releases.TagPrefix)
+			if _, ok := releaseCache[args.repo]; !ok {
+				rawReleases, err := releases.Query(client, args.repo)
+				if err != nil {
+					return err
+				}
+				releaseCache[args.repo] = rawReleases
+			}
+			all := releaseCache[args.repo]
+			singleSDK, err := releases.Filter(all, metadata.Releases.TagPrefix)
 			if err != nil {
 				return err
 			}
-			return insertReleases(tx, sdkId, releases)
+
+			return insertReleases(tx, sdkId, releases.Reduce(singleSDK))
 		}
 	}
 
@@ -261,31 +270,15 @@ func insertFeatures(tx *sql.Tx, sdkID string, metadata *metadataV1) error {
 	return nil
 }
 
-func insertReleases(tx *sql.Tx, sdkID string, release []release.WithEOL) error {
-	stmt, err := tx.Prepare("INSERT INTO sdk_releases (id, major, minor, date, eol) VALUES (?, ?, ?, ?, ?)")
+func insertReleases(tx *sql.Tx, id string, release []releases.Parsed) error {
+	stmt, err := tx.Prepare("INSERT INTO sdk_releases (id, major, minor, patch, date) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
-	for _, release := range release {
-		majorMinor := release.MajorMinor()
-		_, err = stmt.Exec(sdkID, majorMinor[0], majorMinor[1], release.Date.Format(time.RFC3339), release.MaybeEOL())
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func insertReleases(tx *sql.Tx, id string, release []release.WithEOL) error {
-	stmt, err := tx.Prepare("INSERT INTO sdk_releases (id, major, minor, date, eol) VALUES (?, ?, ?, ?, ?)")
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-	for _, release := range release {
-		majorMinor := release.MajorMinor()
-		_, err = stmt.Exec(id, majorMinor[0], majorMinor[1], release.Date.Format(time.RFC3339), release.MaybeEOL())
+	for _, r := range release {
+		v := r.Version
+		_, err = stmt.Exec(id, v.Major(), v.Minor(), v.Patch(), r.Date.Format(time.RFC3339))
 		if err != nil {
 			return err
 		}

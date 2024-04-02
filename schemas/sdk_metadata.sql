@@ -47,20 +47,14 @@ CREATE TABLE sdk_feature_info (
     description TEXT NOT NULL
 );
 
-CREATE_TABLE sdk_releases (
-    id TEXT NOT NULL,
-    version TEXT NOT NULL,
-    date TEXT NOT NULL,
-    PRIMARY KEY(id, version)
-);
 
 CREATE TABLE sdk_releases (
     id TEXT NOT NULL,
-    major TEXT NOT NULL,
-    minor TEXT NOT NULL,
+    major INTEGER NOT NULL,
+    minor INTEGER NOT NULL,
+    patch INTEGER NOT NULL,
     date TEXT NOT NULL,
-    eol TEXT,
-    PRIMARY KEY(id, major, minor)
+    PRIMARY KEY(id, major, minor, patch)
 );
 
 

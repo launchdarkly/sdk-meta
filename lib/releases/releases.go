@@ -1,11 +1,11 @@
-package release
+package releases
 
 import (
 	"context"
 	"fmt"
+	"github.com/Masterminds/semver/v3"
 	gh "github.com/shurcooL/githubv4"
-	"golang.org/x/mod/semver"
-	"strconv"
+	"slices"
 	"strings"
 	"time"
 )
@@ -22,7 +22,7 @@ type Raw struct {
 // Parsed is the post-processed version of a Raw structure, with the version extracted and date
 // parsed.
 type Parsed struct {
-	Version string
+	Version *semver.Version
 	Date    time.Time
 }
 
@@ -38,15 +38,6 @@ type WithEOL struct {
 	EOL *time.Time
 }
 
-// WithMajor extracts the major version of a release and returns a WithMajor containing it.
-func (r Parsed) WithMajor() (WithMajor, error) {
-	major, err := strconv.Atoi(strings.TrimPrefix(semver.Major(r.Version), "v"))
-	if err != nil {
-		return WithMajor{}, err
-	}
-	return WithMajor{r, major}, nil
-}
-
 // AsCurrent marks this release as current.
 func (r Parsed) AsCurrent() WithEOL {
 	return WithEOL{r, nil}
@@ -60,11 +51,6 @@ func (r Parsed) AsExpiring(t time.Time) WithEOL {
 // SupportWindow returns the point in time where this release would expire, if it were current.
 func (r Parsed) SupportWindow() time.Time {
 	return r.Date.AddDate(supportWindowYears, 0, 0)
-}
-
-// MajorMinor returns a slice containing the major and minor version, e.g. ["1" (major), "2" (minor)]
-func (r WithEOL) MajorMinor() []string {
-	return strings.Split(strings.TrimPrefix(semver.MajorMinor(r.Version), "v"), ".")
 }
 
 // MaybeEOL returns an RFC3339 timestamp of the EOL date of this release, or nil if there is no EOL.
@@ -127,21 +113,19 @@ type TagParser interface {
 	Relevant(tag string) bool
 	// ParseSemver returns the semantic version associated with the tag, or an error. The semver should contain
 	// a leading 'v'.
-	ParseSemver(tag string) (string, error)
+	ParseSemver(tag string) (*semver.Version, error)
 }
 
 // basicParser parses tags of the form v[SEMVER] or [SEMVER].
 type basicParser struct{}
 
-func (p *basicParser) Relevant(tag string) bool {
-	return semver.IsValid(tag) || semver.IsValid("v"+tag)
+func (p basicParser) Relevant(tag string) bool {
+	_, err := semver.NewVersion(tag)
+	return err == nil
 }
 
-func (p *basicParser) ParseSemver(tag string) (string, error) {
-	if strings.HasPrefix(tag, "v") {
-		return semver.Canonical(tag), nil
-	}
-	return semver.Canonical("v" + tag), nil
+func (p basicParser) ParseSemver(tag string) (*semver.Version, error) {
+	return semver.NewVersion(tag)
 }
 
 // monorepoParser parses tags of the form [PREFIX][SEMVER].
@@ -149,12 +133,16 @@ type monorepoParser struct {
 	prefix string
 }
 
-func (p *monorepoParser) Relevant(tag string) bool {
-	return strings.HasPrefix(tag, p.prefix) && semver.IsValid(strings.TrimPrefix(tag, p.prefix))
+func (p monorepoParser) Relevant(tag string) bool {
+	if !strings.HasPrefix(tag, p.prefix) {
+		return false
+	}
+	tag = strings.TrimPrefix(tag, p.prefix)
+	return basicParser{}.Relevant(tag)
 }
 
-func (p *monorepoParser) ParseSemver(tag string) (string, error) {
-	return semver.Canonical(strings.TrimPrefix(tag, p.prefix)), nil
+func (p monorepoParser) ParseSemver(tag string) (*semver.Version, error) {
+	return basicParser{}.ParseSemver(strings.TrimPrefix(tag, p.prefix))
 }
 
 func Filter(releases []Raw, prefix string) ([]Parsed, error) {
@@ -181,20 +169,20 @@ func Filter(releases []Raw, prefix string) ([]Parsed, error) {
 		if err != nil {
 			return nil, fmt.Errorf("invalid release date for %s: %v", r.Tag, r.Date)
 		}
-		processed = append(processed, Parsed{Version: semver.Canonical(version), Date: date})
+		processed = append(processed, Parsed{Version: version, Date: date})
 	}
 
 	return processed, nil
 }
 
-func ExtractMajors(releases []Parsed) ([]WithMajor, error) {
-	var withMajors []WithMajor
-	for _, r := range releases {
-		withMajor, err := r.WithMajor()
-		if err != nil {
-			return nil, err
-		}
-		withMajors = append(withMajors, withMajor)
-	}
-	return withMajors, nil
+func Reduce(releases []Parsed) []Parsed {
+	stable := slices.DeleteFunc(releases, func(a Parsed) bool {
+		return a.Version.Major() == 0 || a.Version.Prerelease() != ""
+	})
+
+	slices.SortFunc(stable, func(a Parsed, b Parsed) int {
+		return a.Version.Compare(b.Version)
+	})
+
+	return stable
 }
