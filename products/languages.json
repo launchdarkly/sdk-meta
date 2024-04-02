@@ -19,6 +19,9 @@
     "C++",
     "C"
   ],
+  "flutter-client-sdk": [
+    "Dart"
+  ],
   "node-server": [
     "JavaScript",
     "TypeScript"
