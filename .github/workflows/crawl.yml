@@ -11,16 +11,43 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Crawl
+      - uses: actions/setup-go@v5
+        with:
+            go-version: 1.22
+      - name: Install sqldiff
+        run: sudo apt-get install -y sqlite3-tools
+      - name: Crawl repos
         id: crawl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./scripts/crawl.sh ${{ env.DB_NAME }} ${{ env.METADATA_DIR }}
+          ./scripts/crawl.sh ${{ env.DB_NAME }}.new ${{ env.METADATA_DIR }}.new
+      - name: Diff against previous crawl
+        id: diff
+        run: |
+          changes=$(sqldiff --primarykey ${{ env.DB_NAME }} ${{ env.DB_NAME }}.new)
+          if [ -z "$changes" ]; then
+            echo "No changes detected."
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected!"
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update data
+        id: update
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          mv ${{ env.DB_NAME }}.new ${{ env.DB_NAME }}
+          rm -rf ${{ env.METADATA_DIR }}
+          mv ${{ env.METADATA_DIR }}.new ${{ env.METADATA_DIR }}
       - name: Generate products
+        id: generate
+        if: steps.update.outcome == 'success'
         run: |
           ./scripts/generate-products.sh
       - name: Create PR
+        if: steps.generate.outcome == 'success'
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
