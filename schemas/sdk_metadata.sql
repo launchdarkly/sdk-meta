@@ -62,7 +62,8 @@ INSERT INTO sdk_type_info (type, description) VALUES
                                               ('edge', 'Primarily used to delivery flag payloads to edge services.');
 
 INSERT INTO sdk_feature_info (feature, description) VALUES
-    ('u2c', 'The concept of Users is replaced with Contexts, which can be used to represent users, devices, or other entities.');
+    ('u2c', 'The concept of Users is replaced with Contexts, which can be used to represent users, devices, or other entities.'),
+    ('hooks', 'Hooks are collections of user-defined callbacks that are executed by the SDK at various points of interest, usually for metrics or tracing.');
 
 INSERT INTO sdk_language_info (language) VALUES
     ('Apex'),
