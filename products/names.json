@@ -4,6 +4,7 @@
   "cloudflare": "Cloudflare SDK",
   "cpp-client-sdk": "C++ Client SDK",
   "cpp-server-sdk": "C++ Server SDK",
+  "dotnet-server-sdk": ".NET Server SDK",
   "flutter-client-sdk": "Flutter Client SDK",
   "node-server": "Node.js SDK",
   "react-native": "React Native SDK",
