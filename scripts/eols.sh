@@ -15,7 +15,7 @@ SELECT
     FROM sdk_releases r2
       WHERE r2.id = r.id
         AND (r2.major > r.major OR (r2.major = r.major AND r2.minor > r.minor))
-        AND r2.date >= r.date) AS eol
+) AS eol
   FROM sdk_releases r
   WHERE NOT EXISTS (
     SELECT 1
@@ -23,5 +23,5 @@ SELECT
     WHERE r_inner.id = r.id
       AND r_inner.major = r.major
       AND r_inner.minor = r.minor
-      AND r_inner.date < r.date
+      AND r_inner.patch < r.patch
 ) ORDER BY r.id ASC, r.major DESC, r.minor DESC;"
