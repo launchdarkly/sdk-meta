@@ -132,26 +132,15 @@ func run(args *args) error {
 		"languages": insertLanguages,
 		"type":      insertType,
 		"name":      insertName,
-		"repo": func(tx *sql.Tx, sdkID string, metadata *metadataV1) error {
+		"repo": func(tx *sql.Tx, id string, metadata *metadataV1) error {
 			if args.repo != "" {
-				return insertRepo(tx, sdkID, args.repo)
+				return insertRepo(tx, id, args.repo)
 			}
 			return nil
 		},
 		"features": insertFeatures,
 	}
 
-	// TODO: Plan on how to deal with backfilling.
-	// First, change it so that the release fetching just does the raw GraphQL querying. Put the releases in a table
-	// with date, verison, id. Do that for all SDKs plus the backfills.
-	// Then, have a separate command like: ./cmd/products/releases/main.go that:
-	//  - Queries the database for all releases on a given ID
-	//  - Runs the EOL calculator
-	//  - Spews the output as JSON directly to stdout.
-	// THen the shell script can pipe it to a data product file.
-	// Alternatively, just put them back into a new table, so we;d have
-	// sdk_releases and sdk_release_eols. It might be useful for people to be able to query that. Hmm.
-	// Feels icky though, having that be in the DB - since it's not actually from an authoritative source.
 	if !args.offline {
 		if args.repo == "" {
 			return fmt.Errorf("'repo' arg is required to run in online mode")
@@ -199,7 +188,7 @@ func run(args *args) error {
 	return tx.Commit()
 }
 
-func insertLanguages(tx *sql.Tx, sdkID string, metadata *metadataV1) error {
+func insertLanguages(tx *sql.Tx, id string, metadata *metadataV1) error {
 	if len(metadata.Languages) == 0 {
 		return nil
 	}
@@ -210,7 +199,7 @@ func insertLanguages(tx *sql.Tx, sdkID string, metadata *metadataV1) error {
 	defer stmt.Close()
 
 	for _, language := range metadata.Languages {
-		if _, err := stmt.Exec(sdkID, language); err != nil {
+		if _, err := stmt.Exec(id, language); err != nil {
 			return err
 		}
 	}
@@ -218,7 +207,7 @@ func insertLanguages(tx *sql.Tx, sdkID string, metadata *metadataV1) error {
 	return nil
 }
 
-func insertType(tx *sql.Tx, sdkID string, metadata *metadataV1) error {
+func insertType(tx *sql.Tx, id string, metadata *metadataV1) error {
 	if metadata.Type == "" {
 		return nil
 	}
@@ -227,11 +216,11 @@ func insertType(tx *sql.Tx, sdkID string, metadata *metadataV1) error {
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(sdkID, metadata.Type)
+	_, err = stmt.Exec(id, metadata.Type)
 	return err
 }
 
-func insertName(tx *sql.Tx, sdkID string, metadata *metadataV1) error {
+func insertName(tx *sql.Tx, id string, metadata *metadataV1) error {
 	if metadata.Name == "" {
 		return nil
 	}
@@ -240,21 +229,21 @@ func insertName(tx *sql.Tx, sdkID string, metadata *metadataV1) error {
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(sdkID, metadata.Name)
+	_, err = stmt.Exec(id, metadata.Name)
 	return err
 }
 
-func insertRepo(tx *sql.Tx, sdkID string, repo string) error {
+func insertRepo(tx *sql.Tx, id string, repo string) error {
 	stmt, err := tx.Prepare("INSERT INTO sdk_repos (id, github) VALUES (?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(sdkID, repo)
+	_, err = stmt.Exec(id, repo)
 	return err
 }
 
-func insertFeatures(tx *sql.Tx, sdkID string, metadata *metadataV1) error {
+func insertFeatures(tx *sql.Tx, id string, metadata *metadataV1) error {
 	// Todo: how to handle the empty string/nil values
 	stmt, err := tx.Prepare("INSERT INTO sdk_features (id, feature, introduced, deprecated, removed) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
@@ -262,7 +251,7 @@ func insertFeatures(tx *sql.Tx, sdkID string, metadata *metadataV1) error {
 	}
 	defer stmt.Close()
 	for feature, info := range metadata.Features {
-		_, err = stmt.Exec(sdkID, feature, info.Introduced, info.Deprecated, info.Removed)
+		_, err = stmt.Exec(id, feature, info.Introduced, info.Deprecated, info.Removed)
 		if err != nil {
 			return err
 		}
