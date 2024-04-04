@@ -24,4 +24,4 @@ WHERE r_inner.id = r.id
 AND r_inner.major = r.major
 AND r_inner.minor = r.minor
 AND r_inner.date > r.date
-) ORDER BY r.id, r.major, r.minor DESC;"
+) ORDER BY r.id ASC, r.major DESC, r.minor DESC;"
