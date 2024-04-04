@@ -19,6 +19,9 @@
     "C++",
     "C"
   ],
+  "dotnet-server-sdk": [
+    "C#"
+  ],
   "flutter-client-sdk": [
     "Dart"
   ],
