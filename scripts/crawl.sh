@@ -19,6 +19,13 @@ rm -rf "$temp_dir"
 sqlite3 "$temp_db" < ./schemas/sdk_metadata.sql
 mkdir "$temp_dir"
 
+for file in ./backfill/*.json; do
+  repo=$(basename "$file" .json | tr '_' '/')
+  echo "backfilling $repo"
+
+  ./ingest -metadata "$file" -db "$temp_db" -repo "$repo"
+done
+
 ./scripts/repos.sh | while read -r repo; do
   echo "checking $repo"
   sanitized_repo=$(echo "$repo" | tr '/' '_')
