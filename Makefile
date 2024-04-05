@@ -8,3 +8,5 @@ crawl:
 # Generate all the JSON products.
 products:
 	./scripts/generate-products.sh
+
+all: crawl products
