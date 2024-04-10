@@ -1,13 +1,16 @@
 {
   "akamai-base": "Akamai SDK",
   "akamai-edgekv": "Akamai SDK for EdgeKV",
+  "android": "Android SDK",
   "cloudflare": "Cloudflare SDK",
   "cpp-client-sdk": "C++ Client SDK",
   "cpp-server-sdk": "C++ Server SDK",
   "dotnet-server-sdk": ".NET Server SDK",
   "flutter-client-sdk": "Flutter Client SDK",
+  "java-server-sdk": "Java Server SDK",
   "lua-server-sdk": "Lua Server SDK",
   "node-server": "Node.js SDK",
   "react-native": "React Native SDK",
+  "rust-server-sdk": "Rust Server SDK",
   "vercel": "Vercel Edge SDK"
 }

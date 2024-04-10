@@ -1,13 +1,16 @@
 {
   "akamai-base": "edge",
   "akamai-edgekv": "edge",
+  "android": "client-side",
   "cloudflare": "edge",
   "cpp-client-sdk": "client-side",
   "cpp-server-sdk": "server-side",
   "dotnet-server-sdk": "server-side",
   "flutter-client-sdk": "client-side",
+  "java-server-sdk": "server-side",
   "lua-server-sdk": "server-side",
   "node-server": "server-side",
   "react-native": "client-side",
+  "rust-server-sdk": "server-side",
   "vercel": "edge"
 }

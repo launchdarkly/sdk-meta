@@ -7,6 +7,10 @@
     "JavaScript",
     "TypeScript"
   ],
+  "android": [
+    "Java",
+    "Kotlin"
+  ],
   "cloudflare": [
     "JavaScript",
     "TypeScript"
@@ -25,6 +29,9 @@
   "flutter-client-sdk": [
     "Dart"
   ],
+  "java-server-sdk": [
+    "Java"
+  ],
   "lua-server-sdk": [
     "Lua"
   ],
@@ -35,6 +42,9 @@
   "react-native": [
     "JavaScript",
     "TypeScript"
+  ],
+  "rust-server-sdk": [
+    "Rust"
   ],
   "vercel": [
     "JavaScript",

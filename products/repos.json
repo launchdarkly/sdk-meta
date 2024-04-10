@@ -5,6 +5,9 @@
   "akamai-edgekv": {
     "github": "launchdarkly/js-core"
   },
+  "android": {
+    "github": "launchdarkly/android-client-sdk"
+  },
   "cloudflare": {
     "github": "launchdarkly/js-core"
   },
@@ -20,6 +23,9 @@
   "flutter-client-sdk": {
     "github": "launchdarkly/flutter-client-sdk"
   },
+  "java-server-sdk": {
+    "github": "launchdarkly/java-server-sdk"
+  },
   "lua-server-sdk": {
     "github": "launchdarkly/lua-server-sdk"
   },
@@ -28,6 +34,9 @@
   },
   "react-native": {
     "github": "launchdarkly/js-core"
+  },
+  "rust-server-sdk": {
+    "github": "launchdarkly/rust-server-sdk"
   },
   "vercel": {
     "github": "launchdarkly/js-core"
