@@ -8,6 +8,9 @@
   "android": {
     "github": "launchdarkly/android-client-sdk"
   },
+  "apex-server-sdk": {
+    "github": "launchdarkly/apex-server-sdk"
+  },
   "cloudflare": {
     "github": "launchdarkly/js-core"
   },
@@ -20,8 +23,17 @@
   "dotnet-server-sdk": {
     "github": "launchdarkly/dotnet-server-sdk"
   },
+  "erlang-server-sdk": {
+    "github": "launchdarkly/erlang-server-sdk"
+  },
   "flutter-client-sdk": {
     "github": "launchdarkly/flutter-client-sdk"
+  },
+  "go-server-sdk": {
+    "github": "launchdarkly/go-server-sdk"
+  },
+  "haskell-server-sdk": {
+    "github": "launchdarkly/haskell-server-sdk"
   },
   "java-server-sdk": {
     "github": "launchdarkly/java-server-sdk"
@@ -32,11 +44,23 @@
   "node-server": {
     "github": "launchdarkly/js-core"
   },
+  "php-server-sdk": {
+    "github": "launchdarkly/php-server-sdk"
+  },
   "react-native": {
     "github": "launchdarkly/js-core"
   },
+  "roku": {
+    "github": "launchdarkly/roku-client-sdk"
+  },
+  "ruby-server-sdk": {
+    "github": "launchdarkly/ruby-server-sdk"
+  },
   "rust-server-sdk": {
     "github": "launchdarkly/rust-server-sdk"
+  },
+  "swift-client-sdk": {
+    "github": "launchdarkly/ios-client-sdk"
   },
   "vercel": {
     "github": "launchdarkly/js-core"

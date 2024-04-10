@@ -11,6 +11,9 @@
     "Java",
     "Kotlin"
   ],
+  "apex-server-sdk": [
+    "Apex"
+  ],
   "cloudflare": [
     "JavaScript",
     "TypeScript"
@@ -26,8 +29,17 @@
   "dotnet-server-sdk": [
     "C#"
   ],
+  "erlang-server-sdk": [
+    "Erlang"
+  ],
   "flutter-client-sdk": [
     "Dart"
+  ],
+  "go-server-sdk": [
+    "Go"
+  ],
+  "haskell-server-sdk": [
+    "Haskell"
   ],
   "java-server-sdk": [
     "Java"
@@ -39,12 +51,25 @@
     "JavaScript",
     "TypeScript"
   ],
+  "php-server-sdk": [
+    "PHP"
+  ],
   "react-native": [
     "JavaScript",
     "TypeScript"
   ],
+  "roku": [
+    "BrightScript"
+  ],
+  "ruby-server-sdk": [
+    "Ruby"
+  ],
   "rust-server-sdk": [
     "Rust"
+  ],
+  "swift-client-sdk": [
+    "Swift",
+    "Objective-C"
   ],
   "vercel": [
     "JavaScript",
