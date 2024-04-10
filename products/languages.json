@@ -26,8 +26,17 @@
   "dotnet-server-sdk": [
     "C#"
   ],
+  "erlang-server-sdk": [
+    "Erlang"
+  ],
   "flutter-client-sdk": [
     "Dart"
+  ],
+  "go-server-sdk": [
+    "Go"
+  ],
+  "haskell-server-sdk": [
+    "Haskell"
   ],
   "java-server-sdk": [
     "Java"
@@ -43,8 +52,18 @@
     "JavaScript",
     "TypeScript"
   ],
+  "roku": [
+    "BrightScript"
+  ],
+  "ruby-server-sdk": [
+    "Ruby"
+  ],
   "rust-server-sdk": [
     "Rust"
+  ],
+  "swift-client-sdk": [
+    "Swift",
+    "Objective-C"
   ],
   "vercel": [
     "JavaScript",

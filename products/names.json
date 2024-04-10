@@ -6,11 +6,17 @@
   "cpp-client-sdk": "C++ Client SDK",
   "cpp-server-sdk": "C++ Server SDK",
   "dotnet-server-sdk": ".NET Server SDK",
+  "erlang-server-sdk": "Erlang Server SDK",
   "flutter-client-sdk": "Flutter Client SDK",
+  "go-server-sdk": "Go Server SDK",
+  "haskell-server-sdk": "Haskell Server SDK",
   "java-server-sdk": "Java Server SDK",
   "lua-server-sdk": "Lua Server SDK",
   "node-server": "Node.js SDK",
   "react-native": "React Native SDK",
+  "roku": "Roku SDK",
+  "ruby-server-sdk": "Ruby Server SDK",
   "rust-server-sdk": "Rust Server SDK",
+  "swift-client-sdk": "iOS SDK",
   "vercel": "Vercel Edge SDK"
 }
