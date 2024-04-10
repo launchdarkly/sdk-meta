@@ -6,6 +6,7 @@
   "cpp-server-sdk": "server-side",
   "dotnet-server-sdk": "server-side",
   "flutter-client-sdk": "client-side",
+  "lua-server-sdk": "server-side",
   "node-server": "server-side",
   "react-native": "client-side",
   "vercel": "edge"

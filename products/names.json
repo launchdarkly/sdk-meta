@@ -6,6 +6,7 @@
   "cpp-server-sdk": "C++ Server SDK",
   "dotnet-server-sdk": ".NET Server SDK",
   "flutter-client-sdk": "Flutter Client SDK",
+  "lua-server-sdk": "Lua Server SDK",
   "node-server": "Node.js SDK",
   "react-native": "React Native SDK",
   "vercel": "Vercel Edge SDK"

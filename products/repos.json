@@ -20,6 +20,9 @@
   "flutter-client-sdk": {
     "github": "launchdarkly/flutter-client-sdk"
   },
+  "lua-server-sdk": {
+    "github": "launchdarkly/lua-server-sdk"
+  },
   "node-server": {
     "github": "launchdarkly/js-core"
   },

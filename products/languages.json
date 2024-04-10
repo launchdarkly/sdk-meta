@@ -25,6 +25,9 @@
   "flutter-client-sdk": [
     "Dart"
   ],
+  "lua-server-sdk": [
+    "Lua"
+  ],
   "node-server": [
     "JavaScript",
     "TypeScript"
