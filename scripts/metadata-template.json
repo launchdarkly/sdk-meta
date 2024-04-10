@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "sdks": {
+    "$ID": {
+      "name": "$NAME",
+      "type": "$TYPE",
+      "languages": [
+        "$LANG"
+      ]
+    }
+  }
+}
