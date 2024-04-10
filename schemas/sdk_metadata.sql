@@ -85,6 +85,7 @@ INSERT INTO sdk_language_info (language) VALUES
     ('PHP'),
     ('Haskell'),
     ('Erlang'),
+    ('Elixer'),
     ('Lua'),
     ('Dart'),
     ('Objective-C');
