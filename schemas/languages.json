@@ -8,7 +8,7 @@
     "SDKLanguage" : {
       "type" : "string",
       "description" : "Name of a programming language",
-      "pattern" : "^[+A-Za-z#]+$"
+      "pattern" : "^[+A-Za-z#-]+$"
     }
   },
   "patternProperties" : {
