@@ -8,6 +8,7 @@
   "cpp-server-sdk": "server-side",
   "dotnet-client-sdk": "client-side",
   "dotnet-server-sdk": "server-side",
+  "electron": "client-side",
   "erlang-server-sdk": "server-side",
   "flutter-client-sdk": "client-side",
   "go-server-sdk": "server-side",

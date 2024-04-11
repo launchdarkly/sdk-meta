@@ -26,6 +26,9 @@
   "dotnet-server-sdk": {
     "github": "launchdarkly/dotnet-server-sdk"
   },
+  "electron": {
+    "github": "launchdarkly/electron-client-sdk"
+  },
   "erlang-server-sdk": {
     "github": "launchdarkly/erlang-server-sdk"
   },

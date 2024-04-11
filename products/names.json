@@ -8,6 +8,7 @@
   "cpp-server-sdk": "C++ Server SDK",
   "dotnet-client-sdk": ".NET Client SDK",
   "dotnet-server-sdk": ".NET Server SDK",
+  "electron": "Electron SDK",
   "erlang-server-sdk": "Erlang Server SDK",
   "flutter-client-sdk": "Flutter Client SDK",
   "go-server-sdk": "Go Server SDK",

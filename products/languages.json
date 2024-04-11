@@ -32,6 +32,10 @@
   "dotnet-server-sdk": [
     "C#"
   ],
+  "electron": [
+    "JavaScript",
+    "TypeScript"
+  ],
   "erlang-server-sdk": [
     "Erlang",
     "Elixir"
