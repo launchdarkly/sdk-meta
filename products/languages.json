@@ -30,7 +30,8 @@
     "C#"
   ],
   "erlang-server-sdk": [
-    "Erlang"
+    "Erlang",
+    "Elixir"
   ],
   "flutter-client-sdk": [
     "Dart"
