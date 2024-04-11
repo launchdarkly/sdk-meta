@@ -20,6 +20,9 @@
   "cpp-server-sdk": {
     "github": "launchdarkly/cpp-sdks"
   },
+  "dotnet-client-sdk": {
+    "github": "launchdarkly/dotnet-client-sdk"
+  },
   "dotnet-server-sdk": {
     "github": "launchdarkly/dotnet-server-sdk"
   },
@@ -38,6 +41,9 @@
   "java-server-sdk": {
     "github": "launchdarkly/java-server-sdk"
   },
+  "js-client-sdk": {
+    "github": "launchdarkly/js-client-sdk"
+  },
   "lua-server-sdk": {
     "github": "launchdarkly/lua-server-sdk"
   },
@@ -46,6 +52,12 @@
   },
   "php-server-sdk": {
     "github": "launchdarkly/php-server-sdk"
+  },
+  "python-server-sdk": {
+    "github": "launchdarkly/python-server-sdk"
+  },
+  "react-client-sdk": {
+    "github": "launchdarkly/react-client-sdk"
   },
   "react-native": {
     "github": "launchdarkly/js-core"
@@ -64,5 +76,8 @@
   },
   "vercel": {
     "github": "launchdarkly/js-core"
+  },
+  "vue": {
+    "github": "launchdarkly/vue-client-sdk"
   }
 }

@@ -26,6 +26,9 @@
     "C++",
     "C"
   ],
+  "dotnet-client-sdk": [
+    "C#"
+  ],
   "dotnet-server-sdk": [
     "C#"
   ],
@@ -45,6 +48,10 @@
   "java-server-sdk": [
     "Java"
   ],
+  "js-client-sdk": [
+    "JavaScript",
+    "TypeScript"
+  ],
   "lua-server-sdk": [
     "Lua"
   ],
@@ -54,6 +61,13 @@
   ],
   "php-server-sdk": [
     "PHP"
+  ],
+  "python-server-sdk": [
+    "Python"
+  ],
+  "react-client-sdk": [
+    "JavaScript",
+    "TypeScript"
   ],
   "react-native": [
     "JavaScript",
@@ -73,6 +87,10 @@
     "Objective-C"
   ],
   "vercel": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "vue": [
     "JavaScript",
     "TypeScript"
   ]
