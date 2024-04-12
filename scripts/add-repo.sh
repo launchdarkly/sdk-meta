@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# This script can be used to create a basic metadata file for a particular repo.
+# It will clone the repo, ask some questions, then commit the changes and
+# push to Github.
+#
+# It's not very smart - ideally we'd have a JSON schema for the metadata
+# file so we could validate it before committing. For now, it relies on humans (you) to make sure
+# it is correct.
+
 repo=$1
 
 if [ -z "$repo" ]; then

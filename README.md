@@ -25,6 +25,11 @@ consumption by downstream products and services.
 
 The JSON data products live in [`products`](./products) and the schemas for them live in [`schemas`](./schemas). 
 
-Data can be validated against the schemas using `./scripts/ci/check-json-schemas.sh` on Linux.
+## tooling
+
+Data products can be validated against the schemas using `./scripts/ci/check-json-schemas.sh` on Linux.
 
 Ensure that the JSON files are valid and formatted using `./scripts/ci/format-json.sh`.
+
+To quickly create basic metadata for a new repo, run `./scripts/add-repo.sh <launchdarkly/repo-name>`. This will
+clone the repo, check-in an `.sdk_metadata.json` file, and create a PR.
