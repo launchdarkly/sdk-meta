@@ -1716,9 +1716,15 @@
   "node-server": [
     {
       "major": 9,
+      "minor": 4,
+      "date": "2024-04-16T17:41:07Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 3,
       "date": "2024-04-10T20:03:25Z",
-      "eol": null
+      "eol": "2025-04-16"
     },
     {
       "major": 9,
