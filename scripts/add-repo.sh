@@ -35,10 +35,12 @@ read -r TYPE
 echo "SDK language: "
 read -r LANG
 
+GH_USERNAME=$(gh api user | jq -r .login)
+
 ID="$ID" NAME="$NAME" TYPE="$TYPE" LANG="$LANG" envsubst < ""./scripts/metadata-template.json > "$repo_name/.sdk_metadata.json"
 (
   cd "$repo_name" || exit
-  git switch -c cw/add-sdk-metadata
+  git switch -c "$GH_USERNAME"/add-sdk-metadata
   git add .sdk_metadata.json
   git commit -m "chore: add .sdk_metadata.json"
   gh pr create --fill
