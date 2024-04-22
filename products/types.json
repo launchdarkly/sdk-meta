@@ -16,6 +16,7 @@
   "java-server-sdk": "server-side",
   "js-client-sdk": "client-side",
   "lua-server-sdk": "server-side",
+  "node-client-sdk": "client-side",
   "node-server": "server-side",
   "php-server-sdk": "server-side",
   "python-server-sdk": "server-side",

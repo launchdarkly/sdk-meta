@@ -50,6 +50,9 @@
   "lua-server-sdk": {
     "github": "launchdarkly/lua-server-sdk"
   },
+  "node-client-sdk": {
+    "github": "launchdarkly/node-client-sdk"
+  },
   "node-server": {
     "github": "launchdarkly/js-core"
   },
