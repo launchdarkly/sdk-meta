@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # This script can be used to create a basic metadata file for a particular repo.
 # It will clone the repo, ask some questions, then commit the changes and
 # push to Github.
