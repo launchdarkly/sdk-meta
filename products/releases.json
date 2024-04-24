@@ -552,9 +552,15 @@
   "dotnet-server-sdk": [
     {
       "major": 8,
+      "minor": 4,
+      "date": "2024-04-23T20:14:21Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 3,
       "date": "2024-04-03T18:41:43Z",
-      "eol": null
+      "eol": "2025-04-23"
     },
     {
       "major": 8,
@@ -894,9 +900,15 @@
   "flutter-client-sdk": [
     {
       "major": 4,
+      "minor": 5,
+      "date": "2024-04-23T21:42:44Z",
+      "eol": null
+    },
+    {
+      "major": 4,
       "minor": 4,
       "date": "2024-03-28T17:35:52Z",
-      "eol": null
+      "eol": "2025-04-23"
     },
     {
       "major": 4,
