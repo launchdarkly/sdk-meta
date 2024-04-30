@@ -36,9 +36,15 @@
   "android": [
     {
       "major": 5,
+      "minor": 2,
+      "date": "2024-04-25T21:45:10Z",
+      "eol": null
+    },
+    {
+      "major": 5,
       "minor": 1,
       "date": "2024-03-14T20:47:22Z",
-      "eol": null
+      "eol": "2025-04-25"
     },
     {
       "major": 5,
@@ -1218,9 +1224,15 @@
   "java-server-sdk": [
     {
       "major": 7,
+      "minor": 4,
+      "date": "2024-04-26T17:04:24Z",
+      "eol": null
+    },
+    {
+      "major": 7,
       "minor": 3,
       "date": "2024-03-14T15:41:25Z",
-      "eol": null
+      "eol": "2025-04-26"
     },
     {
       "major": 7,
@@ -2208,9 +2220,15 @@
   "python-server-sdk": [
     {
       "major": 9,
+      "minor": 4,
+      "date": "2024-04-29T17:29:10Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 3,
       "date": "2024-03-14T17:32:06Z",
-      "eol": null
+      "eol": "2025-04-29"
     },
     {
       "major": 9,
