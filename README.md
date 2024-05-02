@@ -33,3 +33,10 @@ Ensure that the JSON files are valid and formatted using `./scripts/ci/format-js
 
 To quickly create basic metadata for a new repo, run `./scripts/add-repo.sh <launchdarkly/repo-name>`. This will
 clone the repo, check-in an `.sdk_metadata.json` file, and create a PR.
+
+## consumers
+
+Consumers of SDK metadata include:
+- [LaunchDarkly Docs](https://docs.launchdarkly.com/)
+
+Are you a consumer? Add a link here to receive communications when new features/changes are coming.
