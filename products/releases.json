@@ -1490,9 +1490,15 @@
   "js-client-sdk": [
     {
       "major": 3,
+      "minor": 3,
+      "date": "2024-05-01T17:32:10Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 2,
       "date": "2024-03-19T19:00:57Z",
-      "eol": null
+      "eol": "2025-05-01"
     },
     {
       "major": 3,
@@ -1740,9 +1746,15 @@
   "node-client-sdk": [
     {
       "major": 3,
+      "minor": 2,
+      "date": "2024-05-01T20:27:26Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 1,
       "date": "2024-03-19T19:02:27Z",
-      "eol": null
+      "eol": "2025-05-01"
     },
     {
       "major": 3,
@@ -2444,9 +2456,15 @@
   "react-client-sdk": [
     {
       "major": 3,
+      "minor": 2,
+      "date": "2024-05-01T18:23:49Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 1,
       "date": "2024-03-21T14:00:02Z",
-      "eol": null
+      "eol": "2025-05-01"
     },
     {
       "major": 3,
@@ -3136,9 +3154,15 @@
   "vue": [
     {
       "major": 2,
+      "minor": 2,
+      "date": "2024-05-01T21:55:21Z",
+      "eol": null
+    },
+    {
+      "major": 2,
       "minor": 1,
       "date": "2024-03-21T13:57:44Z",
-      "eol": null
+      "eol": "2025-05-01"
     },
     {
       "major": 2,
