@@ -39,11 +39,12 @@ CREATE TABLE sdk_features (
     deprecated TEXT,
     removed TEXT,
     PRIMARY KEY (id, feature),
-    FOREIGN KEY (feature) REFERENCES sdk_feature_info(feature)
+    FOREIGN KEY (feature) REFERENCES sdk_feature_info(id)
 );
 
 CREATE TABLE sdk_feature_info (
-    feature TEXT PRIMARY KEY,
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
     description TEXT NOT NULL
 );
 
@@ -63,9 +64,9 @@ INSERT INTO sdk_type_info (type, description) VALUES
                                               ('server-side', 'Primarily used for server-side applications.'),
                                               ('edge', 'Primarily used to delivery flag payloads to edge services.');
 
-INSERT INTO sdk_feature_info (feature, description) VALUES
-    ('u2c', 'The concept of Users is replaced with Contexts, which can be used to represent users, devices, or other entities.'),
-    ('hooks', 'Hooks are collections of user-defined callbacks that are executed by the SDK at various points of interest, usually for metrics or tracing.');
+INSERT INTO sdk_feature_info (id, name, description) VALUES
+    ('u2c', 'Contexts', 'The concept of Users is replaced with Contexts, which can be used to represent users, devices, or other entities.'),
+    ('hooks', 'Hooks', 'Hooks are collections of user-defined callbacks that are executed by the SDK at various points of interest, usually for metrics or tracing.');
 
 INSERT INTO sdk_language_info (language) VALUES
     ('Apex'),
