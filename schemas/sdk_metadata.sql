@@ -65,7 +65,7 @@ INSERT INTO sdk_type_info (type, description) VALUES
                                               ('edge', 'Primarily used to delivery flag payloads to edge services.');
 
 INSERT INTO sdk_feature_info (id, name, description) VALUES
-    ('appConfig', 'Application metadata', 'Specify application and application version information.'),
+    ('appMetadata', 'Application metadata', 'Specify application and application version information.'),
     ('autoEnvAttrs', 'Automatic environment attributes', 'Automatically include device and application data in each evaluated context.'),
     ('bigSegments', 'Big segments', 'Configure a persistent store to hold segments that are either synced from external tools, or that contain an arbitrarily large number of contexts of any one context kind.'),
     ('bootstrapping', 'Bootstrapping', 'Provide an initial set of flag values that are immediately available during client initialization.'),
