@@ -502,9 +502,15 @@
   "dotnet-client-sdk": [
     {
       "major": 5,
+      "minor": 2,
+      "date": "2024-05-08T17:01:33Z",
+      "eol": null
+    },
+    {
+      "major": 5,
       "minor": 1,
       "date": "2024-03-14T18:58:04Z",
-      "eol": null
+      "eol": "2025-05-08"
     },
     {
       "major": 5,
