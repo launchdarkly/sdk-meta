@@ -8,7 +8,7 @@
     "SDKType" : {
       "type" : "string",
        "description" : "The primary deployment strategy for a LaunchDarkly SDK",
-       "enum" : ["client-side", "server-side", "edge"]
+       "enum" : ["client-side", "server-side", "edge", "relay"]
     }
   },
   "patternProperties" : {
