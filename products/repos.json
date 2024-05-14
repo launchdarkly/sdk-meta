@@ -68,6 +68,9 @@
   "react-native": {
     "github": "launchdarkly/js-core"
   },
+  "relay-proxy": {
+    "github": "launchdarkly/ld-relay"
+  },
   "roku": {
     "github": "launchdarkly/roku-client-sdk"
   },

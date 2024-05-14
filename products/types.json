@@ -22,6 +22,7 @@
   "python-server-sdk": "server-side",
   "react-client-sdk": "client-side",
   "react-native": "client-side",
+  "relay-proxy": "relay",
   "roku": "client-side",
   "ruby-server-sdk": "server-side",
   "rust-server-sdk": "server-side",

@@ -81,6 +81,9 @@
     "JavaScript",
     "TypeScript"
   ],
+  "relay-proxy": [
+    "Go"
+  ],
   "roku": [
     "BrightScript"
   ],
