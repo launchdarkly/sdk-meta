@@ -24,3 +24,4 @@ runTest ./schemas/types.json ./products/types.json
 runTest ./schemas/names.json ./products/names.json
 runTest ./schemas/languages.json ./products/languages.json
 runTest ./schemas/repos.json ./products/repos.json
+runTest ./schemas/releases.json ./products/releases.json
