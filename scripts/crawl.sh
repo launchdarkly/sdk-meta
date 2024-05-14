@@ -29,6 +29,12 @@ done
 ./scripts/repos.sh | while read -r repo; do
   echo "checking $repo"
   sanitized_repo=$(echo "$repo" | tr '/' '_')
+
+  if [ -f "./backfill/$sanitized_repo.json" ]; then
+    echo "skipping $repo, it was backfilled"
+    continue
+  fi
+
   metadata=$(gh api "repos/$repo/contents/.sdk_metadata.json" -q '.content') || {
     continue
   }
