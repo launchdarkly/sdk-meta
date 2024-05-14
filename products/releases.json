@@ -36,9 +36,15 @@
   "android": [
     {
       "major": 5,
+      "minor": 3,
+      "date": "2024-05-13T19:18:32Z",
+      "eol": null
+    },
+    {
+      "major": 5,
       "minor": 2,
       "date": "2024-04-25T21:45:10Z",
-      "eol": null
+      "eol": "2025-05-13"
     },
     {
       "major": 5,
@@ -282,9 +288,15 @@
   "cpp-client-sdk": [
     {
       "major": 3,
+      "minor": 5,
+      "date": "2024-05-14T01:03:53Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 4,
       "date": "2023-12-26T22:54:02Z",
-      "eol": null
+      "eol": "2025-05-14"
     },
     {
       "major": 3,
@@ -398,9 +410,15 @@
   "cpp-server-sdk": [
     {
       "major": 3,
+      "minor": 4,
+      "date": "2024-05-14T01:03:45Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 3,
       "date": "2023-12-26T22:54:04Z",
-      "eol": null
+      "eol": "2025-05-14"
     },
     {
       "major": 3,
