@@ -17,10 +17,11 @@ function runTest() {
         fi
     done
 
-    npx --package=ajv-cli --package=ajv-formats ajv validate --spec=draft2020 -s "$primary" "${ajvFlags[@]}" -d "$2"
+    npx --package=ajv-cli --package=ajv-formats ajv validate -c ajv-formats --spec=draft2020 -s "$primary" "${ajvFlags[@]}" -d "$2"
 }
 
 runTest ./schemas/types.json ./products/types.json
 runTest ./schemas/names.json ./products/names.json
 runTest ./schemas/languages.json ./products/languages.json
 runTest ./schemas/repos.json ./products/repos.json
+runTest ./schemas/releases.json ./products/releases.json
