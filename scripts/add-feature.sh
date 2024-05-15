@@ -9,6 +9,8 @@ repo=$1
 feature=$2
 introduced=$3
 
+echo "The repo: $repo"
+
 if [ -z "$repo" ] || [ -z "$feature" ] || [ -z "$introduced" ]; then
   echo "Usage: $0 <repo> <feature> <introduced>"
   exit 1
