@@ -868,9 +868,15 @@
   "erlang-server-sdk": [
     {
       "major": 3,
+      "minor": 3,
+      "date": "2024-05-20T20:43:51Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 2,
       "date": "2024-03-14T15:53:47Z",
-      "eol": null
+      "eol": "2025-05-20"
     },
     {
       "major": 3,
@@ -1751,38 +1757,6 @@
       "minor": 0,
       "date": "2016-08-12T17:43:37Z",
       "eol": "2017-09-14"
-    }
-  ],
-  "lua-server-sdk": [
-    {
-      "major": 2,
-      "minor": 1,
-      "date": "2024-03-11T23:37:23Z",
-      "eol": null
-    },
-    {
-      "major": 2,
-      "minor": 0,
-      "date": "2023-12-28T20:01:01Z",
-      "eol": "2025-03-11"
-    },
-    {
-      "major": 1,
-      "minor": 2,
-      "date": "2022-02-08T00:20:09Z",
-      "eol": "2024-12-28"
-    },
-    {
-      "major": 1,
-      "minor": 1,
-      "date": "2021-02-04T19:50:59Z",
-      "eol": "2023-02-08"
-    },
-    {
-      "major": 1,
-      "minor": 0,
-      "date": "2020-07-27T22:52:55Z",
-      "eol": "2022-02-04"
     }
   ],
   "node-client-sdk": [
@@ -3296,9 +3270,15 @@
   "swift-client-sdk": [
     {
       "major": 9,
+      "minor": 8,
+      "date": "2024-05-20T21:31:06Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 7,
       "date": "2024-05-02T19:49:00Z",
-      "eol": null
+      "eol": "2025-05-20"
     },
     {
       "major": 9,

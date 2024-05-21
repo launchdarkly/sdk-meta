@@ -15,7 +15,6 @@
   "haskell-server-sdk": "Haskell Server SDK",
   "java-server-sdk": "Java Server SDK",
   "js-client-sdk": "JavaScript Client SDK",
-  "lua-server-sdk": "Lua Server SDK",
   "node-client-sdk": "Node.js Client SDK",
   "node-server": "Node.js Server SDK",
   "php-server-sdk": "PHP SDK",
