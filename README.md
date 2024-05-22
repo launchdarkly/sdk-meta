@@ -1,3 +1,6 @@
+[![Actions Status](https://github.com/launchdarkly/sdk-meta/actions/workflows/crawl.yml/badge.svg)](https://github.com/launchdarkly/sdk-meta/actions/workflows/crawl.yml)
+
+
 # sdk-meta
 
 This repo contains metadata related to LaunchDarkly SDKs. 
