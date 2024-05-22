@@ -42,13 +42,10 @@
     "github": "launchdarkly/haskell-server-sdk"
   },
   "java-server-sdk": {
-    "github": "launchdarkly/java-server-sdk"
+    "github": "launchdarkly/java-core"
   },
   "js-client-sdk": {
     "github": "launchdarkly/js-client-sdk"
-  },
-  "lua-server-sdk": {
-    "github": "launchdarkly/lua-server-sdk"
   },
   "node-client-sdk": {
     "github": "launchdarkly/node-client-sdk"

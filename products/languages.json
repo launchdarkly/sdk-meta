@@ -56,9 +56,6 @@
     "JavaScript",
     "TypeScript"
   ],
-  "lua-server-sdk": [
-    "Lua"
-  ],
   "node-client-sdk": [
     "JavaScript",
     "TypeScript"
