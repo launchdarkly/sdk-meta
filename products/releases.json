@@ -868,9 +868,15 @@
   "erlang-server-sdk": [
     {
       "major": 3,
+      "minor": 3,
+      "date": "2024-05-20T20:43:51Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 2,
       "date": "2024-03-14T15:53:47Z",
-      "eol": null
+      "eol": "2025-05-20"
     },
     {
       "major": 3,
@@ -3296,9 +3302,15 @@
   "swift-client-sdk": [
     {
       "major": 9,
+      "minor": 8,
+      "date": "2024-05-20T21:31:06Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 7,
       "date": "2024-05-02T19:49:00Z",
-      "eol": null
+      "eol": "2025-05-20"
     },
     {
       "major": 9,
