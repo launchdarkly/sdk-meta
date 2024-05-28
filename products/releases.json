@@ -1272,9 +1272,15 @@
   "java-server-sdk": [
     {
       "major": 7,
+      "minor": 5,
+      "date": "2024-05-23T15:30:09Z",
+      "eol": null
+    },
+    {
+      "major": 7,
       "minor": 4,
       "date": "2024-04-26T17:04:24Z",
-      "eol": null
+      "eol": "2025-05-23"
     },
     {
       "major": 7,
@@ -2504,9 +2510,15 @@
   "react-client-sdk": [
     {
       "major": 3,
+      "minor": 3,
+      "date": "2024-05-23T21:53:04Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 2,
       "date": "2024-05-01T18:23:49Z",
-      "eol": null
+      "eol": "2025-05-23"
     },
     {
       "major": 3,
