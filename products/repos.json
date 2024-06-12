@@ -21,10 +21,10 @@
     "github": "launchdarkly/cpp-sdks"
   },
   "dotnet-client-sdk": {
-    "github": "launchdarkly/dotnet-client-sdk"
+    "github": "launchdarkly/dotnet-core"
   },
   "dotnet-server-sdk": {
-    "github": "launchdarkly/dotnet-server-sdk"
+    "github": "launchdarkly/dotnet-core"
   },
   "electron": {
     "github": "launchdarkly/electron-client-sdk"
