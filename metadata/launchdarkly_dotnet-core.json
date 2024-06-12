@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "sdks": {
+    "dotnet-server-sdk": {
+      "name": ".NET Server SDK",
+      "type": "server-side",
+      "path": "pkgs/sdk/server",
+      "languages": [
+        "C#"
+      ],
+      "features": {
+        "hooks": {
+          "introduced": "8.3"
+        }
+      }
+    },
+    "dotnet-client-sdk": {
+      "name": ".NET Client SDK",
+      "type": "client-side",
+      "path": "pkgs/sdk/client",
+      "languages": [
+        "C#"
+      ]
+    }
+  }
+}
