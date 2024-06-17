@@ -63,7 +63,8 @@ INSERT INTO sdk_type_info (type, description) VALUES
                                               ('client-side', 'Primarily used for user-facing application.'),
                                               ('server-side', 'Primarily used for server-side applications.'),
                                               ('edge', 'Primarily used to delivery flag payloads to edge services.'),
-                                              ('relay', 'Special case for Relay Proxy.');
+                                              ('relay', 'Special case for Relay Proxy.'),
+                                              ('open-feature-provider', 'Used for OpenFeature providers. Client or server-side.');
 
 INSERT INTO sdk_feature_info (id, name, description) VALUES
     ('appMetadata', 'Application metadata', 'Specify application and application version information.'),
