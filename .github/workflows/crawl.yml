@@ -33,6 +33,7 @@ jobs:
             echo "Changes detected!"
             echo "changed=true" >> $GITHUB_OUTPUT
             echo "$changes"
+            { echo 'changes<<END'; echo "$changes"; echo 'END'; } >> $GITHUB_OUTPUT
           fi
 
       - name: Update data
@@ -60,5 +61,8 @@ jobs:
           title: "feat: update SDK metadata"
           commit-message: "feat: update SDK metadata"
           body: |
-            SDK metadata has changed. This PR updates the existing `metadata.sqlite3` database and associated
-            data products. 
+            This PR contains updates to SDK metadata.
+            It includes the following changes:
+            ```
+            ${{ steps.diff.outputs.changes }}
+            ``` 
