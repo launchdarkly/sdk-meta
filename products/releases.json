@@ -2826,9 +2826,15 @@
   "relay-proxy": [
     {
       "major": 8,
+      "minor": 8,
+      "date": "2024-06-25T23:06:03Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 7,
       "date": "2024-06-17T16:09:20Z",
-      "eol": null
+      "eol": "2025-06-25"
     },
     {
       "major": 8,
