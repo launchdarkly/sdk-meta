@@ -1052,9 +1052,15 @@
   "go-server-sdk": [
     {
       "major": 7,
+      "minor": 5,
+      "date": "2024-06-26T18:06:19Z",
+      "eol": null
+    },
+    {
+      "major": 7,
       "minor": 4,
       "date": "2024-04-11T16:21:21Z",
-      "eol": null
+      "eol": "2025-06-26"
     },
     {
       "major": 7,
@@ -3154,9 +3160,15 @@
   "ruby-server-sdk": [
     {
       "major": 8,
+      "minor": 6,
+      "date": "2024-06-26T18:03:32Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 5,
       "date": "2024-06-10T17:14:25Z",
-      "eol": null
+      "eol": "2025-06-26"
     },
     {
       "major": 8,
