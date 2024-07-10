@@ -13,7 +13,7 @@ func TestProductSanityChecks(t *testing.T) {
 	})
 
 	t.Run("repos", func(t *testing.T) {
-		assert.Equal(t, "launchdarkly/js-core", Repos["node-server"].Github)
+		assert.Equal(t, "launchdarkly/js-core", Repos["node-server"].GitHub)
 	})
 
 	t.Run("languages", func(t *testing.T) {
@@ -45,5 +45,4 @@ func TestProductSanityChecks(t *testing.T) {
 		assert.GreaterOrEqual(t, latestRelease.Minor, 4)
 		assert.Nil(t, latestRelease.EOL)
 	})
-
 }
