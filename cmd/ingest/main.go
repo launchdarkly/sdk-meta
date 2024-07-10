@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/launchdarkly/sdk-meta/lib/releases"
+	"github.com/launchdarkly/sdk-meta/lib/internal/releases"
 	_ "github.com/mattn/go-sqlite3"
 	gh "github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"

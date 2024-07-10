@@ -11,7 +11,7 @@ SELECT
   r.major,
   r.minor,
   r.date,
-  (SELECT DATE(MIN(r2.date), '+1 year')
+  (SELECT strftime('%Y-%m-%dT%H:%M:%S', DATE(MIN(r2.date), '+1 year')) || 'Z'
     FROM sdk_releases r2
       WHERE r2.id = r.id
         AND (r2.major > r.major OR (r2.major = r.major AND r2.minor > r.minor))
