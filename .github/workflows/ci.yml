@@ -28,6 +28,8 @@ jobs:
           go-version: 1.22
       - name: Build
         run: go build ./cmd/ingest
+      - name: Test
+        run: go test ./...
       - name: Sanity test
         run: |
           ./ingest -db test.sqlite3 -create -offline -repo launchdarkly/js-core -metadata ./metadata/launchdarkly_js-core.json 
