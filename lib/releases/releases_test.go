@@ -9,7 +9,7 @@ import (
 
 func TestFilterPrefixes(t *testing.T) {
 
-	timestamp := time.Unix(10000000, 0)
+	timestamp := time.Unix(10000000, 0).UTC()
 	formatted := timestamp.Format(time.RFC3339)
 
 	cases := []struct {
