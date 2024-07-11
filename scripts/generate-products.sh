@@ -6,10 +6,6 @@ set -e
 # -S argument to JQ is used to sort the keys of the output objects so we get more deterministic output,
 # and it's easier to compare diffs between commits to the repo.
 
-sqlite3 -json metadata.sqlite3 "SELECT id from sdk_names;" | # We're going to just make a JSON array of the IDs, sorted alphabetically
-  jq -S 'map(.id) | sort' > products/ids.json
-
-
 sqlite3 -json metadata.sqlite3 "SELECT * from sdk_languages;" |
   jq -S 'reduce .[] as $item ({}; .[$item.id] += [$item.language])' > products/languages.json
 
