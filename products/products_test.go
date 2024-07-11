@@ -8,6 +8,10 @@ import (
 )
 
 func TestProductSanityChecks(t *testing.T) {
+	t.Run("identifiers", func(t *testing.T) {
+		assert.Contains(t, Identifiers, "node-server")
+	})
+
 	t.Run("names", func(t *testing.T) {
 		assert.Equal(t, "Node.js Server SDK", Names["node-server"])
 	})

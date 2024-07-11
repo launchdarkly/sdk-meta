@@ -6,6 +6,10 @@ import (
 	"time"
 )
 
+//go:embed identifiers.json
+var idsJSON []byte
+var Identifiers []string
+
 //go:embed names.json
 var namesJSON []byte
 
@@ -81,6 +85,7 @@ func panicOnError(err error) {
 }
 
 func init() {
+	panicOnError(json.Unmarshal(idsJSON, &Identifiers))
 	panicOnError(json.Unmarshal(namesJSON, &Names))
 	panicOnError(json.Unmarshal(reposJSON, &Repos))
 	panicOnError(json.Unmarshal(languagesJSON, &Languages))

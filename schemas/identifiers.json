@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://launchdarkly.com/sdk-meta/ids.json",
+  "title": "SDK IDs",
+  "description": "List of canonical SDK IDs used to index other SDK metadata",
+  "type": "array",
+  "items": {
+      "type": "string",
+      "description": "A canonical SDK ID",
+      "pattern": "^[a-z-]+$"
+  }
+}

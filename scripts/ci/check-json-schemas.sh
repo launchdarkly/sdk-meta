@@ -20,6 +20,7 @@ function runTest() {
     npx --package=ajv-cli --package=ajv-formats ajv validate -c ajv-formats --spec=draft2020 -s "$primary" "${ajvFlags[@]}" -d "$2"
 }
 
+runTest ./schemas/identifiers.json ./products/identifiers.json
 runTest ./schemas/types.json ./products/types.json
 runTest ./schemas/names.json ./products/names.json
 runTest ./schemas/languages.json ./products/languages.json
