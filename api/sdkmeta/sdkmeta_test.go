@@ -1,10 +1,11 @@
 package sdkmeta
 
 import (
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestProductSanityChecks(t *testing.T) {
@@ -35,6 +36,7 @@ func TestProductSanityChecks(t *testing.T) {
 		firstRelease := Releases["node-server"].Earliest()
 		assert.Equal(t, 1, firstRelease.Major)
 		assert.Equal(t, 0, firstRelease.Minor)
+		assert.False(t, firstRelease.IsLatest())
 
 		assert.Equal(t, firstNodeReleaseDate, firstRelease.Date)
 		require.NotNil(t, firstRelease.EOL)
@@ -44,5 +46,26 @@ func TestProductSanityChecks(t *testing.T) {
 		assert.GreaterOrEqual(t, latestRelease.Major, 9)
 		assert.GreaterOrEqual(t, latestRelease.Minor, 4)
 		assert.Nil(t, latestRelease.EOL)
+		assert.True(t, latestRelease.IsLatest())
+	})
+}
+
+func TestEOLCalculations(t *testing.T) {
+	releases := Releases["node-server"]
+	earliest := releases.Earliest()
+	latest := releases.Latest()
+	earliestEOL := time.Date(2016, 9, 12, 0, 0, 0, 0, time.UTC)
+
+	t.Run("is eol", func(t *testing.T) {
+		assert.False(t, latest.IsEOL(time.Now()))
+		assert.True(t, earliest.IsEOL(earliestEOL.Add(time.Second)))
+	})
+
+	t.Run("is approaching eol", func(t *testing.T) {
+		assert.False(t, earliest.IsApproachingEOL(earliestEOL.Add(-61*time.Minute), time.Hour))
+		assert.False(t, earliest.IsApproachingEOL(earliestEOL.Add(-60*time.Minute), time.Hour))
+		assert.True(t, earliest.IsApproachingEOL(earliestEOL.Add(-59*time.Minute), time.Hour))
+		assert.True(t, earliest.IsApproachingEOL(earliestEOL.Add(-30*time.Minute), time.Hour))
+		assert.True(t, earliest.IsApproachingEOL(earliestEOL.Add(-1*time.Minute), time.Hour))
 	})
 }
