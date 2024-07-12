@@ -1,4 +1,4 @@
-package sdkmeta
+package products
 
 import (
 	"github.com/stretchr/testify/assert"

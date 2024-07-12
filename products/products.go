@@ -1,4 +1,4 @@
-package sdkmeta
+package products
 
 import (
 	_ "embed"
@@ -6,13 +6,13 @@ import (
 	"time"
 )
 
-//go:embed products/names.json
+//go:embed names.json
 var namesJSON []byte
 
 // Names is a map of SDK IDs to display names.
 var Names map[string]string
 
-//go:embed products/repos.json
+//go:embed repos.json
 var reposJSON []byte
 
 // Repo contains the location of an SDK.
@@ -24,13 +24,13 @@ type Repo struct {
 // Repos is a map of SDK IDs to repository information.
 var Repos map[string]Repo
 
-//go:embed products/languages.json
+//go:embed languages.json
 var languagesJSON []byte
 
 // Languages is a map of SDK IDs to supported languages.
 var Languages map[string][]string
 
-//go:embed products/types.json
+//go:embed types.json
 var typesJSON []byte
 
 // Type represents the most common use-case for an SDK.
@@ -50,7 +50,7 @@ const (
 // Types is a map of SDK IDs to SDK types.
 var Types map[string]Type
 
-//go:embed products/releases.json
+//go:embed releases.json
 var releasesJSON []byte
 
 type Release struct {
