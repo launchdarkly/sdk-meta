@@ -1,4 +1,4 @@
-module github.com/launchdarkly/sdk-meta
+module github.com/launchdarkly/sdk-meta/tool
 
 go 1.20
 

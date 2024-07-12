@@ -26,13 +26,13 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: 1.22
-      - name: Build
-        run: go build ./cmd/ingest
-      - name: Test
-        run: go test ./...
+      - name: Test API Module
+        run: cd api && go test ./...
+      - name: Test Tool Module
+        run: cd tool && go test ./...
       - name: Sanity test
         run: |
-          ./ingest -db test.sqlite3 -create -offline -repo launchdarkly/js-core -metadata ./metadata/launchdarkly_js-core.json 
+          cd tool && go run ./cmd/ingest -db test.sqlite3 -create -offline -repo launchdarkly/js-core -metadata ./metadata/launchdarkly_js-core.json 
           length=$(sqlite3 -json test.sqlite3 "SELECT * from sdk_repos;" | jq '. | length')
           if [ $length -ne 6 ]; then
             echo "Expected 6 rows in sdk_repos, got $length"
