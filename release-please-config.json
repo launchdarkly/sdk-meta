@@ -1,0 +1,12 @@
+{
+  "separate-pull-requests": true,
+  "include-component-in-tag" : true,
+  "packages" : {
+    "api" : {
+      "package-name": "api",
+      "release-type" : "go",
+      "tag-separator": "/",
+      "versioning" : "default"
+    }
+  }
+}
