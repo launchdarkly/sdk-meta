@@ -8,7 +8,7 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-go build ./cmd/ingest
+go build ./tool/cmd/ingest
 
 temp_db=$1
 rm -f "$temp_db"
