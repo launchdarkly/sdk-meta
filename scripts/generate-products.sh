@@ -27,4 +27,4 @@ sqlite3 -json metadata.sqlite3 "SELECT * from sdk_repos;" |
 
 # JSON products are duplicated into a subdirectory of the API Go module, because the 'embed' package only allows
 # us to embed files that are in the same directory tree as the module.
-cp -r products/ api/sdkmeta/data
+cp products/*.json api/sdkmeta/data/
