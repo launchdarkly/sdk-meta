@@ -59,11 +59,11 @@ jobs:
             products
             api/sdkmeta/data
           branch: "metadata-update"
-          title: "feat: update SDK metadata"
-          commit-message: "feat: update SDK metadata"
+          title: "fix(metadata): ingest new data and regenerate products"
+          commit-message: "fix(metadata): ingest new data and regenerate products"
           body: |
-            This PR contains updates to SDK metadata.
-            It includes the following changes:
+            Metadata has changed. Ensure that the changes obey patch semantics (data added or modified in a non-breaking
+            way), as upstream services may consume these changes automatically. 
             ```
             ${{ steps.diff.outputs.changes }}
             ``` 
