@@ -3,11 +3,12 @@ package releases
 import (
 	"context"
 	"fmt"
-	"github.com/Masterminds/semver/v3"
-	gh "github.com/shurcooL/githubv4"
 	"slices"
 	"strings"
 	"time"
+
+	"github.com/Masterminds/semver/v3"
+	gh "github.com/shurcooL/githubv4"
 )
 
 // How long we support the latest SDK version.

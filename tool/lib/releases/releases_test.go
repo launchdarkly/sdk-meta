@@ -1,10 +1,11 @@
 package releases
 
 import (
-	"github.com/Masterminds/semver/v3"
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/Masterminds/semver/v3"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFilterPrefixes(t *testing.T) {

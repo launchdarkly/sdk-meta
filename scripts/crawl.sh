@@ -8,7 +8,10 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-go build ./cmd/ingest
+(
+  cd tool
+  go build ./cmd/ingest
+)
 
 temp_db=$1
 rm -f "$temp_db"
@@ -23,7 +26,7 @@ for file in ./backfill/*.json; do
   repo=$(basename "$file" .json | tr '_' '/')
   echo "backfilling $repo"
 
-  ./ingest -metadata "$file" -db "$temp_db" -repo "$repo"
+  ./tool/ingest -metadata "$file" -db "$temp_db" -repo "$repo"
 done
 
 ./scripts/repos.sh | while read -r repo; do
@@ -40,5 +43,5 @@ done
   }
   echo "$metadata" | base64 --decode > "$temp_dir/$sanitized_repo.json"
   echo "found metadata in $repo"
-  ./ingest -metadata "$temp_dir/$sanitized_repo.json" -db "$temp_db" -repo "$repo"
+  ./tool/ingest -metadata "$temp_dir/$sanitized_repo.json" -db "$temp_db" -repo "$repo"
 done

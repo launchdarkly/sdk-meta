@@ -30,7 +30,7 @@
           "eol": {
             "description": "End of life date",
             "anyOf": [
-              { "type": "string", "format": "date" },
+              { "type": "string", "format": "date-time" },
               { "type": "null" }
             ]
           }
