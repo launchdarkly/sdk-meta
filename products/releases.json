@@ -3366,9 +3366,15 @@
   "rust-server-sdk": [
     {
       "major": 2,
+      "minor": 2,
+      "date": "2024-07-19T13:54:09Z",
+      "eol": null
+    },
+    {
+      "major": 2,
       "minor": 1,
       "date": "2024-03-15T20:59:34Z",
-      "eol": null
+      "eol": "2025-07-19T00:00:00Z"
     },
     {
       "major": 2,
