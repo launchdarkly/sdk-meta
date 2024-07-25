@@ -2662,9 +2662,15 @@
   "react-native": [
     {
       "major": 10,
+      "minor": 3,
+      "date": "2024-07-22T21:42:19Z",
+      "eol": null
+    },
+    {
+      "major": 10,
       "minor": 2,
       "date": "2024-07-02T18:42:03Z",
-      "eol": null
+      "eol": "2025-07-22T00:00:00Z"
     },
     {
       "major": 10,
