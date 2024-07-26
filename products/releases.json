@@ -1052,9 +1052,15 @@
   "go-server-sdk": [
     {
       "major": 7,
+      "minor": 6,
+      "date": "2024-07-25T17:01:08Z",
+      "eol": null
+    },
+    {
+      "major": 7,
       "minor": 5,
       "date": "2024-06-26T18:06:19Z",
-      "eol": null
+      "eol": "2025-07-25T00:00:00Z"
     },
     {
       "major": 7,
@@ -2316,9 +2322,15 @@
   "python-server-sdk": [
     {
       "major": 9,
+      "minor": 5,
+      "date": "2024-07-25T18:37:35Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 4,
       "date": "2024-04-29T17:29:10Z",
-      "eol": null
+      "eol": "2025-07-25T00:00:00Z"
     },
     {
       "major": 9,
@@ -2844,9 +2856,15 @@
   "relay-proxy": [
     {
       "major": 8,
+      "minor": 9,
+      "date": "2024-07-25T17:51:14Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 8,
       "date": "2024-06-25T23:06:03Z",
-      "eol": null
+      "eol": "2025-07-25T00:00:00Z"
     },
     {
       "major": 8,
@@ -3172,9 +3190,15 @@
   "ruby-server-sdk": [
     {
       "major": 8,
+      "minor": 7,
+      "date": "2024-07-25T18:07:55Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 6,
       "date": "2024-06-26T18:03:32Z",
-      "eol": null
+      "eol": "2025-07-25T00:00:00Z"
     },
     {
       "major": 8,
