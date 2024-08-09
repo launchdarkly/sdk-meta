@@ -21,4 +21,4 @@ gh api --paginate graphql -f query='{
       }
     }
   }
-}' --jq '.data.search.nodes[] | select(.isArchived == false) | .nameWithOwner'
+}' --jq '.data.search.nodes[] | .nameWithOwner'
