@@ -22,6 +22,12 @@ sqlite3 -json metadata.sqlite3 "SELECT * from sdk_types;" |
 sqlite3 -json metadata.sqlite3 "SELECT * from sdk_repos;" |
   jq -S 'reduce .[] as $item ({}; .[$item.id] += {github: $item.github})' > products/repos.json
 
+sqlite3 -json metadata.sqlite3 "SELECT * from sdk_features;" |
+  jq -S 'reduce .[] as $item ({}; .[$item.id] += [$item.feature])' > products/features.json
+
+sqlite3 -json metadata.sqlite3 "SELECT * from sdk_feature_info;" |
+  jq -S 'reduce .[] as $item ({}; .[$item.id] += {name: $item.name, description: $item.description})' > products/feature_info.json
+
 ./scripts/eols.sh metadata.sqlite3  |
   jq -n 'reduce inputs[] as $input ({}; .[$input.id] += [$input | del(.id)])' > products/releases.json
 
