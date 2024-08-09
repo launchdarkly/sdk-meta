@@ -1,4 +1,4 @@
-js-client-sdk,appConfig,2.22
+js-client-sdk,appMetadata,2.22
 js-client-sdk,bigSegments,1.0
 js-client-sdk,bootstrapping,2.5
 js-client-sdk,contexts,3.0
@@ -10,7 +10,7 @@ js-client-sdk,relayProxyProxy,1.0
 js-client-sdk,secureMode,2.17
 js-client-sdk,track,1.6.2
 js-client-sdk,flagChanges,1.0
-node-client-sdk,appConfig,3.0
+node-client-sdk,appMetadata,3.0
 node-client-sdk,bigSegments,1.0
 node-client-sdk,bootstrapping,1.0
 node-client-sdk,contexts,3.0
@@ -22,7 +22,7 @@ node-client-sdk,relayProxyProxy,1.0
 node-client-sdk,secureMode,1.4
 node-client-sdk,track,1.0
 node-client-sdk,flagChanges,1.0
-react-native,appConfig,7.0
+react-native,appMetadata,7.0
 react-native,bigSegments,1.0
 react-native,experimentation,5.0
 react-native,flagChanges,4.1.2
@@ -33,7 +33,7 @@ react-native,privateAttrs,4.0
 react-native,relayProxyProxy,1.0
 react-native,track,1.0
 react-native,flagChanges,1.0
-react-client-sdk,appConfig,2.26
+react-client-sdk,appMetadata,2.26
 react-client-sdk,bigSegments,1.0
 react-client-sdk,bootstrapping,2.9.5
 react-client-sdk,contexts,3.0
@@ -41,7 +41,7 @@ react-client-sdk,experimentation,1.0
 react-client-sdk,flagChanges,2.21
 react-client-sdk,allFlags,2.9
 react-client-sdk,relayProxyProxy,2.20.2
-dotnet-client-sdk,appConfig,3.1
+dotnet-client-sdk,appMetadata,3.1
 dotnet-client-sdk,autoEnvAttrs,4.0
 dotnet-client-sdk,contexts,3.0
 dotnet-client-sdk,experimentation,2.0
@@ -60,7 +60,7 @@ lua-server-sdk,track,1.0
 lua-server-sdk,storingData,1.0
 lua-server-sdk,relayProxyDaemon,1.0
 lua-server-sdk,relayProxyProxy,1.0
-cpp-server-sdk,appConfig,3.0
+cpp-server-sdk,appMetadata,3.0
 cpp-server-sdk,bigSegments,1.0
 cpp-server-sdk,contexts,3.0
 cpp-server-sdk,experimentation,2.4.8
@@ -73,7 +73,7 @@ cpp-server-sdk,relayProxyProxy,1.0
 cpp-server-sdk,flagChanges,1.0
 cpp-server-sdk,testDataSource,2.6
 cpp-server-sdk,webProxy,1.0
-cpp-client-sdk,appConfig,3.0
+cpp-client-sdk,appMetadata,3.0
 cpp-client-sdk,bigSegments,1.0
 cpp-client-sdk,contexts,3.0
 cpp-client-sdk,experimentation,2.4.8
@@ -83,7 +83,7 @@ cpp-client-sdk,privateAttrs,1.0
 cpp-client-sdk,relayProxyProxy,1.0
 cpp-client-sdk,flagChanges,1.0
 cpp-client-sdk,testDataSource,1.0
-flutter-client-sdk,appConfig,1.3
+flutter-client-sdk,appMetadata,1.3
 flutter-client-sdk,bigSegments,1.0
 flutter-client-sdk,contexts,2.0
 flutter-client-sdk,experimentation,0.2.0
@@ -93,7 +93,7 @@ flutter-client-sdk,privateAttrs,1.0
 flutter-client-sdk,relayProxyProxy,1.0
 flutter-client-sdk,flagChanges,1.0
 flutter-client-sdk,track,1.0
-swift-client-sdk,appConfig,8.0
+swift-client-sdk,appMetadata,8.0
 swift-client-sdk,bigSegments,1.0
 swift-client-sdk,contexts,8.0
 swift-client-sdk,experimentation,1.0
@@ -104,7 +104,7 @@ swift-client-sdk,relayProxyProxy,1.0
 swift-client-sdk,flagChanges,1.0
 swift-client-sdk,secureMode,2.0
 swift-client-sdk,track,1.0
-roku,appConfig,1.3
+roku,appMetadata,1.3
 roku,bigSegments,1.0
 roku,contexts,2.0
 roku,experimentation,1.0
@@ -112,7 +112,7 @@ roku,variationDetail,1.0
 roku,allFlags,1.0
 roku,privateAttrs,1.0
 roku,relayProxyProxy,1.0
-node-server,appConfig,6.4
+node-server,appMetadata,6.4
 node-server,contexts,7.0
 node-server,experimentation,6.1
 node-server,variationDetail,5.4
@@ -127,7 +127,7 @@ node-server,track,1.0
 node-server,storingData,2.0 (Redis)
 node-server,flagChanges,1.0
 node-server,webProxy,1.0
-php-server-sdk,appConfig,4.3
+php-server-sdk,appMetadata,4.3
 php-server-sdk,contexts,5.0
 php-server-sdk,experimentation,4.1
 php-server-sdk,variationDetail,3.4
@@ -140,7 +140,7 @@ php-server-sdk,secureMode,1.0
 php-server-sdk,track,1.0
 php-server-sdk,storingData,1.0 (Redis), 3.5 (Consul and DynamoDB)
 php-server-sdk,testDataSource,4.2
-python-server-sdk,appConfig,7.6
+python-server-sdk,appMetadata,7.6
 python-server-sdk,contexts,8.0
 python-server-sdk,experimentation,7.2
 python-server-sdk,variationDetail,6.4
@@ -155,7 +155,7 @@ python-server-sdk,storingData,2.0 (Consul and Redis), 6.7 (DynamoDB)
 python-server-sdk,flagChanges,9.1
 python-server-sdk,testDataSource,7.4
 python-server-sdk,webProxy,2.0
-ruby-server-sdk,appConfig,6.4
+ruby-server-sdk,appMetadata,6.4
 ruby-server-sdk,contexts,7.0
 ruby-server-sdk,experimentation,6.2
 ruby-server-sdk,variationDetail,5.2
@@ -170,7 +170,7 @@ ruby-server-sdk,storingData,2.3.1 (Redis), 5.5 (Consul and DynamoDB)
 ruby-server-sdk,flagChanges,2.0
 ruby-server-sdk,testDataSource,2.0
 ruby-server-sdk,webProxy,2.2.5
-rust-server-sdk,appConfig,1.0
+rust-server-sdk,appMetadata,1.0
 rust-server-sdk,contexts,1.0
 rust-server-sdk,experimentation,1.0
 rust-server-sdk,variationDetail,1.0
@@ -205,7 +205,7 @@ apex-server-sdk,allFlags,1.0
 apex-server-sdk,privateAttrs,1.0
 apex-server-sdk,track,1.0
 apex-server-sdk,webProxy,1.0
-dotnet-server-sdk,appConfig,8.0
+dotnet-server-sdk,appMetadata,8.0
 dotnet-server-sdk,bigSegments,6.2
 dotnet-server-sdk,contexts,7.0
 dotnet-server-sdk,experimentation,6.1
@@ -224,7 +224,7 @@ dotnet-server-sdk,storingData,1.0
 dotnet-server-sdk,flagChanges,6.0
 dotnet-server-sdk,testDataSource,6.0
 dotnet-server-sdk,webProxy,1.0
-go-server-sdk,appConfig,5.9
+go-server-sdk,appMetadata,5.9
 go-server-sdk,bigSegments,5.5
 go-server-sdk,contexts,6.0
 go-server-sdk,experimentation,5.4
@@ -259,7 +259,7 @@ java-server-sdk,track,1.0
 java-server-sdk,storingData,1.0
 java-server-sdk,flagChanges,5.0
 java-server-sdk,testDataSource,5.1
-haskell-server-sdk,appConfig,3.1
+haskell-server-sdk,appMetadata,3.1
 haskell-server-sdk,contexts,4.0
 haskell-server-sdk,experimentation,2.2
 haskell-server-sdk,variationDetail,1.0
@@ -269,7 +269,7 @@ haskell-server-sdk,privateAttrs,2.5
 haskell-server-sdk,fileDataSource,3.0
 haskell-server-sdk,track,1.0
 haskell-server-sdk,testDataSource,1.0
-erlang-server-sdk,appConfig,1.6
+erlang-server-sdk,appMetadata,1.6
 erlang-server-sdk,contexts,2.0
 erlang-server-sdk,experimentation,1.2
 erlang-server-sdk,variationDetail,1.0
