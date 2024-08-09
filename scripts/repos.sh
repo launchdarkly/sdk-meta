@@ -10,6 +10,7 @@ gh api --paginate graphql -f query='{
     nodes {
       ... on Repository {
         nameWithOwner
+        isArchived
         repositoryTopics(first: 100) {
           nodes {
             topic {
@@ -20,4 +21,4 @@ gh api --paginate graphql -f query='{
       }
     }
   }
-}' --jq '.data.search.nodes[] | .nameWithOwner'
+}' --jq '.data.search.nodes[] | select(.isArchived == false) | .nameWithOwner'
