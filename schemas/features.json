@@ -25,11 +25,17 @@
           },
           "deprecated": {
             "description": "The version that the feature was deprecated",
-            "$ref": "#/$defs/SDKVersion"
+            "anyOf": [
+              { "$ref": "#/$defs/SDKVersion" },
+              { "type": "null" }
+            ]
           },
           "removed": {
             "description": "The version that the feature was removed",
-            "$ref": "#/$defs/SDKVersion"
+            "anyOf": [
+              { "$ref": "#/$defs/SDKVersion" },
+              { "type": "null" }
+            ]
           }
         }
     },
