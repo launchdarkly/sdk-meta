@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://launchdarkly.com/sdk-meta/feature_info.json",
+  "title": "SDK Feature Info",
+  "description": "Description of SDK features",
+  "type": "object",
+  "$defs": {
+    "SDKFeature" : {
+      "type": "object",
+      "description": "Description of an individual feature",
+      "required" : ["name", "description"]
+    }
+  },
+  "patternProperties" : {
+    "^[a-z-]+$" : {
+      "$ref" : "#/$defs/SDKFeature"
+    }
+  }
+}
