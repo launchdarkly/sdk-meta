@@ -32,6 +32,8 @@ jobs:
           else
             echo "Changes detected!"
             echo "changed=true" >> $GITHUB_OUTPUT
+            echo "$changes"
+            { echo 'changes<<END'; echo "$changes"; echo 'END'; } >> $GITHUB_OUTPUT
           fi
 
       - name: Update data
@@ -55,9 +57,13 @@ jobs:
             ${{ env.DB_NAME }}
             ${{ env.METADATA_DIR }}
             products
+            api/sdkmeta/data
           branch: "metadata-update"
-          title: "feat: update SDK metadata"
-          commit-message: "feat: update SDK metadata"
+          title: "fix(metadata): ingest new data and regenerate products"
+          commit-message: "fix(metadata): ingest new data and regenerate products"
           body: |
-            SDK metadata has changed. This PR updates the existing `metadata.sqlite3` database and associated
-            data products. 
+            Metadata has changed. Ensure that the changes obey patch semantics (data added or modified in a non-breaking
+            way), as upstream services may consume these changes automatically. 
+            ```
+            ${{ steps.diff.outputs.changes }}
+            ``` 

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://launchdarkly.com/sdk-meta/releases.json",
+  "title": "SDK Releases",
+  "description": "List of SDK Releases",
+  "type": "object",
+  "$defs": {
+    "SDKReleases" : {
+      "type": "array",
+      "description": "A collection of releases",
+      "items" : {
+        "type" : "object",
+        "required" : ["major", "minor", "date", "eol"],
+        "properties": {
+          "major": {
+            "description": "Major version",
+            "type" : "integer",
+            "minimum" : 0
+          },
+          "minor": {
+            "description": "Minor version",
+            "type" : "integer",
+            "minimum" : 0
+          },
+          "date": {
+            "description": "Release date",
+            "type" : "string",
+            "format": "date-time"
+          },
+          "eol": {
+            "description": "End of life date",
+            "anyOf": [
+              { "type": "string", "format": "date-time" },
+              { "type": "null" }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "patternProperties" : {
+    "^[a-z-]+$" : {
+      "$ref" : "#/$defs/SDKReleases"
+    }
+  }
+}

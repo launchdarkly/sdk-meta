@@ -6,13 +6,14 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/launchdarkly/sdk-meta/lib/releases"
-	_ "github.com/mattn/go-sqlite3"
-	gh "github.com/shurcooL/githubv4"
-	"golang.org/x/oauth2"
 	"os"
 	"os/exec"
 	"time"
+
+	"github.com/launchdarkly/sdk-meta/tool/lib/releases"
+	_ "github.com/mattn/go-sqlite3"
+	gh "github.com/shurcooL/githubv4"
+	"golang.org/x/oauth2"
 )
 
 type metadataV1 struct {
@@ -37,6 +38,7 @@ type metadataCollection struct {
 type args struct {
 	metadataPath string
 	dbPath       string
+	schemaPath   string
 	createDb     bool
 	repo         string
 	offline      bool
@@ -49,6 +51,7 @@ func main() {
 		os.Exit(1)
 	}
 	dbPath := flag.String("db", "metadata.sqlite3", "Path to database file. If not provided, a temp database will be used and discarded.")
+	schema := flag.String("schema", "schemas/sdk_metadata.sql", "Path to schema file for database.")
 
 	createDb := flag.Bool("create", false, "Create database if it does not exist")
 
@@ -61,6 +64,7 @@ func main() {
 	args := &args{
 		*metadataPath,
 		*dbPath,
+		*schema,
 		*createDb,
 		*repo,
 		*offline,
@@ -102,10 +106,10 @@ func parseMetadata(path string) (map[string]*metadataV1, error) {
 	}
 }
 
-func createOrOpen(path string, create bool) (*sql.DB, error) {
+func createOrOpen(path string, schema string, create bool) (*sql.DB, error) {
 	if create {
 		_ = os.Remove(path)
-		if err := exec.Command("sh", "-c", fmt.Sprintf("sqlite3 %s < ./schemas/sdk_metadata.sql", path)).Run(); err != nil {
+		if err := exec.Command("sh", "-c", fmt.Sprintf("sqlite3 %s < %s", path, schema)).Run(); err != nil {
 			return nil, fmt.Errorf("couldn't create new database: %v", err)
 		}
 	}
@@ -118,7 +122,7 @@ func run(args *args) error {
 		return err
 	}
 
-	db, err := createOrOpen(args.dbPath, args.createDb)
+	db, err := createOrOpen(args.dbPath, args.schemaPath, args.createDb)
 	if err != nil {
 		return err
 	}

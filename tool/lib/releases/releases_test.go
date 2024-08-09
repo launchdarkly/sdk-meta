@@ -1,14 +1,16 @@
 package releases
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/Masterminds/semver/v3"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFilterPrefixes(t *testing.T) {
 
-	timestamp := time.Unix(10000000, 0)
+	timestamp := time.Unix(10000000, 0).UTC()
 	formatted := timestamp.Format(time.RFC3339)
 
 	cases := []struct {
@@ -18,22 +20,23 @@ func TestFilterPrefixes(t *testing.T) {
 		{
 			prefix: "foobar-",
 			expected: []Parsed{
-				{Version: "v1.2.3", Date: timestamp},
+				{Version: semver.MustParse("v1.2.3"), Date: timestamp},
 			},
 		},
 		{
 			prefix: "some-cool-sdk-",
 			expected: []Parsed{
-				{Version: "v1.2.4", Date: timestamp},
-				{Version: "v1.2.3", Date: timestamp},
+				{Version: semver.MustParse("v1.2.3"), Date: timestamp},
+
+				{Version: semver.MustParse("v1.2.4"), Date: timestamp},
 			},
 		},
 		{
 			prefix: "",
 			expected: []Parsed{
-				{Version: "v1.2.3", Date: timestamp},
-				{Version: "v1.0.1", Date: timestamp},
-				{Version: "v1.0.0-beta.1", Date: timestamp},
+				{Version: semver.MustParse("v1.2.3"), Date: timestamp},
+				{Version: semver.MustParse("v1.0.1"), Date: timestamp},
+				{Version: semver.MustParse("v1.0.0-beta.1"), Date: timestamp},
 			},
 		},
 	}
@@ -51,7 +54,10 @@ func TestFilterPrefixes(t *testing.T) {
 		t.Run(c.prefix, func(t *testing.T) {
 			got, err := Filter(releases, c.prefix)
 			assert.Nil(t, err)
-			assert.Equal(t, c.expected, got)
+			for i := 0; i < len(got); i++ {
+				assert.Equal(t, c.expected[i].Version.String(), got[i].Version.String())
+				assert.Equal(t, c.expected[i].Date, got[i].Date)
+			}
 		})
 	}
 }

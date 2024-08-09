@@ -1,0 +1,14 @@
+{
+  "separate-pull-requests": true,
+  "include-component-in-tag" : true,
+  "bootstrap-sha": "b74079090a41680641db4599ec1d9584a0b1b982",
+  "bump-minor-pre-major": true,
+  "packages" : {
+    "api" : {
+      "package-name": "api",
+      "release-type" : "go",
+      "tag-separator": "/",
+      "versioning" : "default"
+    }
+  }
+}
