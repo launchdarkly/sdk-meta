@@ -25,3 +25,5 @@ runTest ./schemas/names.json ./products/names.json
 runTest ./schemas/languages.json ./products/languages.json
 runTest ./schemas/repos.json ./products/repos.json
 runTest ./schemas/releases.json ./products/releases.json
+runTest ./schemas/features.json ./products/features.json
+runTest ./schemas/feature_info.json ./products/feature_info.json
