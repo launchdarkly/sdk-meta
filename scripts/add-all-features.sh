@@ -52,13 +52,12 @@ if [ "$create_prs" == true ]; then
 fi
 
 if [ "$copy_metadata" == true ]; then
-  mkdir -p ./backfill-features
   echo "Copying metadata"
   for id in $ids; do
     repo_link=$(jq -r ".\"$id\".github" ./products/repos.json)
 
     repo=$(echo "$repo_link" | cut -d'/' -f2)
 
-    cp "$repo/.sdk_metadata.json" "./backfill-features/launchdarkly_$repo.json"
+    cp "$repo/.sdk_metadata.json" "./backfill/launchdarkly_$repo.json"
   done
 fi
