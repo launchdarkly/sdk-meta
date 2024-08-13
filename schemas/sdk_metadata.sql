@@ -60,7 +60,7 @@ CREATE TABLE sdk_releases (
 
 
 CREATE TABLE sdk_popularity (
-    id TEXT PRIMARY KEY,
+    id TEXT NOT NULL,
     popularity INTEGER NOT NULL,
     PRIMARY KEY(id, popularity)
 );

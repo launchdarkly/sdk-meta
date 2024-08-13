@@ -28,6 +28,9 @@ sqlite3 -json metadata.sqlite3 "SELECT * from sdk_features;" |
 sqlite3 -json metadata.sqlite3 "SELECT * from sdk_feature_info;" |
   jq -S 'reduce .[] as $item ({}; .[$item.id] += {name: $item.name, description: $item.description})' > products/feature_info.json
 
+sqlite3 -json metadata.sqlite3 "SELECT * from sdk_popularity;" |
+  jq -S 'reduce .[] as $item ({}; .[$item.id] = $item.popularity)' > products/popularity.json
+
 ./scripts/eols.sh metadata.sqlite3  |
   jq -n 'reduce inputs[] as $input ({}; .[$input.id] += [$input | del(.id)])' > products/releases.json
 
