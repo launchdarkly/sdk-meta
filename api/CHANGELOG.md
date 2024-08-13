@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.0](https://github.com/launchdarkly/sdk-meta/compare/api/v0.1.2...api/v0.2.0) (2024-08-13)
+
+
+### Features
+
+* add popularity data product ([#134](https://github.com/launchdarkly/sdk-meta/issues/134)) ([9593093](https://github.com/launchdarkly/sdk-meta/commit/95930937fda38380260a695063cb0a28f7b39f38))
+* generate feature JSON data products ([#132](https://github.com/launchdarkly/sdk-meta/issues/132)) ([452cb06](https://github.com/launchdarkly/sdk-meta/commit/452cb06d307eaf6e0b9887ae4120edefdae5a0b5))
+
 ## [0.1.2](https://github.com/launchdarkly/sdk-meta/compare/api/v0.1.1...api/v0.1.2) (2024-08-09)
 
 
