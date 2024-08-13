@@ -19,6 +19,7 @@ It also contains a [Go module](./api) exposing the metadata for easier consumpti
 | [SDK Repos](products/repos.json)               | SDK source repositories                                         | JSON    |
 | [SDK Features](products/features.json)         | SDK supported features                                          | JSON    |
 | [SDK Feature Info](products/feature_info.json) | Descriptions of SDK features                                    | JSON    |
+| [SDK Popularity](products/popularity.json)     | SDK popularity                                                  | JSON    |
 
 
 ## structure

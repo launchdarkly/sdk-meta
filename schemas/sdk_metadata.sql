@@ -59,6 +59,38 @@ CREATE TABLE sdk_releases (
 );
 
 
+CREATE TABLE sdk_popularity (
+    id TEXT PRIMARY KEY,
+    popularity INTEGER NOT NULL,
+    PRIMARY KEY(id, popularity)
+);
+
+INSERT INTO sdk_popularity (id, popularity) VALUES
+    ('react-client-sdk', 1),
+    ('node-server', 2),
+    ('python-server-sdk', 3),
+    ('java-server-sdk', 4),
+    ('dotnet-server-sdk', 5),
+    ('js-client-sdk', 6),
+    ('vue', 7),
+    ('swift-client-sdk', 8),
+    ('go-server-sdk', 9),
+    ('android', 10),
+    ('react-native', 11),
+    ('ruby-server-sdk', 12),
+    ('flutter-client-sdk', 13),
+    ('dotnet-client-sdk', 14),
+    ('erlang-server-sdk', 15),
+    ('rust-server-sdk', 16),
+    ('cpp-client-sdk', 17),
+    ('roku', 18),
+    ('node-client-sdk', 19),
+    ('cpp-server-sdk', 20),
+    ('lua-server-sdk', 21),
+    ('haskell-server-sdk', 22),
+    ('php-server-sdk', 23);
+
+
 INSERT INTO sdk_type_info (type, description) VALUES
                                               ('client-side', 'Primarily used for user-facing application.'),
                                               ('server-side', 'Primarily used for server-side applications.'),
