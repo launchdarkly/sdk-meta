@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://launchdarkly.com/sdk-meta/popularity.json",
+  "title": "SDK Popularity",
+  "description": "SDKs by popularity",
+  "type": "object",
+  "patternProperties" : {
+    "^[a-z-]+$" : {
+      "type" : "integer",
+      "description" : "Ranking of popularity, with smaller numbers being more popular",
+      "minimum" : 1
+    }
+  }
+}

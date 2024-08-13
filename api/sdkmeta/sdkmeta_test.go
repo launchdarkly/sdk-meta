@@ -24,6 +24,10 @@ func TestProductSanityChecks(t *testing.T) {
 	t.Run("types", func(t *testing.T) {
 		assert.Equal(t, ServerSideType, Types["node-server"])
 	})
+	
+	t.Run("popularity", func(t *testing.T) {
+		assert.Equal(t, 2, Popularity["node-server"])
+	})
 
 	t.Run("releases", func(t *testing.T) {
 		firstNodeReleaseDate, err := time.Parse(time.RFC3339, "2015-05-13T16:55:00Z")
