@@ -78,5 +78,7 @@ a new suffix to the module like `v2`.
 
 Consumers of SDK metadata include:
 - [LaunchDarkly Docs](https://docs.launchdarkly.com/)
+- [LaunchDarkly CLI](https://github.com/launchdarkly/ldcli)
+- LaunchDarkly internal service (G)
 
 Are you a consumer? Add a link here to receive communications when new features/changes are coming.
