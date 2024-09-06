@@ -1258,9 +1258,15 @@
   "haskell-server-sdk": [
     {
       "major": 4,
+      "minor": 2,
+      "date": "2024-09-05T18:16:43Z",
+      "eol": null
+    },
+    {
+      "major": 4,
       "minor": 1,
       "date": "2024-03-18T19:42:06Z",
-      "eol": null
+      "eol": "2025-09-05T00:00:00Z"
     },
     {
       "major": 4,
