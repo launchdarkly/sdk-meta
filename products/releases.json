@@ -2358,9 +2358,15 @@
   "python-server-sdk": [
     {
       "major": 9,
+      "minor": 8,
+      "date": "2024-10-16T17:17:17Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 7,
       "date": "2024-08-21T13:48:57Z",
-      "eol": null
+      "eol": "2025-10-16T00:00:00Z"
     },
     {
       "major": 9,
@@ -2722,9 +2728,15 @@
   "react-native": [
     {
       "major": 10,
+      "minor": 8,
+      "date": "2024-10-09T21:32:40Z",
+      "eol": null
+    },
+    {
+      "major": 10,
       "minor": 7,
       "date": "2024-09-26T18:02:22Z",
-      "eol": null
+      "eol": "2025-10-09T00:00:00Z"
     },
     {
       "major": 10,
@@ -3268,9 +3280,15 @@
   "ruby-server-sdk": [
     {
       "major": 8,
+      "minor": 8,
+      "date": "2024-10-16T15:09:08Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 7,
       "date": "2024-07-25T18:07:55Z",
-      "eol": null
+      "eol": "2025-10-16T00:00:00Z"
     },
     {
       "major": 8,
