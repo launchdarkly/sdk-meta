@@ -22,9 +22,15 @@
   "akamai-edgekv": [
     {
       "major": 1,
+      "minor": 2,
+      "date": "2024-10-17T22:02:10Z",
+      "eol": null
+    },
+    {
+      "major": 1,
       "minor": 1,
       "date": "2024-02-06T21:34:16Z",
-      "eol": null
+      "eol": "2025-10-17T00:00:00Z"
     },
     {
       "major": 1,
@@ -250,9 +256,15 @@
   "cloudflare": [
     {
       "major": 2,
+      "minor": 6,
+      "date": "2024-10-17T22:02:07Z",
+      "eol": null
+    },
+    {
+      "major": 2,
       "minor": 5,
       "date": "2024-04-09T19:42:09Z",
-      "eol": null
+      "eol": "2025-10-17T00:00:00Z"
     },
     {
       "major": 2,
@@ -1928,9 +1940,15 @@
   "node-server": [
     {
       "major": 9,
+      "minor": 7,
+      "date": "2024-10-17T22:02:08Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 6,
       "date": "2024-09-26T18:02:22Z",
-      "eol": null
+      "eol": "2025-10-17T00:00:00Z"
     },
     {
       "major": 9,
@@ -2728,9 +2746,15 @@
   "react-native": [
     {
       "major": 10,
+      "minor": 9,
+      "date": "2024-10-17T22:02:07Z",
+      "eol": null
+    },
+    {
+      "major": 10,
       "minor": 8,
       "date": "2024-10-09T21:32:40Z",
-      "eol": null
+      "eol": "2025-10-17T00:00:00Z"
     },
     {
       "major": 10,
