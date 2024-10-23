@@ -2230,9 +2230,15 @@
   "php-server-sdk": [
     {
       "major": 6,
+      "minor": 3,
+      "date": "2024-10-22T20:02:10Z",
+      "eol": null
+    },
+    {
+      "major": 6,
       "minor": 2,
       "date": "2024-06-11T15:59:34Z",
-      "eol": null
+      "eol": "2025-10-22T00:00:00Z"
     },
     {
       "major": 6,
@@ -3572,9 +3578,15 @@
   "swift-client-sdk": [
     {
       "major": 9,
+      "minor": 11,
+      "date": "2024-10-22T15:31:17Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 10,
       "date": "2024-08-07T20:59:31Z",
-      "eol": null
+      "eol": "2025-10-22T00:00:00Z"
     },
     {
       "major": 9,
