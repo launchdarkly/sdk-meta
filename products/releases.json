@@ -910,9 +910,15 @@
   "erlang-server-sdk": [
     {
       "major": 3,
+      "minor": 4,
+      "date": "2024-10-24T20:09:31Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 3,
       "date": "2024-05-20T20:43:51Z",
-      "eol": null
+      "eol": "2025-10-24T00:00:00Z"
     },
     {
       "major": 3,
@@ -1288,9 +1294,15 @@
   "haskell-server-sdk": [
     {
       "major": 4,
+      "minor": 3,
+      "date": "2024-10-24T14:32:08Z",
+      "eol": null
+    },
+    {
+      "major": 4,
       "minor": 2,
       "date": "2024-09-05T18:16:43Z",
-      "eol": null
+      "eol": "2025-10-24T00:00:00Z"
     },
     {
       "major": 4,
@@ -1344,9 +1356,15 @@
   "java-server-sdk": [
     {
       "major": 7,
+      "minor": 6,
+      "date": "2024-10-24T21:49:48Z",
+      "eol": null
+    },
+    {
+      "major": 7,
       "minor": 5,
       "date": "2024-05-23T15:30:09Z",
-      "eol": null
+      "eol": "2025-10-24T00:00:00Z"
     },
     {
       "major": 7,
