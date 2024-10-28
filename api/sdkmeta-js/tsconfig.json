@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "module": "ESNext",  // Use ESM for module system
-    "target": "ES6",  // Output ES6 JavaScript
-    "declaration": true,  // Generate .d.ts files for types
-    "outDir": "dist",  // Output compiled JS and types into the dist folder
-    "strict": true,  // Enforce strict type checking
-    "moduleResolution": "node", // Can't be classic if we want to import from JSON files
-    "resolveJsonModule": true, // Allow importing from JSON files
-    "allowSyntheticDefaultImports": true, // Because our JSON files don't export anything explicitly
-    "lib": ["ES2019", "DOM"]  // Add ES2019 for Object.fromEntries and DOM for browser support
+    "module": "node16",
+    "target": "es2019",
+    "verbatimModuleSyntax": true,
+    "sourceMap": true,
+    "declarationMap": true,
+    "declaration": true,
+    "outDir": "dist",
+    "strict": true,
+    "resolveJsonModule": true,
   },
   "include": ["src/**/*.ts"]
 }
