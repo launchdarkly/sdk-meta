@@ -9,6 +9,7 @@ set -e
 # Cleanup existing products so we have a clean slate.
 rm products/*.json
 rm api/sdkmeta/data/*.json
+rm api/sdkmeta-js/src/data/*.json
 
 sqlite3 -json metadata.sqlite3 "SELECT * from sdk_languages;" |
   jq -S 'reduce .[] as $item ({}; .[$item.id] += [$item.language])' > products/languages.json
@@ -37,3 +38,6 @@ sqlite3 -json metadata.sqlite3 "SELECT * from sdk_popularity;" |
 # JSON products are duplicated into a subdirectory of the API Go module, because the 'embed' package only allows
 # us to embed files that are in the same directory tree as the module.
 cp products/*.json api/sdkmeta/data/
+
+# Same for the Typescript module.
+cp products/*.json api/sdkmeta-js/src/data/
