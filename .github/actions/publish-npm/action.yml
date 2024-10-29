@@ -19,16 +19,11 @@ runs:
       with:
         aws_assume_role: ${{ inputs.aws_assume_role }}
         ssm_parameter_pairs: '/production/common/releasing/npm/token = NODE_AUTH_TOKEN'
-    - name: Setup .yarnrc.yml
-      shell: bash
-      run: |
-        yarn config set npmScopes.launchdarkly.npmRegistryServer "https://registry.npmjs.org"
-        yarn config set npmScopes.launchdarkly.npmAlwaysAuth true
-        yarn config set npmScopes.launchdarkly.npmAuthToken $NODE_AUTH_TOKEN
     - name: publish
       env:
         LD_RELEASE_IS_PRERELEASE: ${{ inputs.prelease }}
         LD_RELEASE_IS_DRYRUN: ${{ inputs.dry_run }}
+        NODE_AUTH_TOKEN: $NODE_AUTH_TOKEN
       shell: bash
       run: |
         cd api/sdkmeta-js
