@@ -4,11 +4,14 @@ runs:
   using: composite
   steps:
     - name: Format JSON
+      shell: bash
       run: |
         ./scripts/ci/format-json.sh
     - name: Ensure no formatting changes needed
+      shell: bash
       run: git diff --exit-code
     - name: Validate JSON schemas
+      shell: bash
       run: |
         ./scripts/ci/check-json-schemas.sh
     - name: Set up Go
@@ -16,8 +19,10 @@ runs:
       with:
         go-version: 1.22
     - name: Test Go Tool Module
+      shell: bash
       run: cd tool && go test ./...
     - name: Test Go API
+      shell: bash
       run: cd api && go test ./...
     - name: Setup node
       uses: actions/setup-node@v4
@@ -25,10 +30,13 @@ runs:
         node-version: 20.x
         registry-url: 'https://registry.npmjs.org'
     - name: Build JS API
+      shell: bash
       run: cd api/sdkmeta-js && npm install && npm run build
     - name: Test JS API
+      shell: bash
       run: cd api/sdkmeta-js && npm test
     - name: Sanity test
+      shell: bash
       run: |
         cd tool && go run ./cmd/ingest -db test.sqlite3 \
           -create -offline -repo launchdarkly/js-core \
