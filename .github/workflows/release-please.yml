@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ needs.release-please.outputs.release_created == 'true' }}
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/ci
       - uses: ./.github/actions/publish-npm
         with:
