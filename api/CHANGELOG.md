@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/launchdarkly/sdk-meta/compare/api/v0.2.10...api/v0.3.0) (2024-10-29)
+
+
+### Features
+
+* create typescript module ([#168](https://github.com/launchdarkly/sdk-meta/issues/168)) ([7c363ad](https://github.com/launchdarkly/sdk-meta/commit/7c363ad56f8698ca04a9e135066010f425e4692c))
+
 ## [0.2.10](https://github.com/launchdarkly/sdk-meta/compare/api/v0.2.9...api/v0.2.10) (2024-10-28)
 
 
