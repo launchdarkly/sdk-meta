@@ -13,6 +13,7 @@ export enum Type {
     Edge = "edge",
     // Relay is Relay Proxy.
     Relay = "relay",
+    // Unknown is assigned when the SDK type can't be determined.
     Unknown = "unknown"
 }
 
