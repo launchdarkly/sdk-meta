@@ -1,0 +1,9 @@
+{
+  "dotnet-server-sdk": {
+    "hooks": {
+      "deprecated": null,
+      "introduced": "8.3",
+      "removed": null
+    }
+  }
+}

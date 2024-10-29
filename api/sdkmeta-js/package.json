@@ -1,0 +1,39 @@
+{
+  "name": "@launchdarkly/sdk-meta",
+  "version": "0.0.1",
+  "description": "LaunchDarkly SDK Metadata",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/launchdarkly/sdk-meta/tree/main",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/launchdarkly/sdk-meta.git"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "tsup",
+    "prepare": "npm run build"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3"
+  },
+  "type": "module",
+  "main": "./dist/SDKMeta.cjs",
+  "module": "./dist/SDKMeta.js",
+  "types": "./dist/SDKMeta.d.ts",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/SDKMeta.d.cts",
+        "require": "./dist/SDKMeta.cjs"
+      },
+      "import": {
+        "types": "./dist/SDKMeta.d.ts",
+        "import": "./dist/SDKMeta.js"
+      }
+    }
+  }
+}
