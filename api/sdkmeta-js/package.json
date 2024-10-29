@@ -9,10 +9,12 @@
     "url": "https://github.com/launchdarkly/sdk-meta.git"
   },
   "scripts": {
+    "test": "jest",
     "build": "tsup",
     "prepare": "npm run build"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "tsup": "^8.3.5",
     "typescript": "^5.6.3"
   },
