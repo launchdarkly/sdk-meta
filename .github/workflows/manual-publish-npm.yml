@@ -1,0 +1,24 @@
+name: Publish to NPM
+on:
+  workflow_dispatch:
+    inputs:
+      prerelease:
+          description: 'Whether this is a prerelease. If so, then the latest tag will not be updated in npm.'
+          required: true
+          type: boolean
+      dry_run:
+          description: 'Whether to run the release in dry-run mode. If so, then the package will not be published.'
+          required: true
+          type: boolean
+
+jobs:
+  build-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/ci
+      - uses: ./.github/actions/publish-npm
+        with:
+          prerelease: ${{ inputs.prerelease }}
+          dry_run: ${{ inputs.dry_run }}
+          aws_assume_role: ${{ secrets.AWS_ASSUME_ROLE }}

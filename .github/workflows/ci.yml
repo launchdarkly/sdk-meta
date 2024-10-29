@@ -10,40 +10,8 @@ on:
       - '**.md'
 
 jobs:
-  lints:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Format JSON
-        run: |
-          ./scripts/ci/format-json.sh
-      - name: Ensure no formatting changes needed
-        run: git diff --exit-code
-      - name: Validate JSON schemas
-        run: |
-          ./scripts/ci/check-json-schemas.sh
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: 1.22
-      - name: Test Go Tool Module
-        run: cd tool && go test ./...
-      - name: Test Go API
-        run: cd api && go test ./...
-      - name: Setup node
-        uses: actions/setup-node@v4
-      - name: Build JS API
-        run: cd api/sdkmeta-js && npm install && npm run build
-      - name: Test JS API
-        run: cd api/sdkmeta-js && npm test
-      - name: Sanity test
-        run: |
-          cd tool && go run ./cmd/ingest -db test.sqlite3 \
-            -create -offline -repo launchdarkly/js-core \
-            -metadata ../metadata/launchdarkly_js-core.json \
-            -schema ../schemas/sdk_metadata.sql
-          length=$(sqlite3 -json test.sqlite3 "SELECT * from sdk_repos;" | jq '. | length')
-          if [ $length -ne 6 ]; then
-            echo "Expected 6 rows in sdk_repos, got $length"
-            exit 1
-          fi
+      - uses: ./.github/actions/ci
