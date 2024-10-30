@@ -35,5 +35,8 @@
         "import": "./dist/SDKMeta.js"
       }
     }
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
