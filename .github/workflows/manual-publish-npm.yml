@@ -23,4 +23,4 @@ jobs:
         with:
           prerelease: ${{ inputs.prerelease }}
           dry_run: ${{ inputs.dry_run }}
-          aws_assume_role: ${{ secrets.AWS_ASSUME_ROLE }}
+          aws_assume_role: ${{ vars.AWS_ROLE_ARN }}
