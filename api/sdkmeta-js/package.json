@@ -6,7 +6,7 @@
   "homepage": "https://github.com/launchdarkly/sdk-meta/tree/main",
   "repository": {
     "type": "git",
-    "url": "https://github.com/launchdarkly/sdk-meta.git"
+    "url": "git+https://github.com/launchdarkly/sdk-meta.git"
   },
   "scripts": {
     "test": "jest",
