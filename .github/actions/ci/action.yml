@@ -1,0 +1,63 @@
+name: CI
+description: Runs CI checks
+runs:
+  using: composite
+  steps:
+    - name: Format JSON
+      shell: bash
+      run: |
+        ./scripts/ci/format-json.sh
+
+    - name: Ensure no formatting changes needed
+      shell: bash
+      run: |
+        git diff --exit-code
+
+    - name: Validate JSON schemas
+      shell: bash
+      run: |
+        ./scripts/ci/check-json-schemas.sh
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: 1.22
+
+    - name: Test Go Tool Module
+      shell: bash
+      run: |
+        cd tool && go test ./...
+
+    - name: Test Go API
+      shell: bash
+      run: |
+        cd api && go test ./...
+
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: Build JS API
+      shell: bash
+      run: |
+        cd api/sdkmeta-js && npm install
+
+    - name: Test JS API
+      shell: bash
+      run: |
+        cd api/sdkmeta-js && npm test
+
+    - name: Sanity test ingestion
+      shell: bash
+      run: |
+        cd tool && go run ./cmd/ingest -db test.sqlite3 \
+          -create -offline -repo launchdarkly/js-core \
+          -metadata ../metadata/launchdarkly_js-core.json \
+          -schema ../schemas/sdk_metadata.sql
+        length=$(sqlite3 -json test.sqlite3 "SELECT * from sdk_repos;" | jq '. | length')
+        if [ $length -ne 6 ]; then
+          echo "Expected 6 rows in sdk_repos, got $length"
+          exit 1
+        fi
