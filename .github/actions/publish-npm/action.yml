@@ -21,11 +21,13 @@ runs:
         ssm_parameter_pairs: '/production/common/releasing/npm/token = NODE_AUTH_TOKEN'
     - uses: ./.github/actions/ci
       name: 'Run CI'
+      env:
+        NODE_AUTH_TOKEN: ${{ env.NODE_AUTH_TOKEN }}
     - name: 'Publish to NPM'
       env:
         LD_RELEASE_IS_PRERELEASE: ${{ inputs.prelease }}
         LD_RELEASE_IS_DRYRUN: ${{ inputs.dry_run }}
-        NODE_AUTH_TOKEN: $NODE_AUTH_TOKEN
+        NODE_AUTH_TOKEN: ${{ env.NODE_AUTH_TOKEN }}
       shell: bash
       run: |
         cd api/sdkmeta-js
