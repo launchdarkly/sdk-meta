@@ -9,7 +9,7 @@ set -e
 # Cleanup existing products so we have a clean slate.
 rm products/*.json
 rm api/sdkmeta/data/*.json
-rm api/sdkmeta-js/src/data/*.json
+rm api-js/src/data/*.json
 
 sqlite3 -json metadata.sqlite3 "SELECT * from sdk_languages;" |
   jq -S 'reduce .[] as $item ({}; .[$item.id] += [$item.language])' > products/languages.json
@@ -40,4 +40,4 @@ sqlite3 -json metadata.sqlite3 "SELECT * from sdk_popularity;" |
 cp products/*.json api/sdkmeta/data/
 
 # Same for the Typescript module.
-cp products/*.json api/sdkmeta-js/src/data/
+cp products/*.json api-js/src/data/
