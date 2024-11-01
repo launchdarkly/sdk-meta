@@ -15,21 +15,11 @@ runs:
   using: composite
   steps:
     - uses: ./.github/actions/ci
-
     - uses: launchdarkly/gh-actions/actions/release-secrets@release-secrets-v1.2.0
       name: 'Get NPM token'
       with:
         aws_assume_role: ${{ inputs.aws_assume_role }}
         ssm_parameter_pairs: '/production/common/releasing/npm/token = NODE_AUTH_TOKEN'
-
-      # Although setup-node is already called in CI, we need to re-run it with the NODE_AUTH_TOKEN env variable set
-      # so that the registry can be configured with auth.
-    - name: Setup node
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20.x
-        registry-url: 'https://registry.npmjs.org'
-
     - name: 'Publish to NPM'
       env:
         LD_RELEASE_IS_PRERELEASE: ${{ inputs.prelease }}
