@@ -42,7 +42,7 @@ runs:
     - name: Build JS API
       shell: bash
       run: |
-        cd api/sdkmeta-js && npm install
+        cd api/sdkmeta-js && npm install && npx publint
 
     - name: Test JS API
       shell: bash

@@ -1,12 +1,12 @@
 {
   "name": "@launchdarkly/sdk-meta",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "LaunchDarkly SDK Metadata",
   "license": "Apache-2.0",
   "homepage": "https://github.com/launchdarkly/sdk-meta/tree/main",
   "repository": {
     "type": "git",
-    "url": "https://github.com/launchdarkly/sdk-meta.git"
+    "url": "git+https://github.com/launchdarkly/sdk-meta.git"
   },
   "scripts": {
     "test": "jest",
@@ -35,5 +35,8 @@
         "import": "./dist/SDKMeta.js"
       }
     }
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
