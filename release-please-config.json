@@ -11,10 +11,10 @@
       "versioning" : "default"
     },
     "api-js" : {
-       "package-name": "api-js",
-        "release-type" : "node",
-        "tag-separator": "/",
-        "versioning" : "default"
+      "package-name": "api-js",
+      "release-type" : "node",
+      "tag-separator": "/",
+      "versioning" : "default"
     }
   }
 }
