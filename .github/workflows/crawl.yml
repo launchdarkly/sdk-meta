@@ -58,6 +58,7 @@ jobs:
             ${{ env.METADATA_DIR }}
             products
             api/sdkmeta/data
+            api-js/src/data
           branch: "metadata-update"
           title: "fix(metadata): ingest new data and regenerate products"
           commit-message: "fix(metadata): ingest new data and regenerate products"
