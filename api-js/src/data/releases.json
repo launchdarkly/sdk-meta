@@ -312,9 +312,15 @@
   "cpp-client-sdk": [
     {
       "major": 3,
+      "minor": 8,
+      "date": "2024-10-30T19:06:06Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 7,
       "date": "2024-10-01T21:08:24Z",
-      "eol": null
+      "eol": "2025-10-30T00:00:00Z"
     },
     {
       "major": 3,
@@ -446,9 +452,15 @@
   "cpp-server-sdk": [
     {
       "major": 3,
+      "minor": 7,
+      "date": "2024-10-30T19:06:06Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 6,
       "date": "2024-09-04T22:13:58Z",
-      "eol": null
+      "eol": "2025-10-30T00:00:00Z"
     },
     {
       "major": 3,
@@ -568,9 +580,15 @@
   "dotnet-client-sdk": [
     {
       "major": 5,
+      "minor": 3,
+      "date": "2024-11-01T17:28:59Z",
+      "eol": null
+    },
+    {
+      "major": 5,
       "minor": 2,
       "date": "2024-05-08T17:01:33Z",
-      "eol": null
+      "eol": "2025-11-01T00:00:00Z"
     },
     {
       "major": 5,
@@ -630,9 +648,15 @@
   "dotnet-server-sdk": [
     {
       "major": 8,
+      "minor": 6,
+      "date": "2024-10-24T17:58:24Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 5,
       "date": "2024-05-10T16:46:36Z",
-      "eol": null
+      "eol": "2025-10-24T00:00:00Z"
     },
     {
       "major": 8,
@@ -910,9 +934,15 @@
   "erlang-server-sdk": [
     {
       "major": 3,
+      "minor": 5,
+      "date": "2024-11-07T17:39:52Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 4,
       "date": "2024-10-24T20:09:31Z",
-      "eol": null
+      "eol": "2025-11-07T00:00:00Z"
     },
     {
       "major": 3,
@@ -996,9 +1026,15 @@
   "flutter-client-sdk": [
     {
       "major": 4,
+      "minor": 8,
+      "date": "2024-10-31T16:17:01Z",
+      "eol": null
+    },
+    {
+      "major": 4,
       "minor": 7,
       "date": "2024-08-01T22:01:30Z",
-      "eol": null
+      "eol": "2025-10-31T00:00:00Z"
     },
     {
       "major": 4,
@@ -3326,9 +3362,15 @@
   "roku": [
     {
       "major": 2,
+      "minor": 2,
+      "date": "2024-10-30T19:22:28Z",
+      "eol": null
+    },
+    {
+      "major": 2,
       "minor": 1,
       "date": "2024-03-14T17:13:12Z",
-      "eol": null
+      "eol": "2025-10-30T00:00:00Z"
     },
     {
       "major": 2,
@@ -3614,9 +3656,15 @@
   "swift-client-sdk": [
     {
       "major": 9,
+      "minor": 12,
+      "date": "2024-11-06T21:21:59Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 11,
       "date": "2024-10-22T15:31:17Z",
-      "eol": null
+      "eol": "2025-11-06T00:00:00Z"
     },
     {
       "major": 9,
