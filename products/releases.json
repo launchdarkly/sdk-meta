@@ -3650,9 +3650,15 @@
   "swift-client-sdk": [
     {
       "major": 9,
+      "minor": 12,
+      "date": "2024-11-06T21:21:59Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 11,
       "date": "2024-10-22T15:31:17Z",
-      "eol": null
+      "eol": "2025-11-06T00:00:00Z"
     },
     {
       "major": 9,
