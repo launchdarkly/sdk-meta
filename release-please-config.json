@@ -9,6 +9,12 @@
       "release-type" : "go",
       "tag-separator": "/",
       "versioning" : "default"
+    },
+    "api-js" : {
+      "package-name": "api-js",
+      "release-type" : "node",
+      "tag-separator": "/",
+      "versioning" : "default"
     }
   }
 }

@@ -26,5 +26,5 @@ runs:
         LD_RELEASE_IS_DRYRUN: ${{ inputs.dry_run }}
       shell: bash
       run: |
-        cd api/sdkmeta-js
+        cd api-js
         ./scripts/publish.sh
