@@ -452,9 +452,15 @@
   "cpp-server-sdk": [
     {
       "major": 3,
+      "minor": 8,
+      "date": "2024-11-08T22:54:44Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 7,
       "date": "2024-10-30T19:06:06Z",
-      "eol": null
+      "eol": "2025-11-08T00:00:00Z"
     },
     {
       "major": 3,
