@@ -22,9 +22,15 @@
   "akamai-edgekv": [
     {
       "major": 1,
+      "minor": 3,
+      "date": "2024-11-14T23:42:43Z",
+      "eol": null
+    },
+    {
+      "major": 1,
       "minor": 2,
       "date": "2024-10-17T22:02:10Z",
-      "eol": null
+      "eol": "2025-11-14T00:00:00Z"
     },
     {
       "major": 1,
