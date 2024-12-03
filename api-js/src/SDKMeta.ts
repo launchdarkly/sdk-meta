@@ -1,8 +1,8 @@
-import sdkLanguages from './data/languages.json'
-import sdkRepos from './data/repos.json'
-import sdkNames from './data/names.json'
-import sdkTypes from './data/types.json'
-import sdkPopularity from './data/popularity.json'
+import sdkLanguages from './data/languages.json' with { type: "json" };
+import sdkRepos from './data/repos.json' with { type: "json" };
+import sdkNames from './data/names.json' with { type: "json" };
+import sdkTypes from './data/types.json' with { type: "json" };
+import sdkPopularity from './data/popularity.json' with { type: "json" };
 
 export enum Type {
     // ClientSide is an SDK that runs in a client scenario.

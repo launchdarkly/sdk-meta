@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "module": "node16",
+    "module": "esnext",
+    "moduleResolution": "Bundler",
     "target": "es2019",
     "verbatimModuleSyntax": true,
     "sourceMap": true,
