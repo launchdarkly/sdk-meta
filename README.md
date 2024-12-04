@@ -1,4 +1,4 @@
-[![Actions Status](https://github.com/launchdarkly/sdk-meta/actions/workflows/crawl.yml/badge.svg)](https://github.com/launchdarkly/sdk-meta/actions/workflows/crawl.yml)
+[![Actions Status](https://github.com/launchdarkly/sdk-meta/actions/workflows/crawl.yml/badge.svg)](https://github.com/launchdarkly/sdk-meta/actions/workflows/crawl.yml) [![NPM][js-badge]][js-link]  [![Go Module][go-badge]][go-link]
 
 
 # sdk-meta
@@ -82,3 +82,12 @@ Consumers of SDK metadata include:
 - LaunchDarkly internal service (G)
 
 Are you a consumer? Add a link here to receive communications when new features/changes are coming.
+
+
+[//]: # 'api-js'
+[js-badge]: https://img.shields.io/npm/v/@launchdarkly/sdk-meta.svg?style=flat-square
+[js-link]: https://www.npmjs.com/package/@launchdarkly/sdk-meta
+
+[//]: # 'api'
+[go-badge]: https://img.shields.io/github/v/tag/launchdarkly/sdk-meta?filter=api/*&include_prereleases&label=Go
+[go-link]: https://pkg.go.dev/github.com/launchdarkly/sdk-meta/api/sdkmeta
