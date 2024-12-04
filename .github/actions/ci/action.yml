@@ -42,7 +42,7 @@ runs:
     - name: Build JS API
       shell: bash
       run: |
-        cd api-js && npm install && npx publint
+        cd api-js && npm install && npx publint && npx --yes @arethetypeswrong/cli --pack .
 
     - name: Test JS API
       shell: bash
