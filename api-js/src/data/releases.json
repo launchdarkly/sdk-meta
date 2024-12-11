@@ -3654,9 +3654,15 @@
   "rust-server-sdk": [
     {
       "major": 2,
+      "minor": 4,
+      "date": "2024-12-10T14:23:55Z",
+      "eol": null
+    },
+    {
+      "major": 2,
       "minor": 3,
       "date": "2024-10-25T17:46:50Z",
-      "eol": null
+      "eol": "2025-12-10T00:00:00Z"
     },
     {
       "major": 2,
