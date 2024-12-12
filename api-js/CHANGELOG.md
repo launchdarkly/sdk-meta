@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0](https://github.com/launchdarkly/sdk-meta/compare/api-js/v0.0.10...api-js/v0.1.0) (2024-12-12)
+
+
+### Features
+
+* add releases product to api-js ([#209](https://github.com/launchdarkly/sdk-meta/issues/209)) ([7bfe62d](https://github.com/launchdarkly/sdk-meta/commit/7bfe62ddd7f7926a7616a4915a4e4d87c1938e12))
+
 ## [0.0.10](https://github.com/launchdarkly/sdk-meta/compare/api-js/v0.0.9...api-js/v0.0.10) (2024-12-11)
 
 
