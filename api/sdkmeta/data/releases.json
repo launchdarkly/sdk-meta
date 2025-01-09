@@ -48,9 +48,15 @@
   "android": [
     {
       "major": 5,
+      "minor": 6,
+      "date": "2025-01-08T18:09:43Z",
+      "eol": null
+    },
+    {
+      "major": 5,
       "minor": 5,
       "date": "2024-11-22T23:42:38Z",
-      "eol": null
+      "eol": "2026-01-08T00:00:00Z"
     },
     {
       "major": 5,
