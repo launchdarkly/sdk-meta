@@ -2332,9 +2332,15 @@
   "php-server-sdk": [
     {
       "major": 6,
+      "minor": 4,
+      "date": "2025-01-17T15:06:20Z",
+      "eol": null
+    },
+    {
+      "major": 6,
       "minor": 3,
       "date": "2024-10-22T20:02:10Z",
-      "eol": null
+      "eol": "2026-01-17T00:00:00Z"
     },
     {
       "major": 6,
