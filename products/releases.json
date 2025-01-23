@@ -1434,9 +1434,15 @@
   "java-server-sdk": [
     {
       "major": 7,
+      "minor": 7,
+      "date": "2025-01-22T16:52:45Z",
+      "eol": null
+    },
+    {
+      "major": 7,
       "minor": 6,
       "date": "2024-10-24T21:49:48Z",
-      "eol": null
+      "eol": "2026-01-22T00:00:00Z"
     },
     {
       "major": 7,
