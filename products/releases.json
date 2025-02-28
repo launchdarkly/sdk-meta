@@ -1,10 +1,16 @@
 {
   "akamai-base": [
     {
+      "major": 3,
+      "minor": 0,
+      "date": "2025-02-26T15:17:20Z",
+      "eol": null
+    },
+    {
       "major": 2,
       "minor": 1,
       "date": "2024-02-06T21:34:15Z",
-      "eol": null
+      "eol": "2026-02-26T00:00:00Z"
     },
     {
       "major": 2,
