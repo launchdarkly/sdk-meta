@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/launchdarkly/sdk-meta/compare/api-js/v0.1.5...api-js/v0.1.6) (2025-03-11)
+
+
+### Bug Fixes
+
+* **metadata:** ingest new data and regenerate products ([#238](https://github.com/launchdarkly/sdk-meta/issues/238)) ([2187144](https://github.com/launchdarkly/sdk-meta/commit/21871448926ab031923d9f966e7cf066427f8e08))
+
 ## [0.1.5](https://github.com/launchdarkly/sdk-meta/compare/api-js/v0.1.4...api-js/v0.1.5) (2025-02-28)
 
 
