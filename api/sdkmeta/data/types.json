@@ -10,6 +10,7 @@
   "dotnet-server-sdk": "server-side",
   "electron": "client-side",
   "erlang-server-sdk": "server-side",
+  "fastly": "edge",
   "flutter-client-sdk": "client-side",
   "go-server-sdk": "server-side",
   "haskell-server-sdk": "server-side",

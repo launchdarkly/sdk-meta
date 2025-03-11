@@ -40,6 +40,10 @@
     "Erlang",
     "Elixir"
   ],
+  "fastly": [
+    "JavaScript",
+    "TypeScript"
+  ],
   "flutter-client-sdk": [
     "Dart"
   ],
