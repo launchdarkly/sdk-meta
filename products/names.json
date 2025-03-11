@@ -10,6 +10,7 @@
   "dotnet-server-sdk": ".NET Server SDK",
   "electron": "Electron SDK",
   "erlang-server-sdk": "Erlang Server SDK",
+  "fastly": "Fastly SDK",
   "flutter-client-sdk": "Flutter Client SDK",
   "go-server-sdk": "Go Server SDK",
   "haskell-server-sdk": "Haskell Server SDK",

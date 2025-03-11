@@ -32,6 +32,9 @@
   "erlang-server-sdk": {
     "github": "launchdarkly/erlang-server-sdk"
   },
+  "fastly": {
+    "github": "launchdarkly/js-core"
+  },
   "flutter-client-sdk": {
     "github": "launchdarkly/flutter-client-sdk"
   },
