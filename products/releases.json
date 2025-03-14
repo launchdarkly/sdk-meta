@@ -1172,9 +1172,15 @@
   "go-server-sdk": [
     {
       "major": 7,
+      "minor": 9,
+      "date": "2025-03-13T20:39:56Z",
+      "eol": null
+    },
+    {
+      "major": 7,
       "minor": 8,
       "date": "2024-12-09T20:49:21Z",
-      "eol": null
+      "eol": "2026-03-13T00:00:00Z"
     },
     {
       "major": 7,
@@ -2350,9 +2356,15 @@
   "php-server-sdk": [
     {
       "major": 6,
+      "minor": 5,
+      "date": "2025-03-13T20:39:31Z",
+      "eol": null
+    },
+    {
+      "major": 6,
       "minor": 4,
       "date": "2025-01-17T15:06:20Z",
-      "eol": null
+      "eol": "2026-03-13T00:00:00Z"
     },
     {
       "major": 6,
@@ -2526,9 +2538,15 @@
   "python-server-sdk": [
     {
       "major": 9,
+      "minor": 10,
+      "date": "2025-03-13T20:40:43Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 9,
       "date": "2025-01-03T15:14:57Z",
-      "eol": null
+      "eol": "2026-03-13T00:00:00Z"
     },
     {
       "major": 9,
@@ -3484,9 +3502,15 @@
   "ruby-server-sdk": [
     {
       "major": 8,
+      "minor": 9,
+      "date": "2025-03-13T20:41:02Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 8,
       "date": "2024-10-16T15:09:08Z",
-      "eol": null
+      "eol": "2026-03-13T00:00:00Z"
     },
     {
       "major": 8,
