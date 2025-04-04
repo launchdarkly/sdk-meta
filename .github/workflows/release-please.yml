@@ -28,6 +28,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/publish-npm
         with:
-          prerelease: true
+          prerelease: false
           dry_run: false
           aws_assume_role: ${{ vars.AWS_ROLE_ARN }}
