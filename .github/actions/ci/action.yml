@@ -56,8 +56,9 @@ runs:
           -create -offline -repo launchdarkly/js-core \
           -metadata ../metadata/launchdarkly_js-core.json \
           -schema ../schemas/sdk_metadata.sql
+        expected_length=$(jq '.sdks | length' ../metadata/launchdarkly_js-core.json)
         length=$(sqlite3 -json test.sqlite3 "SELECT * from sdk_repos;" | jq '. | length')
-        if [ $length -ne 6 ]; then
-          echo "Expected 6 rows in sdk_repos, got $length"
+        if [ $length -ne $expected_length ]; then
+          echo "Expected $expected_length rows in sdk_repos, got $length"
           exit 1
         fi
