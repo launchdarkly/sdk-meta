@@ -1,0 +1,40 @@
+{
+  "akamai-base": {
+    "userAgents": [
+      "AkamaiEdgeSDK"
+    ]
+  },
+  "akamai-edgekv": {
+    "userAgents": [
+      "AkamaiEdgeSDK"
+    ]
+  },
+  "cloudflare": {
+    "userAgents": [
+      "CloudflareEdgeSDK"
+    ]
+  },
+  "fastly": {
+    "userAgents": [
+      "FastlyEdgeSDK"
+    ]
+  },
+  "node-server": {
+    "userAgents": [
+      "NodeJSClient"
+    ]
+  },
+  "react-native": {
+    "userAgents": [
+      "ReactNativeClient"
+    ],
+    "wrapperNames": [
+      "react-native-client"
+    ]
+  },
+  "vercel": {
+    "userAgents": [
+      "VercelEdgeSDK"
+    ]
+  }
+}
