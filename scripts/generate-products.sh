@@ -32,6 +32,10 @@ sqlite3 -json metadata.sqlite3 "SELECT * from sdk_feature_info;" |
 sqlite3 -json metadata.sqlite3 "SELECT * from sdk_popularity;" |
   jq -S 'reduce .[] as $item ({}; .[$item.id] = $item.popularity)' > products/popularity.json
 
+# Generate user agents and wrappers data
+sqlite3 -json metadata.sqlite3 "SELECT id, userAgent as value, 'userAgents' as type FROM sdk_user_agents UNION ALL SELECT id, wrapper as value, 'wrapperNames' as type FROM sdk_wrappers;" |
+  jq -S 'reduce .[] as $item ({}; .[$item.id] = (.[$item.id] // {}) + { ($item.type): ((.[$item.id][$item.type] // []) + [$item.value]) })' > products/user_agents.json
+
 ./scripts/eols.sh metadata.sqlite3  |
   jq -n 'reduce inputs[] as $input ({}; .[$input.id] += [$input | del(.id)])' > products/releases.json
 
