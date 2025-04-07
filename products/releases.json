@@ -292,9 +292,15 @@
   "cloudflare": [
     {
       "major": 2,
+      "minor": 7,
+      "date": "2025-03-17T21:08:42Z",
+      "eol": null
+    },
+    {
+      "major": 2,
       "minor": 6,
       "date": "2024-10-17T22:02:07Z",
-      "eol": null
+      "eol": "2026-03-17T00:00:00Z"
     },
     {
       "major": 2,
@@ -684,9 +690,15 @@
   "dotnet-server-sdk": [
     {
       "major": 8,
+      "minor": 7,
+      "date": "2025-03-21T15:48:14Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 6,
       "date": "2024-10-24T17:58:24Z",
-      "eol": null
+      "eol": "2026-03-21T00:00:00Z"
     },
     {
       "major": 8,
@@ -970,9 +982,15 @@
   "erlang-server-sdk": [
     {
       "major": 3,
+      "minor": 6,
+      "date": "2025-03-19T15:41:27Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 5,
       "date": "2024-11-07T17:39:52Z",
-      "eol": null
+      "eol": "2026-03-19T00:00:00Z"
     },
     {
       "major": 3,
@@ -1172,9 +1190,15 @@
   "go-server-sdk": [
     {
       "major": 7,
+      "minor": 10,
+      "date": "2025-03-28T16:12:32Z",
+      "eol": null
+    },
+    {
+      "major": 7,
       "minor": 9,
       "date": "2025-03-13T20:39:56Z",
-      "eol": null
+      "eol": "2026-03-28T00:00:00Z"
     },
     {
       "major": 7,
@@ -3720,9 +3744,15 @@
   "rust-server-sdk": [
     {
       "major": 2,
+      "minor": 5,
+      "date": "2025-03-21T15:46:23Z",
+      "eol": null
+    },
+    {
+      "major": 2,
       "minor": 4,
       "date": "2024-12-10T14:23:55Z",
-      "eol": null
+      "eol": "2026-03-21T00:00:00Z"
     },
     {
       "major": 2,
