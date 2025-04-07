@@ -8,8 +8,7 @@
       "languages": ["JavaScript", "TypeScript"],
       "releases": {
         "tag-prefix": "akamai-server-base-sdk-"
-      },
-      "userAgents": ["AkamaiEdgeSDK"]
+      }
     },
     "akamai-edgekv": {
       "name": "Akamai SDK for EdgeKV",
@@ -18,8 +17,7 @@
       "languages": ["JavaScript", "TypeScript"],
       "releases": {
         "tag-prefix": "akamai-server-edgekv-sdk-"
-      },
-      "userAgents": ["AkamaiEdgeSDK"]
+      }
     },
     "cloudflare": {
       "name": "Cloudflare SDK",
@@ -28,8 +26,7 @@
       "languages": ["JavaScript", "TypeScript"],
       "releases": {
         "tag-prefix": "cloudflare-server-sdk-"
-      },
-      "userAgents": ["CloudflareEdgeSDK"]
+      }
     },
     "fastly": {
       "name": "Fastly SDK",
@@ -38,8 +35,7 @@
       "languages": ["JavaScript", "TypeScript"],
       "releases": {
         "tag-prefix": "fastly-server-sdk-"
-      },
-      "userAgents": ["FastlyEdgeSDK"]
+      }
     },
     "react-native": {
       "name": "React Native SDK",
@@ -48,9 +44,7 @@
       "languages": ["JavaScript", "TypeScript"],
       "releases": {
         "tag-prefix": "react-native-client-sdk-"
-      },
-      "userAgents": ["ReactNativeClient"],
-      "wrapperNames": ["react-native-client"]
+      }
     },
     "node-server": {
       "name": "Node.js Server SDK",
@@ -59,8 +53,7 @@
       "languages": ["JavaScript", "TypeScript"],
       "releases": {
         "tag-prefix": "node-server-sdk-"
-      },
-      "userAgents": ["NodeJSClient"]
+      }
     },
     "vercel": {
       "name": "Vercel Edge SDK",
@@ -69,8 +62,7 @@
       "languages": ["JavaScript", "TypeScript"],
       "releases": {
         "tag-prefix": "vercel-server-sdk-"
-      },
-      "userAgents": ["VercelEdgeSDK"]
+      }
     }
   }
 }

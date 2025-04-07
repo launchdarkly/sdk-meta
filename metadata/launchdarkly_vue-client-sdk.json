@@ -6,8 +6,7 @@
       "type": "client-side",
       "languages": [
         "JavaScript", "TypeScript"
-      ],
-      "wrapperNames": ["vue-client-sdk"]
+      ]
     }
   }
 }

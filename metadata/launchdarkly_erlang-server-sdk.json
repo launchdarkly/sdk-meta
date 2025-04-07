@@ -6,8 +6,7 @@
       "type": "server-side",
       "languages": [
         "Erlang", "Elixir"
-      ],
-      "userAgents": ["ErlangClient"]
+      ]
     }
   }
 }

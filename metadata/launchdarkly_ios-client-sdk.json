@@ -6,8 +6,7 @@
       "type": "client-side",
       "languages": [
         "Swift", "Objective-C"
-      ],
-      "userAgents": ["iOS", "macOS", "tvOS", "watchOS"]
+      ]
     }
   }
 }

@@ -15,8 +15,7 @@
       },
       "releases": {
         "tag-prefix": "LaunchDarkly.ServerSdk-"
-      },
-      "userAgents": ["DotNetClient"]
+      }
     },
     "dotnet-client-sdk": {
       "name": ".NET Client SDK",
@@ -27,8 +26,7 @@
       ],
       "releases": {
         "tag-prefix": "LaunchDarkly.ClientSdk-"
-      },
-      "userAgents": ["DotnetClientSide", "XamarinClient"]
+      }
     }
   }
 }
