@@ -9,9 +9,45 @@
       "AkamaiEdgeSDK"
     ]
   },
+  "android": {
+    "userAgents": [
+      "AndroidClient"
+    ]
+  },
   "cloudflare": {
     "userAgents": [
       "CloudflareEdgeSDK"
+    ]
+  },
+  "cpp-client-sdk": {
+    "userAgents": [
+      "CPPClient"
+    ]
+  },
+  "cpp-server-sdk": {
+    "userAgents": [
+      "CPPServer"
+    ]
+  },
+  "dotnet-client-sdk": {
+    "userAgents": [
+      "DotnetClientSide",
+      "XamarinClient"
+    ]
+  },
+  "dotnet-server-sdk": {
+    "userAgents": [
+      "DotNetClient"
+    ]
+  },
+  "electron": {
+    "wrapperNames": [
+      "ElectronClient"
+    ]
+  },
+  "erlang-server-sdk": {
+    "userAgents": [
+      "ErlangClient"
     ]
   },
   "fastly": {
@@ -19,9 +55,62 @@
       "FastlyEdgeSDK"
     ]
   },
+  "flutter-client-sdk": {
+    "userAgents": [
+      "FlutterClientSdk"
+    ],
+    "wrapperNames": [
+      "FlutterClientSdk"
+    ]
+  },
+  "go-server-sdk": {
+    "userAgents": [
+      "GoClient"
+    ]
+  },
+  "haskell-server-sdk": {
+    "userAgents": [
+      "HaskellServerClient"
+    ]
+  },
+  "java-server-sdk": {
+    "userAgents": [
+      "JavaClient"
+    ]
+  },
+  "js-client-sdk": {
+    "userAgents": [
+      "JSClient"
+    ]
+  },
+  "lua-server-sdk": {
+    "wrapperNames": [
+      "lua-server-sdk"
+    ]
+  },
+  "node-client-sdk": {
+    "userAgents": [
+      "NodeJSClient"
+    ]
+  },
   "node-server": {
     "userAgents": [
       "NodeJSClient"
+    ]
+  },
+  "php-server-sdk": {
+    "userAgents": [
+      "PHPClient"
+    ]
+  },
+  "python-server-sdk": {
+    "userAgents": [
+      "PythonClient"
+    ]
+  },
+  "react-client-sdk": {
+    "wrapperNames": [
+      "react-client-sdk"
     ]
   },
   "react-native": {
@@ -32,9 +121,42 @@
       "react-native-client"
     ]
   },
+  "relay-proxy": {
+    "userAgents": [
+      "LDRelay"
+    ]
+  },
+  "roku": {
+    "userAgents": [
+      "RokuClient"
+    ]
+  },
+  "ruby-server-sdk": {
+    "userAgents": [
+      "RubyClient"
+    ]
+  },
+  "rust-server-sdk": {
+    "userAgents": [
+      "RustServerClient"
+    ]
+  },
+  "swift-client-sdk": {
+    "userAgents": [
+      "iOS",
+      "macOS",
+      "tvOS",
+      "watchOS"
+    ]
+  },
   "vercel": {
     "userAgents": [
       "VercelEdgeSDK"
+    ]
+  },
+  "vue": {
+    "wrapperNames": [
+      "vue-client-sdk"
     ]
   }
 }
