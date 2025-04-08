@@ -84,20 +84,20 @@ func TestUserAgentsAndWrappers(t *testing.T) {
 		assert.Contains(t, reactNativeInfo.WrapperNames, "react-native-client")
 	})
 
-	t.Run("GetSDKNameByUserAgentOrWrapper finds by wrapper", func(t *testing.T) {
-		name, found := GetSDKNameByUserAgentOrWrapper("react-native-client")
+	t.Run("GetSDKNameByWrapperOrUserAgent finds by wrapper", func(t *testing.T) {
+		name, found := GetSDKNameByWrapperOrUserAgent("react-native-client")
 		assert.True(t, found)
 		assert.Equal(t, "React Native SDK", name)
 	})
 
-	t.Run("GetSDKNameByUserAgentOrWrapper finds by user agent", func(t *testing.T) {
-		name, found := GetSDKNameByUserAgentOrWrapper("NodeJSClient")
+	t.Run("GetSDKNameByWrapperOrUserAgent finds by user agent", func(t *testing.T) {
+		name, found := GetSDKNameByWrapperOrUserAgent("NodeJSClient")
 		assert.True(t, found)
 		assert.Equal(t, "Node.js Server SDK", name)
 	})
 
-	t.Run("GetSDKNameByUserAgentOrWrapper returns false for unknown identifier", func(t *testing.T) {
-		name, found := GetSDKNameByUserAgentOrWrapper("UnknownIdentifier")
+	t.Run("GetSDKNameByWrapperOrUserAgent returns false for unknown identifier", func(t *testing.T) {
+		name, found := GetSDKNameByWrapperOrUserAgent("UnknownIdentifier")
 		assert.False(t, found)
 		assert.Empty(t, name)
 	})

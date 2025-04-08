@@ -118,9 +118,9 @@ type SDKUserAgentMap struct {
 // UserAgents is a map of SDK IDs to their user agent and wrapper information
 var UserAgents map[string]SDKUserAgentMap
 
-// GetSDKNameByUserAgentOrWrapper attempts to find an SDK name by first checking wrapper names,
+// GetSDKNameByWrapperOrUserAgent attempts to find an SDK name by first checking wrapper names,
 // then user agents. Returns the SDK name and true if found, empty string and false if not found.
-func GetSDKNameByUserAgentOrWrapper(identifier string) (string, bool) {
+func GetSDKNameByWrapperOrUserAgent(identifier string) (string, bool) {
 	// First check wrapper names
 	for sdkID, info := range UserAgents {
 		for _, wrapper := range info.WrapperNames {

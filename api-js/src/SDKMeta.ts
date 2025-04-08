@@ -78,7 +78,7 @@ export interface UserAgent {
 export const UserAgents: Record<string, UserAgent> = sdkUserAgents;
 
 export namespace UserAgentHelpers {
-    export const getSDKNameByUserAgentOrWrapper = (identifier: string): string | undefined => {
+    export const getSDKNameByWrapperOrUserAgent = (identifier: string): string | undefined => {
         // First check wrapper names
         for (const [sdkId, info] of Object.entries(UserAgents)) {
             if (info.wrapperNames?.includes(identifier)) {
