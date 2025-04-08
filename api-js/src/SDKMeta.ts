@@ -4,6 +4,7 @@ import sdkNames from './data/names.json'
 import sdkTypes from './data/types.json'
 import sdkPopularity from './data/popularity.json'
 import sdkReleases from './data/releases.json'
+import sdkUserAgents from './data/user_agents.json'
 
 export enum Type {
     // ClientSide is an SDK that runs in a client scenario.
@@ -67,4 +68,41 @@ export namespace ReleaseHelpers {
 
     export const Earliest = (releases: Release[]) => releases[releases.length - 1];
     export const Latest = (releases: Release[]) => releases[0];
+}
+
+export interface UserAgent {
+    userAgents?: string[];
+    wrapperNames?: string[];
+}
+
+export const UserAgents: Record<string, UserAgent> = sdkUserAgents;
+
+export namespace UserAgentHelpers {
+    /**
+     * Attempts to find an SDK name by checking wrapper names and user agents.
+     * First checks wrapper names, then user agents, in alphabetical order by SDK ID.
+     * 
+     * @param identifier - The wrapper name or user agent string to search for
+     * @returns The SDK name if found, undefined if not found
+     */
+    export const getSDKNameByWrapperOrUserAgent = (identifier: string): string | undefined => {
+        // Sort the entries by SDK ID to ensure consistent ordering.
+        const sortedEntries = Object.entries(UserAgents).sort(([a], [b]) => a.localeCompare(b));
+        
+        // First check wrapper names
+        for (const [sdkId, info] of sortedEntries) {
+            if (info.wrapperNames?.includes(identifier)) {
+                return Names[sdkId];
+            }
+        }
+
+        // Then check user agents
+        for (const [sdkId, info] of sortedEntries) {
+            if (info.userAgents?.includes(identifier)) {
+                return Names[sdkId];
+            }
+        }
+
+        return undefined;
+    }
 }

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://launchdarkly.com/sdk-meta/user_agents.json",
+  "title": "SDK User Agents",
+  "description": "List of SDK User Agents and Wrappers",
+  "type": "object",
+  "$defs": {
+    "SDKUserAgentMap": {
+      "type": "object",
+      "description": "Map of user agents for an SDK",
+      "properties": {
+        "userAgents": {
+          "$ref": "#/$defs/AgentValue"
+        },
+        "wrapperNames": {
+          "$ref": "#/$defs/AgentValue"
+        }
+      },
+      "minProperties": 1,
+      "additionalProperties": false
+    },
+    "AgentValue": {
+      "type": "array",
+      "description": "An array of header values, each matching a pattern.",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z-]*$"
+      }
+    }
+  },
+  "patternProperties": {
+    "^[a-z-]+$": {
+      "$ref": "#/$defs/SDKUserAgentMap"
+    }
+  },
+  "additionalProperties": false
+}

@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"sort"
 	"time"
 )
 
@@ -106,6 +107,52 @@ func (r ReleaseList) Latest() Release {
 	return r[0]
 }
 
+//go:embed data/user_agents.json
+var userAgentsJSON []byte
+
+// SDKUserAgentMap contains user agent and wrapper information for an SDK
+type SDKUserAgentMap struct {
+	UserAgents    []string `json:"userAgents,omitempty"`
+	WrapperNames  []string `json:"wrapperNames,omitempty"`
+}
+
+// UserAgents is a map of SDK IDs to their user agent and wrapper information
+var UserAgents map[string]SDKUserAgentMap
+
+// GetSDKNameByWrapperOrUserAgent attempts to find an SDK name by first checking wrapper names,
+// then user agents, in alphabetical order by SDK ID. Returns the SDK name and true if found,
+// empty string and false if not found.
+func GetSDKNameByWrapperOrUserAgent(identifier string) (string, bool) {
+	// Get sorted SDK IDs to ensure consistent ordering
+	var sdkIDs []string
+	for sdkID := range UserAgents {
+		sdkIDs = append(sdkIDs, sdkID)
+	}
+	sort.Strings(sdkIDs)
+
+	// First check wrapper names
+	for _, sdkID := range sdkIDs {
+		info := UserAgents[sdkID]
+		for _, wrapper := range info.WrapperNames {
+			if wrapper == identifier {
+				return Names[sdkID], true
+			}
+		}
+	}
+
+	// Then check user agents
+	for _, sdkID := range sdkIDs {
+		info := UserAgents[sdkID]
+		for _, agent := range info.UserAgents {
+			if agent == identifier {
+				return Names[sdkID], true
+			}
+		}
+	}
+
+	return "", false
+}
+
 func panicOnError(err error) {
 	if err != nil {
 		panic("couldn't initialize SDK Metadata module: " + err.Error())
@@ -119,4 +166,5 @@ func init() {
 	panicOnError(json.Unmarshal(typesJSON, &Types))
 	panicOnError(json.Unmarshal(releasesJSON, &Releases))
 	panicOnError(json.Unmarshal(popularityJSON, &Popularity))
+	panicOnError(json.Unmarshal(userAgentsJSON, &UserAgents))
 }

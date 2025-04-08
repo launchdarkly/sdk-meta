@@ -73,3 +73,32 @@ func TestEOLCalculations(t *testing.T) {
 		assert.True(t, earliest.IsApproachingEOL(earliestEOL.Add(-1*time.Minute), time.Hour))
 	})
 }
+
+func TestUserAgentsAndWrappers(t *testing.T) {
+	t.Run("user agents map contains expected data", func(t *testing.T) {
+		nodeInfo := UserAgents["node-server"]
+		assert.Contains(t, nodeInfo.UserAgents, "NodeJSClient")
+
+		reactNativeInfo := UserAgents["react-native"]
+		assert.Contains(t, reactNativeInfo.UserAgents, "ReactNativeClient")
+		assert.Contains(t, reactNativeInfo.WrapperNames, "react-native-client")
+	})
+
+	t.Run("GetSDKNameByWrapperOrUserAgent finds by wrapper", func(t *testing.T) {
+		name, found := GetSDKNameByWrapperOrUserAgent("react-native-client")
+		assert.True(t, found)
+		assert.Equal(t, "React Native SDK", name)
+	})
+
+	t.Run("GetSDKNameByWrapperOrUserAgent finds by user agent", func(t *testing.T) {
+		name, found := GetSDKNameByWrapperOrUserAgent("NodeJSClient")
+		assert.True(t, found)
+		assert.Equal(t, "Node.js Server SDK", name)
+	})
+
+	t.Run("GetSDKNameByWrapperOrUserAgent returns false for unknown identifier", func(t *testing.T) {
+		name, found := GetSDKNameByWrapperOrUserAgent("UnknownIdentifier")
+		assert.False(t, found)
+		assert.Empty(t, name)
+	})
+}

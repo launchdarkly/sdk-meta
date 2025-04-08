@@ -1,4 +1,5 @@
 import { Names, Repos, Types, Type, Popularity, Languages, Releases, ReleaseHelpers } from '../src/SDKMeta';
+import { UserAgents, UserAgentHelpers } from '../src/SDKMeta';
 
 test('names', () => {
     expect(Names['node-server']).toBe('Node.js Server SDK');
@@ -67,3 +68,43 @@ test('eol calculations', () => {
     expect(ReleaseHelpers.IsApproachingEOL(earliest, new Date(earliestEOL.getTime() - thirty_minutes), hour)).toBe(true);
     expect(ReleaseHelpers.IsApproachingEOL(earliest, new Date(earliestEOL.getTime() - minute), hour)).toBe(true);
 })
+
+test('user agents', () => {
+    // Test basic user agent data structure
+    expect(UserAgents['node-server']).toBeDefined();
+    expect(UserAgents['node-server'].userAgents).toContain('NodeJSClient');
+
+    // Test SDK with both user agents and wrapper names
+    expect(UserAgents['react-native']).toBeDefined();
+    expect(UserAgents['react-native'].userAgents).toContain('ReactNativeClient');
+    expect(UserAgents['react-native'].wrapperNames).toContain('react-native-client');
+});
+
+describe('UserAgentHelpers.getSDKNameByWrapperOrUserAgent', () => {
+    test('finds SDK by wrapper name', () => {
+        const name = UserAgentHelpers.getSDKNameByWrapperOrUserAgent('react-native-client');
+        expect(name).toBe('React Native SDK');
+    });
+
+    test('finds SDK by user agent', () => {
+        const name = UserAgentHelpers.getSDKNameByWrapperOrUserAgent('NodeJSClient');
+        expect(name).toBe('Node.js Server SDK');
+    });
+
+    test('returns undefined for unknown identifier', () => {
+        const name = UserAgentHelpers.getSDKNameByWrapperOrUserAgent('UnknownIdentifier');
+        expect(name).toBeUndefined();
+    });
+
+    test('prioritizes wrapper names over user agents', () => {
+        // In case there's ever a wrapper name that matches a user agent from another SDK,
+        // we should ensure wrapper names are checked first
+        const name = UserAgentHelpers.getSDKNameByWrapperOrUserAgent('react-native-client');
+        expect(name).toBe('React Native SDK');
+    });
+
+    test('finds edge SDK by user agent', () => {
+        const name = UserAgentHelpers.getSDKNameByWrapperOrUserAgent('CloudflareEdgeSDK');
+        expect(name).toBe('Cloudflare SDK');
+    });
+});

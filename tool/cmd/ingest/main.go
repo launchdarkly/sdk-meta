@@ -17,12 +17,13 @@ import (
 )
 
 type metadataV1 struct {
-	Name      string   `json:"name"`
-	Path      string   `json:"path"`
-	UserAgent string   `json:"user-agent"`
-	Type      string   `json:"type"`
-	Languages []string `json:"languages"`
-	Features  map[string]struct {
+	Name         string   `json:"name"`
+	Path         string   `json:"path"`
+	UserAgents   []string `json:"userAgents"`
+	WrapperNames []string `json:"wrapperNames"`
+	Type         string   `json:"type"`
+	Languages    []string `json:"languages"`
+	Features     map[string]struct {
 		Introduced string  `json:"introduced"`
 		Deprecated *string `json:"deprecated"`
 		Removed    *string `json:"removed"`
@@ -142,7 +143,9 @@ func run(args *args) error {
 			}
 			return nil
 		},
-		"features": insertFeatures,
+		"features":     insertFeatures,
+		"userAgents":   insertUserAgents,
+		"wrapperNames": insertWrapperNames,
 	}
 
 	if !args.offline {
@@ -276,5 +279,43 @@ func insertReleases(tx *sql.Tx, id string, release []releases.Parsed) error {
 			return err
 		}
 	}
+	return nil
+}
+
+func insertUserAgents(tx *sql.Tx, id string, metadata *metadataV1) error {
+	if len(metadata.UserAgents) == 0 {
+		return nil
+	}
+	stmt, err := tx.Prepare("INSERT INTO sdk_user_agents (id, userAgent) VALUES (?, ?)")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	for _, userAgent := range metadata.UserAgents {
+		if _, err := stmt.Exec(id, userAgent); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func insertWrapperNames(tx *sql.Tx, id string, metadata *metadataV1) error {
+	if len(metadata.WrapperNames) == 0 {
+		return nil
+	}
+	stmt, err := tx.Prepare("INSERT INTO sdk_wrappers (id, wrapper) VALUES (?, ?)")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	for _, wrapper := range metadata.WrapperNames {
+		if _, err := stmt.Exec(id, wrapper); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

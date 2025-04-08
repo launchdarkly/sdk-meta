@@ -65,6 +65,16 @@ CREATE TABLE sdk_popularity (
     PRIMARY KEY(id, popularity)
 );
 
+CREATE TABLE sdk_user_agents (
+    id TEXT NOT NULL,
+    userAgent TEXT
+);
+
+CREATE TABLE sdk_wrappers (
+    id TEXT NOT NULL,
+    wrapper TEXT
+);
+
 INSERT INTO sdk_popularity (id, popularity) VALUES
     ('react-client-sdk', 1),
     ('node-server', 2),
