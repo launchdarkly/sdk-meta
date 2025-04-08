@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/launchdarkly/sdk-meta/compare/api/v0.3.17...api/v0.4.0) (2025-04-08)
+
+
+### Features
+
+* Add support for user agents and wrapper names. ([#246](https://github.com/launchdarkly/sdk-meta/issues/246)) ([737a080](https://github.com/launchdarkly/sdk-meta/commit/737a08007230849ff66acb0ac510adeaec9dbc77))
+
+
+### Bug Fixes
+
+* **metadata:** ingest new data and regenerate products ([#248](https://github.com/launchdarkly/sdk-meta/issues/248)) ([27d124b](https://github.com/launchdarkly/sdk-meta/commit/27d124b1b2f463576f97214c0ecbc66feeccd655))
+
 ## [0.3.17](https://github.com/launchdarkly/sdk-meta/compare/api/v0.3.16...api/v0.3.17) (2025-04-07)
 
 
