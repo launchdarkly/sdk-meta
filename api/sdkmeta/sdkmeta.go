@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"sort"
 	"time"
 )
 
@@ -119,10 +120,19 @@ type SDKUserAgentMap struct {
 var UserAgents map[string]SDKUserAgentMap
 
 // GetSDKNameByWrapperOrUserAgent attempts to find an SDK name by first checking wrapper names,
-// then user agents. Returns the SDK name and true if found, empty string and false if not found.
+// then user agents, in alphabetical order by SDK ID. Returns the SDK name and true if found,
+// empty string and false if not found.
 func GetSDKNameByWrapperOrUserAgent(identifier string) (string, bool) {
+	// Get sorted SDK IDs to ensure consistent ordering
+	var sdkIDs []string
+	for sdkID := range UserAgents {
+		sdkIDs = append(sdkIDs, sdkID)
+	}
+	sort.Strings(sdkIDs)
+
 	// First check wrapper names
-	for sdkID, info := range UserAgents {
+	for _, sdkID := range sdkIDs {
+		info := UserAgents[sdkID]
 		for _, wrapper := range info.WrapperNames {
 			if wrapper == identifier {
 				return Names[sdkID], true
@@ -131,7 +141,8 @@ func GetSDKNameByWrapperOrUserAgent(identifier string) (string, bool) {
 	}
 
 	// Then check user agents
-	for sdkID, info := range UserAgents {
+	for _, sdkID := range sdkIDs {
+		info := UserAgents[sdkID]
 		for _, agent := range info.UserAgents {
 			if agent == identifier {
 				return Names[sdkID], true

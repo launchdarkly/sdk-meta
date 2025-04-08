@@ -78,16 +78,26 @@ export interface UserAgent {
 export const UserAgents: Record<string, UserAgent> = sdkUserAgents;
 
 export namespace UserAgentHelpers {
+    /**
+     * Attempts to find an SDK name by checking wrapper names and user agents.
+     * First checks wrapper names, then user agents, in alphabetical order by SDK ID.
+     * 
+     * @param identifier - The wrapper name or user agent string to search for
+     * @returns The SDK name if found, undefined if not found
+     */
     export const getSDKNameByWrapperOrUserAgent = (identifier: string): string | undefined => {
+        // Sort the entries by SDK ID to ensure consistent ordering.
+        const sortedEntries = Object.entries(UserAgents).sort(([a], [b]) => a.localeCompare(b));
+        
         // First check wrapper names
-        for (const [sdkId, info] of Object.entries(UserAgents)) {
+        for (const [sdkId, info] of sortedEntries) {
             if (info.wrapperNames?.includes(identifier)) {
                 return Names[sdkId];
             }
         }
 
         // Then check user agents
-        for (const [sdkId, info] of Object.entries(UserAgents)) {
+        for (const [sdkId, info] of sortedEntries) {
             if (info.userAgents?.includes(identifier)) {
                 return Names[sdkId];
             }
