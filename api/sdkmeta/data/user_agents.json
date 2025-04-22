@@ -90,7 +90,7 @@
   },
   "node-client-sdk": {
     "userAgents": [
-      "NodeJSClient"
+      "NodeClientSide"
     ]
   },
   "node-server": {
