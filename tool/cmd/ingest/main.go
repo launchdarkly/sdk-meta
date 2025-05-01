@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"sort"
 	"time"
 
 	"github.com/launchdarkly/sdk-meta/tool/lib/releases"
@@ -184,9 +185,16 @@ func run(args *args) error {
 	}
 	defer tx.Rollback()
 
-	for sdkId, metadata := range metadata {
+	// Sort SDK IDs for consistent iteration order
+	sdkIds := make([]string, 0, len(metadata))
+	for sdkId := range metadata {
+		sdkIds = append(sdkIds, sdkId)
+	}
+	sort.Strings(sdkIds)
+
+	for _, sdkId := range sdkIds {
 		for column, insert := range inserters {
-			if err := insert(tx, sdkId, metadata); err != nil {
+			if err := insert(tx, sdkId, metadata[sdkId]); err != nil {
 				return fmt.Errorf("insert %s for %s: %v", column, sdkId, err)
 			}
 		}
