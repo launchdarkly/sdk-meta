@@ -1784,9 +1784,15 @@
   "js-client-sdk": [
     {
       "major": 3,
+      "minor": 7,
+      "date": "2025-04-29T22:12:43Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 6,
       "date": "2025-04-21T17:20:37Z",
-      "eol": null
+      "eol": "2026-04-29T00:00:00Z"
     },
     {
       "major": 3,
@@ -2998,9 +3004,15 @@
   "react-native": [
     {
       "major": 10,
+      "minor": 10,
+      "date": "2025-04-29T22:21:55Z",
+      "eol": null
+    },
+    {
+      "major": 10,
       "minor": 9,
       "date": "2024-10-17T22:02:07Z",
-      "eol": null
+      "eol": "2026-04-29T00:00:00Z"
     },
     {
       "major": 10,
