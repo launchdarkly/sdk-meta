@@ -10,6 +10,7 @@ gh api --paginate graphql -f query='{
     nodes {
       ... on Repository {
         nameWithOwner
+        isArchived
         repositoryTopics(first: 100) {
           nodes {
             topic {
