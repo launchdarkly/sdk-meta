@@ -60,9 +60,15 @@
   "android": [
     {
       "major": 5,
+      "minor": 7,
+      "date": "2025-05-19T17:29:04Z",
+      "eol": null
+    },
+    {
+      "major": 5,
       "minor": 6,
       "date": "2025-01-08T18:09:43Z",
-      "eol": null
+      "eol": "2026-05-19T00:00:00Z"
     },
     {
       "major": 5,
@@ -3264,9 +3270,15 @@
   "relay-proxy": [
     {
       "major": 8,
+      "minor": 12,
+      "date": "2025-05-21T15:12:05Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 11,
       "date": "2025-04-16T18:24:21Z",
-      "eol": null
+      "eol": "2026-05-21T00:00:00Z"
     },
     {
       "major": 8,
