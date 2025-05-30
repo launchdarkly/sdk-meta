@@ -60,9 +60,21 @@
   "android": [
     {
       "major": 5,
+      "minor": 8,
+      "date": "2025-05-27T15:23:06Z",
+      "eol": null
+    },
+    {
+      "major": 5,
+      "minor": 7,
+      "date": "2025-05-19T17:29:04Z",
+      "eol": "2026-05-27T00:00:00Z"
+    },
+    {
+      "major": 5,
       "minor": 6,
       "date": "2025-01-08T18:09:43Z",
-      "eol": null
+      "eol": "2026-05-19T00:00:00Z"
     },
     {
       "major": 5,
@@ -1808,9 +1820,15 @@
   "js-client-sdk": [
     {
       "major": 3,
+      "minor": 8,
+      "date": "2025-05-27T16:02:18Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 7,
       "date": "2025-04-29T22:12:43Z",
-      "eol": null
+      "eol": "2026-05-27T00:00:00Z"
     },
     {
       "major": 3,
@@ -3264,9 +3282,15 @@
   "relay-proxy": [
     {
       "major": 8,
+      "minor": 12,
+      "date": "2025-05-21T15:12:05Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 11,
       "date": "2025-04-16T18:24:21Z",
-      "eol": null
+      "eol": "2026-05-21T00:00:00Z"
     },
     {
       "major": 8,
