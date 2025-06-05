@@ -366,9 +366,15 @@
   "cpp-client-sdk": [
     {
       "major": 3,
+      "minor": 10,
+      "date": "2025-06-04T20:07:25Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 9,
       "date": "2025-05-02T17:34:10Z",
-      "eol": null
+      "eol": "2026-06-04T00:00:00Z"
     },
     {
       "major": 3,
@@ -512,9 +518,15 @@
   "cpp-server-sdk": [
     {
       "major": 3,
+      "minor": 9,
+      "date": "2025-06-04T20:07:26Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 8,
       "date": "2024-11-08T22:54:44Z",
-      "eol": null
+      "eol": "2026-06-04T00:00:00Z"
     },
     {
       "major": 3,
