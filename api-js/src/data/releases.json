@@ -2210,9 +2210,15 @@
   "node-server": [
     {
       "major": 9,
+      "minor": 10,
+      "date": "2025-06-17T21:33:03Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 9,
       "date": "2025-04-16T19:25:40Z",
-      "eol": null
+      "eol": "2026-06-17T00:00:00Z"
     },
     {
       "major": 9,
