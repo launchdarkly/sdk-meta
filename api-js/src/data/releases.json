@@ -1268,9 +1268,15 @@
   "go-server-sdk": [
     {
       "major": 7,
+      "minor": 12,
+      "date": "2025-07-09T18:26:24Z",
+      "eol": null
+    },
+    {
+      "major": 7,
       "minor": 11,
       "date": "2025-06-24T13:34:25Z",
-      "eol": null
+      "eol": "2026-07-09T00:00:00Z"
     },
     {
       "major": 7,
