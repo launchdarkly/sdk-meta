@@ -3706,9 +3706,15 @@
   "ruby-server-sdk": [
     {
       "major": 8,
+      "minor": 11,
+      "date": "2025-07-15T15:50:15Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 10,
       "date": "2025-04-16T18:26:03Z",
-      "eol": null
+      "eol": "2026-07-15T00:00:00Z"
     },
     {
       "major": 8,
