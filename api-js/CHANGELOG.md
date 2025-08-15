@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.6](https://github.com/launchdarkly/sdk-meta/compare/api-js/v0.2.5...api-js/v0.2.6) (2025-08-15)
+
+
+### Bug Fixes
+
+* **metadata:** ingest new data and regenerate products ([#273](https://github.com/launchdarkly/sdk-meta/issues/273)) ([18dc564](https://github.com/launchdarkly/sdk-meta/commit/18dc564ab60e97b35a151c29ef1ed18e03046075))
+* **metadata:** ingest new data and regenerate products ([#275](https://github.com/launchdarkly/sdk-meta/issues/275)) ([f113c90](https://github.com/launchdarkly/sdk-meta/commit/f113c90c77d6a90d6d1e58bb802d32c177b7600d))
+* **metadata:** ingest new data and regenerate products ([#276](https://github.com/launchdarkly/sdk-meta/issues/276)) ([73f219d](https://github.com/launchdarkly/sdk-meta/commit/73f219d956a40d8a6331d6b92fb1b7ca2bd43b99))
+* **metadata:** ingest new data and regenerate products ([#277](https://github.com/launchdarkly/sdk-meta/issues/277)) ([081cec6](https://github.com/launchdarkly/sdk-meta/commit/081cec63c41f9b84533baa430233aa7a739ce607))
+* **metadata:** ingest new data and regenerate products ([#278](https://github.com/launchdarkly/sdk-meta/issues/278)) ([1c30d25](https://github.com/launchdarkly/sdk-meta/commit/1c30d25211f896aaa9414d24f0095be2c645fccd))
+* **metadata:** ingest new data and regenerate products ([#279](https://github.com/launchdarkly/sdk-meta/issues/279)) ([006b5d0](https://github.com/launchdarkly/sdk-meta/commit/006b5d0b7e248d3ccd3db314af2a5c8da0bfd06c))
+* **metadata:** ingest new data and regenerate products ([#285](https://github.com/launchdarkly/sdk-meta/issues/285)) ([0af20e6](https://github.com/launchdarkly/sdk-meta/commit/0af20e619368d452e8449015ed05d9e7c53c4c11))
+* **metadata:** ingest new data and regenerate products ([#286](https://github.com/launchdarkly/sdk-meta/issues/286)) ([f53152f](https://github.com/launchdarkly/sdk-meta/commit/f53152f374834b778ba563288611e8e9ef774d39))
+* **metadata:** ingest new data and regenerate products ([#287](https://github.com/launchdarkly/sdk-meta/issues/287)) ([eaa12f3](https://github.com/launchdarkly/sdk-meta/commit/eaa12f3e5850f2447457d1d7b23a5064eea35086))
+
 ## [0.2.5](https://github.com/launchdarkly/sdk-meta/compare/api-js/v0.2.4...api-js/v0.2.5) (2025-07-01)
 
 
