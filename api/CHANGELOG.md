@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.9](https://github.com/launchdarkly/sdk-meta/compare/api/v0.4.8...api/v0.4.9) (2025-09-30)
+
+
+### Bug Fixes
+
+* **metadata:** ingest new data and regenerate products ([#297](https://github.com/launchdarkly/sdk-meta/issues/297)) ([d45289f](https://github.com/launchdarkly/sdk-meta/commit/d45289f9d4e286411267de8a6b9e2ba67cb3010b))
+
 ## [0.4.8](https://github.com/launchdarkly/sdk-meta/compare/api/v0.4.7...api/v0.4.8) (2025-09-09)
 
 
