@@ -4045,10 +4045,16 @@
   ],
   "swift-client-sdk": [
     {
+      "major": 10,
+      "minor": 0,
+      "date": "2025-10-29T17:53:08Z",
+      "eol": null
+    },
+    {
       "major": 9,
       "minor": 15,
       "date": "2025-08-15T13:44:32Z",
-      "eol": null
+      "eol": "2026-10-29T00:00:00Z"
     },
     {
       "major": 9,
