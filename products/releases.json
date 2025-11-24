@@ -3414,9 +3414,15 @@
   "relay-proxy": [
     {
       "major": 8,
+      "minor": 16,
+      "date": "2025-11-21T17:10:16Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 15,
       "date": "2025-11-13T19:43:30Z",
-      "eol": null
+      "eol": "2026-11-21T00:00:00Z"
     },
     {
       "major": 8,
