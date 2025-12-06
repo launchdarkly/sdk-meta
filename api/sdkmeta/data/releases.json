@@ -2766,9 +2766,15 @@
   "python-server-sdk": [
     {
       "major": 9,
+      "minor": 14,
+      "date": "2025-12-04T16:57:23Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 13,
       "date": "2025-11-19T22:21:52Z",
-      "eol": null
+      "eol": "2026-12-04T00:00:00Z"
     },
     {
       "major": 9,
