@@ -1,13 +1,13 @@
 module github.com/launchdarkly/sdk-meta/tool
 
-go 1.20
+go 1.23.0
 
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/shurcooL/githubv4 v0.0.0-20240120211514-18a1ae0e79dc
 	github.com/stretchr/testify v1.9.0
-	golang.org/x/oauth2 v0.25.0
+	golang.org/x/oauth2 v0.27.0
 )
 
 require (
