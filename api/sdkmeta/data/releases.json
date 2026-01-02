@@ -60,9 +60,15 @@
   "android": [
     {
       "major": 5,
+      "minor": 10,
+      "date": "2025-12-11T19:59:48Z",
+      "eol": null
+    },
+    {
+      "major": 5,
       "minor": 9,
       "date": "2025-07-16T13:32:37Z",
-      "eol": null
+      "eol": "2026-12-11T00:00:00Z"
     },
     {
       "major": 5,
@@ -4100,9 +4106,15 @@
   "swift-client-sdk": [
     {
       "major": 10,
+      "minor": 1,
+      "date": "2025-12-11T17:12:33Z",
+      "eol": null
+    },
+    {
+      "major": 10,
       "minor": 0,
       "date": "2025-10-29T17:53:08Z",
-      "eol": null
+      "eol": "2026-12-11T00:00:00Z"
     },
     {
       "major": 9,
