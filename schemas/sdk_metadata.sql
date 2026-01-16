@@ -136,7 +136,7 @@ INSERT INTO sdk_feature_info (id, name, description) VALUES
     ('pluginSupport', 'Plugin Support', 'Provides SDK extensibility through the use of plugins.'),
     ('omitAnonContexts', 'Omit Anonymous Contexts from Events', 'Optionally omit anonymous contexts from events.'),
     ('eventCompression', 'Event Compression', 'Optionally support compressing event payloads sent to LaunchDarkly.'),
-    ('pollingResponseCompression', 'Polling Response Compression', 'Supports receiving compressed polling responses.')
+    ('pollingResponseCompression', 'Polling Response Compression', 'Supports receiving compressed polling responses.');
 
 INSERT INTO sdk_language_info (language) VALUES
     ('Apex'),
