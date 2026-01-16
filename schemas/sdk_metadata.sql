@@ -131,7 +131,12 @@ INSERT INTO sdk_feature_info (id, name, description) VALUES
     ('storingData', 'Storing data', 'Configure an external database as a feature store. Persist flag data across application restarts.'),
     ('flagChanges', 'Subscribing to flag changes', 'Use a listener pattern to subscribe to flag change notifications.'),
     ('testDataSource', 'Test data sources', 'Mock data of an SDK. Useful for unit tests; cannot be used in production.'),
-    ('webProxy', 'Web proxy configuration', 'Configure the SDK to connect to LaunchDarkly through a web proxy.');
+    ('webProxy', 'Web proxy configuration', 'Configure the SDK to connect to LaunchDarkly through a web proxy.'),
+    ('fdv2', 'Data Saving Mode', 'Our second generation flag delivery protocol.'),
+    ('pluginSupport', 'Plugin Support', 'Provides SDK extensibility through the use of plugins.'),
+    ('omitAnonContexts', 'Omit Anonymous Contexts from Events', 'Optionally omit anonymous contexts from events.'),
+    ('eventCompression', 'Event Compression', 'Optionally support compressing event payloads sent to LaunchDarkly.'),
+    ('pollingResponseCompression', 'Polling Response Compression', 'Supports receiving compressed polling responses.');
 
 INSERT INTO sdk_language_info (language) VALUES
     ('Apex'),
