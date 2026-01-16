@@ -1,7 +1,7 @@
 {
   "allFlags": {
     "description": "Return the flag variations for all feature flags for a given context.",
-    "name": "Getting all flags"
+    "name": "Generate bootstrap details"
   },
   "appMetadata": {
     "description": "Specify application and application version information.",
@@ -71,10 +71,22 @@
     "description": "For clent-side SDKs, require a hash, signed with the SDK key for the LaunchDarkly environment, to evaluate flag variations. For server-side or edge SDKs, generate a secure mode hash.",
     "name": "Secure mode"
   },
-  "storingData": {
-    "description": "Configure an external database as a feature store. Persist flag data across application restarts.",
-    "name": "Storing data"
-  },
+    "storingData": {
+      "description": "Configure an external database as a feature store. Persist flag data across application restarts.",
+      "name": "Storing data"
+    },
+    "storingDataConsul": {
+      "description": "Configure Consul as a feature store. Persist flag data across application restarts.",
+      "name": "Storing data (Consul)"
+    },
+    "storingDataDynamodb": {
+      "description": "Configure DynamoDB as a feature store. Persist flag data across application restarts.",
+      "name": "Storing data (DynamoDB)"
+    },
+    "storingDataRedis": {
+      "description": "Configure Redis as a feature store. Persist flag data across application restarts.",
+      "name": "Storing data (Redis)"
+    },
   "testDataSource": {
     "description": "Mock data of an SDK. Useful for unit tests; cannot be used in production.",
     "name": "Test data sources"
