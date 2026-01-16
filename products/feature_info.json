@@ -1,7 +1,7 @@
 {
   "allFlags": {
     "description": "Return the flag variations for all feature flags for a given context.",
-    "name": "Getting all flags"
+    "name": "Generate bootstrap details"
   },
   "appMetadata": {
     "description": "Specify application and application version information.",
@@ -23,9 +23,17 @@
     "description": "Evaluate flags based on contexts. A context is a generalized way of referring to the people, services, machines, or other resources that encounter feature flags. SDKs without this feature only support flag evaluation for users.",
     "name": "Contexts and context kinds"
   },
+  "eventCompression": {
+    "description": "Optionally support compressing event payloads sent to LaunchDarkly.",
+    "name": "Event Compression"
+  },
   "experimentation": {
     "description": "Connect a flag with one or more metrics to measure end-user behavior for different variations of a flag. Requires minimum SDK versions, but no SDK configuration.",
     "name": "Experimentation"
+  },
+  "fdv2": {
+    "description": "Our second generation flag delivery protocol.",
+    "name": "Data Saving Mode"
   },
   "fileDataSource": {
     "description": "Use flag values, specified in JSON or YAML files, for all flag evaluations. Useful for testing or prototyping; do not use in production.",
@@ -39,6 +47,10 @@
     "description": "Define callbacks that are executed by the SDK at various points of interest, usually for metrics or tracing.",
     "name": "Hooks"
   },
+  "inlineContextFeatureEvents": {
+    "description": "The SDK will inline the context inside feature events.",
+    "name": "Inline Context In Feature Events"
+  },
   "migrations": {
     "description": "Configure how to read and write data for an old and new system, determine which stage of a migration the application is in, execute the correct read and write calls for each stage.",
     "name": "Migration flags"
@@ -51,9 +63,25 @@
     "description": "Close the SDK's connection to LaunchDarkly. Use cached or fallback values for each flag evaluation.",
     "name": "Offline mode"
   },
+  "omitAnonContexts": {
+    "description": "Optionally omit anonymous contexts from events.",
+    "name": "Omit Anonymous Contexts from Events"
+  },
   "otel": {
     "description": "Add flag evaluation information to OpenTelemetry spans.",
     "name": "OpenTelemetry"
+  },
+  "perContextSummaryEvents": {
+    "description": "The SDK supports emitting a summary event per-context.",
+    "name": "Per-Context Summary Events"
+  },
+  "pluginSupport": {
+    "description": "Provides SDK extensibility through the use of plugins.",
+    "name": "Plugin Support"
+  },
+  "pollingResponseCompression": {
+    "description": "Supports receiving compressed polling responses.",
+    "name": "Polling Response Compression"
   },
   "privateAttrs": {
     "description": "Use context attribute values for targeting, but do not send them to LaunchDarkly.",
@@ -74,6 +102,18 @@
   "storingData": {
     "description": "Configure an external database as a feature store. Persist flag data across application restarts.",
     "name": "Storing data"
+  },
+  "storingDataConsul": {
+    "description": "Configure Consul as a feature store. Persist flag data across application restarts.",
+    "name": "Storing data (Consul)"
+  },
+  "storingDataDynamodb": {
+    "description": "Configure DynamoDB as a feature store. Persist flag data across application restarts.",
+    "name": "Storing data (DynamoDB)"
+  },
+  "storingDataRedis": {
+    "description": "Configure Redis as a feature store. Persist flag data across application restarts.",
+    "name": "Storing data (Redis)"
   },
   "testDataSource": {
     "description": "Mock data of an SDK. Useful for unit tests; cannot be used in production.",
