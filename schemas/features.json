@@ -42,7 +42,7 @@
     "SDKVersion" : {
       "type" : "string",
       "description" : "A version string",
-      "pattern" : "^[0-9]+\\.[0-9]+$"
+      "pattern" : "^[0-9]+\\.[0-9]+(\\.[0-9]+)?$"
     }
   },
   "patternProperties" : {
