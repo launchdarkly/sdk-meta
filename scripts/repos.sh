@@ -3,7 +3,7 @@
 gh api --paginate graphql -f query='{
   search(
     type: REPOSITORY
-    query: """topic:launchdarkly-sdk -topic:launchdarkly-sdk-component -topic:examples org:launchdarkly is:public"""
+    query: """topic:launchdarkly-sdk -topic:launchdarkly-sdk-component -topic:examples org:launchdarkly is:public sort:name-asc"""
     first: 100
   ) {
     repositoryCount
