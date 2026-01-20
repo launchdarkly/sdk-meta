@@ -47,9 +47,13 @@
     "description": "Define callbacks that are executed by the SDK at various points of interest, usually for metrics or tracing.",
     "name": "Hooks"
   },
-  "inlineContextFeatureEvents": {
-    "description": "The SDK will inline the context inside feature events.",
-    "name": "Inline Context In Feature Events"
+  "inlineContextCustomEvents": {
+    "description": "The SDK will inline the context inside custom events.",
+    "name": "Inline Context In Custom Events"
+  },
+  "inlineContextEvaluationEvents": {
+    "description": "The SDK will inline the context inside evaluation events.",
+    "name": "Inline Context In Evaluation Events"
   },
   "migrations": {
     "description": "Configure how to read and write data for an old and new system, determine which stage of a migration the application is in, execute the correct read and write calls for each stage.",

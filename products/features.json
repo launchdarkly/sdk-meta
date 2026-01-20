@@ -5,5 +5,137 @@
       "introduced": "8.3",
       "removed": null
     }
+  },
+  "ruby-server-sdk": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "2.0.1",
+      "removed": null
+    },
+    "appMetadata": {
+      "deprecated": null,
+      "introduced": "6.4",
+      "removed": null
+    },
+    "bigSegments": {
+      "deprecated": null,
+      "introduced": "6.3",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "7.0",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "6.2",
+      "removed": null
+    },
+    "fileDataSource": {
+      "deprecated": null,
+      "introduced": "5.4.1",
+      "removed": null
+    },
+    "flagChanges": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "hooks": {
+      "deprecated": null,
+      "introduced": "8.4",
+      "removed": null
+    },
+    "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "8.9",
+      "removed": null
+    },
+    "inlineContextEvaluationEvents": {
+      "deprecated": null,
+      "introduced": "8.3",
+      "removed": null
+    },
+    "migrations": {
+      "deprecated": null,
+      "introduced": "8.0",
+      "removed": null
+    },
+    "offlineMode": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "omitAnonContexts": {
+      "deprecated": null,
+      "introduced": "8.6",
+      "removed": null
+    },
+    "otel": {
+      "deprecated": null,
+      "introduced": "8.4",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "relayProxyDaemon": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "relayProxyProxy": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "secureMode": {
+      "deprecated": null,
+      "introduced": "2.0.1",
+      "removed": null
+    },
+    "storingData": {
+      "deprecated": null,
+      "introduced": "2.3.1",
+      "removed": null
+    },
+    "storingDataConsul": {
+      "deprecated": null,
+      "introduced": "5.5",
+      "removed": null
+    },
+    "storingDataDynamodb": {
+      "deprecated": null,
+      "introduced": "5.5",
+      "removed": null
+    },
+    "storingDataRedis": {
+      "deprecated": null,
+      "introduced": "2.3.1",
+      "removed": null
+    },
+    "testDataSource": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "5.2",
+      "removed": null
+    },
+    "webProxy": {
+      "deprecated": null,
+      "introduced": "2.2.5",
+      "removed": null
+    }
   }
 }
