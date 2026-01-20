@@ -140,8 +140,9 @@ INSERT INTO sdk_feature_info (id, name, description) VALUES
     ('omitAnonContexts', 'Omit Anonymous Contexts from Events', 'Optionally omit anonymous contexts from events.'),
     ('eventCompression', 'Event Compression', 'Optionally support compressing event payloads sent to LaunchDarkly.'),
     ('pollingResponseCompression', 'Polling Response Compression', 'Supports receiving compressed polling responses.'),
-    ('inlineContextFeatureEvents', 'Inline Context In Feature Events', 'The SDK will inline the context inside feature events.'),
-    ('perContextSummaryEvents', 'Per-Context Summary Events', 'The SDK supports emitting a summary event per-context.');
+    ('inlineContextEvaluationEvents', 'Inline Context In Evaluation Events', 'The SDK will inline the context inside evaluation events.'),
+    ('perContextSummaryEvents', 'Per-Context Summary Events', 'The SDK supports emitting a summary event per-context.'),
+    ('inlineContextCustomEvents', 'Inline Context In Custom Events', 'The SDK will inline the context inside custom events.');
 
 INSERT INTO sdk_language_info (language) VALUES
     ('Apex'),
