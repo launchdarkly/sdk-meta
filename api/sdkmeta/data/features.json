@@ -6,6 +6,347 @@
       "removed": null
     }
   },
+  "go-server-sdk": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "appMetadata": {
+      "deprecated": null,
+      "introduced": "5.9",
+      "removed": null
+    },
+    "bigSegments": {
+      "deprecated": null,
+      "introduced": "5.5",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "6.0",
+      "removed": null
+    },
+    "eventCompression": {
+      "deprecated": null,
+      "introduced": "7.6",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "5.4",
+      "removed": null
+    },
+    "fileDataSource": {
+      "deprecated": null,
+      "introduced": "4.4",
+      "removed": null
+    },
+    "flagChanges": {
+      "deprecated": null,
+      "introduced": "5.0",
+      "removed": null
+    },
+    "hooks": {
+      "deprecated": null,
+      "introduced": "7.3",
+      "removed": null
+    },
+    "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "7.9",
+      "removed": null
+    },
+    "inlineContextEvaluationEvents": {
+      "deprecated": null,
+      "introduced": "7.1",
+      "removed": null
+    },
+    "migrations": {
+      "deprecated": null,
+      "introduced": "7.0",
+      "removed": null
+    },
+    "offlineMode": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "omitAnonContexts": {
+      "deprecated": null,
+      "introduced": "7.5",
+      "removed": null
+    },
+    "otel": {
+      "deprecated": null,
+      "introduced": "7.4",
+      "removed": null
+    },
+    "pluginSupport": {
+      "deprecated": null,
+      "introduced": "7.11",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "2.2.3",
+      "removed": null
+    },
+    "relayProxyDaemon": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "relayProxyProxy": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "secureMode": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "storingData": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "storingDataConsul": {
+      "deprecated": null,
+      "introduced": "4.5",
+      "removed": null
+    },
+    "storingDataDynamodb": {
+      "deprecated": null,
+      "introduced": "4.5",
+      "removed": null
+    },
+    "storingDataRedis": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "testDataSource": {
+      "deprecated": null,
+      "introduced": "5.0",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "4.3",
+      "removed": null
+    },
+    "webProxy": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    }
+  },
+  "haskell-server-sdk": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "appMetadata": {
+      "deprecated": null,
+      "introduced": "3.1",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "4.0",
+      "removed": null
+    },
+    "eventCompression": {
+      "deprecated": null,
+      "introduced": "4.4",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "2.2",
+      "removed": null
+    },
+    "fileDataSource": {
+      "deprecated": null,
+      "introduced": "3.0",
+      "removed": null
+    },
+    "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "4.5",
+      "removed": null
+    },
+    "inlineContextEvaluationEvents": {
+      "deprecated": null,
+      "introduced": "4.1",
+      "removed": null
+    },
+    "offlineMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "omitAnonContexts": {
+      "deprecated": null,
+      "introduced": "4.2",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "relayProxyDaemon": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "relayProxyProxy": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "secureMode": {
+      "deprecated": null,
+      "introduced": "4.0",
+      "removed": null
+    },
+    "storingData": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "storingDataRedis": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "testDataSource": {
+      "deprecated": null,
+      "introduced": "3.0",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    }
+  },
+  "php-server-sdk": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "1.6",
+      "removed": null
+    },
+    "appMetadata": {
+      "deprecated": null,
+      "introduced": "4.3",
+      "removed": null
+    },
+    "bigSegments": {
+      "deprecated": null,
+      "introduced": "6.4",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "5.0",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "4.1",
+      "removed": null
+    },
+    "fileDataSource": {
+      "deprecated": null,
+      "introduced": "3.5",
+      "removed": null
+    },
+    "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "6.5",
+      "removed": null
+    },
+    "migrations": {
+      "deprecated": null,
+      "introduced": "6.0",
+      "removed": null
+    },
+    "offlineMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "2.4",
+      "removed": null
+    },
+    "relayProxyDaemon": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "relayProxyProxy": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "secureMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "storingData": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "storingDataConsul": {
+      "deprecated": null,
+      "introduced": "3.5",
+      "removed": null
+    },
+    "storingDataDynamodb": {
+      "deprecated": null,
+      "introduced": "3.5",
+      "removed": null
+    },
+    "storingDataRedis": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "testDataSource": {
+      "deprecated": null,
+      "introduced": "4.2",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "3.4",
+      "removed": null
+    }
+  },
   "python-server-sdk": {
     "allFlags": {
       "deprecated": null,
@@ -158,6 +499,68 @@
       "removed": null
     }
   },
+  "roku": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "appMetadata": {
+      "deprecated": null,
+      "introduced": "1.3",
+      "removed": null
+    },
+    "bigSegments": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "2.4",
+      "removed": null
+    },
+    "inlineContextEvaluationEvents": {
+      "deprecated": null,
+      "introduced": "2.1",
+      "removed": null
+    },
+    "pollingResponseCompression": {
+      "deprecated": null,
+      "introduced": "2.3",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "relayProxyProxy": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    }
+  },
   "ruby-server-sdk": {
     "allFlags": {
       "deprecated": null,
@@ -287,6 +690,93 @@
     "webProxy": {
       "deprecated": null,
       "introduced": "2.2.5",
+      "removed": null
+    }
+  },
+  "rust-server-sdk": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "appMetadata": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "eventCompression": {
+      "deprecated": null,
+      "introduced": "2.4",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "2.6",
+      "removed": null
+    },
+    "inlineContextEvaluationEvents": {
+      "deprecated": null,
+      "introduced": "2.1",
+      "removed": null
+    },
+    "migrations": {
+      "deprecated": null,
+      "introduced": "2.2",
+      "removed": null
+    },
+    "offlineMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "omitAnonContexts": {
+      "deprecated": null,
+      "introduced": "2.2",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "relayProxyDaemon": {
+      "deprecated": null,
+      "introduced": "2.5",
+      "removed": null
+    },
+    "relayProxyProxy": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "secureMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "storingData": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "1.0",
       "removed": null
     }
   }
