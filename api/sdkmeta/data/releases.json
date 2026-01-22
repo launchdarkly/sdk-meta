@@ -4112,9 +4112,15 @@
   "swift-client-sdk": [
     {
       "major": 11,
+      "minor": 1,
+      "date": "2026-01-22T00:36:32Z",
+      "eol": null
+    },
+    {
+      "major": 11,
       "minor": 0,
       "date": "2026-01-15T22:30:13Z",
-      "eol": null
+      "eol": "2027-01-22T00:00:00Z"
     },
     {
       "major": 10,
