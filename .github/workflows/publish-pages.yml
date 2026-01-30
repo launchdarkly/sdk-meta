@@ -31,6 +31,17 @@ jobs:
           mkdir -p _site
           cp products/features.html _site/index.html
 
+      - name: Create gh-pages branch if it doesn't exist
+        run: |
+          if ! git ls-remote --exit-code --heads origin gh-pages; then
+            echo "Creating gh-pages branch..."
+            git checkout --orphan gh-pages
+            git reset --hard
+            git commit --allow-empty -m "Initialize gh-pages branch"
+            git push origin gh-pages
+            git checkout -
+          fi
+
       - name: Publish to GitHub Pages
         uses: launchdarkly/gh-actions/actions/publish-pages@publish-pages-v1.0.2
         with:
