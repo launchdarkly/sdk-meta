@@ -2,7 +2,7 @@ name: Publish GitHub Pages
 
 on:
   push:
-    branches: ['main', 'rlamb/feature-comparison-tool']
+    branches: ['rlamb/feature-comparison-tool']
     paths:
       - 'products/**'
       - 'tool/cmd/genhtml/**'
