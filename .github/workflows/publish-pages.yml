@@ -1,0 +1,38 @@
+name: Publish GitHub Pages
+
+on:
+  push:
+    branches: ['main', 'rlamb/feature-comparison-tool']
+    paths:
+      - 'products/**'
+      - 'tool/cmd/genhtml/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Generate HTML
+        run: |
+          cd tool && go run ./cmd/genhtml -output ../products/features.html -data ../products
+
+      - name: Prepare publish directory
+        run: |
+          mkdir -p _site
+          cp products/features.html _site/index.html
+
+      - name: Publish to GitHub Pages
+        uses: launchdarkly/gh-actions/actions/publish-pages@publish-pages-v1.0.2
+        with:
+          docs_path: _site
+          github_token: ${{ secrets.GITHUB_TOKEN }}

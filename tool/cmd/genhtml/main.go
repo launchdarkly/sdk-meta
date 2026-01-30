@@ -224,11 +224,44 @@ var htmlTemplate = `<!DOCTYPE html>
       --ld-purple: #405BFF;
       --ld-dark: #282828;
       --ld-light: #F5F5F5;
+      --bg-primary: #F5F5F5;
+      --bg-secondary: #FFFFFF;
+      --text-primary: #282828;
+      --text-secondary: #6C757D;
       --supported-green: #28A745;
       --deprecated-yellow: #FFC107;
       --removed-red: #DC3545;
       --not-supported-gray: #6C757D;
       --border-color: #DEE2E6;
+      --table-header-bg: #282828;
+      --table-header-text: #FFFFFF;
+      --row-hover: #f8f9fa;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-primary: #1a1a1a;
+        --bg-secondary: #2d2d2d;
+        --text-primary: #e0e0e0;
+        --text-secondary: #a0a0a0;
+        --border-color: #404040;
+        --table-header-bg: #1a1a1a;
+        --table-header-text: #e0e0e0;
+        --row-hover: #363636;
+        --not-supported-gray: #808080;
+      }
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #1a1a1a;
+      --bg-secondary: #2d2d2d;
+      --text-primary: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --border-color: #404040;
+      --table-header-bg: #1a1a1a;
+      --table-header-text: #e0e0e0;
+      --row-hover: #363636;
+      --not-supported-gray: #808080;
     }
 
     * {
@@ -239,8 +272,43 @@ var htmlTemplate = `<!DOCTYPE html>
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       margin: 0;
       padding: 20px;
-      background-color: var(--ld-light);
-      color: var(--ld-dark);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .header h1 {
+      margin: 0;
+      flex: 1;
+      text-align: center;
+    }
+
+    .theme-toggle {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 1.2em;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--ld-purple);
+    }
+
+    .theme-toggle .icon {
+      font-size: 1.1em;
     }
 
     h1 {
@@ -251,12 +319,12 @@ var htmlTemplate = `<!DOCTYPE html>
 
     .subtitle {
       text-align: center;
-      color: var(--not-supported-gray);
+      color: var(--text-secondary);
       margin-bottom: 30px;
     }
 
     section {
-      background: white;
+      background: var(--bg-secondary);
       border-radius: 8px;
       padding: 20px;
       margin-bottom: 30px;
@@ -264,7 +332,7 @@ var htmlTemplate = `<!DOCTYPE html>
     }
 
     h2 {
-      color: var(--ld-dark);
+      color: var(--text-primary);
       border-bottom: 2px solid var(--ld-purple);
       padding-bottom: 10px;
       margin-top: 0;
@@ -276,7 +344,7 @@ var htmlTemplate = `<!DOCTYPE html>
       gap: 10px;
       margin-bottom: 20px;
       padding: 15px;
-      background-color: var(--ld-light);
+      background-color: var(--bg-primary);
       border-radius: 6px;
     }
 
@@ -285,7 +353,7 @@ var htmlTemplate = `<!DOCTYPE html>
       align-items: center;
       gap: 5px;
       padding: 8px 12px;
-      background: white;
+      background: var(--bg-secondary);
       border: 1px solid var(--border-color);
       border-radius: 4px;
       cursor: pointer;
@@ -314,7 +382,7 @@ var htmlTemplate = `<!DOCTYPE html>
     .selection-info {
       width: 100%;
       font-size: 0.9em;
-      color: var(--not-supported-gray);
+      color: var(--text-secondary);
       margin-top: 5px;
     }
 
@@ -335,8 +403,8 @@ var htmlTemplate = `<!DOCTYPE html>
     }
 
     th {
-      background-color: var(--ld-dark);
-      color: white;
+      background-color: var(--table-header-bg);
+      color: var(--table-header-text);
       font-weight: 600;
       position: sticky;
       top: 0;
@@ -351,7 +419,7 @@ var htmlTemplate = `<!DOCTYPE html>
     }
 
     tr:hover {
-      background-color: #f8f9fa;
+      background-color: var(--row-hover);
     }
 
     .feature-name {
@@ -360,7 +428,7 @@ var htmlTemplate = `<!DOCTYPE html>
 
     .feature-description {
       font-size: 0.85em;
-      color: var(--not-supported-gray);
+      color: var(--text-secondary);
       margin-top: 4px;
     }
 
@@ -407,7 +475,7 @@ var htmlTemplate = `<!DOCTYPE html>
     .no-selection {
       text-align: center;
       padding: 40px;
-      color: var(--not-supported-gray);
+      color: var(--text-secondary);
     }
 
     @media (max-width: 768px) {
@@ -424,11 +492,26 @@ var htmlTemplate = `<!DOCTYPE html>
         padding: 8px 10px;
         font-size: 13px;
       }
+
+      .header h1 {
+        font-size: 1.3em;
+      }
+
+      .theme-toggle span:not(.icon) {
+        display: none;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>LaunchDarkly SDK Feature Comparison</h1>
+  <div class="header">
+    <div style="width: 100px;"></div>
+    <h1>LaunchDarkly SDK Feature Comparison</h1>
+    <button class="theme-toggle" id="theme-toggle" title="Toggle dark mode">
+      <span class="icon">🌙</span>
+      <span>Dark</span>
+    </button>
+  </div>
   <p class="subtitle">Select up to 3 SDKs in each section to compare their features</p>
 
   <section id="client-side">
@@ -563,16 +646,8 @@ var htmlTemplate = `<!DOCTYPE html>
         thead.innerHTML += ` + "`" + `<th class="sdk-col">${sdk.name}</th>` + "`" + `;
       });
 
-      // Collect all features from selected SDKs
-      const featuresSet = new Set();
-      sdks.forEach(sdk => {
-        if (sdkData[sdk.id]) {
-          Object.keys(sdkData[sdk.id]).forEach(f => featuresSet.add(f));
-        }
-      });
-
-      // Sort features alphabetically by display name
-      const features = Array.from(featuresSet).sort((a, b) => {
+      // Show all features from featureInfo
+      const features = Object.keys(featureInfo).sort((a, b) => {
         const nameA = featureInfo[a]?.name || a;
         const nameB = featureInfo[b]?.name || b;
         return nameA.localeCompare(nameB);
@@ -623,6 +698,59 @@ var htmlTemplate = `<!DOCTYPE html>
       html += '</span>';
       return html;
     }
+
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+
+    function updateToggleButton(isDark) {
+      const icon = themeToggle.querySelector('.icon');
+      const text = themeToggle.querySelector('span:not(.icon)');
+      if (isDark) {
+        icon.textContent = '☀️';
+        text.textContent = 'Light';
+      } else {
+        icon.textContent = '🌙';
+        text.textContent = 'Dark';
+      }
+    }
+
+    function getSystemTheme() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function getCurrentTheme() {
+      const stored = localStorage.getItem('theme');
+      if (stored) return stored;
+      return getSystemTheme();
+    }
+
+    function setTheme(theme) {
+      if (theme === 'dark') {
+        html.setAttribute('data-theme', 'dark');
+      } else {
+        html.setAttribute('data-theme', 'light');
+      }
+      localStorage.setItem('theme', theme);
+      updateToggleButton(theme === 'dark');
+    }
+
+    // Initialize theme
+    const initialTheme = getCurrentTheme();
+    setTheme(initialTheme);
+
+    // Toggle handler
+    themeToggle.addEventListener('click', () => {
+      const current = html.getAttribute('data-theme') || getSystemTheme();
+      setTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (!localStorage.getItem('theme')) {
+        setTheme(e.matches ? 'dark' : 'light');
+      }
+    });
   </script>
 </body>
 </html>
