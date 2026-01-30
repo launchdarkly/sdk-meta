@@ -3,9 +3,6 @@ name: Publish GitHub Pages
 on:
   push:
     branches: ['rlamb/feature-comparison-tool']
-    paths:
-      - 'products/**'
-      - 'tool/cmd/genhtml/**'
   workflow_dispatch:
 
 permissions:
