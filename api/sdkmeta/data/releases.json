@@ -3432,9 +3432,15 @@
   "relay-proxy": [
     {
       "major": 8,
+      "minor": 17,
+      "date": "2026-01-26T20:37:58Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 16,
       "date": "2025-11-21T17:10:16Z",
-      "eol": null
+      "eol": "2027-01-26T00:00:00Z"
     },
     {
       "major": 8,
@@ -3826,9 +3832,15 @@
   "ruby-server-sdk": [
     {
       "major": 8,
+      "minor": 12,
+      "date": "2026-01-30T22:44:16Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 11,
       "date": "2025-07-15T15:50:15Z",
-      "eol": null
+      "eol": "2027-01-30T00:00:00Z"
     },
     {
       "major": 8,

@@ -1,8 +1,382 @@
 {
+  "akamai-base": {
+    "contexts": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "migrations": {
+      "deprecated": null,
+      "introduced": "1.0.9",
+      "removed": null
+    }
+  },
+  "akamai-edgekv": {
+    "contexts": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "migrations": {
+      "deprecated": null,
+      "introduced": "1.0.9",
+      "removed": null
+    }
+  },
+  "apex-server-sdk": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "1.1",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "webProxy": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    }
+  },
+  "browser": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "appMetadata": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "bigSegments": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "bootstrapping": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "flagChanges": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "hooks": {
+      "deprecated": null,
+      "introduced": "0.3",
+      "removed": null
+    },
+    "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "0.3",
+      "removed": null
+    },
+    "pluginSupport": {
+      "deprecated": null,
+      "introduced": "0.4",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "relayProxyProxy": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "secureMode": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "cloudflare": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "2.3.0",
+      "removed": null
+    },
+    "migrations": {
+      "deprecated": null,
+      "introduced": "2.2.2",
+      "removed": null
+    },
+    "secureMode": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "2.3",
+      "removed": null
+    }
+  },
+  "combined-browser": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "appMetadata": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "bigSegments": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "bootstrapping": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "flagChanges": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "hooks": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "pluginSupport": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "relayProxyProxy": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "secureMode": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
   "dotnet-server-sdk": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "appMetadata": {
+      "deprecated": null,
+      "introduced": "8.0",
+      "removed": null
+    },
+    "bigSegments": {
+      "deprecated": null,
+      "introduced": "6.2",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "7.0",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "6.1",
+      "removed": null
+    },
+    "fdv2": {
+      "deprecated": null,
+      "introduced": "8.11",
+      "removed": null
+    },
+    "fileDataSource": {
+      "deprecated": null,
+      "introduced": "5.5",
+      "removed": null
+    },
+    "flagChanges": {
+      "deprecated": null,
+      "introduced": "6.0",
+      "removed": null
+    },
     "hooks": {
       "deprecated": null,
       "introduced": "8.3",
+      "removed": null
+    },
+    "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "8.8",
+      "removed": null
+    },
+    "migrations": {
+      "deprecated": null,
+      "introduced": "8.0",
+      "removed": null
+    },
+    "offlineMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "otel": {
+      "deprecated": null,
+      "introduced": "8.4",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "3.5",
+      "removed": null
+    },
+    "relayProxyDaemon": {
+      "deprecated": null,
+      "introduced": "5.2",
+      "removed": null
+    },
+    "relayProxyProxy": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "secureMode": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "storingData": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "testDataSource": {
+      "deprecated": null,
+      "introduced": "6.0",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "5.4",
+      "removed": null
+    },
+    "webProxy": {
+      "deprecated": null,
+      "introduced": "3.2",
+      "removed": null
+    }
+  },
+  "fastly": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "secureMode": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "0.1",
       "removed": null
     }
   },
@@ -240,6 +614,250 @@
       "removed": null
     },
     "variationDetail": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    }
+  },
+  "java-server-sdk": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "appMetadata": {
+      "deprecated": null,
+      "introduced": "5.8",
+      "removed": null
+    },
+    "bigSegments": {
+      "deprecated": null,
+      "introduced": "5.7",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "6.0",
+      "removed": null
+    },
+    "eventCompression": {
+      "deprecated": null,
+      "introduced": "7.9",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "5.5",
+      "removed": null
+    },
+    "fileDataSource": {
+      "deprecated": null,
+      "introduced": "4.5",
+      "removed": null
+    },
+    "flagChanges": {
+      "deprecated": null,
+      "introduced": "5.0",
+      "removed": null
+    },
+    "hooks": {
+      "deprecated": null,
+      "introduced": "7.4",
+      "removed": null
+    },
+    "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "7.8",
+      "removed": null
+    },
+    "migrations": {
+      "deprecated": null,
+      "introduced": "7.0",
+      "removed": null
+    },
+    "offlineMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "otel": {
+      "deprecated": null,
+      "introduced": "7.4",
+      "removed": null
+    },
+    "pluginSupport": {
+      "deprecated": null,
+      "introduced": "7.10",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "2.5",
+      "removed": null
+    },
+    "relayProxyDaemon": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "relayProxyProxy": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "secureMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "storingData": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "storingDataRedis": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "testDataSource": {
+      "deprecated": null,
+      "introduced": "5.1",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "4.3",
+      "removed": null
+    },
+    "webProxy": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    }
+  },
+  "node-server": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "3.0",
+      "removed": null
+    },
+    "appMetadata": {
+      "deprecated": null,
+      "introduced": "6.4",
+      "removed": null
+    },
+    "bigSegments": {
+      "deprecated": null,
+      "introduced": "6.2",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "7.0",
+      "removed": null
+    },
+    "eventCompression": {
+      "deprecated": null,
+      "introduced": "9.8",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "6.1",
+      "removed": null
+    },
+    "fdv2": {
+      "deprecated": null,
+      "introduced": "9.10",
+      "removed": null
+    },
+    "fileDataSource": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "flagChanges": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "hooks": {
+      "deprecated": null,
+      "introduced": "9.3",
+      "removed": null
+    },
+    "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "9.7.7",
+      "removed": null
+    },
+    "migrations": {
+      "deprecated": null,
+      "introduced": "9.0",
+      "removed": null
+    },
+    "offlineMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "otel": {
+      "deprecated": null,
+      "introduced": "9.3",
+      "removed": null
+    },
+    "pluginSupport": {
+      "deprecated": null,
+      "introduced": "9.10",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "3.3",
+      "removed": null
+    },
+    "relayProxyDaemon": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "relayProxyProxy": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "secureMode": {
+      "deprecated": null,
+      "introduced": "3.0",
+      "removed": null
+    },
+    "storingDataRedis": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "testDataSource": {
+      "deprecated": null,
+      "introduced": "6.3",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "5.4",
+      "removed": null
+    },
+    "webProxy": {
       "deprecated": null,
       "introduced": "1.0",
       "removed": null
@@ -496,6 +1114,90 @@
     "webProxy": {
       "deprecated": null,
       "introduced": "2.0",
+      "removed": null
+    }
+  },
+  "react-native": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "5.0.1",
+      "removed": null
+    },
+    "appMetadata": {
+      "deprecated": null,
+      "introduced": "7.0",
+      "removed": null
+    },
+    "autoEnvAttrs": {
+      "deprecated": null,
+      "introduced": "8.0",
+      "removed": null
+    },
+    "bigSegments": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "7.0",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "5.0",
+      "removed": null
+    },
+    "flagChanges": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "hooks": {
+      "deprecated": null,
+      "introduced": "10.0",
+      "removed": null
+    },
+    "multiEnv": {
+      "deprecated": null,
+      "introduced": "4.2.0",
+      "removed": null
+    },
+    "offlineMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "pluginSupport": {
+      "deprecated": null,
+      "introduced": "10.10",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "4.0",
+      "removed": null
+    },
+    "relayProxyProxy": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "4.1.2",
+      "removed": null
+    }
+  },
+  "react-universal": {
+    "contexts": {
+      "deprecated": null,
+      "introduced": "0.0.1",
       "removed": null
     }
   },
@@ -777,6 +1479,79 @@
     "variationDetail": {
       "deprecated": null,
       "introduced": "1.0",
+      "removed": null
+    }
+  },
+  "server-ai": {
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "shopify-oxygen": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "svelte": {
+    "contexts": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "vercel": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "1.2.0",
+      "removed": null
+    },
+    "secureMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "1.2",
       "removed": null
     }
   }

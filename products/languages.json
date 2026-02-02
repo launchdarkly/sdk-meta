@@ -14,7 +14,15 @@
   "apex-server-sdk": [
     "Apex"
   ],
+  "browser": [
+    "JavaScript",
+    "TypeScript"
+  ],
   "cloudflare": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "combined-browser": [
     "JavaScript",
     "TypeScript"
   ],
@@ -85,6 +93,10 @@
     "JavaScript",
     "TypeScript"
   ],
+  "react-universal": [
+    "JavaScript",
+    "TypeScript"
+  ],
   "relay-proxy": [
     "Go"
   ],
@@ -96,6 +108,18 @@
   ],
   "rust-server-sdk": [
     "Rust"
+  ],
+  "server-ai": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "shopify-oxygen": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "svelte": [
+    "JavaScript",
+    "TypeScript"
   ],
   "swift-client-sdk": [
     "Swift",

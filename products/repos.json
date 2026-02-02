@@ -11,7 +11,13 @@
   "apex-server-sdk": {
     "github": "launchdarkly/apex-server-sdk"
   },
+  "browser": {
+    "github": "launchdarkly/js-core"
+  },
   "cloudflare": {
+    "github": "launchdarkly/js-core"
+  },
+  "combined-browser": {
     "github": "launchdarkly/js-core"
   },
   "cpp-client-sdk": {
@@ -71,6 +77,9 @@
   "react-native": {
     "github": "launchdarkly/js-core"
   },
+  "react-universal": {
+    "github": "launchdarkly/js-core"
+  },
   "relay-proxy": {
     "github": "launchdarkly/ld-relay"
   },
@@ -82,6 +91,15 @@
   },
   "rust-server-sdk": {
     "github": "launchdarkly/rust-server-sdk"
+  },
+  "server-ai": {
+    "github": "launchdarkly/js-core"
+  },
+  "shopify-oxygen": {
+    "github": "launchdarkly/js-core"
+  },
+  "svelte": {
+    "github": "launchdarkly/js-core"
   },
   "swift-client-sdk": {
     "github": "launchdarkly/ios-client-sdk"
