@@ -13,6 +13,8 @@ export enum Type {
     ServerSide = "server-side",
     // Edge is an SDK that runs in an edge deployment scenario.
     Edge = "edge",
+    // AI is an SDK that is primarily focused on AI/ML use cases.
+    AI = "ai",
     // Relay is Relay Proxy.
     Relay = "relay",
     // Unknown if the SDK's type is not recognized.
