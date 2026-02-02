@@ -104,11 +104,16 @@ INSERT INTO sdk_popularity (id, popularity) VALUES
 INSERT INTO sdk_type_info (type, description) VALUES
                                               ('client-side', 'Primarily used for user-facing application.'),
                                               ('edge', 'Primarily used to delivery flag payloads to edge services.'),
+                                              ('ai', 'Used for AI/ML integrations.'),
                                               ('open-feature-provider', 'Used for OpenFeature providers.'),
                                               ('relay', 'Special case for Relay Proxy.'),
                                               ('server-side', 'Primarily used for server-side applications.');
 
 INSERT INTO sdk_feature_info (id, name, description) VALUES
+    ('aiAgentConfig', 'AI Agent Configuration', 'Use an autonomous agent to perform multi-step tasks. Agents use a combination of available tools and strategies to complete goals like analyzing data, generating reports, or triggering actions.'),
+    ('aiCompletionConfig', 'AI Completion Configuration', 'Send prompts to an LLM to generate a single response.'),
+    ('aiJudgeConfig', 'AI Judge Configuration', 'AI Configs automatically score responses using LLM-as-a-Judge, providing actionable data points for quality protection.'),
+    ('aiTrackMetrics', 'Tracking AI metrics', 'Collect and report metrics specific to AI/ML workloads and flag evaluations.'),
     ('allFlags', 'Generate bootstrap details', 'Return the flag variations for all feature flags for a given context.'),
     ('appMetadata', 'Application metadata', 'Specify application and application version information.'),
     ('autoEnvAttrs', 'Automatic environment attributes', 'Automatically include device and application data in each evaluated context.'),
