@@ -14,9 +14,19 @@
       "AndroidClient"
     ]
   },
+  "browser": {
+    "userAgents": [
+      "JSClient"
+    ]
+  },
   "cloudflare": {
     "userAgents": [
       "CloudflareEdgeSDK"
+    ]
+  },
+  "combined-browser": {
+    "userAgents": [
+      "JSClient"
     ]
   },
   "cpp-client-sdk": {
@@ -121,6 +131,11 @@
       "react-native-client"
     ]
   },
+  "react-universal": {
+    "userAgents": [
+      "ReactUniversalClient"
+    ]
+  },
   "relay-proxy": {
     "userAgents": [
       "LDRelay"
@@ -139,6 +154,21 @@
   "rust-server-sdk": {
     "userAgents": [
       "RustServerClient"
+    ]
+  },
+  "server-ai": {
+    "userAgents": [
+      "NodeJSAIClient"
+    ]
+  },
+  "shopify-oxygen": {
+    "userAgents": [
+      "ShopifyOxygenSDK"
+    ]
+  },
+  "svelte": {
+    "userAgents": [
+      "SvelteClient"
     ]
   },
   "swift-client-sdk": {

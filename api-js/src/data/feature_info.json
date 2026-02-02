@@ -1,4 +1,24 @@
 {
+  "aiAgentConfig": {
+    "description": "Use an autonomous agent to perform multi-step tasks. Agents use a combination of available tools and strategies to complete goals like analyzing data, generating reports, or triggering actions.",
+    "name": "AI Agent Configuration"
+  },
+  "aiAgentGraph": {
+    "description": "Define a graph of interconnected agents that can collaborate to achieve complex objectives.",
+    "name": "AI Agent Graph"
+  },
+  "aiCompletionConfig": {
+    "description": "Send prompts to an LLM to generate a single response.",
+    "name": "AI Completion Configuration"
+  },
+  "aiJudgeConfig": {
+    "description": "AI Configs automatically score responses using LLM-as-a-Judge, providing actionable data points for quality protection.",
+    "name": "AI Judge Configuration"
+  },
+  "aiTrackMetrics": {
+    "description": "Collect and report metrics specific to AI/ML workloads and flag evaluations.",
+    "name": "Tracking AI metrics"
+  },
   "allFlags": {
     "description": "Return the flag variations for all feature flags for a given context.",
     "name": "Generate bootstrap details"
