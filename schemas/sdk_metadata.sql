@@ -111,6 +111,7 @@ INSERT INTO sdk_type_info (type, description) VALUES
 
 INSERT INTO sdk_feature_info (id, name, description) VALUES
     ('aiAgentConfig', 'AI Agent Configuration', 'Use an autonomous agent to perform multi-step tasks. Agents use a combination of available tools and strategies to complete goals like analyzing data, generating reports, or triggering actions.'),
+    ('aiAgentGraph', 'AI Agent Graph', 'Define a graph of interconnected agents that can collaborate to achieve complex objectives.'),
     ('aiCompletionConfig', 'AI Completion Configuration', 'Send prompts to an LLM to generate a single response.'),
     ('aiJudgeConfig', 'AI Judge Configuration', 'AI Configs automatically score responses using LLM-as-a-Judge, providing actionable data points for quality protection.'),
     ('aiTrackMetrics', 'Tracking AI metrics', 'Collect and report metrics specific to AI/ML workloads and flag evaluations.'),
