@@ -1,0 +1,225 @@
+ Here is some raw HTML. It consists of some headers (which are SDK_IDs) and rows (which are FEATURE_NAMEs, with
+ associated version values.)
+
+ I want to extract all the data into a clean csv format.
+
+For example, under the [Electron] header, the values for the features are:
+Bootstrapping = 1.0
+Experimentation = 1.0
+Flag evaluation reasons=1.5.7
+
+and so on.
+
+The resulting part of hte CSV would look like
+
+sdk,feature,version
+electron,bootstrapping,1.0
+electron,experimentation,1.0
+electron,flag evaluation reasons,1.5.7
+
+Data begins here:
+
+<Table>
+  <TableHeader>
+    <TableHeadCell>Feature</TableHeadCell>
+    <TableHeadCell>[Electron](/sdk/client-side/electron)</TableHeadCell>
+    <TableHeadCell>[JavaScript](/sdk/client-side/javascript)</TableHeadCell>
+    <TableHeadCell>[Node.js](/sdk/client-side/node-js)</TableHeadCell>
+    <TableHeadCell>[React Native](/sdk/client-side/react/react-native)</TableHeadCell>
+    <TableHeadCell>[React Web](/sdk/client-side/react/react-web)</TableHeadCell>
+    <TableHeadCell>[Vue](/sdk/client-side/vue)</TableHeadCell>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>[Application metadata](/sdk/features/app-config)</TableCell>
+      <TableCell></TableCell>
+      <TableCell>2.22</TableCell>
+      <TableCell>3.0</TableCell>
+      <TableCell>7.0</TableCell>
+      <TableCell>2.26</TableCell>
+      <TableCell></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Automatic environment attributes](/sdk/features/environment-attributes)</TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell>8.0</TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Big segments](/sdk/features/big-segments)</TableCell>
+      <TableCell>All</TableCell>
+      <TableCell>All</TableCell>
+      <TableCell>All</TableCell>
+      <TableCell>All</TableCell>
+      <TableCell>All</TableCell>
+      <TableCell>All</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Bootstrapping](/sdk/features/bootstrapping)</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell>2.5</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell></TableCell>
+      <TableCell>2.9.5</TableCell>
+      <TableCell></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Contexts and context kinds](/sdk/features/user-context-config)</TableCell>
+      <TableCell></TableCell>
+      <TableCell>3.0</TableCell>
+      <TableCell>3.0</TableCell>
+      <TableCell>7.0</TableCell>
+      <TableCell>3.0</TableCell>
+      <TableCell>2.0</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Experimentation](/home/experimentation)</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell>2.6</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell>5.0</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell>1.0</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Flag evaluation reasons](/sdk/features/evaluation-reasons)</TableCell>
+      <TableCell>1.5.7</TableCell>
+      <TableCell>2.72</TableCell>
+      <TableCell>2.0</TableCell>
+      <TableCell>4.1.2</TableCell>
+      <TableCell>2.21</TableCell>
+      <TableCell>1.0</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Getting all flags](/sdk/features/all-flags)</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell>5.0.1</TableCell>
+      <TableCell>2.9</TableCell>
+      <TableCell></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Migration flags](/sdk/features/migrations)</TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Multiple environments](/sdk/features/multiple-environments)</TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell>4.2.0</TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Offline mode](/sdk/features/offline-mode)</TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Private attributes](/sdk/features/private-attributes)</TableCell>
+      <TableCell>1.0.1</TableCell>
+      <TableCell>2.9.4</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell>4.0</TableCell>
+      <TableCell>2.9</TableCell>
+      <TableCell>1.0</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Reading flags from a file](/sdk/features/flags-from-files)</TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Relay Proxy in daemon mode](/sdk/features/relay-proxy-configuration/daemon-mode)</TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Relay Proxy in proxy mode](/sdk/features/relay-proxy-configuration/proxy-mode)</TableCell>
+      <TableCell>1.5.6</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell>2.20.2</TableCell>
+      <TableCell></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Secure mode](/sdk/features/secure-mode)</TableCell>
+      <TableCell>1.5</TableCell>
+      <TableCell>2.17</TableCell>
+      <TableCell>1.4</TableCell>
+      <TableCell></TableCell>
+      <TableCell>2.18</TableCell>
+      <TableCell></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Sending custom events](/sdk/features/events)</TableCell>
+      <TableCell>1.1.4</TableCell>
+      <TableCell>1.6.2</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Storing data](/sdk/features/storing-data)</TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Subscribing to flag changes](/sdk/features/flag-changes)</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell>1.0</TableCell>
+      <TableCell>2.9</TableCell>
+      <TableCell></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Test data sources](/sdk/features/test-data-sources)</TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>[Web proxy configuration](/sdk/features/web-proxy)</TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+      <TableCell></TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+The CSV is as follows:
