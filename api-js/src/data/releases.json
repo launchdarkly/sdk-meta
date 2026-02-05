@@ -319,6 +319,14 @@
       "eol": "2022-07-21T00:00:00Z"
     }
   ],
+  "browser": [
+    {
+      "major": 4,
+      "minor": 0,
+      "date": "2026-02-04T20:06:26Z",
+      "eol": null
+    }
+  ],
   "cloudflare": [
     {
       "major": 2,
