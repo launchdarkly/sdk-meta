@@ -1,0 +1,49 @@
+name: Publish GitHub Pages
+
+on:
+  push:
+    branches: ['main', 'rlamb/feature-comparison-tool']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # actions/checkout@v4.3.1
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Set up Go
+        # actions/setup-go@v5.6.0
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: '1.22'
+
+      - name: Generate HTML
+        run: |
+          cd tool && go run ./cmd/genhtml -output ../products/features.html -data ../products
+
+      - name: Prepare publish directory
+        run: |
+          mkdir -p _site
+          cp products/features.html _site/index.html
+
+      - name: Create gh-pages branch if it doesn't exist
+        run: |
+          if ! git ls-remote --exit-code --heads origin gh-pages; then
+            echo "Creating gh-pages branch..."
+            git checkout --orphan gh-pages
+            git reset --hard
+            git commit --allow-empty -m "Initialize gh-pages branch"
+            git push origin gh-pages
+            git checkout -
+          fi
+
+      - name: Publish to GitHub Pages
+        # launchdarkly/gh-actions/actions/publish-pages@publish-pages-v1.0.2
+        uses: launchdarkly/gh-actions/actions/publish-pages@f87da03e3413ce472ac621025890774ce725e373
+        with:
+          docs_path: _site
+          github_token: ${{ secrets.GITHUB_TOKEN }}

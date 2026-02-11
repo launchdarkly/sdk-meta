@@ -2,3 +2,4 @@
 tool/test.sqlite3
 metadata.sqlite3.new
 tool/ingest
+products/features.html
