@@ -43,6 +43,30 @@ clone the repo, check-in an `.sdk_metadata.json` file, and create a PR.
 
 Some of the tooling lives in a [Go module](./tool) because it's too complex for a shell script.
 
+### SDK Feature Comparison Tool
+
+Can be found on Github Pages [here](https://launchdarkly.github.io/sdk-meta/).
+
+This repo includes an interactive web-based tool for comparing LaunchDarkly SDK features. The tool provides two complementary views:
+
+**By SDK View** (`by-sdk.html`):
+- Select up to 3 SDKs (client-side or server-side)
+- View all features supported by the selected SDKs
+- Compare feature availability and version information side-by-side
+
+**By Feature View** (`by-feature.html`):
+- Select up to 5 features
+- View which SDKs support the selected features
+- Compare version information across all SDKs
+
+**Generating the comparison pages:**
+```bash
+make html
+```
+
+This generates both HTML files in the `_sites_/` directory. The pages are automatically deployed to GitHub Pages when changes are pushed to the main branch.
+
+
 ## versioning policy
 
 The JSON products have an implicit 'v1' version at this time.
