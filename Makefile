@@ -15,8 +15,11 @@ products: #! Generate all the JSON products
 	./scripts/generate-products.sh
 
 .PHONY: html
-html: #! Generate SDK features HTML comparison page
-	cd tool && go run ./cmd/genhtml -output ../products/features.html -data ../products
+html: #! Generate SDK features HTML comparison pages (both views)
+	mkdir -p _site
+	cd tool && go run ./cmd/genhtml --view=by-sdk --output ../_site/by-sdk.html --data ../products
+	cd tool && go run ./cmd/genhtml --view=by-feature --output ../_site/by-feature.html --data ../products
+	cp _site/by-sdk.html _site/index.html
 
 .PHONY: all
 all: crawl products html

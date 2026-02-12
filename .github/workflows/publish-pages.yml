@@ -2,7 +2,7 @@ name: Publish GitHub Pages
 
 on:
   push:
-    branches: ['main', 'rlamb/feature-comparison-tool']
+    branches: ['main']
   workflow_dispatch:
 
 permissions:
@@ -21,14 +21,8 @@ jobs:
         with:
           go-version: '1.22'
 
-      - name: Generate HTML
-        run: |
-          cd tool && go run ./cmd/genhtml -output ../products/features.html -data ../products
-
-      - name: Prepare publish directory
-        run: |
-          mkdir -p _site
-          cp products/features.html _site/index.html
+      - name: Generate HTML pages
+        run: make html
 
       - name: Create gh-pages branch if it doesn't exist
         run: |
