@@ -22,7 +22,7 @@ runs:
         ssm_parameter_pairs: '/production/common/releasing/npm/token = NODE_AUTH_TOKEN'
     - name: 'Publish to NPM'
       env:
-        LD_RELEASE_IS_PRERELEASE: ${{ inputs.prelease }}
+        LD_RELEASE_IS_PRERELEASE: ${{ inputs.prerelease }}
         LD_RELEASE_IS_DRYRUN: ${{ inputs.dry_run }}
       shell: bash
       run: |
