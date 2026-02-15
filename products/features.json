@@ -353,6 +353,88 @@
       "removed": null
     }
   },
+  "erlang-server-sdk": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "appMetadata": {
+      "deprecated": null,
+      "introduced": "1.6",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "1.2",
+      "removed": null
+    },
+    "fileDataSource": {
+      "deprecated": null,
+      "introduced": "1.2",
+      "removed": null
+    },
+    "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "3.7",
+      "removed": null
+    },
+    "inlineContextEvaluationEvents": {
+      "deprecated": null,
+      "introduced": "3.2",
+      "removed": null
+    },
+    "offlineMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "relayProxyDaemon": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "relayProxyProxy": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "storingData": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "storingDataRedis": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "testDataSource": {
+      "deprecated": null,
+      "introduced": "1.4",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    }
+  },
   "fastly": {
     "allFlags": {
       "deprecated": null,
