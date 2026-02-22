@@ -328,9 +328,15 @@
   "browser": [
     {
       "major": 4,
+      "minor": 1,
+      "date": "2026-02-19T17:55:36Z",
+      "eol": null
+    },
+    {
+      "major": 4,
       "minor": 0,
       "date": "2026-02-04T20:06:26Z",
-      "eol": null
+      "eol": "2027-02-19T00:00:00Z"
     }
   ],
   "cloudflare": [
