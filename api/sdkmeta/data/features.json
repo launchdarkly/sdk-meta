@@ -1,25 +1,65 @@
 {
   "akamai-base": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
     "contexts": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "experimentation": {
       "deprecated": null,
       "introduced": "1.0",
       "removed": null
     },
     "migrations": {
       "deprecated": null,
-      "introduced": "1.0.9",
+      "introduced": "2.0",
+      "removed": null
+    },
+    "secureMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "1.0",
       "removed": null
     }
   },
   "akamai-edgekv": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
     "contexts": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "experimentation": {
       "deprecated": null,
       "introduced": "1.0",
       "removed": null
     },
     "migrations": {
       "deprecated": null,
-      "introduced": "1.0.9",
+      "introduced": "1.0.8",
+      "removed": null
+    },
+    "secureMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "1.0",
       "removed": null
     }
   },
