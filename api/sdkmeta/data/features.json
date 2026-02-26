@@ -1260,6 +1260,11 @@
       "introduced": "1.0",
       "removed": null
     },
+    "bootstrapping": {
+      "deprecated": null,
+      "introduced": "10.13",
+      "removed": null
+    },
     "contexts": {
       "deprecated": null,
       "introduced": "7.0",
