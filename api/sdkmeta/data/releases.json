@@ -714,9 +714,15 @@
   "dotnet-client-sdk": [
     {
       "major": 5,
+      "minor": 6,
+      "date": "2026-03-03T19:34:12Z",
+      "eol": null
+    },
+    {
+      "major": 5,
       "minor": 5,
       "date": "2025-06-02T16:49:14Z",
-      "eol": null
+      "eol": "2027-03-03T00:00:00Z"
     },
     {
       "major": 5,
