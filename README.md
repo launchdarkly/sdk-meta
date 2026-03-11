@@ -67,6 +67,56 @@ make html
 This generates both HTML files in the `_sites_/` directory. The pages are automatically deployed to GitHub Pages when changes are pushed to the main branch.
 
 
+## backfill
+
+The `backfill/` directory contains metadata files that supplement the main crawl. Each file is named
+`<org>_<repo>.json` (e.g., `launchdarkly_java-server-sdk.json`), and the filename determines which
+GitHub repo is queried for releases.
+
+There are two types of backfill files:
+
+### Old-repo backfill (default)
+
+Used when an SDK has migrated from a standalone repo to a monorepo. The backfill file references the
+**old** repo to capture historical releases that used simple unprefixed tags (e.g., `7.7.0`). The new
+monorepo's `.sdk_metadata.json` uses a `tag-prefix` to capture new releases (e.g.,
+`launchdarkly-java-server-sdk-7.8.0`).
+
+When the main crawl encounters a repo that has a backfill file, it **skips** that repo — since the
+old repo's metadata is no longer authoritative.
+
+Example (`backfill/launchdarkly_java-server-sdk.json`):
+```json
+{
+  "version": 1,
+  "sdks": {
+    "java-server-sdk": {}
+  }
+}
+```
+
+### Same-repo backfill (`"same-repo": true`)
+
+Used when a repo changed its tag format (e.g., from `3.3.2` to `launchdarkly-react-client-sdk-v3.4.0`)
+without migrating to a different repo. The backfill file references the **same** repo to capture the
+old unprefixed releases, while the repo's `.sdk_metadata.json` uses a `tag-prefix` to capture the
+new prefixed releases.
+
+Setting `"same-repo": true` tells the crawl that this repo is still the canonical home for the SDK.
+The main crawl will **still process** this repo (rather than skipping it), so that full metadata and
+prefixed releases are also ingested.
+
+Example (`backfill/launchdarkly_java-core.json`):
+```json
+{
+  "same-repo": true,
+  "version": 1,
+  "sdks": {
+    "java-server-sdk": {}
+  }
+}
+```
+
 ## versioning policy
 
 The JSON products have an implicit 'v1' version at this time.
