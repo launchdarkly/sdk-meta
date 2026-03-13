@@ -16,8 +16,9 @@ const supportWindowYears = 1
 
 // Raw is the raw tag data returned from the github GraphQL releases query.
 type Raw struct {
-	Tag  string `graphql:"tagName"`
-	Date string `graphql:"publishedAt"`
+	Tag     string `graphql:"tagName"`
+	Date    string `graphql:"publishedAt"`
+	IsDraft bool   `graphql:"isDraft"`
 }
 
 // Parsed is the post-processed version of a Raw structure, with the version extracted and date
@@ -159,6 +160,9 @@ func Filter(releases []Raw, prefix string) ([]Parsed, error) {
 
 	var processed []Parsed
 	for _, r := range releases {
+		if r.IsDraft || r.Date == "" {
+			continue
+		}
 		if !parser.Relevant(r.Tag) {
 			continue
 		}

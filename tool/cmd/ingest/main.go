@@ -249,7 +249,7 @@ func insertName(tx *sql.Tx, id string, metadata *metadataV1) error {
 }
 
 func insertRepo(tx *sql.Tx, id string, repo string) error {
-	stmt, err := tx.Prepare("INSERT INTO sdk_repos (id, github) VALUES (?, ?)")
+	stmt, err := tx.Prepare("INSERT INTO sdk_repos (id, github) VALUES (?, ?) ON CONFLICT DO NOTHING")
 	if err != nil {
 		return err
 	}
