@@ -141,6 +141,11 @@
       "introduced": "0.3",
       "removed": null
     },
+    "perContextSummaryEvents": {
+      "deprecated": null,
+      "introduced": "0.7",
+      "removed": null
+    },
     "pluginSupport": {
       "deprecated": null,
       "introduced": "0.4",
@@ -246,6 +251,11 @@
       "removed": null
     },
     "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "perContextSummaryEvents": {
       "deprecated": null,
       "introduced": "0.1",
       "removed": null
@@ -939,6 +949,11 @@
       "introduced": "9.10",
       "removed": null
     },
+    "pollingResponseCompression": {
+      "deprecated": null,
+      "introduced": "9.2",
+      "removed": null
+    },
     "privateAttrs": {
       "deprecated": null,
       "introduced": "3.3",
@@ -957,6 +972,11 @@
     "secureMode": {
       "deprecated": null,
       "introduced": "3.0",
+      "removed": null
+    },
+    "storingDataDynamodb": {
+      "deprecated": null,
+      "introduced": "5.6",
       "removed": null
     },
     "storingDataRedis": {
@@ -1295,6 +1315,11 @@
       "introduced": "1.0",
       "removed": null
     },
+    "perContextSummaryEvents": {
+      "deprecated": null,
+      "introduced": "10.10.1",
+      "removed": null
+    },
     "pluginSupport": {
       "deprecated": null,
       "introduced": "10.10",
@@ -1610,9 +1635,19 @@
     }
   },
   "server-ai": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.11",
+      "removed": null
+    },
     "aiCompletionConfig": {
       "deprecated": null,
       "introduced": "0.1",
+      "removed": null
+    },
+    "aiJudgeConfig": {
+      "deprecated": null,
+      "introduced": "0.14",
       "removed": null
     },
     "aiTrackMetrics": {
