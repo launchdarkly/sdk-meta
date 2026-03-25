@@ -22,10 +22,6 @@
     "JavaScript",
     "TypeScript"
   ],
-  "combined-browser": [
-    "JavaScript",
-    "TypeScript"
-  ],
   "cpp-client-sdk": [
     "C++",
     "C"
@@ -85,15 +81,15 @@
   "python-server-sdk": [
     "Python"
   ],
+  "react": [
+    "JavaScript",
+    "TypeScript"
+  ],
   "react-client-sdk": [
     "JavaScript",
     "TypeScript"
   ],
   "react-native": [
-    "JavaScript",
-    "TypeScript"
-  ],
-  "react-universal": [
     "JavaScript",
     "TypeScript"
   ],
