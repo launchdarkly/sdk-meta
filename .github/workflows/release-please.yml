@@ -9,6 +9,9 @@ on:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     outputs:
       package-api-js-released: ${{ steps.release.outputs['api-js--release_created'] }}
     steps:
