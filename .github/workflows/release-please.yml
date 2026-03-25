@@ -9,6 +9,9 @@ on:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     outputs:
       package-api-js-released: ${{ steps.release.outputs['api-js--release_created'] }}
     steps:
@@ -23,7 +26,6 @@ jobs:
     permissions:
       id-token: write
       contents: write
-      pull-requests: write
     if: ${{ needs.release-please.outputs.package-api-js-released == 'true' }}
     steps:
       - uses: actions/checkout@v4
