@@ -24,11 +24,6 @@
       "CloudflareEdgeSDK"
     ]
   },
-  "combined-browser": {
-    "userAgents": [
-      "JSClient"
-    ]
-  },
   "cpp-client-sdk": {
     "userAgents": [
       "CPPClient"
@@ -118,6 +113,11 @@
       "PythonClient"
     ]
   },
+  "react": {
+    "wrapperNames": [
+      "react-client-sdk"
+    ]
+  },
   "react-client-sdk": {
     "wrapperNames": [
       "react-client-sdk"
@@ -129,11 +129,6 @@
     ],
     "wrapperNames": [
       "react-native-client"
-    ]
-  },
-  "react-universal": {
-    "userAgents": [
-      "ReactUniversalClient"
     ]
   },
   "relay-proxy": {

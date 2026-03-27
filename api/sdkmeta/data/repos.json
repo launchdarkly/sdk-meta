@@ -17,9 +17,6 @@
   "cloudflare": {
     "github": "launchdarkly/js-core"
   },
-  "combined-browser": {
-    "github": "launchdarkly/js-core"
-  },
   "cpp-client-sdk": {
     "github": "launchdarkly/cpp-sdks"
   },
@@ -71,13 +68,13 @@
   "python-server-sdk": {
     "github": "launchdarkly/python-server-sdk"
   },
+  "react": {
+    "github": "launchdarkly/js-core"
+  },
   "react-client-sdk": {
     "github": "launchdarkly/react-client-sdk"
   },
   "react-native": {
-    "github": "launchdarkly/js-core"
-  },
-  "react-universal": {
     "github": "launchdarkly/js-core"
   },
   "relay-proxy": {

@@ -63,6 +63,98 @@
       "removed": null
     }
   },
+  "android": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "appMetadata": {
+      "deprecated": null,
+      "introduced": "3.6",
+      "removed": null
+    },
+    "autoEnvAttrs": {
+      "deprecated": null,
+      "introduced": "5.0",
+      "removed": null
+    },
+    "bigSegments": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "4.0",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "2.9",
+      "removed": null
+    },
+    "flagChanges": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "hooks": {
+      "deprecated": null,
+      "introduced": "5.8",
+      "removed": null
+    },
+    "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "5.7",
+      "removed": null
+    },
+    "multiEnv": {
+      "deprecated": null,
+      "introduced": "2.6",
+      "removed": null
+    },
+    "offlineMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "perContextSummaryEvents": {
+      "deprecated": null,
+      "introduced": "5.11.0",
+      "removed": null
+    },
+    "pluginSupport": {
+      "deprecated": null,
+      "introduced": "5.9",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "2.2",
+      "removed": null
+    },
+    "relayProxyProxy": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "testDataSource": {
+      "deprecated": null,
+      "introduced": "4.0",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "2.7",
+      "removed": null
+    }
+  },
   "apex-server-sdk": {
     "allFlags": {
       "deprecated": null,
@@ -206,88 +298,6 @@
     "track": {
       "deprecated": null,
       "introduced": "2.3",
-      "removed": null
-    }
-  },
-  "combined-browser": {
-    "allFlags": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "appMetadata": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "bigSegments": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "bootstrapping": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "contexts": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "experimentation": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "flagChanges": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "hooks": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "inlineContextCustomEvents": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "perContextSummaryEvents": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "pluginSupport": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "privateAttrs": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "relayProxyProxy": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "secureMode": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "track": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "variationDetail": {
-      "deprecated": null,
-      "introduced": "0.1",
       "removed": null
     }
   },
@@ -1151,6 +1161,135 @@
       "removed": null
     }
   },
+  "lua-server-sdk": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "appMetadata": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "2.0",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "2.1.3",
+      "removed": null
+    },
+    "offlineMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "relayProxyDaemon": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "relayProxyProxy": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "storingData": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "storingDataRedis": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    }
+  },
+  "node-client-sdk": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "appMetadata": {
+      "deprecated": null,
+      "introduced": "2.0.4",
+      "removed": null
+    },
+    "bigSegments": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "bootstrapping": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "3.0",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "1.1",
+      "removed": null
+    },
+    "flagChanges": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "relayProxyProxy": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "secureMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    }
+  },
   "node-server": {
     "allFlags": {
       "deprecated": null,
@@ -1537,6 +1676,13 @@
       "removed": null
     }
   },
+  "react": {
+    "contexts": {
+      "deprecated": null,
+      "introduced": "0.0.1",
+      "removed": null
+    }
+  },
   "react-client-sdk": {
     "allFlags": {
       "deprecated": null,
@@ -1698,13 +1844,6 @@
     "variationDetail": {
       "deprecated": null,
       "introduced": "4.1.2",
-      "removed": null
-    }
-  },
-  "react-universal": {
-    "contexts": {
-      "deprecated": null,
-      "introduced": "0.0.1",
       "removed": null
     }
   },
@@ -2042,6 +2181,98 @@
     "contexts": {
       "deprecated": null,
       "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "swift-client-sdk": {
+    "allFlags": {
+      "deprecated": null,
+      "introduced": "4.0",
+      "removed": null
+    },
+    "appMetadata": {
+      "deprecated": null,
+      "introduced": "6.2.0",
+      "removed": null
+    },
+    "autoEnvAttrs": {
+      "deprecated": null,
+      "introduced": "9.0",
+      "removed": null
+    },
+    "bigSegments": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "contexts": {
+      "deprecated": null,
+      "introduced": "8.0",
+      "removed": null
+    },
+    "eventCompression": {
+      "deprecated": null,
+      "introduced": "9.9.0",
+      "removed": null
+    },
+    "experimentation": {
+      "deprecated": null,
+      "introduced": "4.3.0",
+      "removed": null
+    },
+    "flagChanges": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "hooks": {
+      "deprecated": null,
+      "introduced": "9.7.0",
+      "removed": null
+    },
+    "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "9.13",
+      "removed": null
+    },
+    "multiEnv": {
+      "deprecated": null,
+      "introduced": "5.0",
+      "removed": null
+    },
+    "offlineMode": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "perContextSummaryEvents": {
+      "deprecated": null,
+      "introduced": "10.2.0",
+      "removed": null
+    },
+    "pluginSupport": {
+      "deprecated": null,
+      "introduced": "9.14",
+      "removed": null
+    },
+    "privateAttrs": {
+      "deprecated": null,
+      "introduced": "2.10",
+      "removed": null
+    },
+    "relayProxyProxy": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "track": {
+      "deprecated": null,
+      "introduced": "1.0",
+      "removed": null
+    },
+    "variationDetail": {
+      "deprecated": null,
+      "introduced": "4.3",
       "removed": null
     }
   },
