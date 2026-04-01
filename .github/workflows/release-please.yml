@@ -39,12 +39,6 @@ jobs:
     if: ${{ needs.release-please.outputs.package-api-js-released == 'true' }}
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24.x
-          registry-url: 'https://registry.npmjs.org'
-
       - uses: ./.github/actions/publish-npm
         with:
           prerelease: 'false'
@@ -58,12 +52,6 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24.x
-          registry-url: 'https://registry.npmjs.org'
-
       - uses: ./.github/actions/publish-npm
         with:
           prerelease: ${{ inputs.prerelease }}
