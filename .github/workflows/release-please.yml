@@ -45,11 +45,6 @@ jobs:
           node-version: 24.x
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Update NPM
-        shell: bash
-        # Must be greater than 11.5.1 for OIDC.
-        run: npm install -g npm@11.6.2
-
       - uses: ./.github/actions/publish-npm
         with:
           prerelease: 'false'
@@ -68,11 +63,6 @@ jobs:
         with:
           node-version: 24.x
           registry-url: 'https://registry.npmjs.org'
-
-      - name: Update NPM
-        shell: bash
-        # Must be greater than 11.5.1 for OIDC.
-        run: npm install -g npm@11.6.2
 
       - uses: ./.github/actions/publish-npm
         with:
