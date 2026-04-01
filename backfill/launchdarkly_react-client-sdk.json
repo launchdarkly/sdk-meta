@@ -1,7 +1,6 @@
 {
-  "same-repo": true,
   "version": 1,
   "sdks": {
-    "react-client-sdk": {}
+    "react": {}
   }
 }
