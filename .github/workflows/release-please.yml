@@ -5,9 +5,19 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Whether to run the release in dry-run mode. If so, then the package will not be published.'
+        type: boolean
+        required: true
+      prerelease:
+        description: 'Whether this is a prerelease. If so, then the latest tag will not be updated in npm.'
+        type: boolean
+        required: true
 
 jobs:
   release-please:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -29,8 +39,42 @@ jobs:
     if: ${{ needs.release-please.outputs.package-api-js-released == 'true' }}
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Update NPM
+        shell: bash
+        # Must be greater than 11.5.1 for OIDC.
+        run: npm install -g npm@11.6.2
+
       - uses: ./.github/actions/publish-npm
         with:
-          prerelease: false
-          dry_run: false
-          aws_assume_role: ${{ vars.AWS_ROLE_ARN }}
+          prerelease: 'false'
+          dry_run: 'false'
+
+  manual-publish:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Update NPM
+        shell: bash
+        # Must be greater than 11.5.1 for OIDC.
+        run: npm install -g npm@11.6.2
+
+      - uses: ./.github/actions/publish-npm
+        with:
+          prerelease: ${{ inputs.prerelease }}
+          dry_run: ${{ inputs.dry_run }}
