@@ -22,7 +22,6 @@
   "node-server": "Node.js Server SDK",
   "php-server-sdk": "PHP SDK",
   "python-server-sdk": "Python Server SDK",
-  "react": "React SDK",
   "react-client-sdk": "React Web SDK",
   "react-native": "React Native SDK",
   "relay-proxy": "Relay Proxy",

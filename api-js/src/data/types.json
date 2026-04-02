@@ -22,7 +22,6 @@
   "node-server": "server-side",
   "php-server-sdk": "server-side",
   "python-server-sdk": "server-side",
-  "react": "client-side",
   "react-client-sdk": "client-side",
   "react-native": "client-side",
   "relay-proxy": "relay",

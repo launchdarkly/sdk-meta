@@ -113,11 +113,6 @@
       "PythonClient"
     ]
   },
-  "react": {
-    "wrapperNames": [
-      "react-client-sdk"
-    ]
-  },
   "react-client-sdk": {
     "wrapperNames": [
       "react-client-sdk"

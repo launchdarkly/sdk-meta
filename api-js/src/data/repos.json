@@ -68,11 +68,8 @@
   "python-server-sdk": {
     "github": "launchdarkly/python-server-sdk"
   },
-  "react": {
-    "github": "launchdarkly/js-core"
-  },
   "react-client-sdk": {
-    "github": "launchdarkly/react-client-sdk"
+    "github": "launchdarkly/js-core"
   },
   "react-native": {
     "github": "launchdarkly/js-core"
