@@ -35,7 +35,8 @@ type metadataV1 struct {
 	} `json:"releases"`
 }
 func (m *metadataV1) effectivePrefixes() []string {
-	prefixes := m.Releases.TagPrefixes
+	var prefixes []string
+	prefixes = append(prefixes, m.Releases.TagPrefixes...)
 	if m.Releases.TagPrefix != "" {
 		prefixes = append(prefixes, m.Releases.TagPrefix)
 	}
