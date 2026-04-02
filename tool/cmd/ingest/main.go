@@ -30,9 +30,23 @@ type metadataV1 struct {
 		Removed    *string `json:"removed"`
 	} `json:"features"`
 	Releases struct {
-		TagPrefix string `json:"tag-prefix"`
+		TagPrefix   string   `json:"tag-prefix"`
+		TagPrefixes []string `json:"tag-prefixes"`
 	} `json:"releases"`
 }
+func (m *metadataV1) effectivePrefixes() []string {
+	var prefixes []string
+	prefixes = append(prefixes, m.Releases.TagPrefixes...)
+	if m.Releases.TagPrefix != "" {
+		prefixes = append(prefixes, m.Releases.TagPrefix)
+	}
+	if len(prefixes) == 0 {
+		// Default is to match bare semver tags.
+		prefixes = []string{""}
+	}
+	return prefixes
+}
+
 type metadataCollection struct {
 	Version int `json:"version"`
 }
@@ -170,7 +184,8 @@ func run(args *args) error {
 				releaseCache[args.repo] = rawReleases
 			}
 			all := releaseCache[args.repo]
-			singleSDK, err := releases.Filter(all, metadata.Releases.TagPrefix)
+
+			singleSDK, err := releases.FilterMulti(all, metadata.effectivePrefixes())
 			if err != nil {
 				return err
 			}
