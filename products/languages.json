@@ -81,10 +81,6 @@
   "python-server-sdk": [
     "Python"
   ],
-  "react": [
-    "JavaScript",
-    "TypeScript"
-  ],
   "react-client-sdk": [
     "JavaScript",
     "TypeScript"
