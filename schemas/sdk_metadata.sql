@@ -76,7 +76,7 @@ CREATE TABLE sdk_wrappers (
 );
 
 INSERT INTO sdk_popularity (id, popularity) VALUES
-    ('react-client-sdk', 1),
+    ('react', 1),
     ('node-server', 2),
     ('python-server-sdk', 3),
     ('java-server-sdk', 4),

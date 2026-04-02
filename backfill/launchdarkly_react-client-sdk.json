@@ -1,6 +1,10 @@
 {
   "version": 1,
   "sdks": {
-    "react": {}
+    "react": {
+      "releases": {
+        "tag-prefixes": ["", "launchdarkly-react-client-sdk-"]
+      }
+    }
   }
 }

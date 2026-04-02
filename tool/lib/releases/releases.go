@@ -147,34 +147,51 @@ func (p monorepoParser) ParseSemver(tag string) (*semver.Version, error) {
 	return basicParser{}.ParseSemver(strings.TrimPrefix(tag, p.prefix))
 }
 
-func Filter(releases []Raw, prefix string) ([]Parsed, error) {
+func newParser(prefix string) TagParser {
+	if prefix == "" {
+		return &basicParser{}
+	}
+	return &monorepoParser{prefix: prefix}
+}
 
+func Filter(releases []Raw, prefix string) ([]Parsed, error) {
+	return FilterMulti(releases, []string{prefix})
+}
+
+func FilterMulti(releases []Raw, prefixes []string) ([]Parsed, error) {
 	const timeFormat = time.RFC3339
 
-	var parser TagParser
-	if prefix == "" {
-		parser = &basicParser{}
-	} else {
-		parser = &monorepoParser{prefix: prefix}
+	parsers := make([]TagParser, len(prefixes))
+	for i, p := range prefixes {
+		parsers[i] = newParser(p)
 	}
 
+	seen := make(map[string]bool)
 	var processed []Parsed
 	for _, r := range releases {
 		if r.IsDraft || r.Date == "" {
 			continue
 		}
-		if !parser.Relevant(r.Tag) {
-			continue
+		for _, parser := range parsers {
+			if !parser.Relevant(r.Tag) {
+				continue
+			}
+			version, err := parser.ParseSemver(r.Tag)
+			if err != nil {
+				return nil, err
+			}
+			v := version.String()
+			if seen[v] {
+				break
+			}
+			seen[v] = true
+			date, err := time.Parse(timeFormat, r.Date)
+			if err != nil {
+				return nil, fmt.Errorf("invalid release date for %s: %v", r.Tag, r.Date)
+			}
+			processed = append(processed, Parsed{Version: version, Date: date})
+			break
 		}
-		version, err := parser.ParseSemver(r.Tag)
-		if err != nil {
-			return nil, err
-		}
-		date, err := time.Parse(timeFormat, r.Date)
-		if err != nil {
-			return nil, fmt.Errorf("invalid release date for %s: %v", r.Tag, r.Date)
-		}
-		processed = append(processed, Parsed{Version: version, Date: date})
 	}
 
 	return processed, nil
