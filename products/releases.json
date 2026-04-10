@@ -3590,9 +3590,15 @@
   "relay-proxy": [
     {
       "major": 8,
+      "minor": 18,
+      "date": "2026-04-09T18:26:49Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 17,
       "date": "2026-01-26T20:37:58Z",
-      "eol": null
+      "eol": "2027-04-09T00:00:00Z"
     },
     {
       "major": 8,
