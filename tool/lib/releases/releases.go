@@ -1,24 +1,24 @@
 package releases
 
 import (
-	"context"
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"slices"
 	"strings"
 	"time"
 
 	"github.com/Masterminds/semver/v3"
-	gh "github.com/shurcooL/githubv4"
 )
 
 // How long we support the latest SDK version.
 const supportWindowYears = 1
 
-// Raw is the raw tag data returned from the github GraphQL releases query.
+// Raw is the raw tag data returned from the GitHub releases API.
 type Raw struct {
-	Tag     string `graphql:"tagName"`
-	Date    string `graphql:"publishedAt"`
-	IsDraft bool   `graphql:"isDraft"`
+	Tag     string
+	Date    string
+	IsDraft bool
 }
 
 // Parsed is the post-processed version of a Raw structure, with the version extracted and date
@@ -64,47 +64,52 @@ func (r WithEOL) MaybeEOL() *string {
 	return &formatted
 }
 
-type releasesQuery struct {
-	Repository struct {
-		Releases struct {
-			Nodes    []Raw
-			PageInfo struct {
-				EndCursor   gh.String
-				HasNextPage bool
-			}
-		} `graphql:"releases(first: 100, after: $cursor)"`
-	} `graphql:"repository(owner: $org, name: $repo)"`
+type restRelease struct {
+	TagName     string `json:"tag_name"`
+	PublishedAt string `json:"published_at"`
+	Draft       bool   `json:"draft"`
 }
 
-func Query(client *gh.Client,
-	repoPath string) ([]Raw, error) {
+func Query(client *http.Client, repoPath string) ([]Raw, error) {
 	parts := strings.Split(repoPath, "/")
 	if len(parts) != 2 {
 		return nil, fmt.Errorf("invalid repo path: %s", repoPath)
 	}
 
-	org := parts[0]
-	repo := parts[1]
-
-	variables := map[string]interface{}{
-		"org":    gh.String(org),
-		"repo":   gh.String(repo),
-		"cursor": (*gh.String)(nil),
-	}
-
 	var releases []Raw
 
-	var query releasesQuery
-	for {
-		err := client.Query(context.Background(), &query, variables)
+	for page := 1; ; page++ {
+		url := fmt.Sprintf("https://api.github.com/repos/%s/%s/releases?per_page=100&page=%d",
+			parts[0], parts[1], page)
+
+		resp, err := client.Get(url)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("fetching releases for %s: %w", repoPath, err)
 		}
-		releases = append(releases, query.Repository.Releases.Nodes...)
-		if !query.Repository.Releases.PageInfo.HasNextPage {
+
+		if resp.StatusCode != http.StatusOK {
+			resp.Body.Close()
+			return nil, fmt.Errorf("fetching releases for %s: HTTP %d", repoPath, resp.StatusCode)
+		}
+
+		var batch []restRelease
+		err = json.NewDecoder(resp.Body).Decode(&batch)
+		resp.Body.Close()
+		if err != nil {
+			return nil, fmt.Errorf("decoding releases for %s: %w", repoPath, err)
+		}
+
+		if len(batch) == 0 {
 			break
 		}
-		variables["cursor"] = gh.NewString(query.Repository.Releases.PageInfo.EndCursor)
+
+		for _, r := range batch {
+			releases = append(releases, Raw{
+				Tag:     r.TagName,
+				Date:    r.PublishedAt,
+				IsDraft: r.Draft,
+			})
+		}
 	}
 
 	return releases, nil

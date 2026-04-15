@@ -13,7 +13,6 @@ import (
 
 	"github.com/launchdarkly/sdk-meta/tool/lib/releases"
 	_ "github.com/mattn/go-sqlite3"
-	gh "github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
 )
 
@@ -34,6 +33,7 @@ type metadataV1 struct {
 		TagPrefixes []string `json:"tag-prefixes"`
 	} `json:"releases"`
 }
+
 func (m *metadataV1) effectivePrefixes() []string {
 	var prefixes []string
 	prefixes = append(prefixes, m.Releases.TagPrefixes...)
@@ -170,9 +170,8 @@ func run(args *args) error {
 		src := oauth2.StaticTokenSource(
 			&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
 		)
-		httpClient := oauth2.NewClient(context.Background(), src)
+		client := oauth2.NewClient(context.Background(), src)
 
-		client := gh.NewClient(httpClient)
 		releaseCache := make(map[string][]releases.Raw)
 
 		inserters["releases"] = func(tx *sql.Tx, sdkId string, metadata *metadataV1) error {
