@@ -818,9 +818,15 @@
   "dotnet-server-sdk": [
     {
       "major": 8,
+      "minor": 12,
+      "date": "2026-04-16T21:33:23Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 11,
       "date": "2026-01-12T20:40:55Z",
-      "eol": null
+      "eol": "2027-04-16T00:00:00Z"
     },
     {
       "major": 8,
