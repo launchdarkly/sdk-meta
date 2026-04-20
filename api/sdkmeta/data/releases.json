@@ -328,9 +328,15 @@
   "browser": [
     {
       "major": 4,
+      "minor": 6,
+      "date": "2026-04-17T21:11:05Z",
+      "eol": null
+    },
+    {
+      "major": 4,
       "minor": 5,
       "date": "2026-04-14T20:15:36Z",
-      "eol": null
+      "eol": "2027-04-17T00:00:00Z"
     },
     {
       "major": 4,
@@ -3342,9 +3348,15 @@
   "react-native": [
     {
       "major": 10,
+      "minor": 16,
+      "date": "2026-04-17T21:11:04Z",
+      "eol": null
+    },
+    {
+      "major": 10,
       "minor": 15,
       "date": "2026-03-16T18:12:58Z",
-      "eol": null
+      "eol": "2027-04-17T00:00:00Z"
     },
     {
       "major": 10,
