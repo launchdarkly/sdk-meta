@@ -1262,9 +1262,15 @@
   "flutter-client-sdk": [
     {
       "major": 4,
+      "minor": 16,
+      "date": "2026-04-23T18:11:30Z",
+      "eol": null
+    },
+    {
+      "major": 4,
       "minor": 15,
       "date": "2026-02-11T19:07:06Z",
-      "eol": null
+      "eol": "2027-04-23T00:00:00Z"
     },
     {
       "major": 4,
@@ -3348,9 +3354,15 @@
   "react-native": [
     {
       "major": 10,
+      "minor": 17,
+      "date": "2026-04-23T20:27:28Z",
+      "eol": null
+    },
+    {
+      "major": 10,
       "minor": 16,
       "date": "2026-04-17T21:11:04Z",
-      "eol": null
+      "eol": "2027-04-23T00:00:00Z"
     },
     {
       "major": 10,
@@ -3620,9 +3632,15 @@
   "relay-proxy": [
     {
       "major": 8,
+      "minor": 19,
+      "date": "2026-04-23T14:48:27Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 18,
       "date": "2026-04-09T18:26:49Z",
-      "eol": null
+      "eol": "2027-04-23T00:00:00Z"
     },
     {
       "major": 8,
