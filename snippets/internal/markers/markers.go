@@ -8,11 +8,18 @@ import (
 	"strings"
 )
 
-// HashContent returns the first 12 hex chars of the SHA-256 of the bytes.
+// hashLen is the number of hex characters of the SHA-256 written into render
+// markers. Twelve hex chars is ~48 bits — enough collision resistance to
+// catch accidental drift in CI but NOT a cryptographic integrity claim. Do
+// not extend other security-sensitive checks to rely on this prefix without
+// widening it first.
+const hashLen = 12
+
+// HashContent returns the first hashLen hex chars of the SHA-256 of the bytes.
 // This is the hash written into render markers.
 func HashContent(content string) string {
 	sum := sha256.Sum256([]byte(content))
-	return hex.EncodeToString(sum[:])[:12]
+	return hex.EncodeToString(sum[:])[:hashLen]
 }
 
 // MarkerFields is the set of key=value pairs we recognize after the ID.
@@ -27,9 +34,9 @@ type MarkerFields struct {
 type commentStyle int
 
 const (
-	styleLine       commentStyle = iota // `// SDK_SNIPPET:...\n`
-	styleJSXExpr                         // `{/* SDK_SNIPPET:... */}`
-	styleBlock                           // `/* SDK_SNIPPET:... */`
+	styleLine    commentStyle = iota // `// SDK_SNIPPET:...\n`
+	styleJSXExpr                     // `{/* SDK_SNIPPET:... */}`
+	styleBlock                       // `/* SDK_SNIPPET:... */`
 )
 
 // Match describes one marker occurrence in a TSX/TS file.
@@ -48,12 +55,17 @@ type Match struct {
 	TagName string
 }
 
-// Hash returns the hash of the current content in the element's children.
-func (m Match) Hash(src string) string {
-	return HashContent(src[m.RegionStart:m.RegionEnd])
+// FullElementHash returns the hash of the entire <Tag ...>...</Tag> region,
+// including the opening tag's attributes and the closing tag. This is what
+// render markers commit to so an attribute-only edit (e.g. changing
+// `lang="python"` → `lang="go"`) is detected by `verify`.
+func (m Match) FullElementHash(src string) string {
+	return HashContent(src[m.OpenTagStart:m.CloseTagEnd])
 }
 
 // Regex for the marker line inside any comment syntax. Captures fields.
+// Only ID is required; hash/version/scope are optional in the regex but the
+// hash is REQUIRED at verify time (see ldapplication.Verify).
 var markerRe = regexp.MustCompile(
 	`SDK_SNIPPET:RENDER:(?P<id>\S+)` +
 		`(?:\s+hash=(?P<hash>[0-9a-fA-F]+))?` +
@@ -62,6 +74,11 @@ var markerRe = regexp.MustCompile(
 )
 
 // tagNameRe matches the beginning of a JSX component tag: `<TagName`.
+//
+// Constraint: the leading character is uppercase. JSX semantics distinguish
+// component identifiers (capitalized — resolve to a value in scope) from DOM
+// elements (lowercase — emitted as raw HTML). Snippet authors who need to
+// mark a DOM element directly will need to wrap it in a component first.
 var tagNameRe = regexp.MustCompile(`<([A-Z][A-Za-z0-9]*)`)
 
 // ScanTSX finds every render marker in a TSX file and pairs it with the
@@ -131,28 +148,99 @@ func ScanTSX(src string) ([]Match, error) {
 			i += end + 2
 			continue
 		}
-		// String literal: skip until matching close. Prevents false positives
-		// inside quoted text like `"// SDK_SNIPPET:..."`.
-		if src[i] == '"' || src[i] == '\'' || src[i] == '`' {
-			quote := src[i]
-			j := i + 1
-			for j < len(src) {
-				if src[j] == '\\' {
-					j += 2
-					continue
-				}
-				if src[j] == quote {
-					j++
-					break
-				}
-				j++
-			}
-			i = j
+		// String / template literal: skip until matching close. Prevents false
+		// positives inside quoted text like `"// SDK_SNIPPET:..."` and inside
+		// backtick template literals (which can themselves contain ${} expressions
+		// containing nested template literals).
+		if src[i] == '"' || src[i] == '\'' {
+			i = skipPlainString(src, i)
+			continue
+		}
+		if src[i] == '`' {
+			i = skipBacktick(src, i)
 			continue
 		}
 		i++
 	}
 	return out, nil
+}
+
+// skipPlainString consumes a "..." or '...' string literal starting at i and
+// returns the offset immediately after the closing quote. Backslash escapes
+// are honored. If the string is unterminated the function returns len(src).
+func skipPlainString(src string, i int) int {
+	quote := src[i]
+	j := i + 1
+	for j < len(src) {
+		if src[j] == '\\' {
+			j += 2
+			continue
+		}
+		if src[j] == quote {
+			return j + 1
+		}
+		j++
+	}
+	return len(src)
+}
+
+// skipBacktick consumes a `...` template literal starting at i and returns
+// the offset immediately after the closing backtick. Inside the literal,
+// `${ ... }` expressions are recognized and their bodies are scanned with
+// brace-balanced depth so a nested template literal does not prematurely
+// close the outer one.
+func skipBacktick(src string, i int) int {
+	j := i + 1
+	for j < len(src) {
+		switch src[j] {
+		case '\\':
+			j += 2
+		case '`':
+			return j + 1
+		case '$':
+			if j+1 < len(src) && src[j+1] == '{' {
+				j = skipJSExpr(src, j+1) // pass the `{`
+				continue
+			}
+			j++
+		default:
+			j++
+		}
+	}
+	return len(src)
+}
+
+// skipJSExpr consumes a `{ ... }` JS expression starting at the byte indexed
+// by `i` (which must point at the opening `{`) and returns the offset
+// immediately after the matching `}`. Strings, template literals, and nested
+// `{}` blocks are tracked. Comments inside the expression are NOT recognized
+// (they don't appear in JSX-attribute / template-literal contexts in
+// practice); add support if a real snippet host requires it.
+func skipJSExpr(src string, i int) int {
+	depth := 0
+	j := i
+	for j < len(src) {
+		switch src[j] {
+		case '{':
+			depth++
+			j++
+		case '}':
+			depth--
+			j++
+			if depth == 0 {
+				return j
+			}
+		case '"', '\'':
+			j = skipPlainString(src, j)
+		case '`':
+			j = skipBacktick(src, j)
+		case '\\':
+			j += 2
+		default:
+			j++
+		}
+	}
+	return len(src)
 }
 
 func parseMarker(inner string) (MarkerFields, bool) {
@@ -215,19 +303,12 @@ func attachElement(src string, commentStart, commentEnd int, style commentStyle,
 			}
 		}
 		switch c {
-		case '"', '\'', '`':
-			quote := c
-			j++
-			for j < len(src) {
-				if src[j] == '\\' {
-					j += 2
-					continue
-				}
-				if src[j] == quote {
-					break
-				}
-				j++
-			}
+		case '"', '\'':
+			j = skipPlainString(src, j)
+			continue
+		case '`':
+			j = skipBacktick(src, j)
+			continue
 		case '{':
 			depth++
 		case '}':
@@ -240,14 +321,51 @@ func attachElement(src string, commentStart, commentEnd int, style commentStyle,
 	}
 	regionStart := j + 1 // byte after `>`
 
-	// Find matching </TagName>. First-slice does not support same-tag nesting.
-	closeTag := "</" + tag + ">"
-	closeIdx := strings.Index(src[regionStart:], closeTag)
-	if closeIdx < 0 {
-		return Match{}, fmt.Errorf("marker %q: no </%s> closing tag found", m.ID, tag)
+	// Find matching </TagName> at the same nesting depth. Walk the body,
+	// counting <TagName ...> opens and </TagName> closes; the close that
+	// brings depth back to zero is the match. String/backtick/JSX-expression
+	// scanning ensures angle brackets inside attributes or string literals
+	// don't perturb the depth.
+	openMarker := "<" + tag
+	closeMarker := "</" + tag + ">"
+	tagDepth := 1
+	regionEnd := -1
+	closeTagEnd := -1
+	k := regionStart
+	for k < len(src) {
+		switch src[k] {
+		case '"', '\'':
+			k = skipPlainString(src, k)
+			continue
+		case '`':
+			k = skipBacktick(src, k)
+			continue
+		case '<':
+			// Same-tag open at depth: only if followed by a non-identifier byte
+			// (so `<Snippet` matches but `<SnippetGroup` doesn't).
+			if hasTagPrefix(src, k, openMarker) {
+				tagDepth++
+				k += len(openMarker)
+				continue
+			}
+			if strings.HasPrefix(src[k:], closeMarker) {
+				tagDepth--
+				if tagDepth == 0 {
+					regionEnd = k
+					closeTagEnd = k + len(closeMarker)
+					k = closeTagEnd
+					goto done
+				}
+				k += len(closeMarker)
+				continue
+			}
+		}
+		k++
 	}
-	regionEnd := regionStart + closeIdx
-	closeTagEnd := regionEnd + len(closeTag)
+done:
+	if regionEnd < 0 {
+		return Match{}, fmt.Errorf("marker %q: no matching </%s> closing tag found", m.ID, tag)
+	}
 
 	return Match{
 		Fields:       m,
@@ -260,6 +378,24 @@ func attachElement(src string, commentStart, commentEnd int, style commentStyle,
 		CloseTagEnd:  closeTagEnd,
 		TagName:      tag,
 	}, nil
+}
+
+// hasTagPrefix reports whether src[i:] starts with prefix AND the byte
+// immediately after is one that can't be part of a longer identifier.
+// Used to distinguish `<Snippet` from `<SnippetGroup`.
+func hasTagPrefix(src string, i int, prefix string) bool {
+	if !strings.HasPrefix(src[i:], prefix) {
+		return false
+	}
+	end := i + len(prefix)
+	if end >= len(src) {
+		return true
+	}
+	c := src[end]
+	if (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') {
+		return false
+	}
+	return true
 }
 
 // FormatMarker renders the marker comment in the given style, with hash+version.

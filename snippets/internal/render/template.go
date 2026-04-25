@@ -55,12 +55,16 @@ func Parse(src string) ([]Node, error) {
 			append_(&Literal{Text: src[i:start]})
 		}
 		token := src[start:end]
+		// Note: order of cases matters. "if NAME" must be tested first so that a
+		// hypothetical variable starting with "if" can never be reached. Equality
+		// is required for the "end" case so a variable like {{ endTime }} doesn't
+		// get treated as a block-close.
 		switch {
 		case m[4] >= 0: // "if NAME"
 			name := src[m[4]:m[5]]
 			c := &Cond{Var: name}
 			stack = append(stack, c)
-		case strings.HasPrefix(strings.TrimSpace(token[2:len(token)-2]), "end"):
+		case strings.TrimSpace(token[2:len(token)-2]) == "end":
 			if len(stack) == 0 {
 				return nil, fmt.Errorf("template: unmatched {{ end }} at offset %d", start)
 			}

@@ -68,7 +68,9 @@ func ParseFile(path string) (*Snippet, error) {
 		return nil, fmt.Errorf("%s: missing YAML frontmatter", path)
 	}
 	var fm Frontmatter
-	if err := yaml.Unmarshal(raw[m[2]:m[3]], &fm); err != nil {
+	dec := yaml.NewDecoder(bytes.NewReader(raw[m[2]:m[3]]))
+	dec.KnownFields(true)
+	if err := dec.Decode(&fm); err != nil {
 		return nil, fmt.Errorf("%s: frontmatter parse: %w", path, err)
 	}
 	body := raw[m[1]:]

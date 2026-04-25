@@ -52,6 +52,9 @@ done
 kill -TERM "$PID" 2>/dev/null || true
 wait "$PID" 2>/dev/null || true
 echo "validator: did not see expected line: ${prefix}<value>" >&2
-echo "--- snippet output ---" >&2
-cat "$LOG" >&2
+echo "--- snippet output (LAUNCHDARKLY_SDK_KEY redacted) ---" >&2
+# Defense-in-depth: today's snippets never print LAUNCHDARKLY_SDK_KEY, but a
+# future snippet could (intentionally or by accident) and this log gets piped
+# into CI output. Redact any literal occurrence of the key before dumping.
+sed -e "s|${LAUNCHDARKLY_SDK_KEY}|<REDACTED_LAUNCHDARKLY_SDK_KEY>|g" "$LOG" >&2
 exit 1

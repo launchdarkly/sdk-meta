@@ -50,6 +50,13 @@ whose body should be replaced:
 `hash` and `version` are filled in by `snippets render`. On first wiring, use
 `hash=000000000000` as a placeholder — the next render rewrites it.
 
+The element directly following a marker MUST be a capitalized JSX component
+tag (e.g. `<Snippet>`, `<CodeBlock>`). Lowercase HTML tags (`<pre>`, `<code>`)
+are not recognized; wrap the content in a component first if you need to mark
+it. The hash committed by the marker covers the *entire* `<Tag …>…</Tag>`
+region — opening tag, attributes, body, closing tag — so attribute edits like
+`lang="python"` → `lang="go"` are caught by `verify`.
+
 ## CLI quick reference
 
 ```sh

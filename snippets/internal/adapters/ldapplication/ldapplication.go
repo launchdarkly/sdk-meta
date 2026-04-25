@@ -1,6 +1,8 @@
 package ldapplication
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -63,8 +65,17 @@ func Verify(sdksDir, appDir string) error {
 
 // discoverTargetFiles returns every file referenced by an sdk.yaml's
 // `ld-application.get-started-file` field, resolved relative to appDir.
+//
+// Each referenced path must be a clean relative path that stays inside
+// appDir. This guards against a malicious sdk.yaml committing
+// `get-started-file: ../../../foo` and the renderer overwriting arbitrary
+// files outside the consumer checkout.
 func discoverTargetFiles(sdksDir, appDir string) ([]string, error) {
 	entries, err := os.ReadDir(sdksDir)
+	if err != nil {
+		return nil, err
+	}
+	absAppDir, err := filepath.Abs(appDir)
 	if err != nil {
 		return nil, err
 	}
@@ -81,10 +92,20 @@ func discoverTargetFiles(sdksDir, appDir string) ([]string, error) {
 			}
 			return nil, err
 		}
-		if desc.LDApplication.GetStartedFile == "" {
+		rel := desc.LDApplication.GetStartedFile
+		if rel == "" {
 			continue
 		}
-		full := filepath.Join(appDir, desc.LDApplication.GetStartedFile)
+		if filepath.IsAbs(rel) {
+			return nil, fmt.Errorf("descriptor %s: get-started-file %q must be relative", descPath, rel)
+		}
+		full := filepath.Join(absAppDir, rel)
+		// Reject any path that escapes appDir. filepath.Rel followed by a
+		// `..` prefix check is the canonical way to do this.
+		relCheck, err := filepath.Rel(absAppDir, full)
+		if err != nil || relCheck == ".." || strings.HasPrefix(relCheck, ".."+string(filepath.Separator)) {
+			return nil, fmt.Errorf("descriptor %s: get-started-file %q escapes appDir", descPath, rel)
+		}
 		if _, err := os.Stat(full); err != nil {
 			return nil, fmt.Errorf("descriptor %s: target not found: %w", descPath, err)
 		}
@@ -94,8 +115,9 @@ func discoverTargetFiles(sdksDir, appDir string) ([]string, error) {
 }
 
 // rewriteFile does the actual in-place rewrite. If dryRun is true it only
-// verifies that (a) every marker hash matches the current file content and
-// (b) re-rendering produces the same bytes.
+// verifies that (a) every marker carries a hash field, (b) that hash matches
+// the full <Tag>...</Tag> region in the file, and (c) re-rendering would
+// produce the same bytes.
 func rewriteFile(path string, snippets map[string]*model.Snippet, dryRun bool) (bool, error) {
 	raw, err := os.ReadFile(path)
 	if err != nil {
@@ -111,6 +133,7 @@ func rewriteFile(path string, snippets map[string]*model.Snippet, dryRun bool) (
 		return false, nil
 	}
 
+	// Build output by replacing each match's region in left-to-right order.
 	var sb strings.Builder
 	cursor := 0
 	changed := false
@@ -123,13 +146,26 @@ func rewriteFile(path string, snippets map[string]*model.Snippet, dryRun bool) (
 		if err != nil {
 			return false, fmt.Errorf("snippet %s: %w", s.Path, err)
 		}
-		rendered := render.RenderForLDApplication(tpl)
-		jsxBody := wrapForJSX(rendered, src, m.RegionStart, m.RegionEnd)
+		// Reuse the surrounding whitespace from the existing region so a
+		// re-render produces a minimal diff. This is purely cosmetic; the
+		// bare-vs-template decision below is independent and is driven by
+		// the snippet's intent.
+		leading, trailing := splitSurroundingWS(src[m.RegionStart:m.RegionEnd])
+		jsxBody := leading + renderForJSXChild(tpl) + trailing
+
+		// Construct the post-rewrite full element (opening tag + new body + closing tag)
+		// and hash THAT — so attribute edits (e.g. lang="python" → "go") flow
+		// into the marker hash and are caught by `verify`.
+		newFullElement := src[m.OpenTagStart:m.RegionStart] + jsxBody + src[m.RegionEnd:m.CloseTagEnd]
+		newHash := markers.HashContent(newFullElement)
 
 		if dryRun {
-			actualHash := markers.HashContent(src[m.RegionStart:m.RegionEnd])
-			if m.Fields.Hash != "" && m.Fields.Hash != actualHash {
-				return false, fmt.Errorf("marker %q: hand-edit detected — file hash %s does not match marker %s",
+			if m.Fields.Hash == "" {
+				return false, fmt.Errorf("marker %q: missing required hash= field — re-render to populate it", m.Fields.ID)
+			}
+			actualHash := markers.HashContent(src[m.OpenTagStart:m.CloseTagEnd])
+			if m.Fields.Hash != actualHash {
+				return false, fmt.Errorf("marker %q: hand-edit detected — element hash %s does not match marker %s",
 					m.Fields.ID, actualHash, m.Fields.Hash)
 			}
 			if jsxBody != src[m.RegionStart:m.RegionEnd] {
@@ -140,7 +176,7 @@ func rewriteFile(path string, snippets map[string]*model.Snippet, dryRun bool) (
 
 		newMarker := markers.FormatMarker(m.Style, markers.MarkerFields{
 			ID:      m.Fields.ID,
-			Hash:    markers.HashContent(jsxBody),
+			Hash:    newHash,
 			Version: version.Version,
 			Scope:   "content",
 		})
@@ -161,32 +197,73 @@ func rewriteFile(path string, snippets map[string]*model.Snippet, dryRun bool) (
 	if !changed {
 		return false, nil
 	}
-	return true, os.WriteFile(path, []byte(sb.String()), 0o644)
+	return true, atomicWriteFile(path, []byte(sb.String()))
 }
 
-// wrapForJSX produces the bytes that belong between <Tag> and </Tag>.
-// To keep cut-over diffs minimal, it preserves the surrounding-whitespace
-// shape of the existing region:
-//   - leading whitespace (between `>` and the first non-space char) is reused
-//   - trailing whitespace (between the last non-space char and `</`) is reused
-//
-// The middle is replaced. Bare-text vs. backtick-template form is decided by
-// whether the rendered content needs interpolation/multiline.
-func wrapForJSX(rendered, src string, regionStart, regionEnd int) string {
-	hasInterp := strings.Contains(rendered, "${")
-	isMultiline := strings.Contains(rendered, "\n")
-	needsTemplate := hasInterp || isMultiline
-
-	existing := src[regionStart:regionEnd]
-	leading, trailing := splitSurroundingWS(existing)
-
-	wasBare := !strings.Contains(strings.TrimSpace(existing), "{`") &&
-		!strings.HasPrefix(strings.TrimSpace(existing), "{")
-
-	if wasBare && !needsTemplate {
-		return leading + rendered + trailing
+// atomicWriteFile writes to a same-directory tempfile, fsyncs, and renames
+// over the destination. The destination's permission bits are preserved so
+// running `snippets render` on a checkout that has tightened permissions
+// (e.g. read-only mode for a CODEOWNER-protected file) doesn't quietly
+// reset them to 0644.
+func atomicWriteFile(path string, data []byte) error {
+	dir := filepath.Dir(path)
+	mode := os.FileMode(0o644)
+	if info, err := os.Stat(path); err == nil {
+		mode = info.Mode().Perm()
 	}
-	return leading + "{`" + rendered + "`}" + trailing
+	// Random suffix avoids colliding with parallel renders.
+	var sfx [8]byte
+	if _, err := rand.Read(sfx[:]); err != nil {
+		return err
+	}
+	tmp := filepath.Join(dir, "."+filepath.Base(path)+".sdk-snippets."+hex.EncodeToString(sfx[:])+".tmp")
+	f, err := os.OpenFile(tmp, os.O_WRONLY|os.O_CREATE|os.O_EXCL, mode)
+	if err != nil {
+		return err
+	}
+	if _, err := f.Write(data); err != nil {
+		f.Close()
+		os.Remove(tmp)
+		return err
+	}
+	if err := f.Sync(); err != nil {
+		f.Close()
+		os.Remove(tmp)
+		return err
+	}
+	if err := f.Close(); err != nil {
+		os.Remove(tmp)
+		return err
+	}
+	if err := os.Rename(tmp, path); err != nil {
+		os.Remove(tmp)
+		return err
+	}
+	return nil
+}
+
+// renderForJSXChild produces the bytes that go between <Tag> and </Tag>.
+// The choice between bare-text and `{`...`}` template-literal form is made
+// from the snippet's *intent*, not from what's currently in the file:
+//   - if the template has any interpolation, conditional, newline, or a
+//     character JSX would interpret specially (`{`, `}`), wrap in `{`...`}`;
+//   - otherwise emit bare text, with no JS escaping.
+//
+// Escaping for backticks/backslashes/${} only happens when the output is
+// going to be inside a backtick literal. Bare JSX text doesn't interpret
+// any of those, so escaping there would corrupt user-visible output.
+func renderForJSXChild(tpl []render.Node) string {
+	if needsTemplateLiteral(tpl) {
+		return "{`" + render.RenderForLDApplicationTemplate(tpl) + "`}"
+	}
+	bare, err := render.RenderForJSXText(tpl)
+	if err != nil {
+		// Defensive: HasInterpolation should have routed us to the template
+		// path. If we somehow got here with interpolation, fall back to the
+		// safe wrapping form.
+		return "{`" + render.RenderForLDApplicationTemplate(tpl) + "`}"
+	}
+	return bare
 }
 
 // splitSurroundingWS returns the leading and trailing whitespace of s.
@@ -207,3 +284,22 @@ func splitSurroundingWS(s string) (string, string) {
 }
 
 func isSpace(b byte) bool { return b == ' ' || b == '\t' || b == '\n' || b == '\r' }
+
+func needsTemplateLiteral(tpl []render.Node) bool {
+	if render.HasInterpolation(tpl) {
+		return true
+	}
+	for _, n := range tpl {
+		l, ok := n.(*render.Literal)
+		if !ok {
+			continue
+		}
+		if strings.Contains(l.Text, "\n") {
+			return true
+		}
+		if render.ContainsJSXSpecial(l.Text) {
+			return true
+		}
+	}
+	return false
+}
