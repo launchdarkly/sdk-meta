@@ -1,0 +1,14 @@
+id: python-server-sdk
+sdk-meta-id: python
+display-name: Python
+type: server-side
+languages:
+  - id: python
+    extensions: [".py"]
+package-managers: [pip]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/python.tsx
+docs:
+  reference-page: /sdk/server-side/python
+hello-world-repo: launchdarkly/hello-python

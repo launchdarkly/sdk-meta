@@ -1,0 +1,5 @@
+/snippets
+/dist
+.cache/
+*.test
+.DS_Store
