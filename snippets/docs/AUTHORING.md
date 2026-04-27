@@ -53,9 +53,10 @@ whose body should be replaced:
 The element directly following a marker MUST be a capitalized JSX component
 tag (e.g. `<Snippet>`, `<CodeBlock>`). Lowercase HTML tags (`<pre>`, `<code>`)
 are not recognized; wrap the content in a component first if you need to mark
-it. The hash committed by the marker covers the *entire* `<Tag …>…</Tag>`
-region — opening tag, attributes, body, closing tag — so attribute edits like
-`lang="python"` → `lang="go"` are caught by `verify`.
+it. The marker hash covers only the *children* of the element (between `>`
+and `</`), matching the `scope=content` contract — attributes (`lang`,
+`withCopyButton`, `label`, `className`, …) are the consumer's to choose and
+can be edited without re-running `snippets render`.
 
 ## CLI quick reference
 

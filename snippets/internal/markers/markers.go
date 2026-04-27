@@ -55,14 +55,6 @@ type Match struct {
 	TagName string
 }
 
-// FullElementHash returns the hash of the entire <Tag ...>...</Tag> region,
-// including the opening tag's attributes and the closing tag. This is what
-// render markers commit to so an attribute-only edit (e.g. changing
-// `lang="python"` → `lang="go"`) is detected by `verify`.
-func (m Match) FullElementHash(src string) string {
-	return HashContent(src[m.OpenTagStart:m.CloseTagEnd])
-}
-
 // Regex for the marker line inside any comment syntax. Captures fields.
 // Only ID is required; hash/version/scope are optional in the regex but the
 // hash is REQUIRED at verify time (see ldapplication.Verify).

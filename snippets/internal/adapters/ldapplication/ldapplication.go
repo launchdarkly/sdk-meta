@@ -153,19 +153,19 @@ func rewriteFile(path string, snippets map[string]*model.Snippet, dryRun bool) (
 		leading, trailing := splitSurroundingWS(src[m.RegionStart:m.RegionEnd])
 		jsxBody := leading + renderForJSXChild(tpl) + trailing
 
-		// Construct the post-rewrite full element (opening tag + new body + closing tag)
-		// and hash THAT — so attribute edits (e.g. lang="python" → "go") flow
-		// into the marker hash and are caught by `verify`.
-		newFullElement := src[m.OpenTagStart:m.RegionStart] + jsxBody + src[m.RegionEnd:m.CloseTagEnd]
-		newHash := markers.HashContent(newFullElement)
+		// The hash covers ONLY the children we own. Attributes on the
+		// element are the consumer's to choose (lang="…", withCopyButton,
+		// className, etc.) and re-styling them must not require re-running
+		// `snippets render`. This matches the scope=content contract.
+		newHash := markers.HashContent(jsxBody)
 
 		if dryRun {
 			if m.Fields.Hash == "" {
 				return false, fmt.Errorf("marker %q: missing required hash= field — re-render to populate it", m.Fields.ID)
 			}
-			actualHash := markers.HashContent(src[m.OpenTagStart:m.CloseTagEnd])
+			actualHash := markers.HashContent(src[m.RegionStart:m.RegionEnd])
 			if m.Fields.Hash != actualHash {
-				return false, fmt.Errorf("marker %q: hand-edit detected — element hash %s does not match marker %s",
+				return false, fmt.Errorf("marker %q: hand-edit detected — children hash %s does not match marker %s",
 					m.Fields.ID, actualHash, m.Fields.Hash)
 			}
 			if jsxBody != src[m.RegionStart:m.RegionEnd] {

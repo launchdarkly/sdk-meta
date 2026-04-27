@@ -5,8 +5,6 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-
-	"github.com/launchdarkly/sdk-meta/snippets/internal/markers"
 )
 
 // Helper: write a tiny sdks/ tree pointing at a fixture TSX file.
@@ -63,25 +61,110 @@ func TestDiscoverTargetFiles_RejectsAbsolute(t *testing.T) {
 	}
 }
 
-// Regression for review #1: hash should cover attributes, not just children.
-// Editing `lang="python"` to `lang="go"` must change the hash.
-func TestFullElementHash_DetectsAttributeEdit(t *testing.T) {
-	beforeFile := `<Snippet lang="python">body</Snippet>`
-	afterFile := `<Snippet lang="go">body</Snippet>`
-	mBefore, err := markers.ScanTSX("// SDK_SNIPPET:RENDER:foo hash=abc version=0.1.0\n" + beforeFile)
-	if err != nil {
+// Per the scope=content contract, attributes are the consumer's to choose.
+// `verify` must NOT reject an attribute-only edit — only changes to the
+// element's children should fail. Tests below exercise both cases.
+func TestVerify_AcceptsAttributeEdit(t *testing.T) {
+	tmp := t.TempDir()
+	sdks := filepath.Join(tmp, "sdks", "x")
+	if err := os.MkdirAll(filepath.Join(sdks, "snippets"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	mAfter, err := markers.ScanTSX("// SDK_SNIPPET:RENDER:foo hash=abc version=0.1.0\n" + afterFile)
-	if err != nil {
+	if err := os.WriteFile(filepath.Join(sdks, "sdk.yaml"), []byte(
+		"id: x\nsdk-meta-id: y\ndisplay-name: y\ntype: server-side\n"+
+			"languages:\n  - id: y\n    extensions: [\".y\"]\n"+
+			"package-managers: []\nregions: []\nhello-world-repo: a/b\n"+
+			"ld-application:\n  get-started-file: app.tsx\n"+
+			"docs:\n  reference-page: /\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	srcBefore := "// SDK_SNIPPET:RENDER:foo hash=abc version=0.1.0\n" + beforeFile
-	srcAfter := "// SDK_SNIPPET:RENDER:foo hash=abc version=0.1.0\n" + afterFile
-	hBefore := mBefore[0].FullElementHash(srcBefore)
-	hAfter := mAfter[0].FullElementHash(srcAfter)
-	if hBefore == hAfter {
-		t.Fatalf("expected different hashes; both = %s", hBefore)
+	if err := os.WriteFile(filepath.Join(sdks, "snippets", "x.snippet.md"), []byte(
+		`---
+id: x/cmd
+sdk: x
+kind: bootstrap
+lang: shell
+---
+
+`+"```shell\nmkdir hi\n```\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	app := filepath.Join(tmp, "app")
+	if err := os.MkdirAll(app, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	tsx := `// SDK_SNIPPET:RENDER:x/cmd hash=000000000000 version=0.1.0
+<Snippet lang="shell">
+  placeholder
+</Snippet>
+`
+	if err := os.WriteFile(filepath.Join(app, "app.tsx"), []byte(tsx), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Render(filepath.Join(tmp, "sdks"), app); err != nil {
+		t.Fatal(err)
+	}
+	// Hand-edit an attribute (add withCopyButton). Verify must still pass.
+	bytes, _ := os.ReadFile(filepath.Join(app, "app.tsx"))
+	edited := strings.Replace(string(bytes),
+		`<Snippet lang="shell">`,
+		`<Snippet lang="shell" withCopyButton>`, 1)
+	if err := os.WriteFile(filepath.Join(app, "app.tsx"), []byte(edited), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := Verify(filepath.Join(tmp, "sdks"), app); err != nil {
+		t.Fatalf("verify should accept attribute-only edit: %v", err)
+	}
+}
+
+func TestVerify_RejectsChildEdit(t *testing.T) {
+	tmp := t.TempDir()
+	sdks := filepath.Join(tmp, "sdks", "x")
+	if err := os.MkdirAll(filepath.Join(sdks, "snippets"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(sdks, "sdk.yaml"), []byte(
+		"id: x\nsdk-meta-id: y\ndisplay-name: y\ntype: server-side\n"+
+			"languages:\n  - id: y\n    extensions: [\".y\"]\n"+
+			"package-managers: []\nregions: []\nhello-world-repo: a/b\n"+
+			"ld-application:\n  get-started-file: app.tsx\n"+
+			"docs:\n  reference-page: /\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(sdks, "snippets", "x.snippet.md"), []byte(
+		`---
+id: x/cmd
+sdk: x
+kind: bootstrap
+lang: shell
+---
+
+`+"```shell\nmkdir hi\n```\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	app := filepath.Join(tmp, "app")
+	if err := os.MkdirAll(app, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	tsx := `// SDK_SNIPPET:RENDER:x/cmd hash=000000000000 version=0.1.0
+<Snippet lang="shell">
+  placeholder
+</Snippet>
+`
+	if err := os.WriteFile(filepath.Join(app, "app.tsx"), []byte(tsx), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Render(filepath.Join(tmp, "sdks"), app); err != nil {
+		t.Fatal(err)
+	}
+	bytes, _ := os.ReadFile(filepath.Join(app, "app.tsx"))
+	edited := strings.Replace(string(bytes), "mkdir hi", "mkdir HACKED", 1)
+	if err := os.WriteFile(filepath.Join(app, "app.tsx"), []byte(edited), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	err := Verify(filepath.Join(tmp, "sdks"), app)
+	if err == nil || !strings.Contains(err.Error(), "hand-edit detected") {
+		t.Fatalf("verify should reject child edit, got %v", err)
 	}
 }
 

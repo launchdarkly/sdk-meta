@@ -170,16 +170,6 @@ func TestScanTSX_BacktickWithNestedTemplate(t *testing.T) {
 	}
 }
 
-// FullElementHash must change when the opening tag's attributes change, so
-// `verify` catches an attribute-only edit. Regression for review #1.
-func TestFullElementHash_DetectsAttributeEdit(t *testing.T) {
-	srcA := `<Snippet lang="python">body</Snippet>`
-	srcB := `<Snippet lang="go">body</Snippet>`
-	if HashContent(srcA) == HashContent(srcB) {
-		t.Fatalf("expected different hashes for differing attributes")
-	}
-}
-
 func TestParseMarker_OptionalFields(t *testing.T) {
 	// hash, version, scope all absent: parseMarker still extracts the ID.
 	got, ok := parseMarker(" SDK_SNIPPET:RENDER:foo/bar")
