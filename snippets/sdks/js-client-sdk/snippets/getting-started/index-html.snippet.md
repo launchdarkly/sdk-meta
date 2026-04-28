@@ -51,7 +51,7 @@ Create a file called `index.html` and add the following code:
         // LaunchDarkly contexts dashboard soon after you run the demo.
         const context = {
           kind: 'user',
-          key: 'example-context-key',
+          key: 'example-user-key',
           name: 'Sandy'
         };
 

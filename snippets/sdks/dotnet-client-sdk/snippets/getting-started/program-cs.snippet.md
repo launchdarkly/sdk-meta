@@ -25,7 +25,7 @@ Open the file `Program.cs` and add the following code:
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Client;
 
-var context = Context.New("context-key-123abc");
+var context = Context.New("example-user-key");
 var timeSpan = TimeSpan.FromSeconds(10);
 var client = LdClient.Init(
   Configuration.Default("{{ mobileKey }}", ConfigurationBuilder.AutoEnvAttributes.Enabled),
