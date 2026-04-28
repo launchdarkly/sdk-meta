@@ -11,9 +11,9 @@ inputs:
     description: Default flag key baked into the rendered source. Gonfalon's snippet uses this as the env-var name passed to lookupEnv (see comment below); validation reads LAUNCHDARKLY_FLAG_KEY at runtime.
 ld-application:
   slot: main-hs
-# validation runtime not yet wired — Haskell stack-build harness pending.
-# When added, the stack image needs launchdarkly-server-sdk + text
-# pre-installed to keep per-validate cost reasonable.
+validation:
+  runtime: haskell-server
+  entrypoint: app/Main.hs
 ---
 
 Edit `app/Main.hs` by adding the following code:
@@ -98,6 +98,6 @@ main = do
     -- Set sdkKey to your LaunchDarkly SDK key.
     sdkKey <- lookupEnv "LAUNCHDARKLY_SDK_KEY"
     -- Set featureFlagKey to the feature flag key you want to evaluate.
-    featureFlagKey <- lookupEnv "{{ featureKey }}"
+    featureFlagKey <- lookupEnv "LAUNCHDARKLY_FLAG_KEY"
     evaluate sdkKey featureFlagKey
 ```

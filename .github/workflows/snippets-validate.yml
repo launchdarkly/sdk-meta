@@ -57,11 +57,12 @@ jobs:
           - { sdk: cpp-server-sdk,    runs-on: ubuntu-latest, key-type: server }
           - { sdk: cpp-client-sdk,    runs-on: ubuntu-latest, key-type: mobile }
           - { sdk: lua-server-sdk,    runs-on: ubuntu-latest, key-type: server }
+          - { sdk: haskell-server-sdk, runs-on: ubuntu-latest, key-type: server }
           # Browser SDKs (headless Playwright):
           - { sdk: js-client-sdk,     runs-on: ubuntu-latest, key-type: client }
           #
           # Validators not yet wired (snippets ported, harness pending):
-          #   server-runtime: erlang-server-sdk, haskell-server-sdk
+          #   server-runtime: erlang-server-sdk
           #   browser: react-client-sdk, react-client-sdk-legacy,
           #     vue-client-sdk (key-type: client)
           #   Linux mobile/native: android-client-sdk, flutter-client-sdk,
