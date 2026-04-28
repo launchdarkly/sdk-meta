@@ -12,9 +12,10 @@ name: Validate snippets
 #     `feature flag evaluates to true` line.
 #
 # Each matrix row declares `key-type: server | client | mobile` so the
-# right `use_*_key` flag is set for the SDK under test. We always set
-# LAUNCHDARKLY_FLAG_KEY=sample-feature ourselves; the action only handles
-# the SDK/client/mobile key.
+# right `use_*_key` flag is set for the SDK under test. The action also
+# injects LAUNCHDARKLY_FLAG_KEY from the SSM parameter
+# /sdk/common/hello-apps/boolean-flag-key, matching what every hello-*
+# repo's CI relies on; we don't set it ourselves.
 #
 # fail-fast: false so every cell runs to completion. A final `summary` job
 # aggregates per-cell artifacts into a markdown table.
@@ -85,7 +86,6 @@ jobs:
           role_arn: ${{ vars.AWS_ROLE_ARN_EXAMPLES }}
           command: |
             set -o pipefail
-            export LAUNCHDARKLY_FLAG_KEY=sample-feature
             cd snippets
             go run ./cmd/snippets validate --sdk=${{ matrix.sdk }} \
               --sdks=./sdks --validators=./validators 2>&1 | tee /tmp/validate.log
