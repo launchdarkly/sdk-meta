@@ -14,8 +14,10 @@ import (
 )
 
 // Frontmatter is the YAML block at the top of a .snippet.md file.
-// Only the fields this first-pass slice actually uses are modelled; unknown
-// fields are ignored so later phases can extend the schema without churn here.
+// ParseFile decodes with `KnownFields(true)`, so any frontmatter key not
+// modelled below is rejected at parse time — that's deliberate, it catches
+// typos like `Description:` or `entrypiont:` rather than silently dropping
+// them. Adding a new schema field means adding it to this struct first.
 type Frontmatter struct {
 	ID          string           `yaml:"id"`
 	SDK         string           `yaml:"sdk"`

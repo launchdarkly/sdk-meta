@@ -52,6 +52,14 @@ await_success_line() {
 # LAUNCHDARKLY_MOBILE_KEY / LAUNCHDARKLY_CLIENT_SIDE_ID) replaced with a
 # placeholder. Defense in depth — today's snippets never echo a key, but a
 # future snippet could and this log gets piped into CI output.
+# Escapes a string for use as a sed substitution pattern with `|` as the
+# delimiter. Backslash-escapes the BRE metacharacters and the chosen
+# delimiter so a credential containing any of them can't break out of
+# the pattern half of the s|…|…| expression.
+_sed_escape_pattern() {
+    printf '%s' "$1" | sed 's/[][\\.*^$|/&]/\\&/g'
+}
+
 dump_redacted() {
     log=$1
     # Build a sed program that redacts each defined key. Empty values are
@@ -60,7 +68,8 @@ dump_redacted() {
     for var in LAUNCHDARKLY_SDK_KEY LAUNCHDARKLY_MOBILE_KEY LAUNCHDARKLY_CLIENT_SIDE_ID; do
         eval "val=\${$var-}"
         if [ -n "$val" ]; then
-            sed_args="$sed_args -e s|$val|<REDACTED_$var>|g"
+            esc=$(_sed_escape_pattern "$val")
+            sed_args="$sed_args -e s|$esc|<REDACTED_$var>|g"
         fi
     done
     if [ -n "$sed_args" ]; then

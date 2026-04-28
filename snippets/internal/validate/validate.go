@@ -82,7 +82,12 @@ func isValidatable(s *model.Snippet) bool {
 func runOne(cfg Config, s *model.Snippet, all map[string]*model.Snippet, env envInputs) error {
 	runtime := s.Frontmatter.Validation.Runtime
 	if runtime == "" {
-		runtime = s.CodeLang
+		// Fall back to the snippet's `lang:` frontmatter field, matching
+		// the documented contract on Validation.Runtime. (CodeLang — the
+		// markdown fence's language tag — is a presentation hint and may
+		// diverge from the author's declared `lang:`; using it here would
+		// silently pick the wrong validator if they don't match.)
+		runtime = s.Frontmatter.Lang
 	}
 	if runtime == "" {
 		return fmt.Errorf("snippet %q: cannot determine validator runtime (set validation.runtime or lang)", s.Frontmatter.ID)
