@@ -54,12 +54,13 @@ jobs:
           - { sdk: dotnet-server-sdk, runs-on: ubuntu-latest, key-type: server }
           - { sdk: dotnet-client-sdk, runs-on: ubuntu-latest, key-type: mobile }
           - { sdk: java-server-sdk,   runs-on: ubuntu-latest, key-type: server }
+          - { sdk: cpp-server-sdk,    runs-on: ubuntu-latest, key-type: server }
           # Browser SDKs (headless Playwright):
           - { sdk: js-client-sdk,     runs-on: ubuntu-latest, key-type: client }
           #
           # Validators not yet wired (snippets ported, harness pending):
           #   server-runtime: erlang-server-sdk, haskell-server-sdk,
-          #     lua-server-sdk, cpp-server-sdk, cpp-client-sdk
+          #     lua-server-sdk, cpp-client-sdk
           #   browser: react-client-sdk, react-client-sdk-legacy,
           #     vue-client-sdk (key-type: client)
           #   Linux mobile/native: android-client-sdk, flutter-client-sdk,

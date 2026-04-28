@@ -14,9 +14,9 @@ inputs:
     description: Default flag key baked into the rendered source.
 ld-application:
   slot: main-cpp
-# Validator pending. Per-validate cycle requires a Docker image with
-# cmake + boost + openssl + ninja and a checkout of cpp-sdks; first
-# build is multi-minute even with prebuilt deps.
+validation:
+  runtime: cpp-server
+  entrypoint: main.cpp
 ---
 
 Create a file named `main.cpp` add the following code:
@@ -68,8 +68,8 @@ int main() {
     bool const flag_value =
         client.BoolVariation(context, "{{ featureKey }}", false);
 
-    std::cout << "*** Feature flag '{{ featureKey }}' is "
-              << (flag_value ? "true" : "false") << std::endl;
+    std::cout << "*** The '{{ featureKey }}' feature flag evaluates to "
+              << (flag_value ? "true" : "false") << "." << std::endl;
 
     return 0;
 }
