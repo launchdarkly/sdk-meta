@@ -1,0 +1,13 @@
+# Validator harness descriptor. Each validators/languages/<runtime>/ has one.
+#
+# mode: docker | native
+#   docker — the Go validator builds the Dockerfile in this dir and runs
+#            harness/run.sh inside the container with /snippet bind-mounted
+#   native — the Go validator execs harness/run.sh on the host with the
+#            staged snippet path passed as $SNIPPET_DIR
+#
+# runs-on: hint for the CI workflow's matrix.runs-on field. Not read by the
+#          Go validator.
+mode: docker
+runs-on: ubuntu-latest
+image-prefix: sdk-snippets/python-validator
