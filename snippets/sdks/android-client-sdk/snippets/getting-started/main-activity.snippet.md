@@ -11,8 +11,10 @@ inputs:
     description: Default flag key baked into the rendered source.
 ld-application:
   slot: main-activity
-# Validator pending — Android validation needs setup-android + a Linux
-# emulator boot, slow but feasible. Deferred.
+validation:
+  runtime: android-client
+  entrypoint: app/src/main/java/com/launchdarkly/hello_android/MainActivity.kt
+  companions: [android-client-sdk/getting-started/main-application]
 ---
 
 Open the file `MainActivity.kt` and add the following code:
