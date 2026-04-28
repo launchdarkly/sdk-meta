@@ -62,10 +62,11 @@ jobs:
           - { sdk: js-client-sdk,     runs-on: ubuntu-latest, key-type: client }
           - { sdk: vue-client-sdk,    runs-on: ubuntu-latest, key-type: client }
           - { sdk: react-client-sdk,  runs-on: ubuntu-latest, key-type: client }
+          - { sdk: flutter-client-sdk, runs-on: ubuntu-latest, key-type: client }
           #
           # Validators not yet wired (snippets ported, harness pending):
           #   server-runtime: erlang-server-sdk
-          #   Linux mobile/native: android-client-sdk, flutter-client-sdk,
+          #   Linux mobile/native: android-client-sdk,
           #     react-native-client-sdk (key-type: mobile)
           #   macos-latest + xcodebuild: ios-client-sdk (key-type: mobile)
           # Skipped: roku-client-sdk (validation: none, manual procedure).

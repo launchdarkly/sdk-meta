@@ -11,8 +11,14 @@ inputs:
     description: Default flag key baked into the rendered source.
 ld-application:
   slot: main-dart
-# Validator pending — flutter test/run on a Linux runner with
-# flutter-action; deferred.
+validation:
+  runtime: flutter-client
+  entrypoint: lib/main.dart
+  # The credential isn't substituted into the source — the snippet uses
+  # CredentialSource.fromEnvironment() which reads
+  # LAUNCHDARKLY_CLIENT_SIDE_ID baked in via flutter's --dart-define
+  # flag at build time. The validator passes that env var through; no
+  # `inputs:` declaration needed since nothing is interpolated here.
 ---
 
 Open the file `lib/main.dart` and replace with the following code:
