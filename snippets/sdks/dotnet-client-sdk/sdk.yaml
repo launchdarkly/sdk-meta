@@ -1,0 +1,14 @@
+id: dotnet-client-sdk
+sdk-meta-id: dotnet-client
+display-name: .NET (client-side)
+type: client-side
+languages:
+  - id: csharp
+    extensions: [".cs"]
+package-managers: [nuget]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/dotnetClient.tsx
+docs:
+  reference-page: /sdk/client-side/dotnet
+hello-world-repo: launchdarkly/hello-dotnet-client

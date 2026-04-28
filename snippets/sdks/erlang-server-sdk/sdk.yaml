@@ -1,0 +1,14 @@
+id: erlang-server-sdk
+sdk-meta-id: erlang
+display-name: Erlang
+type: server-side
+languages:
+  - id: erlang
+    extensions: [".erl"]
+package-managers: [rebar3]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/erlang.tsx
+docs:
+  reference-page: /sdk/server-side/erlang
+hello-world-repo: launchdarkly/hello-erlang

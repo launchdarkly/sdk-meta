@@ -1,0 +1,14 @@
+id: react-native-client-sdk
+sdk-meta-id: react-native
+display-name: React Native
+type: client-side
+languages:
+  - id: tsx
+    extensions: [".tsx"]
+package-managers: [npm, yarn]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/reactNative.tsx
+docs:
+  reference-page: /sdk/client-side/react-native
+hello-world-repo: launchdarkly/js-core

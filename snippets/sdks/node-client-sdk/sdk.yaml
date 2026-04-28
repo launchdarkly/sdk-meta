@@ -1,0 +1,14 @@
+id: node-client-sdk
+sdk-meta-id: node-client
+display-name: Node.js (client-side)
+type: client-side
+languages:
+  - id: javascript
+    extensions: [".js"]
+package-managers: [npm]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/nodeClient.tsx
+docs:
+  reference-page: /sdk/client-side/node-js
+hello-world-repo: launchdarkly/hello-node-client

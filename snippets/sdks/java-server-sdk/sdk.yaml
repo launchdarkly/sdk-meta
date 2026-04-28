@@ -1,0 +1,14 @@
+id: java-server-sdk
+sdk-meta-id: java
+display-name: Java
+type: server-side
+languages:
+  - id: java
+    extensions: [".java"]
+package-managers: [maven, gradle]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/java.tsx
+docs:
+  reference-page: /sdk/server-side/java
+hello-world-repo: launchdarkly/hello-java
