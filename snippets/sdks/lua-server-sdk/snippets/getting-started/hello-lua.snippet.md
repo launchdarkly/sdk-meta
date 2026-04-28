@@ -14,9 +14,9 @@ inputs:
     description: Default flag key baked into the rendered source.
 ld-application:
   slot: hello-lua
-# Validator pending. Lua wraps the C++ Server SDK and requires the
-# C++ build (cmake + boost + openssl + ninja) plus luarocks. A
-# specialized validator image is needed; deferred.
+validation:
+  runtime: lua-server
+  entrypoint: hello.lua
 ---
 
 Create a file named `hello.lua` and add the following code:
@@ -35,5 +35,5 @@ local user = ld.makeContext({
 })
 
 local value = client:boolVariation(user, "{{ featureKey }}", false)
-print("Feature flag '{{ featureKey }}' is "..tostring(value).."")
+print("*** The '{{ featureKey }}' feature flag evaluates to "..tostring(value)..".")
 ```
