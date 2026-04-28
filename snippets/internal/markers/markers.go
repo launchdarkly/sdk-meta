@@ -102,15 +102,20 @@ func ScanTSX(src string) ([]Match, error) {
 			i += end
 			continue
 		}
-		// JSX expression comment: `{/*` ... `*/}`
+		// JSX expression comment: `{/*` ... `*/}`. Search for the close
+		// past the open marker so an input like `{/*/}` doesn't match
+		// the same `*` against both sides — `strings.Index(src[i:], "*/}")`
+		// would return 2, and `inner := src[i+3 : i+end]` would be a
+		// reversed slice that panics at runtime.
 		if i+2 < len(src) && src[i] == '{' && src[i+1] == '/' && src[i+2] == '*' {
-			end := strings.Index(src[i:], "*/}")
-			if end < 0 {
+			rel := strings.Index(src[i+3:], "*/}")
+			if rel < 0 {
 				return nil, fmt.Errorf("unterminated {/* */} comment at offset %d", i)
 			}
-			inner := src[i+3 : i+end]
+			inner := src[i+3 : i+3+rel]
+			closeEnd := i + 3 + rel + 3
 			if m, ok := parseMarker(inner); ok {
-				match, err := attachElement(src, i, i+end+3, styleJSXExpr, m)
+				match, err := attachElement(src, i, closeEnd, styleJSXExpr, m)
 				if err != nil {
 					return nil, err
 				}
@@ -118,18 +123,20 @@ func ScanTSX(src string) ([]Match, error) {
 				i = match.CloseTagEnd
 				continue
 			}
-			i += end + 3
+			i = closeEnd
 			continue
 		}
-		// Block comment: `/*` ... `*/`
+		// Block comment: `/*` ... `*/`. Same off-by-three guard as the
+		// JSX-expression case — `/*/` would otherwise overlap-match.
 		if i+1 < len(src) && src[i] == '/' && src[i+1] == '*' {
-			end := strings.Index(src[i:], "*/")
-			if end < 0 {
+			rel := strings.Index(src[i+2:], "*/")
+			if rel < 0 {
 				return nil, fmt.Errorf("unterminated /* */ comment at offset %d", i)
 			}
-			inner := src[i+2 : i+end]
+			inner := src[i+2 : i+2+rel]
+			closeEnd := i + 2 + rel + 2
 			if m, ok := parseMarker(inner); ok {
-				match, err := attachElement(src, i, i+end+2, styleBlock, m)
+				match, err := attachElement(src, i, closeEnd, styleBlock, m)
 				if err != nil {
 					return nil, err
 				}
@@ -137,7 +144,7 @@ func ScanTSX(src string) ([]Match, error) {
 				i = match.CloseTagEnd
 				continue
 			}
-			i += end + 2
+			i = closeEnd
 			continue
 		}
 		// String / template literal: skip until matching close. Prevents false

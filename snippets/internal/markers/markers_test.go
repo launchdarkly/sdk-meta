@@ -186,6 +186,40 @@ func TestScanTSX_SimilarPrefixTag_IdentifierContinuations(t *testing.T) {
 	}
 }
 
+// Regression: pathological inputs that overlap the open and close
+// markers of a comment used to slip past the `end < 0` guard and
+// produce a reversed slice (low > high), panicking at runtime. The
+// scan now searches for the close marker AFTER the open marker.
+func TestScanTSX_OverlappingCommentMarkersDontPanic(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		src  string
+	}{
+		// `{/*/}`: strings.Index finds `*/}` at offset 2, sharing the
+		// `*` with the open `{/*`. Old code: inner = src[3:2] → panic.
+		// Expected: scanner errors with "unterminated" since there's
+		// no genuine close.
+		{"jsx-expression", "before {/*/} after"},
+		// `/*/`: same shape — `*/` overlaps the open `/*`.
+		{"block", "before /*/ after"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			defer func() {
+				if r := recover(); r != nil {
+					t.Fatalf("scanner panicked: %v", r)
+				}
+			}()
+			_, err := ScanTSX(tc.src)
+			if err == nil {
+				t.Fatalf("expected unterminated-comment error, got none")
+			}
+			if !strings.Contains(err.Error(), "unterminated") {
+				t.Fatalf("expected unterminated-comment error, got: %v", err)
+			}
+		})
+	}
+}
+
 // Regression for review #9: a nested template literal inside a ${ } expression
 // inside a backtick string must not end the outer string scan early.
 func TestScanTSX_BacktickWithNestedTemplate(t *testing.T) {
