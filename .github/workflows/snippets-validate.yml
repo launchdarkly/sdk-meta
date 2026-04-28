@@ -66,9 +66,8 @@ jobs:
           - { sdk: flutter-client-sdk, runs-on: ubuntu-latest, key-type: client }
           - { sdk: android-client-sdk, runs-on: ubuntu-latest, key-type: mobile }
           - { sdk: react-native-client-sdk, runs-on: ubuntu-latest, key-type: mobile }
-          #
-          # Validators not yet wired (snippets ported, harness pending):
-          #   macos-latest + xcodebuild: ios-client-sdk (key-type: mobile)
+          # iOS (macOS runner + xcodebuild + iOS Simulator):
+          - { sdk: ios-client-sdk,     runs-on: macos-latest,  key-type: mobile }
           # Skipped: roku-client-sdk (validation: none, manual procedure).
     steps:
       - uses: actions/checkout@v4

@@ -11,8 +11,6 @@ inputs:
     description: Mobile key baked into the rendered source.
 ld-application:
   slot: app-delegate
-# Validator pending — iOS validation requires a macOS runner with Xcode
-# and `xcodebuild test` orchestration; deferred to a future slice.
 ---
 
 Open `AppDelegate.swift` and add the following code:

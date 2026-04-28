@@ -11,13 +11,10 @@ inputs:
     description: Default flag key baked into the rendered source.
 ld-application:
   slot: view-controller
-# Validator pending — same as app-delegate.
-#
-# Known bug in this snippet (carried verbatim from gonfalon for now):
-# the updateUi label uses `(flagKey)` and `(result)` instead of Swift's
-# string interpolation `\(flagKey)` and `\(result)`. As written it
-# would print the literal text `(flagKey)`. Fix-on-red when the iOS
-# validator lands.
+validation:
+  runtime: ios-client
+  entrypoint: ViewController.swift
+  companions: [ios-client-sdk/getting-started/app-delegate]
 ---
 
 Open `ViewController.swift` and add the following code:
@@ -49,7 +46,7 @@ class ViewController: UIViewController {
     }
 
     func updateUi(flagKey: String, result: Bool) {
-        self.featureFlagLabel.text = "The (flagKey) feature flag evaluates to (result)"
+        self.featureFlagLabel.text = "The \(flagKey) feature flag evaluates to \(result)"
 
         let toggleOn = UIColor(red: 0, green: 0.52, blue: 0.29, alpha: 1)
         let toggleOff = UIColor(red: 0.22, green: 0.22, blue: 0.25, alpha: 1)

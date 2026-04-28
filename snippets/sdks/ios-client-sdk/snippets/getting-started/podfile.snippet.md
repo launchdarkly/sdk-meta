@@ -8,8 +8,8 @@ description: CocoaPods Podfile pulling the LaunchDarkly iOS SDK.
 inputs:
   version:
     type: string
-    description: SDK version. Defaults to '6.1.0' in gonfalon as a fallback when the async fetch hasn't completed.
-    runtime-default: "6.1.0"
+    description: SDK version. Defaults to '11.1.2' as a fallback when gonfalon's async fetch from CocoaPods hasn't completed.
+    runtime-default: "11.1.2"
 ld-application:
   slot: podfile
 ---
