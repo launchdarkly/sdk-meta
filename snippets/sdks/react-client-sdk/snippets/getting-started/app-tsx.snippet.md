@@ -11,6 +11,10 @@ inputs:
     description: Default flag key (camelCased) baked into the rendered source.
 ld-application:
   slot: app-tsx
+validation:
+  runtime: react-client
+  entrypoint: src/App.tsx
+  companions: [react-client-sdk/getting-started/main-tsx]
 ---
 
 Use the `useFlags` hook to evaluate flags. For example, in `App.tsx`:

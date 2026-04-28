@@ -92,24 +92,26 @@ func discoverTargetFiles(sdksDir, appDir string) ([]string, error) {
 			}
 			return nil, err
 		}
-		rel := desc.LDApplication.GetStartedFile
-		if rel == "" {
-			continue
+		rels := desc.LDApplication.GetStartedFiles
+		if rel := desc.LDApplication.GetStartedFile; rel != "" {
+			rels = append([]string{rel}, rels...)
 		}
-		if filepath.IsAbs(rel) {
-			return nil, fmt.Errorf("descriptor %s: get-started-file %q must be relative", descPath, rel)
+		for _, rel := range rels {
+			if filepath.IsAbs(rel) {
+				return nil, fmt.Errorf("descriptor %s: get-started-file %q must be relative", descPath, rel)
+			}
+			full := filepath.Join(absAppDir, rel)
+			// Reject any path that escapes appDir. filepath.Rel followed by a
+			// `..` prefix check is the canonical way to do this.
+			relCheck, err := filepath.Rel(absAppDir, full)
+			if err != nil || relCheck == ".." || strings.HasPrefix(relCheck, ".."+string(filepath.Separator)) {
+				return nil, fmt.Errorf("descriptor %s: get-started-file %q escapes appDir", descPath, rel)
+			}
+			if _, err := os.Stat(full); err != nil {
+				return nil, fmt.Errorf("descriptor %s: target not found: %w", descPath, err)
+			}
+			out = append(out, full)
 		}
-		full := filepath.Join(absAppDir, rel)
-		// Reject any path that escapes appDir. filepath.Rel followed by a
-		// `..` prefix check is the canonical way to do this.
-		relCheck, err := filepath.Rel(absAppDir, full)
-		if err != nil || relCheck == ".." || strings.HasPrefix(relCheck, ".."+string(filepath.Separator)) {
-			return nil, fmt.Errorf("descriptor %s: get-started-file %q escapes appDir", descPath, rel)
-		}
-		if _, err := os.Stat(full); err != nil {
-			return nil, fmt.Errorf("descriptor %s: target not found: %w", descPath, err)
-		}
-		out = append(out, full)
 	}
 	return out, nil
 }

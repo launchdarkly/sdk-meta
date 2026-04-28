@@ -11,7 +11,6 @@ inputs:
     description: Client-side ID baked into the rendered source.
 ld-application:
   slot: main-tsx
-# Validator pending — Vite build + Playwright headless harness deferred.
 ---
 
 In `main.tsx`, wrap your application with `LDProvider`:
@@ -24,7 +23,10 @@ import App from './App';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <LDProvider clientSideID="{{ environmentId }}">
+    <LDProvider
+      clientSideID="{{ environmentId }}"
+      context={{ kind: 'user', key: 'example-user-key', name: 'Sandy' }}
+    >
       <App />
     </LDProvider>
   </StrictMode>,
