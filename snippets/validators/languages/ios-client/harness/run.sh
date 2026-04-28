@@ -37,6 +37,15 @@ xcodegen generate
 DESTINATION="platform=iOS Simulator,name=iPhone 15"
 
 LOG=$(mktemp)
+
+# `-resolvePackageDependencies` is an action mutually exclusive with
+# `test`; xcodebuild silently runs only the resolve when both are
+# passed. Resolve packages first, then run the test action.
+xcodebuild -resolvePackageDependencies \
+    -project HelloIOS.xcodeproj \
+    -scheme HelloIOS \
+    >>"$LOG" 2>&1
+
 set +e
 SIMCTL_CHILD_LAUNCHDARKLY_MOBILE_KEY="$LAUNCHDARKLY_MOBILE_KEY" \
 SIMCTL_CHILD_LAUNCHDARKLY_FLAG_KEY="$LAUNCHDARKLY_FLAG_KEY" \
@@ -44,10 +53,9 @@ xcodebuild test \
     -project HelloIOS.xcodeproj \
     -scheme HelloIOS \
     -destination "$DESTINATION" \
-    -resolvePackageDependencies \
     CODE_SIGNING_ALLOWED=NO \
     CODE_SIGN_IDENTITY="" \
-    >"$LOG" 2>&1
+    >>"$LOG" 2>&1
 XCB_EXIT=$?
 set -e
 
