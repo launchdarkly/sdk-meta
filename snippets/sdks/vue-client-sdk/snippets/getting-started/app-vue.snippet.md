@@ -11,7 +11,10 @@ inputs:
     description: Default flag key baked into the rendered source.
 ld-application:
   slot: app-vue
-# Validator pending — same as main-js.
+validation:
+  runtime: vue-client
+  entrypoint: src/App.vue
+  companions: [vue-client-sdk/getting-started/main-js]
 ---
 
 In `src/App.vue`:
@@ -25,7 +28,7 @@ const flagValue = useLDFlag('{{ featureKey }}', false)
 </script>
 
 <template>
-  <div v-if="ldReady">Feature Flag {{ featureKey }} is {{ flagValue }}</div>
+  <div v-if="ldReady">The {{ featureKey }} feature flag evaluates to {{ flagValue }}.</div>
   <div v-else>LaunchDarkly client initializing...</div>
 </template>
 ```
