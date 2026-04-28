@@ -1,0 +1,16 @@
+id: vue-client-sdk
+sdk-meta-id: vue
+display-name: Vue
+type: client-side
+languages:
+  - id: javascript
+    extensions: [".js"]
+  - id: vue
+    extensions: [".vue"]
+package-managers: [npm, yarn]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/vue.tsx
+docs:
+  reference-page: /sdk/client-side/vue
+hello-world-repo: launchdarkly/vue-client-sdk

@@ -1,0 +1,22 @@
+id: react-client-sdk
+sdk-meta-id: react-web
+display-name: React (web)
+type: client-side
+languages:
+  - id: tsx
+    extensions: [".tsx"]
+  - id: jsx
+    extensions: [".jsx"]
+package-managers: [npm, yarn]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  # Legacy variant (create-react-app) uses standard JSX template-literal
+  # interpolation and is rendered into gonfalon via render markers. The
+  # createApp (Vite) variant uses `?raw` asset-file imports + replaceAll;
+  # the snippet files are present in this dir but rendering into
+  # createApp.tsx is deferred until that file is migrated off the
+  # assetSource pattern.
+  get-started-file: static/ld/components/getStarted/sdk/react/legacy.tsx
+docs:
+  reference-page: /sdk/client-side/react/react-web
+hello-world-repo: launchdarkly-labs/react-ts

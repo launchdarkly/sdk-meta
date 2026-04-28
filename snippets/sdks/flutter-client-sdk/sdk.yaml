@@ -1,0 +1,14 @@
+id: flutter-client-sdk
+sdk-meta-id: flutter
+display-name: Flutter
+type: client-side
+languages:
+  - id: dart
+    extensions: [".dart"]
+package-managers: [pub]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/flutter.tsx
+docs:
+  reference-page: /sdk/client-side/flutter
+hello-world-repo: launchdarkly/hello-flutter

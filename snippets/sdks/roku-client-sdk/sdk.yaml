@@ -1,0 +1,14 @@
+id: roku-client-sdk
+sdk-meta-id: roku
+display-name: Roku
+type: client-side
+languages:
+  - id: brightscript
+    extensions: [".brs"]
+package-managers: []
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/roku.tsx
+docs:
+  reference-page: /sdk/client-side/roku
+hello-world-repo: launchdarkly/hello-roku

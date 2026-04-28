@@ -1,0 +1,14 @@
+id: rust-server-sdk
+sdk-meta-id: rust
+display-name: Rust
+type: server-side
+languages:
+  - id: rust
+    extensions: [".rs"]
+package-managers: [cargo]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/rust.tsx
+docs:
+  reference-page: /sdk/server-side/rust
+hello-world-repo: launchdarkly/hello-rust

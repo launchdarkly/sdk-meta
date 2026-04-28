@@ -1,0 +1,14 @@
+id: ios-client-sdk
+sdk-meta-id: ios
+display-name: iOS (Swift)
+type: client-side
+languages:
+  - id: swift
+    extensions: [".swift"]
+package-managers: [cocoapods, spm, carthage]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/ios.tsx
+docs:
+  reference-page: /sdk/client-side/ios
+hello-world-repo: launchdarkly/hello-ios-swift
