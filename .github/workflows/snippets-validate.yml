@@ -3,7 +3,7 @@ name: Validate snippets
 # Runs the per-SDK validators in parallel. Each cell delegates to
 # `launchdarkly/gh-actions/actions/verify-hello-app@v2.0.1`, which is the
 # same action the `hello-*` repos use to:
-#   - assume the configured AWS role via OIDC (`vars.AWS_ROLE_ARN`)
+#   - assume the configured AWS role via OIDC (`vars.AWS_ROLE_ARN_EXAMPLES`)
 #   - fetch the LaunchDarkly Sandbox account credentials from Secrets
 #     Manager and inject the appropriate key as an env var
 #     (LAUNCHDARKLY_SDK_KEY, LAUNCHDARKLY_CLIENT_SIDE_ID, or
@@ -82,7 +82,7 @@ jobs:
           use_server_key: ${{ matrix.key-type == 'server' }}
           use_client_key: ${{ matrix.key-type == 'client' }}
           use_mobile_key: ${{ matrix.key-type == 'mobile' }}
-          role_arn: ${{ vars.AWS_ROLE_ARN }}
+          role_arn: ${{ vars.AWS_ROLE_ARN_EXAMPLES }}
           command: |
             set -o pipefail
             export LAUNCHDARKLY_FLAG_KEY=sample-feature
