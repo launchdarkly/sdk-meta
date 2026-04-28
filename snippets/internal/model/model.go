@@ -82,8 +82,14 @@ type Snippet struct {
 }
 
 var frontmatterRe = regexp.MustCompile(`(?s)\A---\n(.*?)\n---\n`)
-var fenceOpenRe = regexp.MustCompile("(?m)^```([a-zA-Z0-9_+-]*)\\s*$")
-var fenceCloseRe = regexp.MustCompile("(?m)^```\\s*$")
+// `[ \t]*` (not `\s*`) for the trailing horizontal whitespace because
+// `\s` includes `\n`: a greedy `\s*$` will consume the line-terminating
+// newline, and then the `after = after[1:]` step in firstCodeBlock skips
+// the *next* newline — silently dropping a blank line that immediately
+// followed the fence. CommonMark says fenced code-block content
+// preserves leading blank lines, so we have to too.
+var fenceOpenRe = regexp.MustCompile("(?m)^```([a-zA-Z0-9_+-]*)[ \t]*$")
+var fenceCloseRe = regexp.MustCompile("(?m)^```[ \t]*$")
 
 // ParseFile reads a .snippet.md file and returns the parsed Snippet.
 func ParseFile(path string) (*Snippet, error) {
