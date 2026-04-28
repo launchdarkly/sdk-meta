@@ -1,0 +1,164 @@
+name: Validate snippets
+
+# Runs the per-SDK validators in parallel. Each cell delegates to
+# `launchdarkly/gh-actions/actions/verify-hello-app@v2.0.1`, which is the
+# same action the `hello-*` repos use to:
+#   - assume the configured AWS role via OIDC (`vars.AWS_ROLE_ARN`)
+#   - fetch the LaunchDarkly Sandbox account credentials from Secrets
+#     Manager and inject the appropriate key as an env var
+#     (LAUNCHDARKLY_SDK_KEY, LAUNCHDARKLY_CLIENT_SIDE_ID, or
+#     LAUNCHDARKLY_MOBILE_KEY based on the use_*_key flag)
+#   - run `command:` and assert its output contains the EXAM-HELLO
+#     `feature flag evaluates to true` line.
+#
+# Each matrix row declares `key-type: server | client | mobile` so the
+# right `use_*_key` flag is set for the SDK under test. We always set
+# LAUNCHDARKLY_FLAG_KEY=sample-feature ourselves; the action only handles
+# the SDK/client/mobile key.
+#
+# fail-fast: false so every cell runs to completion. A final `summary` job
+# aggregates per-cell artifacts into a markdown table.
+
+on:
+  pull_request:
+    paths:
+      - 'snippets/**'
+      - '.github/workflows/snippets-validate.yml'
+  workflow_dispatch:
+
+permissions:
+  id-token: write    # OIDC for verify-hello-app's AWS role assumption
+  contents: read
+
+concurrency:
+  group: snippets-validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: ${{ matrix.sdk }}
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # T1 — Linux server / native runtimes that fit cleanly in Docker.
+          - { sdk: python-server-sdk, runs-on: ubuntu-latest, key-type: server }
+          - { sdk: go-server-sdk,     runs-on: ubuntu-latest, key-type: server }
+          - { sdk: node-server-sdk,   runs-on: ubuntu-latest, key-type: server }
+          - { sdk: node-client-sdk,   runs-on: ubuntu-latest, key-type: client }
+          - { sdk: ruby-server-sdk,   runs-on: ubuntu-latest, key-type: server }
+          - { sdk: php-server-sdk,    runs-on: ubuntu-latest, key-type: server }
+          - { sdk: rust-server-sdk,   runs-on: ubuntu-latest, key-type: server }
+          - { sdk: dotnet-server-sdk, runs-on: ubuntu-latest, key-type: server }
+          - { sdk: dotnet-client-sdk, runs-on: ubuntu-latest, key-type: mobile }
+          - { sdk: java-server-sdk,   runs-on: ubuntu-latest, key-type: server }
+          # T2 — browser SDKs (headless Playwright):
+          - { sdk: js-client-sdk,     runs-on: ubuntu-latest, key-type: client }
+          # Additional T1 SDKs append here as their snippet dirs land:
+          #   erlang-server-sdk, haskell-server-sdk,
+          #   lua-server-sdk, cpp-server-sdk, cpp-client-sdk.
+          # Additional T2 SDKs:
+          #   react-client-sdk, react-client-sdk-legacy, vue-client-sdk
+          #   (key-type: client)
+          # T3 — mobile/native non-Apple (Linux native runners):
+          #   android-client-sdk    (key-type: mobile)
+          #   flutter-client-sdk    (key-type: mobile)
+          #   react-native-client-sdk (key-type: mobile)
+          # T4 — iOS (macos-latest, xcodebuild):
+          #   - { sdk: ios-client-sdk, runs-on: macos-latest, key-type: mobile }
+          # Skipped: roku-client-sdk (validation: none, manual procedure).
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Validate
+        id: validate
+        uses: launchdarkly/gh-actions/actions/verify-hello-app@verify-hello-app-v2.0.1
+        with:
+          use_server_key: ${{ matrix.key-type == 'server' }}
+          use_client_key: ${{ matrix.key-type == 'client' }}
+          use_mobile_key: ${{ matrix.key-type == 'mobile' }}
+          role_arn: ${{ vars.AWS_ROLE_ARN }}
+          command: |
+            set -o pipefail
+            export LAUNCHDARKLY_FLAG_KEY=sample-feature
+            cd snippets
+            go run ./cmd/snippets validate --sdk=${{ matrix.sdk }} \
+              --sdks=./sdks --validators=./validators 2>&1 | tee /tmp/validate.log
+
+      - name: Record result
+        if: always()
+        run: |
+          mkdir -p /tmp/result
+          if [ "${{ steps.validate.outcome }}" = "success" ]; then
+              echo "ok" > /tmp/result/status
+          else
+              echo "fail" > /tmp/result/status
+          fi
+          [ -f /tmp/validate.log ] && cp /tmp/validate.log /tmp/result/log
+
+      - name: Upload result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: result-${{ matrix.sdk }}
+          path: /tmp/result/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  summary:
+    name: Validation summary
+    if: always()
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: results
+          pattern: result-*
+
+      - name: Build markdown table
+        run: |
+          {
+            echo "## Snippet validation summary"
+            echo
+            echo "Run: \`${{ github.run_id }}\` · Commit: \`${{ github.sha }}\`"
+            echo
+            echo "| SDK | Result | Excerpt |"
+            echo "|---|---|---|"
+            for d in results/result-*; do
+              [ -d "$d" ] || continue
+              sdk=$(basename "$d" | sed 's/^result-//')
+              status="unknown"
+              [ -f "$d/status" ] && status=$(cat "$d/status")
+              if [ "$status" = "ok" ]; then
+                  echo "| \`$sdk\` | ok | |"
+              else
+                  excerpt=""
+                  if [ -f "$d/log" ]; then
+                      excerpt=$(tail -n 50 "$d/log" \
+                        | grep -v '^$' \
+                        | tail -n 3 \
+                        | sed -e 's/|/\\|/g' -e 's/`/\\`/g' \
+                        | tr '\n' ' ')
+                  fi
+                  echo "| \`$sdk\` | **FAIL** | $excerpt |"
+              fi
+            done
+            echo
+            echo "Per-job logs are uploaded as \`result-<sdk>\` artifacts (14-day retention)."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail summary if any cell failed
+        run: |
+          for d in results/result-*; do
+            [ -d "$d" ] || continue
+            if [ -f "$d/status" ] && [ "$(cat "$d/status")" != "ok" ]; then
+                echo "At least one validator failed; see step summary above." >&2
+                exit 1
+            fi
+          done
