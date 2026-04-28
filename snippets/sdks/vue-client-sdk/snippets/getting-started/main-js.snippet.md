@@ -11,7 +11,6 @@ inputs:
     description: Client-side ID baked into the rendered source.
 ld-application:
   slot: main-js
-# Validator pending — Vue + Vite + Playwright harness deferred.
 ---
 
 In `src/main.js`:
@@ -24,7 +23,7 @@ import { LDPlugin } from 'launchdarkly-vue-client-sdk'
 const app = createApp(App)
 app.use(LDPlugin, {
   clientSideID: '{{ environmentId }}',
-  context: { kind: 'user', key: 'example-user' },
+  context: { kind: 'user', key: 'example-user-key' },
 })
 app.mount('#app')
 ```
