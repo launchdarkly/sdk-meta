@@ -146,12 +146,13 @@ func rewriteFile(path string, snippets map[string]*model.Snippet, dryRun bool) (
 		if err != nil {
 			return false, fmt.Errorf("snippet %s: %w", s.Path, err)
 		}
+		declared := declaredInputSet(s)
 		// Reuse the surrounding whitespace from the existing region so a
 		// re-render produces a minimal diff. This is purely cosmetic; the
 		// bare-vs-template decision below is independent and is driven by
 		// the snippet's intent.
 		leading, trailing := splitSurroundingWS(src[m.RegionStart:m.RegionEnd])
-		jsxBody := leading + renderForJSXChild(tpl) + trailing
+		jsxBody := leading + renderForJSXChild(tpl, declared) + trailing
 
 		// The hash covers ONLY the children we own. Attributes on the
 		// element are the consumer's to choose (lang="…", withCopyButton,
@@ -252,18 +253,30 @@ func atomicWriteFile(path string, data []byte) error {
 // Escaping for backticks/backslashes/${} only happens when the output is
 // going to be inside a backtick literal. Bare JSX text doesn't interpret
 // any of those, so escaping there would corrupt user-visible output.
-func renderForJSXChild(tpl []render.Node) string {
-	if needsTemplateLiteral(tpl) {
-		return "{`" + render.RenderForLDApplicationTemplate(tpl) + "`}"
+func renderForJSXChild(tpl []render.Node, declared map[string]struct{}) string {
+	if needsTemplateLiteral(tpl, declared) {
+		return "{`" + render.RenderForLDApplicationTemplate(tpl, declared) + "`}"
 	}
-	bare, err := render.RenderForJSXText(tpl)
+	bare, err := render.RenderForJSXText(tpl, declared)
 	if err != nil {
-		// Defensive: HasInterpolation should have routed us to the template
-		// path. If we somehow got here with interpolation, fall back to the
-		// safe wrapping form.
-		return "{`" + render.RenderForLDApplicationTemplate(tpl) + "`}"
+		// Defensive: needsTemplateLiteral should have routed us to the
+		// template path. If we somehow got here with interpolation, fall
+		// back to the safe wrapping form.
+		return "{`" + render.RenderForLDApplicationTemplate(tpl, declared) + "`}"
 	}
 	return bare
+}
+
+// declaredInputSet returns the set of input names declared on the snippet's
+// frontmatter. Used to differentiate `{{ name }}` we own (declared inputs)
+// from foreign template syntax (e.g. Vue's `{{ flagValue }}` mustaches in a
+// Vue snippet body) that should pass through verbatim.
+func declaredInputSet(s *model.Snippet) map[string]struct{} {
+	out := make(map[string]struct{}, len(s.Frontmatter.Inputs))
+	for name := range s.Frontmatter.Inputs {
+		out[name] = struct{}{}
+	}
+	return out
 }
 
 // splitSurroundingWS returns the leading and trailing whitespace of s.
@@ -285,8 +298,8 @@ func splitSurroundingWS(s string) (string, string) {
 
 func isSpace(b byte) bool { return b == ' ' || b == '\t' || b == '\n' || b == '\r' }
 
-func needsTemplateLiteral(tpl []render.Node) bool {
-	if render.HasInterpolation(tpl) {
+func needsTemplateLiteral(tpl []render.Node, declared map[string]struct{}) bool {
+	if render.HasInterpolation(tpl, declared) {
 		return true
 	}
 	for _, n := range tpl {

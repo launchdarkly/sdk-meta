@@ -7,31 +7,31 @@ import (
 	"github.com/launchdarkly/sdk-meta/snippets/internal/model"
 )
 
-// Regression for review #2: snippet author-controlled values may not escape
-// the staging directory.
-func TestCheckEntrypointRejectsTraversal(t *testing.T) {
+// Regression for review #2: snippet `file:` paths may not escape the staging
+// directory. The check moved from a dedicated entrypoint guard to a stage-
+// path guard during the multi-file refactor.
+func TestCheckStagePathRejectsTraversal(t *testing.T) {
 	bad := []string{
 		"../etc/passwd",
 		"../../home/x/.ssh/authorized_keys",
-		"a/b/c.py",
-		"./main.py",
-		".",
+		"/etc/passwd",
 		"..",
 	}
 	for _, e := range bad {
-		if err := checkEntrypoint(e); err == nil {
-			t.Errorf("checkEntrypoint(%q): expected error", e)
+		if err := checkStagePath(e); err == nil {
+			t.Errorf("checkStagePath(%q): expected error", e)
 		}
 	}
-	good := []string{"main.py", "app.py", "snippet_test.py"}
+	good := []string{
+		"main.py",
+		"src/main.rs",
+		"src/main/java/com/launchdarkly/HelloLD.java",
+		"./main.py", // filepath.Clean normalizes to main.py
+	}
 	for _, e := range good {
-		if err := checkEntrypoint(e); err != nil {
-			t.Errorf("checkEntrypoint(%q): unexpected error %v", e, err)
+		if err := checkStagePath(e); err != nil {
+			t.Errorf("checkStagePath(%q): unexpected error %v", e, err)
 		}
-	}
-	// Empty is allowed (no validation entrypoint declared).
-	if err := checkEntrypoint(""); err != nil {
-		t.Errorf("empty entrypoint should be allowed: %v", err)
 	}
 }
 
@@ -61,35 +61,45 @@ func TestCheckRequirementsRejectsPipFlags(t *testing.T) {
 	}
 }
 
-// Regression for review #7: sdk-key inputs must come from the env, not from
-// a snippet's runtime-default.
+// All four EXAM-HELLO key types pull from env, not from runtime-default.
 func TestRuntimeInputs(t *testing.T) {
+	env := envInputs{
+		sdkKey:       "real-sdk-key",
+		flagKey:      "real-flag-key",
+		mobileKey:    "real-mobile-key",
+		clientSideID: "real-client-side-id",
+	}
 	s := &model.Snippet{
 		Frontmatter: model.Frontmatter{
 			Inputs: map[string]model.Input{
-				"apiKey":     {Type: "sdk-key"},
-				"featureKey": {Type: "flag-key"},
-				"version":    {Type: "string", RuntimeDefault: "1.2.3"},
+				"apiKey":         {Type: "sdk-key"},
+				"featureKey":     {Type: "flag-key"},
+				"mobileKey":      {Type: "mobile-key"},
+				"clientSideId":   {Type: "client-side-id"},
+				"version":        {Type: "string", RuntimeDefault: "1.2.3"},
 			},
 		},
 	}
-	got, err := runtimeInputs(s, "real-sdk-key", "real-flag-key")
+	got, err := runtimeInputs(s, env)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got["apiKey"] != "real-sdk-key" {
-		t.Errorf("apiKey: got %q want real-sdk-key", got["apiKey"])
+	want := map[string]string{
+		"apiKey":       "real-sdk-key",
+		"featureKey":   "real-flag-key",
+		"mobileKey":    "real-mobile-key",
+		"clientSideId": "real-client-side-id",
+		"version":      "1.2.3",
 	}
-	if got["featureKey"] != "real-flag-key" {
-		t.Errorf("featureKey: got %q want real-flag-key", got["featureKey"])
-	}
-	if got["version"] != "1.2.3" {
-		t.Errorf("version: got %q want 1.2.3", got["version"])
+	for k, v := range want {
+		if got[k] != v {
+			t.Errorf("input %q: got %q want %q", k, got[k], v)
+		}
 	}
 }
 
 func TestRuntimeInputsRejectsRuntimeDefaultOnKeys(t *testing.T) {
-	for _, kind := range []string{"sdk-key", "flag-key"} {
+	for _, kind := range []string{"sdk-key", "flag-key", "mobile-key", "client-side-id"} {
 		s := &model.Snippet{
 			Frontmatter: model.Frontmatter{
 				Inputs: map[string]model.Input{
@@ -97,7 +107,7 @@ func TestRuntimeInputsRejectsRuntimeDefaultOnKeys(t *testing.T) {
 				},
 			},
 		}
-		_, err := runtimeInputs(s, "x", "y")
+		_, err := runtimeInputs(s, envInputs{})
 		if err == nil || !strings.Contains(err.Error(), "runtime-default") {
 			t.Errorf("%s: want runtime-default rejection, got %v", kind, err)
 		}

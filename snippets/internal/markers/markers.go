@@ -159,21 +159,33 @@ func ScanTSX(src string) ([]Match, error) {
 
 // skipPlainString consumes a "..." or '...' string literal starting at i and
 // returns the offset immediately after the closing quote. Backslash escapes
-// are honored. If the string is unterminated the function returns len(src).
+// are honored.
+//
+// If the apparent string crosses a newline before finding a closing quote,
+// the function treats the opening character as NOT a string start (returns
+// i+1 so the caller advances one byte). This guards against JSX text content
+// like `SDK's shared libraries` where an apostrophe is part of a word, not
+// a string-literal opener — without this, the scanner would swallow
+// hundreds of bytes and miss the next marker. Multi-line strings in JS/JSX
+// use backticks, which skipBacktick handles separately.
 func skipPlainString(src string, i int) int {
 	quote := src[i]
 	j := i + 1
 	for j < len(src) {
-		if src[j] == '\\' {
+		switch src[j] {
+		case '\\':
 			j += 2
 			continue
-		}
-		if src[j] == quote {
+		case '\n':
+			// Quote didn't close on this line — assume it wasn't a string
+			// opener (e.g. a JSX-text apostrophe).
+			return i + 1
+		case quote:
 			return j + 1
 		}
 		j++
 	}
-	return len(src)
+	return i + 1
 }
 
 // skipBacktick consumes a `...` template literal starting at i and returns

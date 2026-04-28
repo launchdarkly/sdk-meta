@@ -39,8 +39,34 @@ type LDApplicationHints struct {
 }
 
 type Validation struct {
-	Entrypoint   string `yaml:"entrypoint"`
+	// Runtime selects the validator harness under
+	// validators/languages/<runtime>/. If empty, the snippet's `lang:`
+	// field is used as the fallback (e.g. lang=python implies the python
+	// harness). Set explicitly when the snippet's lang doesn't equal the
+	// runtime — e.g. `lang: javascript` snippets that run under Node use
+	// `runtime: node`, and `lang: html` snippets that run in a headless
+	// browser use `runtime: browser`.
+	Runtime string `yaml:"runtime"`
+
+	// Entrypoint is the relative file path the harness invokes. If empty,
+	// the snippet's `file:` field is used (which is also where the rendered
+	// body is staged). Required for the validator to consider the snippet
+	// runnable; absence means "no validation for this snippet."
+	Entrypoint string `yaml:"entrypoint"`
+
+	// Requirements is a runtime-specific dependency descriptor. For Python
+	// it's the contents of requirements.txt. For other runtimes it's
+	// language-specific (or empty when manifest companions carry deps).
 	Requirements string `yaml:"requirements"`
+
+	// Companions lists snippet IDs to stage alongside this one. Each
+	// companion's body is rendered with the same runtime inputs and
+	// written to the staging dir at the companion's `file:` path. Use for
+	// multi-file projects (Java pom.xml, .NET .csproj, Rust Cargo.toml,
+	// iOS Podfile, etc.). The companions need not declare their own
+	// `validation.runtime` — they just declare `file:` so the validator
+	// knows where to put them.
+	Companions []string `yaml:"companions"`
 }
 
 // Snippet pairs the frontmatter with the body of the first fenced code block

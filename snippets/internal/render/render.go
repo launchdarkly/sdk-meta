@@ -6,7 +6,9 @@ import (
 )
 
 // RenderRuntime substitutes inputs as concrete values. Used by the validator.
-// A missing input is an error — validation must always have a value.
+// Names that don't appear in the inputs map round-trip as literal `{{ name }}`
+// so foreign template languages embedded in the snippet body (e.g. Vue's
+// own `{{ ... }}` mustache syntax) survive validation untouched.
 func RenderRuntime(nodes []Node, inputs map[string]string) (string, error) {
 	var sb strings.Builder
 	for _, n := range nodes {
@@ -16,13 +18,20 @@ func RenderRuntime(nodes []Node, inputs map[string]string) (string, error) {
 		case *Var:
 			v, ok := inputs[x.Name]
 			if !ok {
-				return "", fmt.Errorf("render: missing runtime input %q", x.Name)
+				// Unknown name — emit verbatim so foreign templates pass through.
+				sb.WriteString("{{ ")
+				sb.WriteString(x.Name)
+				sb.WriteString(" }}")
+				continue
 			}
 			sb.WriteString(v)
 		case *Cond:
 			v, ok := inputs[x.Var]
 			if !ok {
-				return "", fmt.Errorf("render: missing runtime input %q (used in conditional)", x.Var)
+				// We only support {{ if name }}…{{ end }} for declared inputs.
+				// An undeclared name in a conditional is almost certainly an
+				// authoring mistake (Vue's `v-if` is a different syntax).
+				return "", fmt.Errorf("render: conditional refers to undeclared input %q", x.Var)
 			}
 			if v != "" {
 				inner, err := RenderRuntime(x.Body, inputs)
@@ -36,18 +45,19 @@ func RenderRuntime(nodes []Node, inputs map[string]string) (string, error) {
 	return sb.String(), nil
 }
 
-// HasInterpolation reports whether the template contains any Var or Cond
-// node anywhere in the tree. Used by adapters to decide between bare-text
-// and template-literal output forms.
-func HasInterpolation(nodes []Node) bool {
+// HasInterpolation reports whether the template contains any Var (matching
+// a declared input) or Cond node. Used by adapters to decide between bare-
+// text and template-literal output forms. Foreign-template Vars (names
+// not in `declaredInputs`) don't count — they're literal text.
+func HasInterpolation(nodes []Node, declaredInputs map[string]struct{}) bool {
 	for _, n := range nodes {
 		switch x := n.(type) {
 		case *Var:
-			return true
+			if _, ok := declaredInputs[x.Name]; ok {
+				return true
+			}
 		case *Cond:
 			return true
-		case *Literal:
-			_ = x
 		}
 	}
 	return false
@@ -57,14 +67,22 @@ func HasInterpolation(nodes []Node) bool {
 // JS template literal: substitutions become `${name}`, conditionals become
 // `${name ? `inner` : ''}`. Literal text is escaped so backslashes,
 // backticks, and `${` sequences in the source survive into the runtime
-// string verbatim. The caller wraps the returned bytes in backticks.
-func RenderForLDApplicationTemplate(nodes []Node) string {
+// string verbatim. Names not in declaredInputs are emitted as literal
+// `{{ name }}` so foreign-template syntax (Vue's mustaches) passes through.
+// The caller wraps the returned bytes in backticks.
+func RenderForLDApplicationTemplate(nodes []Node, declaredInputs map[string]struct{}) string {
 	var sb strings.Builder
 	for _, n := range nodes {
 		switch x := n.(type) {
 		case *Literal:
 			sb.WriteString(escapeTL(x.Text))
 		case *Var:
+			if _, ok := declaredInputs[x.Name]; !ok {
+				// Foreign template — emit the original `{{ name }}` literally,
+				// escaped for the surrounding template literal.
+				sb.WriteString(escapeTL("{{ " + x.Name + " }}"))
+				continue
+			}
 			sb.WriteString("${")
 			sb.WriteString(x.Name)
 			sb.WriteString("}")
@@ -72,7 +90,7 @@ func RenderForLDApplicationTemplate(nodes []Node) string {
 			sb.WriteString("${")
 			sb.WriteString(x.Var)
 			sb.WriteString(" ? `")
-			sb.WriteString(RenderForLDApplicationTemplate(x.Body))
+			sb.WriteString(RenderForLDApplicationTemplate(x.Body, declaredInputs))
 			sb.WriteString("` : ''}")
 		}
 	}
@@ -81,20 +99,30 @@ func RenderForLDApplicationTemplate(nodes []Node) string {
 
 // RenderForJSXText produces the body for embedding as bare JSX text (i.e.
 // not wrapped in a template literal). Only valid when the template has no
-// interpolation; the caller is expected to consult HasInterpolation first.
+// interpolation matching a declared input. Foreign-template `{{ name }}`
+// passes through verbatim.
 //
 // Backslashes, backticks, and ${} sequences are emitted verbatim — JSX
 // text does not interpret any of those. Literal `{` and `}` characters
-// are not handled here (they would require JSX-specific escaping); the
-// caller should fall back to template-literal output if either appears.
-func RenderForJSXText(nodes []Node) (string, error) {
+// are not handled here; the caller should fall back to template-literal
+// output if either appears.
+func RenderForJSXText(nodes []Node, declaredInputs map[string]struct{}) (string, error) {
 	var sb strings.Builder
 	for _, n := range nodes {
-		l, ok := n.(*Literal)
-		if !ok {
-			return "", fmt.Errorf("RenderForJSXText: template has interpolation; use RenderForLDApplicationTemplate")
+		switch x := n.(type) {
+		case *Literal:
+			sb.WriteString(x.Text)
+		case *Var:
+			if _, ok := declaredInputs[x.Name]; ok {
+				return "", fmt.Errorf("RenderForJSXText: template has declared interpolation; use RenderForLDApplicationTemplate")
+			}
+			// Foreign template — emit literal.
+			sb.WriteString("{{ ")
+			sb.WriteString(x.Name)
+			sb.WriteString(" }}")
+		case *Cond:
+			return "", fmt.Errorf("RenderForJSXText: template has conditional; use RenderForLDApplicationTemplate")
 		}
-		sb.WriteString(l.Text)
 	}
 	return sb.String(), nil
 }

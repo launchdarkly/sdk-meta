@@ -21,22 +21,33 @@ type Config struct {
 	SDK           string // sdk id to validate (empty = all)
 }
 
-// Run finds validatable snippets under cfg.SDKsDir and runs each through
-// the per-language Docker validator. First-pass implementation: python only.
+// envInputs holds the environment-derived input values that get substituted
+// into snippets at validation time. Each field maps to one EXAM-HELLO env
+// var and to a snippet-input type.
+type envInputs struct {
+	sdkKey        string // LAUNCHDARKLY_SDK_KEY        ↔ type: sdk-key
+	flagKey       string // LAUNCHDARKLY_FLAG_KEY       ↔ type: flag-key
+	mobileKey     string // LAUNCHDARKLY_MOBILE_KEY     ↔ type: mobile-key
+	clientSideID  string // LAUNCHDARKLY_CLIENT_SIDE_ID ↔ type: client-side-id
+}
+
+// Run finds validatable snippets under cfg.SDKsDir and routes each through
+// its language harness. A snippet is considered validatable when its
+// frontmatter declares any one of:
+//   - validation.runtime
+//   - validation.entrypoint  (back-compat with the python first slice)
 //
-// Snippets are run against a real LaunchDarkly environment. Required env vars,
-// matching the convention used by the hello-* sample apps:
-//
-//	LAUNCHDARKLY_SDK_KEY    server-side SDK key for the test environment
-//	LAUNCHDARKLY_FLAG_KEY   the flag key the snippet should evaluate
-//
-// These are read from the caller's environment and forwarded into the
-// per-snippet Docker run. They are never written to a file in the repo.
+// EXAM-HELLO env vars (LAUNCHDARKLY_SDK_KEY, LAUNCHDARKLY_FLAG_KEY,
+// LAUNCHDARKLY_MOBILE_KEY, LAUNCHDARKLY_CLIENT_SIDE_ID) are read from the
+// caller's environment. Snippets that need a particular key declare an input
+// of the matching type; the dispatcher refuses to run if a needed key is
+// not set.
 func Run(cfg Config) error {
-	sdkKey := os.Getenv("LAUNCHDARKLY_SDK_KEY")
-	flagKey := os.Getenv("LAUNCHDARKLY_FLAG_KEY")
-	if sdkKey == "" || flagKey == "" {
-		return fmt.Errorf("LAUNCHDARKLY_SDK_KEY and LAUNCHDARKLY_FLAG_KEY must be set in the caller environment")
+	env := envInputs{
+		sdkKey:       os.Getenv("LAUNCHDARKLY_SDK_KEY"),
+		flagKey:      os.Getenv("LAUNCHDARKLY_FLAG_KEY"),
+		mobileKey:    os.Getenv("LAUNCHDARKLY_MOBILE_KEY"),
+		clientSideID: os.Getenv("LAUNCHDARKLY_CLIENT_SIDE_ID"),
 	}
 
 	snippets, err := model.LoadAll(cfg.SDKsDir)
@@ -50,11 +61,11 @@ func Run(cfg Config) error {
 		if cfg.SDK != "" && s.Frontmatter.SDK != cfg.SDK {
 			continue
 		}
-		if s.Frontmatter.Validation.Entrypoint == "" {
+		if !isValidatable(s) {
 			continue
 		}
 		any = true
-		if err := runOne(cfg, s, sdkKey, flagKey); err != nil {
+		if err := runOne(cfg, s, snippets, env); err != nil {
 			return fmt.Errorf("validate %s: %w", id, err)
 		}
 	}
@@ -64,81 +75,175 @@ func Run(cfg Config) error {
 	return nil
 }
 
-func runOne(cfg Config, s *model.Snippet, sdkKey, flagKey string) error {
-	switch s.CodeLang {
-	case "python":
-		return runPython(cfg, s, sdkKey, flagKey)
-	default:
-		return fmt.Errorf("no validator for lang=%q", s.CodeLang)
-	}
+func isValidatable(s *model.Snippet) bool {
+	return s.Frontmatter.Validation.Runtime != "" || s.Frontmatter.Validation.Entrypoint != ""
 }
 
-func runPython(cfg Config, s *model.Snippet, sdkKey, flagKey string) error {
-	if err := checkEntrypoint(s.Frontmatter.Validation.Entrypoint); err != nil {
-		return err
+func runOne(cfg Config, s *model.Snippet, all map[string]*model.Snippet, env envInputs) error {
+	runtime := s.Frontmatter.Validation.Runtime
+	if runtime == "" {
+		runtime = s.CodeLang
 	}
-	if err := checkRequirements(s.Frontmatter.Validation.Requirements); err != nil {
-		return err
+	if runtime == "" {
+		return fmt.Errorf("snippet %q: cannot determine validator runtime (set validation.runtime or lang)", s.Frontmatter.ID)
 	}
 
-	inputs, err := runtimeInputs(s, sdkKey, flagKey)
-	if err != nil {
-		return err
-	}
-	nodes, err := render.Parse(s.CodeBody)
-	if err != nil {
-		return err
-	}
-	code, err := render.RenderRuntime(nodes, inputs)
+	runner, runnerDir, err := loadRunner(cfg.ValidatorsDir, runtime)
 	if err != nil {
 		return err
 	}
 
-	stageDir, err := os.MkdirTemp("", "snippets-validate-")
+	if err := requireEnvForInputs(s, all, env); err != nil {
+		return err
+	}
+
+	stageDir, err := stageSnippet(s, all, env)
 	if err != nil {
 		return err
 	}
 	defer os.RemoveAll(stageDir)
 
-	entrypoint := s.Frontmatter.Validation.Entrypoint
-	if err := os.WriteFile(filepath.Join(stageDir, entrypoint), []byte(code), 0o644); err != nil {
-		return err
+	entrypoint := entrypointPath(s)
+	fmt.Printf("--- validate %s (runtime=%s, entrypoint=%s) ---\n", s.Frontmatter.ID, runtime, entrypoint)
+
+	switch runner.Mode {
+	case "docker":
+		return runDocker(cfg, runner, runnerDir, stageDir, entrypoint, env)
+	case "native":
+		return runNative(runnerDir, stageDir, entrypoint, env)
+	default:
+		return fmt.Errorf("validator runtime %q: unknown mode %q", runtime, runner.Mode)
 	}
-	if s.Frontmatter.Validation.Requirements != "" {
-		if err := os.WriteFile(filepath.Join(stageDir, "requirements.txt"),
-			[]byte(s.Frontmatter.Validation.Requirements+"\n"), 0o644); err != nil {
-			return err
+}
+
+// entrypointPath returns the relative path the harness should invoke. If the
+// snippet declares validation.entrypoint use that; otherwise fall back to
+// the file: field (which is also where the body is staged).
+func entrypointPath(s *model.Snippet) string {
+	if s.Frontmatter.Validation.Entrypoint != "" {
+		return s.Frontmatter.Validation.Entrypoint
+	}
+	return s.Frontmatter.File
+}
+
+// stageSnippet writes the snippet body and any companion bodies into a
+// temp directory shaped exactly like the project the harness expects.
+//
+// Each snippet (entrypoint + companions) is rendered with runtime inputs and
+// written at its `file:` path under stageDir. A snippet without a `file:`
+// field is an error — we need to know where to put its body.
+func stageSnippet(entry *model.Snippet, all map[string]*model.Snippet, env envInputs) (string, error) {
+	stageDir, err := os.MkdirTemp("", "snippets-validate-")
+	if err != nil {
+		return "", err
+	}
+
+	if err := stageOne(stageDir, entry, env); err != nil {
+		os.RemoveAll(stageDir)
+		return "", err
+	}
+	for _, cid := range entry.Frontmatter.Validation.Companions {
+		comp, ok := all[cid]
+		if !ok {
+			os.RemoveAll(stageDir)
+			return "", fmt.Errorf("snippet %s: companion %q not found", entry.Frontmatter.ID, cid)
+		}
+		if err := stageOne(stageDir, comp, env); err != nil {
+			os.RemoveAll(stageDir)
+			return "", err
 		}
 	}
 
-	validatorDir := filepath.Join(cfg.ValidatorsDir, "languages", "python")
-	if _, err := os.Stat(filepath.Join(validatorDir, "Dockerfile")); err != nil {
-		return fmt.Errorf("validator Dockerfile not found at %s: %w", validatorDir, err)
+	// Python convention: validation.requirements becomes requirements.txt.
+	// Other runtimes carry their dependency manifest as a companion snippet
+	// (pom.xml, Cargo.toml, etc.).
+	if req := entry.Frontmatter.Validation.Requirements; req != "" {
+		if err := checkRequirements(req); err != nil {
+			os.RemoveAll(stageDir)
+			return "", err
+		}
+		if err := os.WriteFile(filepath.Join(stageDir, "requirements.txt"),
+			[]byte(req+"\n"), 0o644); err != nil {
+			os.RemoveAll(stageDir)
+			return "", err
+		}
 	}
+	return stageDir, nil
+}
 
-	// Tag the image by hash of its build context. Two concurrent validate runs
-	// on the same Docker host won't race on a shared mutable tag, and rebuilds
-	// are skipped automatically when the validator hasn't changed.
-	tag, err := validatorImageTag(validatorDir)
+func stageOne(stageDir string, s *model.Snippet, env envInputs) error {
+	rel := s.Frontmatter.File
+	if rel == "" {
+		return fmt.Errorf("snippet %s: frontmatter.file is required for staging", s.Frontmatter.ID)
+	}
+	if err := checkStagePath(rel); err != nil {
+		return fmt.Errorf("snippet %s: %w", s.Frontmatter.ID, err)
+	}
+	inputs, err := runtimeInputs(s, env)
+	if err != nil {
+		return fmt.Errorf("snippet %s: %w", s.Frontmatter.ID, err)
+	}
+	nodes, err := render.Parse(s.CodeBody)
+	if err != nil {
+		return fmt.Errorf("snippet %s: %w", s.Frontmatter.ID, err)
+	}
+	body, err := render.RenderRuntime(nodes, inputs)
+	if err != nil {
+		return fmt.Errorf("snippet %s: %w", s.Frontmatter.ID, err)
+	}
+	dst := filepath.Join(stageDir, rel)
+	if err := os.MkdirAll(filepath.Dir(dst), 0o755); err != nil {
+		return err
+	}
+	return os.WriteFile(dst, []byte(body), 0o644)
+}
+
+// checkStagePath rejects file paths that escape the staging directory.
+func checkStagePath(rel string) error {
+	clean := filepath.Clean(rel)
+	if filepath.IsAbs(clean) {
+		return fmt.Errorf("frontmatter.file %q must be relative", rel)
+	}
+	if clean == ".." || strings.HasPrefix(clean, ".."+string(filepath.Separator)) {
+		return fmt.Errorf("frontmatter.file %q escapes staging directory", rel)
+	}
+	return nil
+}
+
+// runDocker builds the validator's Dockerfile and runs harness/run.sh inside
+// the resulting container with the staged snippet bind-mounted at /snippet.
+//
+// Build context is the entire `validators/` tree so each Dockerfile can pull
+// from `shared/` (the shared harness library) as well as its own
+// `languages/<runtime>/` subtree.
+func runDocker(cfg Config, runner *Runner, runnerDir, stageDir, entrypoint string, env envInputs) error {
+	dockerfile := filepath.Join(runnerDir, "Dockerfile")
+	if _, err := os.Stat(dockerfile); err != nil {
+		return fmt.Errorf("validator Dockerfile not found at %s: %w", runnerDir, err)
+	}
+	tag, err := validatorImageTag(cfg.ValidatorsDir, runnerDir, runner.ImagePrefix)
 	if err != nil {
 		return err
 	}
-	build := exec.Command("docker", "build", "--quiet", "-t", tag, validatorDir)
+	build := exec.Command("docker", "build", "--quiet",
+		"-f", dockerfile,
+		"-t", tag,
+		cfg.ValidatorsDir,
+	)
 	build.Stdout = os.Stdout
 	build.Stderr = os.Stderr
 	if err := build.Run(); err != nil {
 		return fmt.Errorf("docker build failed: %w", err)
 	}
-
-	fmt.Printf("--- validate %s (lang=%s, entrypoint=%s) ---\n", s.Frontmatter.ID, s.CodeLang, entrypoint)
-
-	run := exec.Command("docker", "run", "--rm",
-		"-v", stageDir+":/snippet:ro",
-		"-e", "SNIPPET_ENTRYPOINT="+entrypoint,
-		"-e", "LAUNCHDARKLY_SDK_KEY="+sdkKey,
-		"-e", "LAUNCHDARKLY_FLAG_KEY="+flagKey,
-		tag,
-	)
+	args := []string{"run", "--rm",
+		"-v", stageDir + ":/snippet:ro",
+		"-e", "SNIPPET_ENTRYPOINT=" + entrypoint,
+	}
+	for _, kv := range envForRun(env) {
+		args = append(args, "-e", kv)
+	}
+	args = append(args, tag)
+	run := exec.Command("docker", args...)
 	run.Stdout = os.Stdout
 	run.Stderr = os.Stderr
 	if err := run.Run(); err != nil {
@@ -147,21 +252,120 @@ func runPython(cfg Config, s *model.Snippet, sdkKey, flagKey string) error {
 	return nil
 }
 
-// checkEntrypoint rejects any value that isn't a plain filename. Snippet
-// frontmatter is author-controlled, so without this guard a malicious
-// `entrypoint: ../../../etc/foo` would let `os.WriteFile(stageDir+entrypoint)`
-// land outside the staging directory.
-func checkEntrypoint(entrypoint string) error {
-	if entrypoint == "" {
-		return nil
+// runNative execs the harness's run.sh on the host with the staged snippet
+// path passed as $SNIPPET_DIR. Used for runtimes whose toolchains can't run
+// in a Linux container (iOS / xcodebuild) or are too heavy to dockerize for
+// CI (Android emulator, Flutter).
+func runNative(runnerDir, stageDir, entrypoint string, env envInputs) error {
+	script := filepath.Join(runnerDir, "harness", "run.sh")
+	if _, err := os.Stat(script); err != nil {
+		return fmt.Errorf("native validator run.sh not found at %s: %w", script, err)
 	}
-	if entrypoint != filepath.Base(entrypoint) {
-		return fmt.Errorf("validation.entrypoint %q must be a plain filename (no path separators or ..)", entrypoint)
-	}
-	if entrypoint == "." || entrypoint == ".." {
-		return fmt.Errorf("validation.entrypoint %q is not a valid filename", entrypoint)
+	cmd := exec.Command("/bin/sh", script)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Env = append(os.Environ(),
+		"SNIPPET_DIR="+stageDir,
+		"SNIPPET_ENTRYPOINT="+entrypoint,
+	)
+	cmd.Env = append(cmd.Env, envForRun(env)...)
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("native validator failed: %w", err)
 	}
 	return nil
+}
+
+// envForRun returns the EXAM-HELLO env-var KEY=VALUE pairs that should be
+// forwarded into the harness. Empty values are still forwarded (the harness
+// can decide whether to require them); the per-snippet
+// requireEnvForInputs check has already failed fast on missing values that
+// the snippet actually needs.
+func envForRun(env envInputs) []string {
+	return []string{
+		"LAUNCHDARKLY_SDK_KEY=" + env.sdkKey,
+		"LAUNCHDARKLY_FLAG_KEY=" + env.flagKey,
+		"LAUNCHDARKLY_MOBILE_KEY=" + env.mobileKey,
+		"LAUNCHDARKLY_CLIENT_SIDE_ID=" + env.clientSideID,
+	}
+}
+
+// requireEnvForInputs walks the entrypoint snippet AND its companions; for
+// every input typed as one of the EXAM-HELLO key types, the corresponding
+// env var must be set. This produces a clear error before a downstream pip-
+// install or docker-build has wasted time.
+func requireEnvForInputs(entry *model.Snippet, all map[string]*model.Snippet, env envInputs) error {
+	check := func(s *model.Snippet) error {
+		for name, in := range s.Frontmatter.Inputs {
+			switch in.Type {
+			case "flag-key":
+				if env.flagKey == "" {
+					return fmt.Errorf("snippet %s input %q (type=flag-key) requires LAUNCHDARKLY_FLAG_KEY to be set", s.Frontmatter.ID, name)
+				}
+			case "sdk-key":
+				if env.sdkKey == "" {
+					return fmt.Errorf("snippet %s input %q (type=sdk-key) requires LAUNCHDARKLY_SDK_KEY to be set", s.Frontmatter.ID, name)
+				}
+			case "mobile-key":
+				if env.mobileKey == "" {
+					return fmt.Errorf("snippet %s input %q (type=mobile-key) requires LAUNCHDARKLY_MOBILE_KEY to be set", s.Frontmatter.ID, name)
+				}
+			case "client-side-id":
+				if env.clientSideID == "" {
+					return fmt.Errorf("snippet %s input %q (type=client-side-id) requires LAUNCHDARKLY_CLIENT_SIDE_ID to be set", s.Frontmatter.ID, name)
+				}
+			}
+		}
+		return nil
+	}
+	if err := check(entry); err != nil {
+		return err
+	}
+	for _, cid := range entry.Frontmatter.Validation.Companions {
+		if comp, ok := all[cid]; ok {
+			if err := check(comp); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+// runtimeInputs derives concrete values for every declared input.
+//
+// Inputs typed flag-key / sdk-key / mobile-key / client-side-id pull from
+// the EXAM-HELLO env vars carried in `env`. Other inputs fall back to the
+// snippet's own runtime-default. Declaring runtime-default for any of the
+// EXAM-HELLO key types is an error: those values must always come from the
+// caller's environment so real keys never end up committed.
+func runtimeInputs(s *model.Snippet, env envInputs) (map[string]string, error) {
+	out := map[string]string{}
+	for name, in := range s.Frontmatter.Inputs {
+		switch in.Type {
+		case "flag-key":
+			if in.RuntimeDefault != "" {
+				return nil, fmt.Errorf("input %q (type=flag-key) must not declare runtime-default", name)
+			}
+			out[name] = env.flagKey
+		case "sdk-key":
+			if in.RuntimeDefault != "" {
+				return nil, fmt.Errorf("input %q (type=sdk-key) must not declare runtime-default", name)
+			}
+			out[name] = env.sdkKey
+		case "mobile-key":
+			if in.RuntimeDefault != "" {
+				return nil, fmt.Errorf("input %q (type=mobile-key) must not declare runtime-default", name)
+			}
+			out[name] = env.mobileKey
+		case "client-side-id":
+			if in.RuntimeDefault != "" {
+				return nil, fmt.Errorf("input %q (type=client-side-id) must not declare runtime-default", name)
+			}
+			out[name] = env.clientSideID
+		default:
+			out[name] = in.RuntimeDefault
+		}
+	}
+	return out, nil
 }
 
 // checkRequirements rejects values that would let a snippet author smuggle
@@ -185,60 +389,40 @@ func checkRequirements(req string) error {
 	return nil
 }
 
-// validatorImageTag produces a Docker tag that's a content hash of the
-// validator directory: a deterministic tag that changes only when a file in
-// the validator changes. Concurrent validate runs against the same validator
-// thus reuse the cached image; runs against different validators get different
-// tags so they cannot interleave.
-func validatorImageTag(dir string) (string, error) {
+// validatorImageTag produces a Docker tag that's a content hash of both the
+// shared harness library AND the per-language validator directory. A change
+// in either place forces a rebuild; concurrent validate runs against the
+// same validator share the cached image.
+func validatorImageTag(validatorsDir, runnerDir, prefix string) (string, error) {
 	h := sha256.New()
-	err := filepath.WalkDir(dir, func(p string, d os.DirEntry, err error) error {
-		if err != nil {
-			return err
+	for _, sub := range []string{"shared", ""} {
+		// "" means "the runner dir itself"; otherwise sub is rooted at validatorsDir.
+		var root string
+		if sub == "" {
+			root = runnerDir
+		} else {
+			root = filepath.Join(validatorsDir, sub)
 		}
-		if d.IsDir() {
-			return nil
-		}
-		f, err := os.Open(p)
-		if err != nil {
-			return err
-		}
-		defer f.Close()
-		rel, _ := filepath.Rel(dir, p)
-		fmt.Fprintf(h, "%s\x00", rel)
-		_, err = io.Copy(h, f)
-		return err
-	})
-	if err != nil {
-		return "", err
-	}
-	return "sdk-snippets/python-validator:" + hex.EncodeToString(h.Sum(nil))[:16], nil
-}
-
-// runtimeInputs derives concrete values for every declared input.
-//
-// Inputs typed as `flag-key` use LAUNCHDARKLY_FLAG_KEY; inputs typed as
-// `sdk-key` use LAUNCHDARKLY_SDK_KEY. Both come from the caller's env so the
-// snippet's rendered output never embeds a real key. Other inputs fall back
-// to the snippet's own runtime-default. Declaring runtime-default for either
-// keyed type is an error: the value must always come from the environment.
-func runtimeInputs(s *model.Snippet, sdkKey, flagKey string) (map[string]string, error) {
-	out := map[string]string{}
-	for name, in := range s.Frontmatter.Inputs {
-		switch in.Type {
-		case "flag-key":
-			if in.RuntimeDefault != "" {
-				return nil, fmt.Errorf("input %q (type=flag-key) must not declare runtime-default — value comes from LAUNCHDARKLY_FLAG_KEY", name)
+		err := filepath.WalkDir(root, func(p string, d os.DirEntry, err error) error {
+			if err != nil {
+				return err
 			}
-			out[name] = flagKey
-		case "sdk-key":
-			if in.RuntimeDefault != "" {
-				return nil, fmt.Errorf("input %q (type=sdk-key) must not declare runtime-default — value comes from LAUNCHDARKLY_SDK_KEY", name)
+			if d.IsDir() {
+				return nil
 			}
-			out[name] = sdkKey
-		default:
-			out[name] = in.RuntimeDefault
+			f, err := os.Open(p)
+			if err != nil {
+				return err
+			}
+			defer f.Close()
+			rel, _ := filepath.Rel(validatorsDir, p)
+			fmt.Fprintf(h, "%s\x00", rel)
+			_, err = io.Copy(h, f)
+			return err
+		})
+		if err != nil {
+			return "", err
 		}
 	}
-	return out, nil
+	return prefix + ":" + hex.EncodeToString(h.Sum(nil))[:16], nil
 }
