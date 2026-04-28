@@ -19,11 +19,11 @@ Use the `useFlags` hook to evaluate flags. For example, in `App.tsx`:
 import { useFlags } from 'launchdarkly-react-client-sdk';
 
 function App() {
-  const { {{ featureKey }} } = useFlags();
+  const { {{ featureKey | camelCase }} } = useFlags();
 
   return (
-    <div style={{ backgroundColor: {{ featureKey }} ? 'green' : 'red' }}>
-      The {{ featureKey }} feature flag evaluates to <b>{ {{ featureKey }} ? 'true' : 'false'}</b>
+    <div style={{ backgroundColor: {{ featureKey | camelCase }} ? 'green' : 'red' }}>
+      The {{ featureKey | camelCase }} feature flag evaluates to <b>{ {{ featureKey | camelCase }} ? 'true' : 'false'}</b>
     </div>
   );
 }

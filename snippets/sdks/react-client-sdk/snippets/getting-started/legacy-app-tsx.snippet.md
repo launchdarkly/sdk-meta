@@ -11,6 +11,10 @@ inputs:
     description: Default flag key (camelCased) baked into the rendered source. Note that gonfalon camel-cases the supplied flag key before substituting; for validation we use the env-var value as-is.
 ld-application:
   slot: legacy-app-tsx
+validation:
+  runtime: react-client
+  entrypoint: src/App.tsx
+  companions: [react-client-sdk/getting-started/legacy-index-tsx]
 ---
 
 In `App.tsx`:
@@ -20,12 +24,12 @@ import './App.css';
 import { useFlags } from 'launchdarkly-react-client-sdk';
 
 function App() {
-  const { {{ featureKey }} } = useFlags();
+  const { {{ featureKey | camelCase }} } = useFlags();
 
   return (
       <div className="App">
-        <header className="App-header" style={{backgroundColor: {{ featureKey }} ? '#00844B' : '#373841'}}>
-            <p>The {{ featureKey }} feature flag evaluates to <b>{ {{ featureKey }} ? 'True' : 'False'}</b></p>
+        <header className="App-header" style={{backgroundColor: {{ featureKey | camelCase }} ? '#00844B' : '#373841'}}>
+            <p>The {{ featureKey | camelCase }} feature flag evaluates to <b>{ {{ featureKey | camelCase }} ? 'True' : 'False'}</b></p>
         </header>
       </div>
   );

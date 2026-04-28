@@ -9,16 +9,21 @@ import (
 // The snippet templating language is intentionally tiny:
 //
 //	{{ varName }}                substitute the value of an input
+//	{{ varName | filter }}       substitute the value with a filter applied
 //	{{ if varName }}...{{ end }} emit "..." only if the input is truthy (non-empty)
 //
 // Conditionals do not nest in the first-pass slice. The inner "..." may still
-// contain {{ varName }} substitutions. Future phases can extend this (filters,
-// region toggles, version toggles) without breaking existing snippets.
+// contain {{ varName }} substitutions. Filters supported today: `camelCase`.
+// React's snippets need the camelCase filter because `useFlags()` destructures
+// camelCased identifiers; ld-application maps these to `${camelCase(name)}`.
 
 type Node interface{ isNode() }
 
 type Literal struct{ Text string }
-type Var struct{ Name string }
+type Var struct {
+	Name   string
+	Filter string // empty if no filter; e.g. "camelCase"
+}
 type Cond struct {
 	Var  string
 	Body []Node
@@ -29,7 +34,7 @@ func (*Var) isNode()     {}
 func (*Cond) isNode()    {}
 
 var nameRe = `[a-zA-Z][a-zA-Z0-9_]*`
-var tokenRe = regexp.MustCompile(`\{\{\s*(if\s+(` + nameRe + `)\s*|end\s*|(` + nameRe + `)\s*)\}\}`)
+var tokenRe = regexp.MustCompile(`\{\{\s*(if\s+(` + nameRe + `)\s*|end\s*|(` + nameRe + `)(?:\s*\|\s*(` + nameRe + `))?\s*)\}\}`)
 
 // Parse parses the mini-templating syntax into a flat node list.
 // Conditionals are flattened: a Cond node contains its inner body.
@@ -71,9 +76,17 @@ func Parse(src string) ([]Node, error) {
 			closed := stack[len(stack)-1]
 			stack = stack[:len(stack)-1]
 			append_(closed)
-		case m[6] >= 0: // "NAME"
+		case m[6] >= 0: // "NAME" optionally followed by "| FILTER"
 			name := src[m[6]:m[7]]
-			append_(&Var{Name: name})
+			v := &Var{Name: name}
+			if m[8] >= 0 {
+				filter := src[m[8]:m[9]]
+				if filter != "camelCase" {
+					return nil, fmt.Errorf("template: unknown filter %q at offset %d (only `camelCase` is supported)", filter, start)
+				}
+				v.Filter = filter
+			}
+			append_(v)
 		default:
 			return nil, fmt.Errorf("template: unrecognized directive %q at offset %d", token, start)
 		}

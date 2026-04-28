@@ -61,11 +61,14 @@ jobs:
           # Browser SDKs (headless Playwright):
           - { sdk: js-client-sdk,     runs-on: ubuntu-latest, key-type: client }
           - { sdk: vue-client-sdk,    runs-on: ubuntu-latest, key-type: client }
+          - { sdk: react-client-sdk,  runs-on: ubuntu-latest, key-type: client }
           #
           # Validators not yet wired (snippets ported, harness pending):
           #   server-runtime: erlang-server-sdk
-          #   browser: react-client-sdk, react-client-sdk-legacy
-          #     (key-type: client)
+          #   browser: react-client-sdk createApp variant — pending the gonfalon
+          #     createApp.tsx refactor (replaceAll → inline template literal).
+          #     The React SDK's createApp main-tsx snippet also needs explicit
+          #     context= on <LDProvider> to target the hello-app's user key.
           #   Linux mobile/native: android-client-sdk, flutter-client-sdk,
           #     react-native-client-sdk (key-type: mobile)
           #   macos-latest + xcodebuild: ios-client-sdk (key-type: mobile)
