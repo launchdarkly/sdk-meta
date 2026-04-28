@@ -8,14 +8,16 @@ description: gen_server module that wraps the LaunchDarkly Erlang client.
 inputs:
   apiKey:
     type: sdk-key
-    description: SDK key baked into the rendered source. Validation is not yet wired — see comment.
+    description: SDK key baked into the rendered source.
 ld-application:
   slot: server-erl
-# Validator pending. The Erlang Get Started flow is fundamentally
-# interactive (rebar3 shell + manual gen_server:call). To validate end-
-# to-end we'd need to write a wrapper application script that calls
-# hello_erlang_server:get/3 and prints an EXAM-HELLO conformant line.
-# That's a snippet rewrite and is left as fix-on-red.
+validation:
+  runtime: erlang-server
+  entrypoint: src/hello_erlang_server.erl
+  # The user-facing flow is interactive: `rebar3 shell` + manual
+  # gen_server:call. The validator synthesizes the equivalent in
+  # `rebar3 eval` so the gen_server is exercised end-to-end without
+  # requiring a wrapper module in the snippet itself.
 ---
 
 First create a new file named `src/hello_erlang_server.erl`. Then, in
