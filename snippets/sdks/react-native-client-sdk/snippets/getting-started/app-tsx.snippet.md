@@ -11,7 +11,10 @@ inputs:
     description: Mobile key baked into the rendered source.
 ld-application:
   slot: app-tsx
-# Validator pending — RN bundler + Expo boot is heavy; deferred.
+validation:
+  runtime: react-native-client
+  entrypoint: App.tsx
+  companions: [react-native-client-sdk/getting-started/welcome-tsx]
 ---
 
 In `App.tsx`:
