@@ -14,7 +14,9 @@ inputs:
     description: Default flag key baked into the rendered source.
 ld-application:
   slot: main-cpp
-# Validator pending — same toolchain story as cpp-server-sdk.
+validation:
+  runtime: cpp-client
+  entrypoint: main.cpp
 ---
 
 Create a file named `main.cpp` add the following code:
@@ -65,8 +67,8 @@ int main() {
 
     bool const flag_value = client.BoolVariation("{{ featureKey }}", false);
 
-    std::cout << "*** Feature flag '{{ featureKey }}' is "
-              << (flag_value ? "true" : "false") << std::endl;
+    std::cout << "*** The '{{ featureKey }}' feature flag evaluates to "
+              << (flag_value ? "true" : "false") << "." << std::endl;
 
     return 0;
 }
