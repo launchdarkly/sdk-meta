@@ -10,7 +10,7 @@ examples.
 |---|---|---|
 | `id` | yes | globally unique; convention `<sdk>/<group>/<name>` |
 | `sdk` | yes | matches a directory under `sdks/` |
-| `kind` | yes | `bootstrap`, `install`, `hello-world`, `run` |
+| `kind` | yes | one of: `bootstrap` (project-scaffolding command, e.g. `npx create-vue@latest`), `install` (dependency-add command, e.g. `pip install ldclient-py`), `hello-world` (the actual code file the consumer drops in), `run` (the command that runs the result, e.g. `python main.py`). One snippet has exactly one kind; the set is closed for now. New kinds get added here as the snippet system grows. |
 | `lang` | yes | language tag for the fenced code block |
 | `description` | recommended | one-liner shown to the consumer |
 | `inputs` | optional | each input has `type`, `description`, `runtime-default` |
@@ -48,7 +48,8 @@ whose body should be replaced:
 - Block comment anywhere: `/* SDK_SNIPPET:RENDER:<id> hash=<h> version=<v> */`
 
 `hash` and `version` are filled in by `snippets render`. On first wiring, use
-`hash=000000000000` as a placeholder — the next render rewrites it.
+`hash=0` as a placeholder — the next render rewrites it. (Any hex string
+works; `0` just minimizes finger-typing.)
 
 The element directly following a marker MUST be a capitalized JSX component
 tag (e.g. `<Snippet>`, `<CodeBlock>`). Lowercase HTML tags (`<pre>`, `<code>`)

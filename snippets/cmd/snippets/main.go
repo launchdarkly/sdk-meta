@@ -14,11 +14,25 @@ const usage = `snippets — LaunchDarkly SDK snippet generator
 
 usage:
   snippets render   --target=ld-application --out=<app-checkout> [--sdks=./sdks]
-  snippets verify   --target=ld-application --out=<app-checkout> [--sdks=./sdks]
-  snippets validate --sdk=<sdk-id> [--sdks=./sdks] [--validators=./validators]
-  snippets version
+      Rewrites the consumer's marked regions in place from the snippet sources.
+      This is the command authors run after editing a snippet, and the command
+      that produces the diff in the consumer repo's PR.
 
-First-pass support: target=ld-application, sdk=python-server-sdk.
+  snippets verify   --target=ld-application --out=<app-checkout> [--sdks=./sdks]
+      Read-only check used by CI in the consumer repo. Re-renders every marked
+      region in memory and fails if the rendered bytes drift from what's on
+      disk, or if a marker's hash does not match its current region's content.
+      Never writes; never executes any snippet code.
+
+  snippets validate --sdk=<sdk-id> [--sdks=./sdks] [--validators=./validators]
+      Builds the SDK's per-language validator (Docker image or native harness),
+      stages each runnable snippet with concrete input values, and runs it
+      against a real LaunchDarkly environment. Exercises the snippet code end
+      to end; requires LAUNCHDARKLY_SDK_KEY (or _MOBILE_KEY / _CLIENT_SIDE_ID)
+      and LAUNCHDARKLY_FLAG_KEY in the env.
+
+  snippets version
+      Print the snippets generator version.
 `
 
 func main() {
