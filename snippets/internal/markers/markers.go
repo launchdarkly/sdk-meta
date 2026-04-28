@@ -385,8 +385,11 @@ done:
 }
 
 // hasTagPrefix reports whether src[i:] starts with prefix AND the byte
-// immediately after is one that can't be part of a longer identifier.
-// Used to distinguish `<Snippet` from `<SnippetGroup`.
+// immediately after can't extend the tag's identifier. The continuation
+// set covers JS/JSX identifier chars (`A-Za-z0-9_$`) plus `.` for
+// member-expression tag names (`<Foo.Bar>`). Without `.` and `_$`,
+// `<Snippet_Group>` and `<Snippet.Inner>` would falsely match a
+// `<Snippet` open and break depth tracking.
 func hasTagPrefix(src string, i int, prefix string) bool {
 	if !strings.HasPrefix(src[i:], prefix) {
 		return false
@@ -397,6 +400,9 @@ func hasTagPrefix(src string, i int, prefix string) bool {
 	}
 	c := src[end]
 	if (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') {
+		return false
+	}
+	if c == '_' || c == '$' || c == '.' {
 		return false
 	}
 	return true

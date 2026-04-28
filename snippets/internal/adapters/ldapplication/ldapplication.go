@@ -303,14 +303,19 @@ func needsTemplateLiteral(tpl []render.Node, declared map[string]struct{}) bool 
 		return true
 	}
 	for _, n := range tpl {
-		l, ok := n.(*render.Literal)
-		if !ok {
-			continue
-		}
-		if strings.Contains(l.Text, "\n") {
-			return true
-		}
-		if render.ContainsJSXSpecial(l.Text) {
+		switch x := n.(type) {
+		case *render.Literal:
+			if strings.Contains(x.Text, "\n") {
+				return true
+			}
+			if render.ContainsJSXSpecial(x.Text) {
+				return true
+			}
+		case *render.Var:
+			// Foreign-template Vars (Vue/Handlebars `{{ name }}`) are
+			// emitted verbatim. Their `{` and `}` would be interpreted
+			// as JSX expression delimiters in bare-text mode, so force
+			// the template-literal path so the curlies get escaped.
 			return true
 		}
 	}

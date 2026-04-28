@@ -222,6 +222,69 @@ lang: shell
 	}
 }
 
+// Regression: a snippet whose only interpolation is a foreign-template
+// `{{ name }}` (e.g. Vue's mustache) must render via the template-
+// literal path so the curlies get escaped. Bare-text rendering would
+// emit `{{ name }}` straight into JSX, where the outer `{` opens a JS
+// expression and the inner becomes an object-literal — invalid JSX.
+func TestNeedsTemplateLiteral_ForeignTemplateUsesTemplateLiteral(t *testing.T) {
+	tmp := t.TempDir()
+	sdks := filepath.Join(tmp, "sdks", "x")
+	if err := os.MkdirAll(filepath.Join(sdks, "snippets"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(sdks, "sdk.yaml"), []byte(
+		"id: x\nsdk-meta-id: y\ndisplay-name: y\ntype: server-side\n"+
+			"languages:\n  - id: y\n    extensions: [\".y\"]\n"+
+			"package-managers: []\nregions: []\nhello-world-repo: a/b\n"+
+			"ld-application:\n  get-started-file: app.tsx\n"+
+			"docs:\n  reference-page: /\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	// Snippet body has no declared inputs and no JSX-special chars in
+	// any literal — just a foreign-template `{{ flagValue }}`.
+	if err := os.WriteFile(filepath.Join(sdks, "snippets", "x.snippet.md"), []byte(
+		`---
+id: x/cmd
+sdk: x
+kind: bootstrap
+lang: html
+---
+
+`+"```html\nflag is {{ flagValue }}\n```\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	app := filepath.Join(tmp, "app")
+	if err := os.MkdirAll(app, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	tsx := `// SDK_SNIPPET:RENDER:x/cmd hash=000000000000 version=0.1.0
+<Snippet lang="html">
+  placeholder
+</Snippet>
+`
+	if err := os.WriteFile(filepath.Join(app, "app.tsx"), []byte(tsx), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := Render(filepath.Join(tmp, "sdks"), app); err != nil {
+		t.Fatal(err)
+	}
+	out, _ := os.ReadFile(filepath.Join(app, "app.tsx"))
+	// The body MUST be wrapped in a template literal: the foreign-
+	// template `{{ flagValue }}` would otherwise be interpreted by JSX.
+	if !strings.Contains(string(out), "{`") {
+		t.Fatalf("expected template-literal wrapping, got:\n%s", out)
+	}
+	if !strings.Contains(string(out), "{{ flagValue }}") {
+		t.Fatalf("expected foreign-template literal preserved, got:\n%s", out)
+	}
+	// Verify must accept what render produced.
+	if err := Verify(filepath.Join(tmp, "sdks"), app); err != nil {
+		t.Fatalf("verify after render should pass: %v", err)
+	}
+}
+
 // Regression for review #5: a marker with no hash= field must be rejected
 // during verify.
 func TestVerify_RejectsMissingHash(t *testing.T) {

@@ -155,6 +155,37 @@ func TestScanTSX_SimilarPrefixTag(t *testing.T) {
 	}
 }
 
+// Regression: a nested tag whose name shares a prefix but uses
+// underscore, dollar-sign, or dot continuation must not be treated as
+// the marked tag re-opening. JSX identifiers can include `_$`, and
+// member-expression tag names use `.` (`<Foo.Bar>`).
+func TestScanTSX_SimilarPrefixTag_IdentifierContinuations(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		body string
+	}{
+		{"underscore", `<Snippet_Group>x</Snippet_Group>`},
+		{"dollar", `<Snippet$Group>x</Snippet$Group>`},
+		{"member-expression", `<Snippet.Inner>x</Snippet.Inner>`},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			src := "// SDK_SNIPPET:RENDER:foo hash=abc version=0.1.0\n" +
+				"<Snippet>" + tc.body + "</Snippet>"
+			matches, err := ScanTSX(src)
+			if err != nil {
+				t.Fatalf("scan: %v", err)
+			}
+			if len(matches) != 1 {
+				t.Fatalf("want 1 match, got %d", len(matches))
+			}
+			body := src[matches[0].RegionStart:matches[0].RegionEnd]
+			if body != tc.body {
+				t.Fatalf("body mismatch: %q", body)
+			}
+		})
+	}
+}
+
 // Regression for review #9: a nested template literal inside a ${ } expression
 // inside a backtick string must not end the outer string scan early.
 func TestScanTSX_BacktickWithNestedTemplate(t *testing.T) {
