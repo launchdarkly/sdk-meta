@@ -31,10 +31,43 @@ if ! command -v xcodegen >/dev/null 2>&1; then
 fi
 xcodegen generate
 
-# macos-latest GH runners ship with several iPhone simulators
-# preinstalled; iPhone 15 is the safest stable target across recent
-# Xcode versions.
-DESTINATION="platform=iOS Simulator,name=iPhone 15"
+# Pick whichever iPhone simulator is currently installed on this
+# runner. macos-latest's iPhone roster shifts per Xcode release —
+# hardcoding "iPhone 15" stops working when GitHub bumps the image.
+SIM_NAME=$(xcrun simctl list devices available --json | python3 -c '
+import sys, json, re
+data = json.load(sys.stdin)
+best = None
+best_num = -1
+for runtime, devs in data.get("devices", {}).items():
+    if "iOS" not in runtime:
+        continue
+    for dev in devs:
+        name = dev.get("name", "")
+        if not dev.get("isAvailable", False):
+            continue
+        if not name.startswith("iPhone"):
+            continue
+        # Prefer plain "iPhone <N>" over Pro/Max/Plus variants so the
+        # destination string is shortest and most likely to match.
+        m = re.match(r"^iPhone (\d+)$", name)
+        if m and int(m.group(1)) > best_num:
+            best_num = int(m.group(1))
+            best = name
+if best is None:
+    # Fallback: any available iPhone, max version-suffix wins.
+    cand = []
+    for runtime, devs in data.get("devices", {}).items():
+        if "iOS" not in runtime:
+            continue
+        for dev in devs:
+            if dev.get("isAvailable") and dev.get("name", "").startswith("iPhone"):
+                cand.append(dev["name"])
+    best = sorted(cand)[-1] if cand else "iPhone 16"
+print(best)
+')
+DESTINATION="platform=iOS Simulator,name=$SIM_NAME"
+echo "validator: targeting $DESTINATION"
 
 LOG=$(mktemp)
 
