@@ -1,0 +1,14 @@
+id: cpp-server-sdk
+sdk-meta-id: cpp-server
+display-name: C++ (server-side)
+type: server-side
+languages:
+  - id: cpp
+    extensions: [".cpp", ".h", ".hpp"]
+package-managers: [cmake]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/cppServer.tsx
+docs:
+  reference-page: /sdk/server-side/c-c--
+hello-world-repo: launchdarkly/cpp-sdks

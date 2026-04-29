@@ -1,0 +1,14 @@
+id: dotnet-server-sdk
+sdk-meta-id: dotnet-server
+display-name: .NET (server-side)
+type: server-side
+languages:
+  - id: csharp
+    extensions: [".cs"]
+package-managers: [nuget]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/dotnet.tsx
+docs:
+  reference-page: /sdk/server-side/dotnet
+hello-world-repo: launchdarkly/hello-dotnet-server

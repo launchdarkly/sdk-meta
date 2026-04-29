@@ -1,0 +1,61 @@
+name: HelloIOS
+options:
+  bundleIdPrefix: com.launchdarkly
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+# launchdarkly-ios-client-sdk via Swift Package Manager — avoids the
+# CocoaPods step described in the snippet for the user. We're testing
+# the snippet's runtime behavior, not the dependency manager itself.
+packages:
+  LaunchDarkly:
+    url: https://github.com/launchdarkly/ios-client-sdk
+    from: "11.0.0"
+
+targets:
+  HelloIOS:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+    info:
+      path: Sources/Info.plist
+      properties:
+        UILaunchStoryboardName: ""
+        CFBundleName: HelloIOS
+        CFBundleIdentifier: com.launchdarkly.HelloIOS
+        CFBundleVersion: "1"
+        CFBundleShortVersionString: "1.0"
+    dependencies:
+      - package: LaunchDarkly
+    settings:
+      base:
+        SWIFT_VERSION: "5.9"
+        PRODUCT_BUNDLE_IDENTIFIER: com.launchdarkly.HelloIOS
+        TARGETED_DEVICE_FAMILY: "1,2"
+        CODE_SIGNING_ALLOWED: "NO"
+        CODE_SIGN_IDENTITY: ""
+
+  HelloIOSTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests
+    dependencies:
+      - target: HelloIOS
+    settings:
+      base:
+        SWIFT_VERSION: "5.9"
+        CODE_SIGNING_ALLOWED: "NO"
+        CODE_SIGN_IDENTITY: ""
+
+schemes:
+  HelloIOS:
+    build:
+      targets:
+        HelloIOS: all
+        HelloIOSTests: [test]
+    test:
+      targets:
+        - HelloIOSTests

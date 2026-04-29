@@ -1,0 +1,14 @@
+id: php-server-sdk
+sdk-meta-id: php
+display-name: PHP
+type: server-side
+languages:
+  - id: php
+    extensions: [".php"]
+package-managers: [composer]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/php.tsx
+docs:
+  reference-page: /sdk/server-side/php
+hello-world-repo: launchdarkly/hello-php

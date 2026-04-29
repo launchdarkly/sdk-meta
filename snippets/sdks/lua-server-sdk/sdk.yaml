@@ -1,0 +1,14 @@
+id: lua-server-sdk
+sdk-meta-id: lua
+display-name: Lua
+type: server-side
+languages:
+  - id: lua
+    extensions: [".lua"]
+package-managers: [luarocks]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/luaServer.tsx
+docs:
+  reference-page: /sdk/server-side/lua
+hello-world-repo: launchdarkly/lua-server-sdk

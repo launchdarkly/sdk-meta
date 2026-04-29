@@ -19,10 +19,11 @@ func RenderRuntime(nodes []Node, inputs map[string]string) (string, error) {
 			v, ok := inputs[x.Name]
 			if !ok {
 				// Unknown name — emit verbatim so foreign templates pass through.
-				sb.WriteString("{{ ")
-				sb.WriteString(x.Name)
-				sb.WriteString(" }}")
+				sb.WriteString(literalVar(x))
 				continue
+			}
+			if x.Filter != "" {
+				v = applyFilter(x.Filter, v)
 			}
 			sb.WriteString(v)
 		case *Cond:
@@ -80,11 +81,18 @@ func RenderForLDApplicationTemplate(nodes []Node, declaredInputs map[string]stru
 			if _, ok := declaredInputs[x.Name]; !ok {
 				// Foreign template — emit the original `{{ name }}` literally,
 				// escaped for the surrounding template literal.
-				sb.WriteString(escapeTL("{{ " + x.Name + " }}"))
+				sb.WriteString(escapeTL(literalVar(x)))
 				continue
 			}
 			sb.WriteString("${")
-			sb.WriteString(x.Name)
+			if x.Filter != "" {
+				sb.WriteString(x.Filter)
+				sb.WriteString("(")
+				sb.WriteString(x.Name)
+				sb.WriteString(")")
+			} else {
+				sb.WriteString(x.Name)
+			}
 			sb.WriteString("}")
 		case *Cond:
 			sb.WriteString("${")
@@ -117,9 +125,7 @@ func RenderForJSXText(nodes []Node, declaredInputs map[string]struct{}) (string,
 				return "", fmt.Errorf("RenderForJSXText: template has declared interpolation; use RenderForLDApplicationTemplate")
 			}
 			// Foreign template — emit literal.
-			sb.WriteString("{{ ")
-			sb.WriteString(x.Name)
-			sb.WriteString(" }}")
+			sb.WriteString(literalVar(x))
 		case *Cond:
 			return "", fmt.Errorf("RenderForJSXText: template has conditional; use RenderForLDApplicationTemplate")
 		}
@@ -141,4 +147,67 @@ func escapeTL(s string) string {
 	s = strings.ReplaceAll(s, "`", "\\`")
 	s = strings.ReplaceAll(s, "${", "\\${")
 	return s
+}
+
+// literalVar formats a Var node back to its source `{{ name }}` /
+// `{{ name | filter }}` form. Used when emitting an undeclared name
+// verbatim so foreign-template syntax round-trips intact.
+func literalVar(v *Var) string {
+	if v.Filter == "" {
+		return "{{ " + v.Name + " }}"
+	}
+	return "{{ " + v.Name + " | " + v.Filter + " }}"
+}
+
+// applyFilter applies a filter to a runtime value. Today only `camelCase`
+// is supported — used by react-client-sdk's snippets where useFlags()
+// destructures camelCased identifiers from a kebab-cased flag key.
+func applyFilter(name, value string) string {
+	switch name {
+	case "camelCase":
+		return camelCase(value)
+	default:
+		return value
+	}
+}
+
+// camelCase mirrors @gonfalon/strings' camelCase. Converts kebab-case,
+// snake_case, and space-separated words to camelCase. Leading non-alpha
+// runs are stripped. The first segment stays lowercase; subsequent
+// segments get an uppercase initial.
+//
+// Examples:
+//   sample-feature  -> sampleFeature
+//   my_flag_key     -> myFlagKey
+//   already-camelOK -> alreadyCamelOk (lowercases later segments first)
+func camelCase(s string) string {
+	var segs []string
+	var cur strings.Builder
+	flush := func() {
+		if cur.Len() > 0 {
+			segs = append(segs, strings.ToLower(cur.String()))
+			cur.Reset()
+		}
+	}
+	for _, r := range s {
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') {
+			cur.WriteRune(r)
+			continue
+		}
+		flush()
+	}
+	flush()
+	if len(segs) == 0 {
+		return ""
+	}
+	var out strings.Builder
+	out.WriteString(segs[0])
+	for _, seg := range segs[1:] {
+		if seg == "" {
+			continue
+		}
+		out.WriteString(strings.ToUpper(seg[:1]))
+		out.WriteString(seg[1:])
+	}
+	return out.String()
 }

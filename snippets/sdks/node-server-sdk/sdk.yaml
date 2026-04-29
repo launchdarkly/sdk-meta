@@ -1,0 +1,14 @@
+id: node-server-sdk
+sdk-meta-id: node-server
+display-name: Node.js (server-side)
+type: server-side
+languages:
+  - id: javascript
+    extensions: [".js"]
+package-managers: [npm]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/nodeServer.tsx
+docs:
+  reference-page: /sdk/server-side/node-js
+hello-world-repo: launchdarkly/hello-node-server

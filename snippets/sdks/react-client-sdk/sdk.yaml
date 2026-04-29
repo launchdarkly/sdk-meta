@@ -1,0 +1,23 @@
+id: react-client-sdk
+sdk-meta-id: react-web
+display-name: React (web)
+type: client-side
+languages:
+  - id: tsx
+    extensions: [".tsx"]
+  - id: jsx
+    extensions: [".jsx"]
+package-managers: [npm, yarn]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  # Two get-started variants live side-by-side in gonfalon: the legacy
+  # create-react-app flow (legacy.tsx) and the createApp/Vite flow
+  # (createApp.tsx). Both use standard JSX template-literal interpolation
+  # with the `${camelCase(featureKey)}` pattern, so both render via
+  # render markers.
+  get-started-files:
+    - static/ld/components/getStarted/sdk/react/legacy.tsx
+    - static/ld/components/getStarted/sdk/react/createApp.tsx
+docs:
+  reference-page: /sdk/client-side/react/react-web
+hello-world-repo: launchdarkly-labs/react-ts

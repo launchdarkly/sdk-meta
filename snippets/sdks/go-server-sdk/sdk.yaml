@@ -1,0 +1,14 @@
+id: go-server-sdk
+sdk-meta-id: go
+display-name: Go
+type: server-side
+languages:
+  - id: go
+    extensions: [".go"]
+package-managers: [go-modules]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/go.tsx
+docs:
+  reference-page: /sdk/server-side/go
+hello-world-repo: launchdarkly/hello-go

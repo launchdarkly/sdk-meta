@@ -1,0 +1,14 @@
+id: js-client-sdk
+sdk-meta-id: js
+display-name: JavaScript (browser)
+type: client-side
+languages:
+  - id: html
+    extensions: [".html"]
+package-managers: [cdn, npm]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/javascript.tsx
+docs:
+  reference-page: /sdk/client-side/javascript
+hello-world-repo: launchdarkly/hello-js

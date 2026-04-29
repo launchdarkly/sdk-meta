@@ -1,0 +1,14 @@
+id: cpp-client-sdk
+sdk-meta-id: cpp-client
+display-name: C++ (client-side)
+type: client-side
+languages:
+  - id: cpp
+    extensions: [".cpp", ".h", ".hpp"]
+package-managers: [cmake]
+regions: [commercial, federal, eu, relay-proxy]
+ld-application:
+  get-started-file: static/ld/components/getStarted/sdk/cppClient.tsx
+docs:
+  reference-page: /sdk/client-side/c-c--
+hello-world-repo: launchdarkly/cpp-sdks

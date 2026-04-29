@@ -22,7 +22,8 @@ type descriptor struct {
 	Regions         []string       `yaml:"regions"`
 	HelloWorldRepo  string         `yaml:"hello-world-repo"`
 	LDApplication   struct {
-		GetStartedFile string `yaml:"get-started-file"`
+		GetStartedFile  string   `yaml:"get-started-file"`
+		GetStartedFiles []string `yaml:"get-started-files"`
 	} `yaml:"ld-application"`
 	Docs struct {
 		ReferencePage string `yaml:"reference-page"`
