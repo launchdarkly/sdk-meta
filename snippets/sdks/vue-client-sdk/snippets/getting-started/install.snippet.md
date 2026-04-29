@@ -4,8 +4,6 @@ sdk: vue-client-sdk
 kind: install
 lang: shell
 description: Change into the project and install the LaunchDarkly Vue SDK.
-ld-application:
-  slot: install
 ---
 
 Change dir and install the LaunchDarkly SDK:

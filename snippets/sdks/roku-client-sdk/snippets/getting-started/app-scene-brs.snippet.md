@@ -12,8 +12,6 @@ inputs:
   featureKey:
     type: flag-key
     description: Default flag key baked into the rendered source.
-ld-application:
-  slot: app-scene-brs
 # validation: none
 #
 # Roku validation requires a Roku device or the proprietary BrightScript

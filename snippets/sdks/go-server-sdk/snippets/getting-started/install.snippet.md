@@ -4,8 +4,6 @@ sdk: go-server-sdk
 kind: install
 lang: shell
 description: Install the Go server SDK module.
-ld-application:
-  slot: install
 ---
 
 Next, install the SDK:

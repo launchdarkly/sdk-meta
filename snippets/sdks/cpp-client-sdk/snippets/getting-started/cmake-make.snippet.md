@@ -4,8 +4,6 @@ sdk: cpp-client-sdk
 kind: bootstrap
 lang: bash
 description: Configure with the Make generator.
-ld-application:
-  slot: cmake-make
 ---
 
 ```bash

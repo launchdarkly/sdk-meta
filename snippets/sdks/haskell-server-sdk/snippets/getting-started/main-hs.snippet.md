@@ -9,8 +9,6 @@ inputs:
   featureKey:
     type: flag-key
     description: Default flag key baked into the rendered source. Gonfalon's snippet uses this as the env-var name passed to lookupEnv (see comment below); validation reads LAUNCHDARKLY_FLAG_KEY at runtime.
-ld-application:
-  slot: main-hs
 validation:
   runtime: haskell-server
   entrypoint: app/Main.hs

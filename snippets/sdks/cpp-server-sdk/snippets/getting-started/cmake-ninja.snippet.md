@@ -4,8 +4,6 @@ sdk: cpp-server-sdk
 kind: bootstrap
 lang: bash
 description: Configure with the Ninja generator.
-ld-application:
-  slot: cmake-ninja
 ---
 
 ```bash

@@ -8,8 +8,6 @@ inputs:
   apiKey:
     type: sdk-key
     description: SDK key embedded in the rendered Run command.
-ld-application:
-  slot: run
 ---
 
 Run:

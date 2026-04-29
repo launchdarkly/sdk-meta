@@ -4,8 +4,6 @@ sdk: react-native-client-sdk
 kind: bootstrap
 lang: shell
 description: Bootstrap an Expo React Native TypeScript app.
-ld-application:
-  slot: create-expo
 ---
 
 Use `create-expo-app` to create a new Expo application:

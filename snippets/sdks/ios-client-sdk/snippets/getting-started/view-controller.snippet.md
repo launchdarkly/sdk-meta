@@ -9,8 +9,6 @@ inputs:
   featureKey:
     type: flag-key
     description: Default flag key baked into the rendered source.
-ld-application:
-  slot: view-controller
 validation:
   runtime: ios-client
   entrypoint: ViewController.swift
