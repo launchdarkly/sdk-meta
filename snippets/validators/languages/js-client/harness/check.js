@@ -1,12 +1,11 @@
-// Loads the staged HTML in headless Chromium, polls the page text for the
-// EXAM-HELLO success line, and exits 0 when matched. The browser is given
-// up to 30 seconds to fetch the LaunchDarkly client SDK from its CDN,
-// initialize, and evaluate the flag.
+// Loads the built snippet bundle in headless Chromium via a file:// URL,
+// polls the page text for the EXAM-HELLO success line, and exits 0 when
+// matched. The browser is given up to 30 seconds to fetch flag data
+// from LaunchDarkly, initialize, and evaluate the flag.
 const { chromium } = require('/harness/node_modules/playwright');
 
 (async () => {
-  const entrypoint = process.env.SNIPPET_ENTRYPOINT || 'index.html';
-  const url = `file:///snippet/${entrypoint}`;
+  const url = 'file:///opt/hello-js/index.html';
   const successRe = /feature flag evaluates to true/i;
 
   const browser = await chromium.launch();
@@ -38,7 +37,7 @@ const { chromium } = require('/harness/node_modules/playwright');
   console.error(finalText.trim());
   await browser.close();
   process.exit(1);
-})().catch(async (err) => {
+})().catch((err) => {
   console.error('validator: harness error:', err.message);
   process.exit(1);
 });

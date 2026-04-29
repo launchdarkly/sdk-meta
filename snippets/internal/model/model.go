@@ -46,8 +46,8 @@ type Validation struct {
 	// field is used as the fallback (e.g. lang=python implies the python
 	// harness). Set explicitly when the snippet's lang doesn't equal the
 	// runtime — e.g. `lang: javascript` snippets that run under Node use
-	// `runtime: node`, and `lang: html` snippets that run in a headless
-	// browser use `runtime: browser`.
+	// `runtime: node`, and `lang: ts` snippets that build a browser bundle
+	// for the JavaScript client SDK use `runtime: js-client`.
 	Runtime string `yaml:"runtime"`
 
 	// Entrypoint is the relative file path the harness invokes. If empty,
