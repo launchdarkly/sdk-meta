@@ -40,7 +40,7 @@ func TestDiscoverTargetFiles_RejectsTraversal(t *testing.T) {
 	}
 	writeSDKTree(t, sdks, "evil-sdk", "../escape.tsx", app)
 
-	_, err := discoverTargetFiles(sdks, app)
+	_, err := discoverTargetFiles(os.DirFS(sdks), app)
 	if err == nil || !strings.Contains(err.Error(), "escapes appDir") {
 		t.Fatalf("want escapes-appDir error, got %v", err)
 	}
@@ -55,7 +55,7 @@ func TestDiscoverTargetFiles_RejectsAbsolute(t *testing.T) {
 	}
 	writeSDKTree(t, sdks, "evil-sdk", "/etc/passwd", app)
 
-	_, err := discoverTargetFiles(sdks, app)
+	_, err := discoverTargetFiles(os.DirFS(sdks), app)
 	if err == nil || !strings.Contains(err.Error(), "must be relative") {
 		t.Fatalf("want must-be-relative error, got %v", err)
 	}
@@ -101,7 +101,7 @@ lang: shell
 	if err := os.WriteFile(filepath.Join(app, "app.tsx"), []byte(tsx), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := Render(filepath.Join(tmp, "sdks"), app); err != nil {
+	if _, err := Render(os.DirFS(filepath.Join(tmp, "sdks")), app); err != nil {
 		t.Fatal(err)
 	}
 	// Hand-edit an attribute (add withCopyButton). Verify must still pass.
@@ -112,7 +112,7 @@ lang: shell
 	if err := os.WriteFile(filepath.Join(app, "app.tsx"), []byte(edited), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := Verify(filepath.Join(tmp, "sdks"), app); err != nil {
+	if err := Verify(os.DirFS(filepath.Join(tmp, "sdks")), app); err != nil {
 		t.Fatalf("verify should accept attribute-only edit: %v", err)
 	}
 }
@@ -154,7 +154,7 @@ lang: shell
 	if err := os.WriteFile(filepath.Join(app, "app.tsx"), []byte(tsx), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := Render(filepath.Join(tmp, "sdks"), app); err != nil {
+	if _, err := Render(os.DirFS(filepath.Join(tmp, "sdks")), app); err != nil {
 		t.Fatal(err)
 	}
 	bytes, _ := os.ReadFile(filepath.Join(app, "app.tsx"))
@@ -162,7 +162,7 @@ lang: shell
 	if err := os.WriteFile(filepath.Join(app, "app.tsx"), []byte(edited), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	err := Verify(filepath.Join(tmp, "sdks"), app)
+	err := Verify(os.DirFS(filepath.Join(tmp, "sdks")), app)
 	if err == nil || !strings.Contains(err.Error(), "hand-edit detected") {
 		t.Fatalf("verify should reject child edit, got %v", err)
 	}
@@ -208,7 +208,7 @@ lang: shell
 		t.Fatal(err)
 	}
 
-	if _, err := Render(filepath.Join(tmp, "sdks"), app); err != nil {
+	if _, err := Render(os.DirFS(filepath.Join(tmp, "sdks")), app); err != nil {
 		t.Fatal(err)
 	}
 	out, _ := os.ReadFile(filepath.Join(app, "app.tsx"))
@@ -217,7 +217,7 @@ lang: shell
 		t.Fatalf("expected bare-text rendering, got:\n%s", out)
 	}
 	// And verify must accept it.
-	if err := Verify(filepath.Join(tmp, "sdks"), app); err != nil {
+	if err := Verify(os.DirFS(filepath.Join(tmp, "sdks")), app); err != nil {
 		t.Fatalf("verify after render should pass: %v", err)
 	}
 }
@@ -267,7 +267,7 @@ lang: html
 		t.Fatal(err)
 	}
 
-	if _, err := Render(filepath.Join(tmp, "sdks"), app); err != nil {
+	if _, err := Render(os.DirFS(filepath.Join(tmp, "sdks")), app); err != nil {
 		t.Fatal(err)
 	}
 	out, _ := os.ReadFile(filepath.Join(app, "app.tsx"))
@@ -280,7 +280,7 @@ lang: html
 		t.Fatalf("expected foreign-template literal preserved, got:\n%s", out)
 	}
 	// Verify must accept what render produced.
-	if err := Verify(filepath.Join(tmp, "sdks"), app); err != nil {
+	if err := Verify(os.DirFS(filepath.Join(tmp, "sdks")), app); err != nil {
 		t.Fatalf("verify after render should pass: %v", err)
 	}
 }
@@ -324,7 +324,7 @@ lang: shell
 	if err := os.WriteFile(filepath.Join(app, "app.tsx"), []byte(tsx), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	err := Verify(filepath.Join(tmp, "sdks"), app)
+	err := Verify(os.DirFS(filepath.Join(tmp, "sdks")), app)
 	if err == nil || !strings.Contains(err.Error(), "missing required hash") {
 		t.Fatalf("want missing-hash error, got %v", err)
 	}

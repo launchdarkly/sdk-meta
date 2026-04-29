@@ -4,8 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"os"
-	"path/filepath"
+	"io/fs"
 	"regexp"
 	"sort"
 	"strings"
@@ -91,30 +90,31 @@ var frontmatterRe = regexp.MustCompile(`(?s)\A---\n(.*?)\n---\n`)
 var fenceOpenRe = regexp.MustCompile("(?m)^```([a-zA-Z0-9_+-]*)[ \t]*$")
 var fenceCloseRe = regexp.MustCompile("(?m)^```[ \t]*$")
 
-// ParseFile reads a .snippet.md file and returns the parsed Snippet.
-func ParseFile(path string) (*Snippet, error) {
-	raw, err := os.ReadFile(path)
+// ParseFile reads a .snippet.md file from fsys and returns the parsed Snippet.
+// snippetPath is an fs.FS-style path (slash-separated, no leading "./").
+func ParseFile(fsys fs.FS, snippetPath string) (*Snippet, error) {
+	raw, err := fs.ReadFile(fsys, snippetPath)
 	if err != nil {
 		return nil, err
 	}
 	m := frontmatterRe.FindSubmatchIndex(raw)
 	if m == nil {
-		return nil, fmt.Errorf("%s: missing YAML frontmatter", path)
+		return nil, fmt.Errorf("%s: missing YAML frontmatter", snippetPath)
 	}
 	var fm Frontmatter
 	dec := yaml.NewDecoder(bytes.NewReader(raw[m[2]:m[3]]))
 	dec.KnownFields(true)
 	if err := dec.Decode(&fm); err != nil {
-		return nil, fmt.Errorf("%s: frontmatter parse: %w", path, err)
+		return nil, fmt.Errorf("%s: frontmatter parse: %w", snippetPath, err)
 	}
 	body := raw[m[1]:]
 
 	lang, code, err := firstCodeBlock(body)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", path, err)
+		return nil, fmt.Errorf("%s: %w", snippetPath, err)
 	}
 	return &Snippet{
-		Path:        path,
+		Path:        snippetPath,
 		Frontmatter: fm,
 		CodeLang:    lang,
 		CodeBody:    code,
@@ -145,10 +145,12 @@ func firstCodeBlock(body []byte) (string, string, error) {
 	return lang, string(codeBytes), nil
 }
 
-// LoadAll walks sdksDir for every *.snippet.md file and returns them indexed by id.
-func LoadAll(sdksDir string) (map[string]*Snippet, error) {
+// LoadAll walks fsys for every *.snippet.md file and returns them indexed by id.
+// fsys is rooted at the sdks/ directory's contents (so an entry path looks like
+// "<sdk-id>/snippets/<group>/<name>.snippet.md").
+func LoadAll(fsys fs.FS) (map[string]*Snippet, error) {
 	out := map[string]*Snippet{}
-	err := filepath.WalkDir(sdksDir, func(p string, d os.DirEntry, err error) error {
+	err := fs.WalkDir(fsys, ".", func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -158,7 +160,7 @@ func LoadAll(sdksDir string) (map[string]*Snippet, error) {
 		if !strings.HasSuffix(p, ".snippet.md") {
 			return nil
 		}
-		s, err := ParseFile(p)
+		s, err := ParseFile(fsys, p)
 		if err != nil {
 			return err
 		}

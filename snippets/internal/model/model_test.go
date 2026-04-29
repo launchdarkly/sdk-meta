@@ -30,7 +30,7 @@ func TestParseFile_PreservesLeadingBlankLine(t *testing.T) {
 	if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	s, err := ParseFile(path)
+	s, err := ParseFile(os.DirFS(tmp), filepath.Base(path))
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -58,7 +58,7 @@ func TestParseFile_NoLeadingBlankLine(t *testing.T) {
 	if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	s, err := ParseFile(path)
+	s, err := ParseFile(os.DirFS(tmp), filepath.Base(path))
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
