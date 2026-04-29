@@ -2712,9 +2712,15 @@
   "php-server-sdk": [
     {
       "major": 6,
+      "minor": 8,
+      "date": "2026-04-28T13:27:13Z",
+      "eol": null
+    },
+    {
+      "major": 6,
       "minor": 7,
       "date": "2026-02-23T15:13:23Z",
-      "eol": null
+      "eol": "2027-04-28T00:00:00Z"
     },
     {
       "major": 6,
