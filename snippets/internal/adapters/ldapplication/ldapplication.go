@@ -180,10 +180,21 @@ func rewriteFile(path string, snippets map[string]*model.Snippet, dryRun bool) (
 			continue
 		}
 
+		// `version=` records the binary that last *changed* this snippet's
+		// rendered content — not the binary that last touched the file. If
+		// the body is byte-identical to what's already on disk, we preserve
+		// the existing version so a release-without-content-changes doesn't
+		// rewrite every marker (and produce a noisy 24-file diff in the
+		// downstream sync PR). First-render markers with no `version=` field
+		// get stamped with the current binary's version.
+		ver := m.Fields.Version
+		if ver == "" || jsxBody != src[m.RegionStart:m.RegionEnd] {
+			ver = version.Version
+		}
 		newMarker := markers.FormatMarker(m.Style, markers.MarkerFields{
 			ID:      m.Fields.ID,
 			Hash:    newHash,
-			Version: version.Version,
+			Version: ver,
 			Scope:   "content",
 		})
 		sb.WriteString(src[cursor:m.CommentStart])

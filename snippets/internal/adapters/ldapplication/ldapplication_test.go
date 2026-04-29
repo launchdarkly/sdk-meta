@@ -285,6 +285,84 @@ lang: html
 	}
 }
 
+// Render preserves the existing `version=` field on a marker when the
+// rendered body is byte-identical to what's already on disk. The version
+// is meant to record the binary that last *changed* this snippet's
+// content, not the binary that last touched the file — otherwise every
+// release would rewrite every marker in every consumer file even when
+// no snippet actually changed.
+func TestRender_PreservesVersionWhenBodyUnchanged(t *testing.T) {
+	tmp := t.TempDir()
+	sdks := filepath.Join(tmp, "sdks", "x")
+	if err := os.MkdirAll(filepath.Join(sdks, "snippets"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(sdks, "sdk.yaml"), []byte(
+		"id: x\nsdk-meta-id: y\ndisplay-name: y\ntype: server-side\n"+
+			"languages:\n  - id: y\n    extensions: [\".y\"]\n"+
+			"package-managers: []\nregions: []\nhello-world-repo: a/b\n"+
+			"ld-application:\n  get-started-file: app.tsx\n"+
+			"docs:\n  reference-page: /\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(sdks, "snippets", "x.snippet.md"), []byte(
+		`---
+id: x/cmd
+sdk: x
+kind: bootstrap
+lang: shell
+---
+
+`+"```shell\nmkdir hi\n```\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	app := filepath.Join(tmp, "app")
+	if err := os.MkdirAll(app, 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	// First render: marker has hash=0 so the body has to be filled in;
+	// the binary's version stamp lands.
+	initial := `// SDK_SNIPPET:RENDER:x/cmd hash=0 version=0.0.1-old
+<Snippet lang="shell">
+  placeholder
+</Snippet>
+`
+	tsx := filepath.Join(app, "app.tsx")
+	if err := os.WriteFile(tsx, []byte(initial), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Render(os.DirFS(filepath.Join(tmp, "sdks")), app); err != nil {
+		t.Fatal(err)
+	}
+	out, _ := os.ReadFile(tsx)
+	// The marker version should now be the binary's current version —
+	// the old `0.0.1-old` is overwritten because the body is changing
+	// (placeholder → real content).
+	if strings.Contains(string(out), "version=0.0.1-old") {
+		t.Fatalf("first render should have replaced stale version stamp; got:\n%s", out)
+	}
+
+	// Second render: body is identical now, so the marker's version stays
+	// where it landed — even if we hand-edit the version on disk to a
+	// non-current value before re-rendering.
+	current, _ := os.ReadFile(tsx)
+	doctored := strings.Replace(string(current), "version=", "version=9.9.9-pinned-", 1)
+	if doctored == string(current) {
+		t.Fatal("doctoring failed; test fixture out of sync")
+	}
+	if err := os.WriteFile(tsx, []byte(doctored), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Render(os.DirFS(filepath.Join(tmp, "sdks")), app); err != nil {
+		t.Fatal(err)
+	}
+	out, _ = os.ReadFile(tsx)
+	if !strings.Contains(string(out), "version=9.9.9-pinned-") {
+		t.Fatalf("second render should have preserved the pinned version; got:\n%s", out)
+	}
+}
+
 // Regression for review #5: a marker with no hash= field must be rejected
 // during verify.
 func TestVerify_RejectsMissingHash(t *testing.T) {
