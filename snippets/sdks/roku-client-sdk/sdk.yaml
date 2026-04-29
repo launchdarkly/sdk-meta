@@ -1,14 +1,4 @@
+# Identifier for this SDK. Matches the SDK's id in launchdarkly/sdk-meta's
+# API packages — the source of truth for everything else (display name,
+# language flavors, supported regions, hello-world repo, docs URL).
 id: roku-client-sdk
-sdk-meta-id: roku
-display-name: Roku
-type: client-side
-languages:
-  - id: brightscript
-    extensions: [".brs"]
-package-managers: []
-regions: [commercial, federal, eu, relay-proxy]
-ld-application:
-  get-started-file: static/ld/components/getStarted/sdk/roku.tsx
-docs:
-  reference-page: /sdk/client-side/roku
-hello-world-repo: launchdarkly/hello-roku

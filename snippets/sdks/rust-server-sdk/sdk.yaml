@@ -1,14 +1,4 @@
+# Identifier for this SDK. Matches the SDK's id in launchdarkly/sdk-meta's
+# API packages — the source of truth for everything else (display name,
+# language flavors, supported regions, hello-world repo, docs URL).
 id: rust-server-sdk
-sdk-meta-id: rust
-display-name: Rust
-type: server-side
-languages:
-  - id: rust
-    extensions: [".rs"]
-package-managers: [cargo]
-regions: [commercial, federal, eu, relay-proxy]
-ld-application:
-  get-started-file: static/ld/components/getStarted/sdk/rust.tsx
-docs:
-  reference-page: /sdk/server-side/rust
-hello-world-repo: launchdarkly/hello-rust

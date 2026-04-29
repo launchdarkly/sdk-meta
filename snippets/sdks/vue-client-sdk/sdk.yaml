@@ -1,16 +1,4 @@
+# Identifier for this SDK. Matches the SDK's id in launchdarkly/sdk-meta's
+# API packages — the source of truth for everything else (display name,
+# language flavors, supported regions, hello-world repo, docs URL).
 id: vue-client-sdk
-sdk-meta-id: vue
-display-name: Vue
-type: client-side
-languages:
-  - id: javascript
-    extensions: [".js"]
-  - id: vue
-    extensions: [".vue"]
-package-managers: [npm, yarn]
-regions: [commercial, federal, eu, relay-proxy]
-ld-application:
-  get-started-file: static/ld/components/getStarted/sdk/vue.tsx
-docs:
-  reference-page: /sdk/client-side/vue
-hello-world-repo: launchdarkly/vue-client-sdk
