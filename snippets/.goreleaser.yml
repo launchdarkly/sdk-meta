@@ -55,6 +55,23 @@ changelog:
   # auto-generated notes would duplicate it.
   disable: true
 
+# We do NOT let goreleaser publish to GitHub. The release lifecycle is:
+#   1. release-please creates a draft GitHub Release (`"draft": true` in
+#      release-please-config.json).
+#   2. The workflow pushes the git tag at the SHA pointed at by the release.
+#   3. goreleaser builds + signs into ./dist (release.disable: true here).
+#   4. The workflow runs `gh release upload` to attach every artifact to
+#      the still-draft release.
+#   5. The workflow runs `gh release edit --draft=false` ONCE, atomically
+#      promoting the release. With branch-protected immutable releases,
+#      this is the point of no return — every artifact must already be
+#      attached.
+# If we let goreleaser publish, it would either (a) try to create a new
+# (non-draft) release at the tag — colliding with release-please's draft
+# — or (b) flip the existing draft to published before signing finished.
+release:
+  disable: true
+
 # Cosign keyless. Sign each archive + the checksums file, with no key
 # material to manage. Verifiers pin the signing identity to this repo.
 signs:

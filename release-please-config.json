@@ -20,6 +20,7 @@
       "release-type" : "go",
       "tag-separator": "/",
       "versioning" : "default",
+      "draft": true,
       "extra-files": [
         "internal/version/version.go"
       ]
