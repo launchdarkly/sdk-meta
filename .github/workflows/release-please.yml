@@ -128,6 +128,14 @@ jobs:
 
       - uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3.7.0
 
+      # GoReleaser OSS requires GORELEASER_CURRENT_TAG to be a plain semver
+      # string; the monorepo `tag_prefix` knob that would let it parse
+      # `snippets/v0.1.0` is Pro-only. Strip the prefix here. We keep
+      # TAG_NAME (full prefixed form) for `gh release` calls below — the
+      # GitHub release object still uses the prefixed tag.
+      - name: Compute semver tag for goreleaser
+        run: echo "SEMVER_TAG=${TAG_NAME#snippets/}" >> "$GITHUB_ENV"
+
       # goreleaser builds binaries + cosign-signs them into ./dist. It does
       # NOT touch GitHub releases (release.disable: true in the goreleaser
       # config).
@@ -139,7 +147,7 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GORELEASER_CURRENT_TAG: ${{ env.TAG_NAME }}
+          GORELEASER_CURRENT_TAG: ${{ env.SEMVER_TAG }}
 
       - name: Upload artifacts to draft release
         env:
