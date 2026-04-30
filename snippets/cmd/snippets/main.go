@@ -3,12 +3,25 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/fs"
 	"os"
 
+	"github.com/launchdarkly/sdk-meta/snippets"
 	"github.com/launchdarkly/sdk-meta/snippets/internal/adapters/ldapplication"
 	"github.com/launchdarkly/sdk-meta/snippets/internal/validate"
 	"github.com/launchdarkly/sdk-meta/snippets/internal/version"
 )
+
+// resolveSDKsFS returns the embedded sdks tree when sdksFlag is empty, or
+// os.DirFS(sdksFlag) otherwise. The embedded form is what release artifacts
+// ship with — consumers don't need to check out sdk-meta to render. Authors
+// developing locally pass `--sdks=./sdks` to point at their working tree.
+func resolveSDKsFS(sdksFlag string) fs.FS {
+	if sdksFlag == "" {
+		return snippets.SDKsFS()
+	}
+	return os.DirFS(sdksFlag)
+}
 
 const usage = `snippets — LaunchDarkly SDK snippet generator
 
@@ -58,17 +71,17 @@ func main() {
 }
 
 func runRender(args []string) {
-	fs := flag.NewFlagSet("render", flag.ExitOnError)
-	target := fs.String("target", "", "adapter target: `ld-application`")
-	out := fs.String("out", "", "path to the consumer checkout")
-	sdks := fs.String("sdks", "./sdks", "path to the sdks/ directory")
-	_ = fs.Parse(args)
+	fset := flag.NewFlagSet("render", flag.ExitOnError)
+	target := fset.String("target", "", "adapter target: `ld-application`")
+	out := fset.String("out", "", "path to the consumer checkout")
+	sdks := fset.String("sdks", "", "path to a sdks/ directory (default: embedded)")
+	_ = fset.Parse(args)
 
 	if *target != "ld-application" || *out == "" {
 		fmt.Fprintf(os.Stderr, "render: --target=ld-application and --out are required\n")
 		os.Exit(2)
 	}
-	changed, err := ldapplication.Render(*sdks, *out)
+	changed, err := ldapplication.Render(resolveSDKsFS(*sdks), *out)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "render failed: %v\n", err)
 		os.Exit(1)
@@ -83,17 +96,17 @@ func runRender(args []string) {
 }
 
 func runVerify(args []string) {
-	fs := flag.NewFlagSet("verify", flag.ExitOnError)
-	target := fs.String("target", "", "adapter target: `ld-application`")
-	out := fs.String("out", "", "path to the consumer checkout")
-	sdks := fs.String("sdks", "./sdks", "path to the sdks/ directory")
-	_ = fs.Parse(args)
+	fset := flag.NewFlagSet("verify", flag.ExitOnError)
+	target := fset.String("target", "", "adapter target: `ld-application`")
+	out := fset.String("out", "", "path to the consumer checkout")
+	sdks := fset.String("sdks", "", "path to a sdks/ directory (default: embedded)")
+	_ = fset.Parse(args)
 
 	if *target != "ld-application" || *out == "" {
 		fmt.Fprintf(os.Stderr, "verify: --target=ld-application and --out are required\n")
 		os.Exit(2)
 	}
-	if err := ldapplication.Verify(*sdks, *out); err != nil {
+	if err := ldapplication.Verify(resolveSDKsFS(*sdks), *out); err != nil {
 		fmt.Fprintf(os.Stderr, "verify failed: %v\n", err)
 		os.Exit(1)
 	}
@@ -101,17 +114,17 @@ func runVerify(args []string) {
 }
 
 func runValidate(args []string) {
-	fs := flag.NewFlagSet("validate", flag.ExitOnError)
-	sdk := fs.String("sdk", "", "sdk id to validate (required)")
-	sdks := fs.String("sdks", "./sdks", "path to the sdks/ directory")
-	validators := fs.String("validators", "./validators", "path to the validators/ directory")
-	_ = fs.Parse(args)
+	fset := flag.NewFlagSet("validate", flag.ExitOnError)
+	sdk := fset.String("sdk", "", "sdk id to validate (required)")
+	sdks := fset.String("sdks", "", "path to a sdks/ directory (default: embedded)")
+	validators := fset.String("validators", "./validators", "path to the validators/ directory")
+	_ = fset.Parse(args)
 
 	if *sdk == "" {
 		fmt.Fprintf(os.Stderr, "validate: --sdk is required\n")
 		os.Exit(2)
 	}
-	if err := validate.Run(validate.Config{SDKsDir: *sdks, ValidatorsDir: *validators, SDK: *sdk}); err != nil {
+	if err := validate.Run(validate.Config{SDKsFS: resolveSDKsFS(*sdks), ValidatorsDir: *validators, SDK: *sdk}); err != nil {
 		fmt.Fprintf(os.Stderr, "validate failed: %v\n", err)
 		os.Exit(1)
 	}

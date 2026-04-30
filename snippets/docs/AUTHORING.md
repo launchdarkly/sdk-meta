@@ -51,6 +51,14 @@ whose body should be replaced:
 `hash=0` as a placeholder — the next render rewrites it. (Any hex string
 works; `0` just minimizes finger-typing.)
 
+`hash` is load-bearing — it's recomputed from the rendered children on every
+run, and `verify` rejects any drift. `version` is informational: it records
+the version of the `snippets` binary that last produced the children below
+this marker. Re-rendering with a newer binary leaves `version` alone when the
+children would be byte-identical, so a release-without-content-changes
+doesn't churn every marker in the consumer's tree. The version only moves
+forward when the snippet's rendered body actually changes.
+
 The element directly following a marker MUST be a capitalized JSX component
 tag (e.g. `<Snippet>`, `<CodeBlock>`). Lowercase HTML tags (`<pre>`, `<code>`)
 are not recognized; wrap the content in a component first if you need to mark

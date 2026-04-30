@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -16,8 +17,8 @@ import (
 
 // Config controls a validator run.
 type Config struct {
-	SDKsDir       string // path to sdks/
-	ValidatorsDir string // path to validators/
+	SDKsFS        fs.FS  // sdks/ as an fs.FS (embedded or os.DirFS)
+	ValidatorsDir string // path to validators/ (must be on disk — Docker COPY needs it)
 	SDK           string // sdk id to validate (empty = all)
 }
 
@@ -50,7 +51,7 @@ func Run(cfg Config) error {
 		clientSideID: os.Getenv("LAUNCHDARKLY_CLIENT_SIDE_ID"),
 	}
 
-	snippets, err := model.LoadAll(cfg.SDKsDir)
+	snippets, err := model.LoadAll(cfg.SDKsFS)
 	if err != nil {
 		return err
 	}

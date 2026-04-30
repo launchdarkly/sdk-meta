@@ -2,7 +2,7 @@ package ldapplication
 
 import (
 	"bytes"
-	"os"
+	"io/fs"
 
 	"gopkg.in/yaml.v3"
 )
@@ -35,8 +35,8 @@ type descLanguage struct {
 	Extensions []string `yaml:"extensions"`
 }
 
-func loadDescriptor(path string) (*descriptor, error) {
-	raw, err := os.ReadFile(path)
+func loadDescriptor(fsys fs.FS, p string) (*descriptor, error) {
+	raw, err := fs.ReadFile(fsys, p)
 	if err != nil {
 		return nil, err
 	}

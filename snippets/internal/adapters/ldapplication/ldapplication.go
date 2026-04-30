@@ -4,7 +4,9 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
+	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -16,14 +18,15 @@ import (
 
 // Render walks every SDK's get-started TSX file under appDir, finds render
 // markers, and rewrites each marked region with the rendered snippet content.
-// Returns one entry per file it touched.
-func Render(sdksDir, appDir string) ([]string, error) {
-	snippets, err := model.LoadAll(sdksDir)
+// sdksFS is the fs.FS rooted at the sdks/ directory (either embedded or
+// os.DirFS(path)). Returns one entry per file it touched.
+func Render(sdksFS fs.FS, appDir string) ([]string, error) {
+	snippets, err := model.LoadAll(sdksFS)
 	if err != nil {
 		return nil, err
 	}
 
-	files, err := discoverTargetFiles(sdksDir, appDir)
+	files, err := discoverTargetFiles(sdksFS, appDir)
 	if err != nil {
 		return nil, err
 	}
@@ -44,13 +47,13 @@ func Render(sdksDir, appDir string) ([]string, error) {
 // Verify re-renders every marked region in memory and fails if any hash in a
 // marker does not match the hash of the bytes currently in the file, or if a
 // re-render would change content. Never modifies files.
-func Verify(sdksDir, appDir string) error {
-	snippets, err := model.LoadAll(sdksDir)
+func Verify(sdksFS fs.FS, appDir string) error {
+	snippets, err := model.LoadAll(sdksFS)
 	if err != nil {
 		return err
 	}
 
-	files, err := discoverTargetFiles(sdksDir, appDir)
+	files, err := discoverTargetFiles(sdksFS, appDir)
 	if err != nil {
 		return err
 	}
@@ -70,8 +73,8 @@ func Verify(sdksDir, appDir string) error {
 // appDir. This guards against a malicious sdk.yaml committing
 // `get-started-file: ../../../foo` and the renderer overwriting arbitrary
 // files outside the consumer checkout.
-func discoverTargetFiles(sdksDir, appDir string) ([]string, error) {
-	entries, err := os.ReadDir(sdksDir)
+func discoverTargetFiles(sdksFS fs.FS, appDir string) ([]string, error) {
+	entries, err := fs.ReadDir(sdksFS, ".")
 	if err != nil {
 		return nil, err
 	}
@@ -84,8 +87,8 @@ func discoverTargetFiles(sdksDir, appDir string) ([]string, error) {
 		if !e.IsDir() {
 			continue
 		}
-		descPath := filepath.Join(sdksDir, e.Name(), "sdk.yaml")
-		desc, err := loadDescriptor(descPath)
+		descPath := path.Join(e.Name(), "sdk.yaml")
+		desc, err := loadDescriptor(sdksFS, descPath)
 		if err != nil {
 			if os.IsNotExist(err) {
 				continue
@@ -177,10 +180,21 @@ func rewriteFile(path string, snippets map[string]*model.Snippet, dryRun bool) (
 			continue
 		}
 
+		// `version=` records the binary that last *changed* this snippet's
+		// rendered content — not the binary that last touched the file. If
+		// the body is byte-identical to what's already on disk, we preserve
+		// the existing version so a release-without-content-changes doesn't
+		// rewrite every marker (and produce a noisy 24-file diff in the
+		// downstream sync PR). First-render markers with no `version=` field
+		// get stamped with the current binary's version.
+		ver := m.Fields.Version
+		if ver == "" || jsxBody != src[m.RegionStart:m.RegionEnd] {
+			ver = version.Version
+		}
 		newMarker := markers.FormatMarker(m.Style, markers.MarkerFields{
 			ID:      m.Fields.ID,
 			Hash:    newHash,
-			Version: version.Version,
+			Version: ver,
 			Scope:   "content",
 		})
 		sb.WriteString(src[cursor:m.CommentStart])
