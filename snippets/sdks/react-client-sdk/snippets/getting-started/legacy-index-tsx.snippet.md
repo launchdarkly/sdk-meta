@@ -9,8 +9,6 @@ inputs:
   environmentId:
     type: client-side-id
     description: Client-side ID baked into the rendered source.
-ld-application:
-  slot: legacy-index-tsx
 ---
 
 In `index.tsx`:

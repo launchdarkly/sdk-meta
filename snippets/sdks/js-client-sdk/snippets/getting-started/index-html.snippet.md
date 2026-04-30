@@ -5,8 +5,6 @@ kind: hello-world
 lang: html
 file: index.html
 description: Static host page that loads the bundled SDK app.
-ld-application:
-  slot: index-html
 ---
 
 Create `index.html`:

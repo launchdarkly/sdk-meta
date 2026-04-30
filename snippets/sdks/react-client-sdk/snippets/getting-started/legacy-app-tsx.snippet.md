@@ -9,8 +9,6 @@ inputs:
   featureKey:
     type: flag-key
     description: Default flag key (camelCased) baked into the rendered source. Note that gonfalon camel-cases the supplied flag key before substituting; for validation we use the env-var value as-is.
-ld-application:
-  slot: legacy-app-tsx
 validation:
   runtime: react-client
   entrypoint: src/App.tsx

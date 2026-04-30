@@ -9,8 +9,6 @@ inputs:
     type: string
     description: SDK version. Gonfalon fetches the latest from Maven Central asynchronously; renders as empty during the fetch (rather than the prior stale '5.0.0' fallback).
     runtime-default: ""
-ld-application:
-  slot: pom-dependency
 ---
 
 Add the SDK to your project in your `pom.xml <dependencies>` section:

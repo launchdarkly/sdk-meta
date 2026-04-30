@@ -9,8 +9,6 @@ inputs:
   mobileKey:
     type: mobile-key
     description: Mobile key baked into the rendered source.
-ld-application:
-  slot: app-tsx
 validation:
   runtime: react-native-client
   entrypoint: App.tsx

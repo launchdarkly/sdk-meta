@@ -4,8 +4,6 @@ sdk: node-client-sdk
 kind: run
 lang: shell
 description: Run the program.
-ld-application:
-  slot: run
 ---
 
 Run:

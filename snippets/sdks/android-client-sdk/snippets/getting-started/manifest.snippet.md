@@ -4,8 +4,6 @@ sdk: android-client-sdk
 kind: manifest-fragment
 lang: xml
 description: AndroidManifest.xml fragment registering MainApplication.
-ld-application:
-  slot: manifest
 ---
 
 Register the `MainApplication` class in the `AndroidManifest.xml`:

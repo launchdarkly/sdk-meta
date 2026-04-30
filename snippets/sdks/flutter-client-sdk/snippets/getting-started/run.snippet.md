@@ -8,8 +8,6 @@ inputs:
   mobileKey:
     type: mobile-key
     description: Mobile key embedded in the rendered Run command.
-ld-application:
-  slot: run
 ---
 
 Run:

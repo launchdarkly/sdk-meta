@@ -4,8 +4,6 @@ sdk: lua-server-sdk
 kind: install
 lang: bash
 description: Compile and install the underlying C++ Server SDK from source.
-ld-application:
-  slot: cpp-build
 ---
 
 If the C++ Server SDK is already installed or you already obtained release artifacts from LaunchDarkly, skip this step.

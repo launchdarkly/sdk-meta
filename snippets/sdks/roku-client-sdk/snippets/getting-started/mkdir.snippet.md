@@ -4,8 +4,6 @@ sdk: roku-client-sdk
 kind: bootstrap
 lang: shell
 description: Bootstrap the Roku project layout.
-ld-application:
-  slot: mkdir
 ---
 
 Create a new directory for your application:

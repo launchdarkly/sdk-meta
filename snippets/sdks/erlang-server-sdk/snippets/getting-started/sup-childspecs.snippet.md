@@ -4,8 +4,6 @@ sdk: erlang-server-sdk
 kind: manifest-fragment
 lang: erlang
 description: ChildSpecs replacement to drop into src/hello_erlang_sup.erl.
-ld-application:
-  slot: sup-childspecs
 ---
 
 Replace the `ChildSpecs` variable in `src/hello_erlang_sup.erl` with the following:

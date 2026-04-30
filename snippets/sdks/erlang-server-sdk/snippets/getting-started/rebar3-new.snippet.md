@@ -4,8 +4,6 @@ sdk: erlang-server-sdk
 kind: bootstrap
 lang: shell
 description: Bootstrap a rebar3 application.
-ld-application:
-  slot: rebar3-new
 ---
 
 Create a new project for your application:

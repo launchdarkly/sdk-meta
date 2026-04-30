@@ -4,8 +4,6 @@ sdk: haskell-server-sdk
 kind: bootstrap
 lang: shell
 description: Bootstrap a Haskell stack project.
-ld-application:
-  slot: stack-new
 ---
 
 Create a new project for your application:

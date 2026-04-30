@@ -4,8 +4,6 @@ sdk: php-server-sdk
 kind: bootstrap
 lang: shell
 description: Create the project directory and install Composer.
-ld-application:
-  slot: mkdir
 ---
 
 Create a new directory and install [Composer](https://getcomposer.org/):

@@ -9,8 +9,6 @@ inputs:
   featureKey:
     type: flag-key
     description: Default flag key baked into the rendered source.
-ld-application:
-  slot: welcome-tsx
 ---
 
 Create a new file `src/welcome.tsx`:

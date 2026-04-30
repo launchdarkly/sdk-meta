@@ -1,14 +1,4 @@
+# Identifier for this SDK. Matches the SDK's id in launchdarkly/sdk-meta's
+# API packages — the source of truth for everything else (display name,
+# language flavors, supported regions, hello-world repo, docs URL).
 id: react-native-client-sdk
-sdk-meta-id: react-native
-display-name: React Native
-type: client-side
-languages:
-  - id: tsx
-    extensions: [".tsx"]
-package-managers: [npm, yarn]
-regions: [commercial, federal, eu, relay-proxy]
-ld-application:
-  get-started-file: static/ld/components/getStarted/sdk/reactNative.tsx
-docs:
-  reference-page: /sdk/client-side/react-native
-hello-world-repo: launchdarkly/js-core

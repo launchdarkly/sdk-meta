@@ -4,8 +4,6 @@ sdk: flutter-client-sdk
 kind: bootstrap
 lang: bash
 description: Create a new Flutter project for Android and iOS.
-ld-application:
-  slot: flutter-create
 ---
 
 Use the Flutter tool to create a new project:

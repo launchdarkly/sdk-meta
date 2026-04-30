@@ -4,8 +4,6 @@ sdk: cpp-server-sdk
 kind: bootstrap
 lang: shell
 description: Create the project directory.
-ld-application:
-  slot: mkdir
 ---
 
 Create a new project directory:

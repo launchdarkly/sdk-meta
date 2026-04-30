@@ -24,19 +24,14 @@ type Frontmatter struct {
 	Lang        string           `yaml:"lang"`
 	File        string           `yaml:"file"`
 	Description string           `yaml:"description"`
-	Inputs        map[string]Input  `yaml:"inputs"`
-	LDApplication LDApplicationHints `yaml:"ld-application"`
-	Validation    Validation        `yaml:"validation"`
+	Inputs     map[string]Input `yaml:"inputs"`
+	Validation Validation       `yaml:"validation"`
 }
 
 type Input struct {
 	Type           string `yaml:"type"`
 	Description    string `yaml:"description"`
 	RuntimeDefault string `yaml:"runtime-default"`
-}
-
-type LDApplicationHints struct {
-	Slot string `yaml:"slot"`
 }
 
 type Validation struct {

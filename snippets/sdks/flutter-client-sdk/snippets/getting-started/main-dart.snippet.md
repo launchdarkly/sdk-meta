@@ -9,8 +9,6 @@ inputs:
   featureKey:
     type: flag-key
     description: Default flag key baked into the rendered source.
-ld-application:
-  slot: main-dart
 validation:
   runtime: flutter-client
   entrypoint: lib/main.dart

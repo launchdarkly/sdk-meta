@@ -75,11 +75,17 @@ export LAUNCHDARKLY_SDK_KEY=...     # server-side key
 export LAUNCHDARKLY_FLAG_KEY=...    # flag the snippet evaluates
 snippets validate --sdk=python-server-sdk
 
-# Rewrite all marked regions in an ld-application checkout
-snippets render --target=ld-application --out=/path/to/ld-application
+# Rewrite every marked region under one or more entrypoint dirs in the
+# consumer checkout. --entrypoint is repeatable; the renderer walks each
+# directory recursively, only opens files whose extension it understands
+# (.tsx/.jsx/.ts/.js/.mdx) AND that contain the SDK_SNIPPET:RENDER
+# sentinel, and skips junk dirs (node_modules, .git, dist, build, ...).
+snippets render --target=ld-application \
+  --entrypoint=/path/to/ld-application/static/ld/components/getStarted
 
-# Confirm consumer file matches what we'd render (no edits)
-snippets verify --target=ld-application --out=/path/to/ld-application
+# Confirm consumer files match what we'd render (no edits)
+snippets verify --target=ld-application \
+  --entrypoint=/path/to/ld-application/static/ld/components/getStarted
 ```
 
 ## Validator inputs

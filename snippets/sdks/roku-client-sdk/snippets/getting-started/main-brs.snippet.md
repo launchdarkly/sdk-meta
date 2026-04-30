@@ -5,8 +5,6 @@ kind: hello-world
 lang: brightscript
 file: source/main.brs
 description: Roku scene runner that boots the AppScene.
-ld-application:
-  slot: main-brs
 ---
 
 Create a file with a basic scene runner named `source/main.brs` and add the following code:
