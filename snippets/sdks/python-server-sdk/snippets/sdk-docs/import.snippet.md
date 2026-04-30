@@ -4,6 +4,8 @@ sdk: python-server-sdk
 kind: reference
 lang: python
 description: SDK + observability plugin imports.
+validation:
+  scaffold: python-server-sdk/scaffolds/with-test-data
 ---
 
 ```python
