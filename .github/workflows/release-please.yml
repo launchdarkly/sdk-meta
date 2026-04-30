@@ -112,64 +112,72 @@ jobs:
     needs: release-please
     if: ${{ needs.release-please.outputs.package-snippets-released == 'true' }}
     permissions:
-      contents: write   # upload assets + flip release out of draft
-      id-token: write   # cosign keyless via OIDC
+      contents: write       # upload assets + flip release out of draft
+      id-token: write       # OIDC for the attestation signer
+      attestations: write   # publish SLSA build provenance to the repo
     env:
       TAG_NAME: ${{ needs.release-please.outputs.package-snippets-tag-name }}
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0    # goreleaser walks tags
           ref: ${{ needs.release-please.outputs.package-snippets-tag-name }}
 
       - uses: actions/setup-go@v5
         with:
           go-version-file: snippets/go.mod
 
-      - uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3.7.0
-
-      # GoReleaser OSS requires GORELEASER_CURRENT_TAG to be a plain semver
-      # string; the monorepo `tag_prefix` knob that would let it parse
-      # `snippets/v0.1.0` is Pro-only. Strip the prefix here. We keep
-      # TAG_NAME (full prefixed form) for `gh release` calls below — the
-      # GitHub release object still uses the prefixed tag.
-      - name: Compute semver tag for goreleaser
+      # The plain semver (e.g. `v0.2.0`) — used for the binary's embedded
+      # version stamp and for archive naming. The full prefixed TAG_NAME
+      # (e.g. `snippets/v0.2.0`) is what `gh release` calls expect.
+      - name: Compute semver tag
         run: echo "SEMVER_TAG=${TAG_NAME#snippets/}" >> "$GITHUB_ENV"
 
-      # goreleaser builds binaries + cosign-signs them into ./dist. It does
-      # NOT touch GitHub releases (release.disable: true in the goreleaser
-      # config).
-      #
-      # `--skip=validate` is required because goreleaser checks that
-      # `GORELEASER_CURRENT_TAG` (here `v0.1.0`) is a real git tag pointing
-      # at HEAD — but the actual tag pushed is `snippets/v0.1.0`. Validate
-      # also covers a dirty-worktree check, which is moot in CI on a
-      # fresh checkout.
-      - uses: goreleaser/goreleaser-action@90a3faa9d0182683851fbfa97ca1a2cb983bfca3 # v6.2.1
-        with:
-          distribution: goreleaser
-          version: '~> v2'
-          workdir: snippets
-          args: release --clean --skip=validate
+      # Cross-compile the four targets we ship. Plain `go build`; we used
+      # to drive this with goreleaser but its monorepo support is Pro-only
+      # and the OSS path produced two distinct release-time failures on
+      # consecutive releases.
+      - name: Cross-compile release artifacts
+        working-directory: snippets
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GORELEASER_CURRENT_TAG: ${{ env.SEMVER_TAG }}
+          SEMVER: ${{ env.SEMVER_TAG }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          ldflags="-s -w -X github.com/launchdarkly/sdk-meta/snippets/internal/version.Version=${SEMVER#v}"
+          for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64; do
+            goos="${target%/*}"
+            goarch="${target#*/}"
+            stage="dist/snippets_${SEMVER}_${goos}_${goarch}"
+            mkdir -p "$stage"
+            CGO_ENABLED=0 GOOS="$goos" GOARCH="$goarch" \
+              go build -trimpath -ldflags "$ldflags" -o "$stage/snippets" ./cmd/snippets
+            cp README.md "$stage/"
+            cp ../LICENSE "$stage/"
+            tar -C dist -czf "${stage}.tar.gz" "$(basename "$stage")"
+            rm -rf "$stage"
+          done
+          cd dist
+          sha256sum *.tar.gz > checksums.txt
+
+      # SLSA build-provenance attestation per archive. Stored on GitHub;
+      # consumers verify with `gh attestation verify <archive>
+      # --repo launchdarkly/sdk-meta`. No sidecar files to manage.
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: snippets/dist/*.tar.gz
 
       - name: Upload artifacts to draft release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          # Archives, signatures, certificates, and the checksums file (and
-          # its sig + cert). --clobber so a retry overwrites partial uploads
-          # cleanly.
+          # The four archives + the checksums file. Attestations live on
+          # GitHub directly, not as release assets. --clobber so a retry
+          # overwrites partial uploads cleanly.
           gh release upload "$TAG_NAME" \
             snippets/dist/*.tar.gz \
-            snippets/dist/*.tar.gz.sig \
-            snippets/dist/*.tar.gz.pem \
             snippets/dist/checksums.txt \
-            snippets/dist/checksums.txt.sig \
-            snippets/dist/checksums.txt.pem \
             --clobber
 
       # Atomic flip. From here, the release is immutable; further uploads
