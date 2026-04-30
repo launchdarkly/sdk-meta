@@ -143,17 +143,25 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p dist
-          ldflags="-s -w -X github.com/launchdarkly/sdk-meta/snippets/internal/version.Version=${SEMVER#v}"
+          # Bare version for both the embedded ldflag and archive naming.
+          # The consumer-side `sync-snippets` action strips `snippets/v`
+          # from the tag to derive the archive filename, so the producer
+          # must drop the `v` here to match.
+          version="${SEMVER#v}"
+          ldflags="-s -w -X github.com/launchdarkly/sdk-meta/snippets/internal/version.Version=${version}"
           for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64; do
             goos="${target%/*}"
             goarch="${target#*/}"
-            stage="dist/snippets_${SEMVER}_${goos}_${goarch}"
-            mkdir -p "$stage"
+            stage=$(mktemp -d)
             CGO_ENABLED=0 GOOS="$goos" GOARCH="$goarch" \
               go build -trimpath -ldflags "$ldflags" -o "$stage/snippets" ./cmd/snippets
             cp README.md "$stage/"
             cp ../LICENSE "$stage/"
-            tar -C dist -czf "${stage}.tar.gz" "$(basename "$stage")"
+            # Files at archive root (no wrapping subdirectory). The
+            # consumer extracts with `tar -xzf <archive> snippets`,
+            # which requires the binary to be at the top level.
+            tar -C "$stage" -czf "dist/snippets_${version}_${goos}_${goarch}.tar.gz" \
+              snippets README.md LICENSE
             rm -rf "$stage"
           done
           cd dist
