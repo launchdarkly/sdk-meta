@@ -109,8 +109,16 @@ func discoverFilesUnder(entrypoints []string) ([]string, error) {
 				return walkErr
 			}
 			if d.IsDir() {
-				if _, skip := skipDirNames[d.Name()]; skip {
-					return filepath.SkipDir
+				// Always descend into the entrypoint root, even if its
+				// basename happens to be in skipDirNames (e.g.
+				// `--entrypoint=./build` for a project that lays its
+				// generated TSX out there). The skip-list is meant to prune
+				// well-known noise *under* the root, not to silently turn
+				// the entire walk into a no-op.
+				if p != abs {
+					if _, skip := skipDirNames[d.Name()]; skip {
+						return filepath.SkipDir
+					}
 				}
 				return nil
 			}

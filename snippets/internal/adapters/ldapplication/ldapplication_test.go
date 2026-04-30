@@ -80,6 +80,25 @@ func TestDiscoverFilesUnder_DedupsOverlappingEntrypoints(t *testing.T) {
 	}
 }
 
+// The skip-list (node_modules, build, dist, …) prunes noise *under* the
+// entrypoint root. If the user passes one of those names *as* the
+// entrypoint (e.g. a project that emits its TSX into ./build), the walk
+// must still descend — otherwise discovery silently produces zero files.
+func TestDiscoverFilesUnder_RootMatchingSkipNameStillDescends(t *testing.T) {
+	tmp := t.TempDir()
+	root := filepath.Join(tmp, "build")
+	writeAppFile(t, root, "marker.tsx",
+		"// SDK_SNIPPET:RENDER:x/cmd hash=0 version=0.1.0\n<Snippet>x</Snippet>\n")
+
+	files, err := discoverFilesUnder([]string{root})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(files) != 1 || filepath.Base(files[0]) != "marker.tsx" {
+		t.Fatalf("expected marker.tsx under skip-named root, got %v", files)
+	}
+}
+
 // A non-directory entrypoint is rejected loudly rather than silently no-op'd.
 func TestDiscoverFilesUnder_RejectsNonDirectory(t *testing.T) {
 	tmp := t.TempDir()
