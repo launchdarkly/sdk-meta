@@ -24,11 +24,55 @@ jobs:
       pull-requests: write
     outputs:
       package-api-js-released: ${{ steps.release.outputs['api-js--release_created'] }}
+      package-snippets-released: ${{ steps.release.outputs['snippets--release_created'] }}
+      package-snippets-tag-name: ${{ steps.release.outputs['snippets--tag_name'] }}
     steps:
+      # First call: create any GitHub Releases that the merged release-PR(s)
+      # called for, but do NOT open / update the rollup PR yet. The snippets
+      # package is configured with `"draft": true`, so its release lands as a
+      # draft — artifacts are uploaded to it later in this workflow, and the
+      # release is flipped to published only after every artifact is in place.
+      # That ordering is mandatory under immutable-releases policies.
       - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 # v4.4.0
         id: release
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          skip-github-pull-request: true
+
+      # The snippets release is created as a *draft*, which doesn't create
+      # the underlying git tag. goreleaser + `gh release upload` need the tag
+      # to exist; push it manually at the SHA the release points at. (api-js
+      # releases are non-draft, so they auto-create their tag — no manual
+      # push needed for that package.)
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs['snippets--release_created'] == 'true' }}
+
+      - name: Push snippets release tag
+        if: ${{ steps.release.outputs['snippets--release_created'] == 'true' }}
+        env:
+          TAG_NAME: ${{ steps.release.outputs['snippets--tag_name'] }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh api "repos/${{ github.repository }}/git/ref/tags/${TAG_NAME}" >/dev/null 2>&1; then
+            echo "Tag ${TAG_NAME} already exists, skipping creation."
+          else
+            echo "Creating tag ${TAG_NAME}."
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git tag "${TAG_NAME}"
+            git push origin "${TAG_NAME}"
+          fi
+
+      # Second call: open or update the rollup PR. Skip when we just created
+      # a release — the next conventional-commit push will pick up the rollup
+      # then.
+      - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 # v4.4.0
+        if: |
+          steps.release.outputs['api-js--release_created'] != 'true' &&
+          steps.release.outputs['snippets--release_created'] != 'true'
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          skip-github-release: true
 
   release-npm:
     runs-on: ubuntu-latest
@@ -56,3 +100,77 @@ jobs:
         with:
           prerelease: ${{ inputs.prerelease }}
           dry_run: ${{ inputs.dry_run }}
+
+  # Build, sign, upload, and PUBLISH the snippets CLI release. The release
+  # itself was created in draft mode by the release-please job above; we
+  # land every artifact onto the draft, and then flip it to published in a
+  # single atomic step at the end. With branch-protected immutable releases
+  # enforced on this repo, that flip is the point of no return — every
+  # artifact must already be attached.
+  release-snippets:
+    runs-on: ubuntu-latest
+    needs: release-please
+    if: ${{ needs.release-please.outputs.package-snippets-released == 'true' }}
+    permissions:
+      contents: write   # upload assets + flip release out of draft
+      id-token: write   # cosign keyless via OIDC
+    env:
+      TAG_NAME: ${{ needs.release-please.outputs.package-snippets-tag-name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # goreleaser walks tags
+          ref: ${{ needs.release-please.outputs.package-snippets-tag-name }}
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: snippets/go.mod
+
+      - uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3.7.0
+
+      # GoReleaser OSS requires GORELEASER_CURRENT_TAG to be a plain semver
+      # string; the monorepo `tag_prefix` knob that would let it parse
+      # `snippets/v0.1.0` is Pro-only. Strip the prefix here. We keep
+      # TAG_NAME (full prefixed form) for `gh release` calls below — the
+      # GitHub release object still uses the prefixed tag.
+      - name: Compute semver tag for goreleaser
+        run: echo "SEMVER_TAG=${TAG_NAME#snippets/}" >> "$GITHUB_ENV"
+
+      # goreleaser builds binaries + cosign-signs them into ./dist. It does
+      # NOT touch GitHub releases (release.disable: true in the goreleaser
+      # config).
+      - uses: goreleaser/goreleaser-action@90a3faa9d0182683851fbfa97ca1a2cb983bfca3 # v6.2.1
+        with:
+          distribution: goreleaser
+          version: '~> v2'
+          workdir: snippets
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GORELEASER_CURRENT_TAG: ${{ env.SEMVER_TAG }}
+
+      - name: Upload artifacts to draft release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          # Archives, signatures, certificates, and the checksums file (and
+          # its sig + cert). --clobber so a retry overwrites partial uploads
+          # cleanly.
+          gh release upload "$TAG_NAME" \
+            snippets/dist/*.tar.gz \
+            snippets/dist/*.tar.gz.sig \
+            snippets/dist/*.tar.gz.pem \
+            snippets/dist/checksums.txt \
+            snippets/dist/checksums.txt.sig \
+            snippets/dist/checksums.txt.pem \
+            --clobber
+
+      # Atomic flip. From here, the release is immutable; further uploads
+      # would fail under the repo's branch-protected releases policy. Every
+      # asset above must be in place before this step runs.
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release edit "$TAG_NAME" --draft=false

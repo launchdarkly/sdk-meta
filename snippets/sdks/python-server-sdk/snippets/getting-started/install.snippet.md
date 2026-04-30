@@ -9,8 +9,6 @@ inputs:
     type: string
     description: Optional pinned SDK version; when empty the pin is omitted.
     runtime-default: ""
-ld-application:
-  slot: install
 ---
 
 Create a file called `requirements.txt` with the SDK dependency and install it:

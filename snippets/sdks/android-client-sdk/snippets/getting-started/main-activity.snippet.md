@@ -9,8 +9,6 @@ inputs:
   featureKey:
     type: flag-key
     description: Default flag key baked into the rendered source.
-ld-application:
-  slot: main-activity
 validation:
   runtime: android-client
   entrypoint: app/src/main/java/com/launchdarkly/hello_android/MainActivity.kt

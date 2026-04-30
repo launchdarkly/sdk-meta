@@ -4,8 +4,6 @@ sdk: go-server-sdk
 kind: bootstrap
 lang: shell
 description: Create the project directory for the Go hello-world.
-ld-application:
-  slot: mkdir
 ---
 
 Create a new directory for your application:

@@ -9,8 +9,6 @@ inputs:
     type: string
     description: SDK version. Gonfalon fetches the latest from Hex asynchronously.
     runtime-default: ""
-ld-application:
-  slot: rebar-config
 ---
 
 Next, add the SDK package to your list of dependencies in `rebar.config`:

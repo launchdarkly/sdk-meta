@@ -12,8 +12,6 @@ inputs:
   featureKey:
     type: flag-key
     description: Default flag key baked into the rendered source.
-ld-application:
-  slot: hello-lua
 validation:
   runtime: lua-server
   entrypoint: hello.lua

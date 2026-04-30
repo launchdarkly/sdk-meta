@@ -9,8 +9,6 @@ inputs:
   apiKey:
     type: sdk-key
     description: SDK key baked into the rendered source.
-ld-application:
-  slot: server-erl
 validation:
   runtime: erlang-server
   entrypoint: src/hello_erlang_server.erl

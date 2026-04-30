@@ -4,8 +4,6 @@ sdk: react-client-sdk
 kind: run
 lang: shell
 description: Start the Vite dev server.
-ld-application:
-  slot: run-dev
 ---
 
 Run the app:

@@ -1,9 +1,11 @@
 package ldapplication
 
 import (
+	"bytes"
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,103 +16,136 @@ import (
 	"github.com/launchdarkly/sdk-meta/snippets/internal/version"
 )
 
-// Render walks every SDK's get-started TSX file under appDir, finds render
-// markers, and rewrites each marked region with the rendered snippet content.
+// markerSentinel is the substring every render marker contains. We use it as
+// a fast pre-filter so walking large consumer trees only invokes the marker
+// scanner on files that could possibly contain a marker. Cheaper than a
+// regex match per file.
+var markerSentinel = []byte("SDK_SNIPPET:RENDER:")
+
+// candidateExtensions are the file extensions whose comment syntax the
+// marker scanner understands today: JS, TS, JSX, TSX, plus MDX (whose JSX
+// expression comments share the `{/* ... */}` form). Everything else is
+// skipped on sight so a `node_modules` walk doesn't eat a million PNGs.
+var candidateExtensions = map[string]struct{}{
+	".tsx": {}, ".jsx": {}, ".ts": {}, ".js": {}, ".mdx": {},
+}
+
+// skipDirNames are directories we never descend into. They never carry
+// snippet markers and routinely have hundreds of thousands of files
+// (node_modules), generated build output, or version-control bookkeeping.
+var skipDirNames = map[string]struct{}{
+	"node_modules": {}, ".git": {}, ".next": {}, "dist": {}, "build": {},
+	".cache": {}, "coverage": {}, "out": {}, ".turbo": {},
+}
+
+// Render walks every entrypoint, finds files that contain render markers,
+// and rewrites each marked region with the rendered snippet content. sdksFS
+// is the fs.FS rooted at the sdks/ directory (either embedded or
+// os.DirFS(path)). entrypoints are absolute or repo-relative directory
+// paths the consumer (gonfalon, ld-docs) declares as roots to scan.
 // Returns one entry per file it touched.
-func Render(sdksDir, appDir string) ([]string, error) {
-	snippets, err := model.LoadAll(sdksDir)
-	if err != nil {
-		return nil, err
-	}
-
-	files, err := discoverTargetFiles(sdksDir, appDir)
-	if err != nil {
-		return nil, err
-	}
-
-	var changed []string
-	for _, path := range files {
-		ok, err := rewriteFile(path, snippets, false)
-		if err != nil {
-			return nil, fmt.Errorf("%s: %w", path, err)
-		}
-		if ok {
-			changed = append(changed, path)
-		}
-	}
-	return changed, nil
+func Render(sdksFS fs.FS, entrypoints []string) ([]string, error) {
+	return run(sdksFS, entrypoints, false)
 }
 
 // Verify re-renders every marked region in memory and fails if any hash in a
 // marker does not match the hash of the bytes currently in the file, or if a
 // re-render would change content. Never modifies files.
-func Verify(sdksDir, appDir string) error {
-	snippets, err := model.LoadAll(sdksDir)
-	if err != nil {
-		return err
-	}
-
-	files, err := discoverTargetFiles(sdksDir, appDir)
-	if err != nil {
-		return err
-	}
-
-	for _, path := range files {
-		if _, err := rewriteFile(path, snippets, true); err != nil {
-			return fmt.Errorf("%s: %w", path, err)
-		}
-	}
-	return nil
+func Verify(sdksFS fs.FS, entrypoints []string) error {
+	_, err := run(sdksFS, entrypoints, true)
+	return err
 }
 
-// discoverTargetFiles returns every file referenced by an sdk.yaml's
-// `ld-application.get-started-file` field, resolved relative to appDir.
-//
-// Each referenced path must be a clean relative path that stays inside
-// appDir. This guards against a malicious sdk.yaml committing
-// `get-started-file: ../../../foo` and the renderer overwriting arbitrary
-// files outside the consumer checkout.
-func discoverTargetFiles(sdksDir, appDir string) ([]string, error) {
-	entries, err := os.ReadDir(sdksDir)
+func run(sdksFS fs.FS, entrypoints []string, dryRun bool) ([]string, error) {
+	snippets, err := model.LoadAll(sdksFS)
 	if err != nil {
 		return nil, err
 	}
-	absAppDir, err := filepath.Abs(appDir)
+
+	files, err := discoverFilesUnder(entrypoints)
 	if err != nil {
 		return nil, err
 	}
-	var out []string
-	for _, e := range entries {
-		if !e.IsDir() {
-			continue
-		}
-		descPath := filepath.Join(sdksDir, e.Name(), "sdk.yaml")
-		desc, err := loadDescriptor(descPath)
+
+	var changed []string
+	for _, p := range files {
+		ok, err := rewriteFile(p, snippets, dryRun)
 		if err != nil {
-			if os.IsNotExist(err) {
-				continue
+			return nil, fmt.Errorf("%s: %w", p, err)
+		}
+		if ok {
+			changed = append(changed, p)
+		}
+	}
+	return changed, nil
+}
+
+// discoverFilesUnder walks every entrypoint directory and returns the set
+// of files whose extension the marker scanner understands AND whose contents
+// contain the SDK_SNIPPET:RENDER: sentinel. Symlinks are not followed so
+// a malicious symlink farm in node_modules can't pull the renderer outside
+// its intended scope. Duplicates (when two entrypoints overlap) are
+// collapsed.
+func discoverFilesUnder(entrypoints []string) ([]string, error) {
+	if len(entrypoints) == 0 {
+		return nil, fmt.Errorf("at least one --entrypoint is required")
+	}
+	seen := map[string]struct{}{}
+	var out []string
+	for _, ep := range entrypoints {
+		abs, err := filepath.Abs(ep)
+		if err != nil {
+			return nil, fmt.Errorf("entrypoint %q: %w", ep, err)
+		}
+		info, err := os.Stat(abs)
+		if err != nil {
+			return nil, fmt.Errorf("entrypoint %q: %w", ep, err)
+		}
+		if !info.IsDir() {
+			return nil, fmt.Errorf("entrypoint %q: not a directory", ep)
+		}
+		err = filepath.WalkDir(abs, func(p string, d os.DirEntry, walkErr error) error {
+			if walkErr != nil {
+				return walkErr
 			}
+			if d.IsDir() {
+				// Always descend into the entrypoint root, even if its
+				// basename happens to be in skipDirNames (e.g.
+				// `--entrypoint=./build` for a project that lays its
+				// generated TSX out there). The skip-list is meant to prune
+				// well-known noise *under* the root, not to silently turn
+				// the entire walk into a no-op.
+				if p != abs {
+					if _, skip := skipDirNames[d.Name()]; skip {
+						return filepath.SkipDir
+					}
+				}
+				return nil
+			}
+			// Skip symlinks — we don't follow links into other parts of the
+			// repo (or out of it).
+			if d.Type()&os.ModeSymlink != 0 {
+				return nil
+			}
+			if _, ok := candidateExtensions[filepath.Ext(p)]; !ok {
+				return nil
+			}
+			if _, dup := seen[p]; dup {
+				return nil
+			}
+			data, err := os.ReadFile(p)
+			if err != nil {
+				return err
+			}
+			if !bytes.Contains(data, markerSentinel) {
+				return nil
+			}
+			seen[p] = struct{}{}
+			out = append(out, p)
+			return nil
+		})
+		if err != nil {
 			return nil, err
-		}
-		rels := desc.LDApplication.GetStartedFiles
-		if rel := desc.LDApplication.GetStartedFile; rel != "" {
-			rels = append([]string{rel}, rels...)
-		}
-		for _, rel := range rels {
-			if filepath.IsAbs(rel) {
-				return nil, fmt.Errorf("descriptor %s: get-started-file %q must be relative", descPath, rel)
-			}
-			full := filepath.Join(absAppDir, rel)
-			// Reject any path that escapes appDir. filepath.Rel followed by a
-			// `..` prefix check is the canonical way to do this.
-			relCheck, err := filepath.Rel(absAppDir, full)
-			if err != nil || relCheck == ".." || strings.HasPrefix(relCheck, ".."+string(filepath.Separator)) {
-				return nil, fmt.Errorf("descriptor %s: get-started-file %q escapes appDir", descPath, rel)
-			}
-			if _, err := os.Stat(full); err != nil {
-				return nil, fmt.Errorf("descriptor %s: target not found: %w", descPath, err)
-			}
-			out = append(out, full)
 		}
 	}
 	return out, nil
@@ -177,10 +212,21 @@ func rewriteFile(path string, snippets map[string]*model.Snippet, dryRun bool) (
 			continue
 		}
 
+		// `version=` records the binary that last *changed* this snippet's
+		// rendered content — not the binary that last touched the file. If
+		// the body is byte-identical to what's already on disk, we preserve
+		// the existing version so a release-without-content-changes doesn't
+		// rewrite every marker (and produce a noisy 24-file diff in the
+		// downstream sync PR). First-render markers with no `version=` field
+		// get stamped with the current binary's version.
+		ver := m.Fields.Version
+		if ver == "" || jsxBody != src[m.RegionStart:m.RegionEnd] {
+			ver = version.Version
+		}
 		newMarker := markers.FormatMarker(m.Style, markers.MarkerFields{
 			ID:      m.Fields.ID,
 			Hash:    newHash,
-			Version: version.Version,
+			Version: ver,
 			Scope:   "content",
 		})
 		sb.WriteString(src[cursor:m.CommentStart])

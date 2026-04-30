@@ -1,14 +1,4 @@
+# Identifier for this SDK. Matches the SDK's id in launchdarkly/sdk-meta's
+# API packages — the source of truth for everything else (display name,
+# language flavors, supported regions, hello-world repo, docs URL).
 id: ruby-server-sdk
-sdk-meta-id: ruby
-display-name: Ruby
-type: server-side
-languages:
-  - id: ruby
-    extensions: [".rb"]
-package-managers: [bundler]
-regions: [commercial, federal, eu, relay-proxy]
-ld-application:
-  get-started-file: static/ld/components/getStarted/sdk/ruby.tsx
-docs:
-  reference-page: /sdk/server-side/ruby
-hello-world-repo: launchdarkly/hello-ruby

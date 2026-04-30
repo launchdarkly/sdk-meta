@@ -5,8 +5,6 @@ kind: manifest
 lang: cpp
 file: CMakeLists.txt
 description: CMake configuration file for the hello-cpp-server project.
-ld-application:
-  slot: cmakelists
 ---
 
 Create a `CMakeLists.txt` file with the following content:

@@ -4,8 +4,6 @@ sdk: java-server-sdk
 kind: manifest-fragment
 lang: xml
 description: pom.xml `<build>` block configuring the maven-assembly-plugin.
-ld-application:
-  slot: pom-build
 ---
 
 Configure the Maven Assembly Plugin in your `pom.xml` to make it easier to run the application:

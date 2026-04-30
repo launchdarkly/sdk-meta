@@ -12,8 +12,6 @@ inputs:
   featureKey:
     type: flag-key
     description: Default flag key baked into the rendered source. Validation reads LAUNCHDARKLY_FLAG_KEY at runtime.
-ld-application:
-  slot: program-cs
 validation:
   runtime: dotnet-client
   requirements: Launchdarkly.ClientSdk

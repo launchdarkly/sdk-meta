@@ -9,8 +9,6 @@ inputs:
   mobileKey:
     type: mobile-key
     description: Mobile key baked into the rendered source.
-ld-application:
-  slot: main-application
 ---
 
 Create `MainApplication.kt` and add the following code:

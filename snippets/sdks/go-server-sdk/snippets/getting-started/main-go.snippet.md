@@ -9,8 +9,6 @@ inputs:
   featureKey:
     type: flag-key
     description: Default flag key baked into the rendered source. Validation reads LAUNCHDARKLY_FLAG_KEY at runtime; the env var takes precedence.
-ld-application:
-  slot: main-go
 validation:
   runtime: go
 ---

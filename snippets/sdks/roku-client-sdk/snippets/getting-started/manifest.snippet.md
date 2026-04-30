@@ -4,8 +4,6 @@ sdk: roku-client-sdk
 kind: manifest
 lang: text
 description: Roku app manifest file.
-ld-application:
-  slot: manifest
 ---
 
 Create a basic app `manifest` file:

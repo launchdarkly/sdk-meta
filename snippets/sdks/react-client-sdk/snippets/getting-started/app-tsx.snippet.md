@@ -9,8 +9,6 @@ inputs:
   featureKey:
     type: flag-key
     description: Default flag key (camelCased) baked into the rendered source.
-ld-application:
-  slot: app-tsx
 validation:
   runtime: react-client
   entrypoint: src/App.tsx

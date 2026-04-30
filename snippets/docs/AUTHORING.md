@@ -51,6 +51,14 @@ whose body should be replaced:
 `hash=0` as a placeholder — the next render rewrites it. (Any hex string
 works; `0` just minimizes finger-typing.)
 
+`hash` is load-bearing — it's recomputed from the rendered children on every
+run, and `verify` rejects any drift. `version` is informational: it records
+the version of the `snippets` binary that last produced the children below
+this marker. Re-rendering with a newer binary leaves `version` alone when the
+children would be byte-identical, so a release-without-content-changes
+doesn't churn every marker in the consumer's tree. The version only moves
+forward when the snippet's rendered body actually changes.
+
 The element directly following a marker MUST be a capitalized JSX component
 tag (e.g. `<Snippet>`, `<CodeBlock>`). Lowercase HTML tags (`<pre>`, `<code>`)
 are not recognized; wrap the content in a component first if you need to mark
@@ -67,11 +75,17 @@ export LAUNCHDARKLY_SDK_KEY=...     # server-side key
 export LAUNCHDARKLY_FLAG_KEY=...    # flag the snippet evaluates
 snippets validate --sdk=python-server-sdk
 
-# Rewrite all marked regions in an ld-application checkout
-snippets render --target=ld-application --out=/path/to/ld-application
+# Rewrite every marked region under one or more entrypoint dirs in the
+# consumer checkout. --entrypoint is repeatable; the renderer walks each
+# directory recursively, only opens files whose extension it understands
+# (.tsx/.jsx/.ts/.js/.mdx) AND that contain the SDK_SNIPPET:RENDER
+# sentinel, and skips junk dirs (node_modules, .git, dist, build, ...).
+snippets render --target=ld-application \
+  --entrypoint=/path/to/ld-application/static/ld/components/getStarted
 
-# Confirm consumer file matches what we'd render (no edits)
-snippets verify --target=ld-application --out=/path/to/ld-application
+# Confirm consumer files match what we'd render (no edits)
+snippets verify --target=ld-application \
+  --entrypoint=/path/to/ld-application/static/ld/components/getStarted
 ```
 
 ## Validator inputs

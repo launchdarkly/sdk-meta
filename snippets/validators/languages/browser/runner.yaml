@@ -1,3 +1,0 @@
-mode: docker
-runs-on: ubuntu-latest
-image-prefix: sdk-snippets/browser-validator

@@ -5,8 +5,6 @@ kind: manifest
 lang: xml
 file: components/AppScene.xml
 description: SceneGraph component definition with the LaunchDarklyTask node.
-ld-application:
-  slot: app-scene-xml
 ---
 
 In `components/AppScene.xml` create a basic scene by adding the following code:

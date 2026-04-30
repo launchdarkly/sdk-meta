@@ -1,14 +1,4 @@
+# Identifier for this SDK. Matches the SDK's id in launchdarkly/sdk-meta's
+# API packages — the source of truth for everything else (display name,
+# language flavors, supported regions, hello-world repo, docs URL).
 id: android-client-sdk
-sdk-meta-id: android
-display-name: Android
-type: client-side
-languages:
-  - id: kotlin
-    extensions: [".kt"]
-package-managers: [gradle]
-regions: [commercial, federal, eu, relay-proxy]
-ld-application:
-  get-started-file: static/ld/components/getStarted/sdk/android.tsx
-docs:
-  reference-page: /sdk/client-side/android
-hello-world-repo: launchdarkly/hello-android

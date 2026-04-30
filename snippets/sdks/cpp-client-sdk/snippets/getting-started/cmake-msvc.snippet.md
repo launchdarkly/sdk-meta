@@ -4,8 +4,6 @@ sdk: cpp-client-sdk
 kind: bootstrap
 lang: bash
 description: Configure with Visual Studio 2022.
-ld-application:
-  slot: cmake-msvc
 ---
 
 ```bash

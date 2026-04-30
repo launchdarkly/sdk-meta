@@ -9,8 +9,6 @@ inputs:
   featureKey:
     type: flag-key
     description: The feature flag key to evaluate. Validation reads this from LAUNCHDARKLY_FLAG_KEY in the caller env.
-ld-application:
-  slot: main-py
 validation:
   entrypoint: main.py
   requirements: launchdarkly-server-sdk

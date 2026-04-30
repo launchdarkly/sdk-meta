@@ -4,8 +4,6 @@ sdk: react-client-sdk
 kind: bootstrap
 lang: shell
 description: Bootstrap a React TypeScript app with create-react-app (legacy variant).
-ld-application:
-  slot: legacy-create
 ---
 
 Use `create-react-app` to create a new React application:

@@ -4,8 +4,6 @@ sdk: cpp-client-sdk
 kind: bootstrap
 lang: bash
 description: Create the CMake build directory.
-ld-application:
-  slot: build-mkdir
 ---
 
 Create a build directory:

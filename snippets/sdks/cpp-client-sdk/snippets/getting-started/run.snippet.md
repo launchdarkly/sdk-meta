@@ -4,8 +4,6 @@ sdk: cpp-client-sdk
 kind: run
 lang: bash
 description: Run the built binary.
-ld-application:
-  slot: run
 ---
 
 Run:

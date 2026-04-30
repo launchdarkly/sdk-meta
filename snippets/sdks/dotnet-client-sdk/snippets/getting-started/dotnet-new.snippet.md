@@ -4,8 +4,6 @@ sdk: dotnet-client-sdk
 kind: bootstrap
 lang: shell
 description: Create a new .NET console application.
-ld-application:
-  slot: dotnet-new
 ---
 
 Next, create a new console application:
