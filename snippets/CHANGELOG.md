@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.2.0...snippets/v0.2.1) (2026-04-30)
+
+
+### Bug Fixes
+
+* Replace goreleaser with go build + github attestation ([#409](https://github.com/launchdarkly/sdk-meta/issues/409)) ([6a62f10](https://github.com/launchdarkly/sdk-meta/commit/6a62f1081e5af6f376282e33ea799f6bdf943d33))
+
 ## [0.2.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.1.0...snippets/v0.2.0) (2026-04-30)
 
 
