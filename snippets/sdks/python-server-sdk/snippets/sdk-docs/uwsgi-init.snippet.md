@@ -4,6 +4,11 @@ sdk: python-server-sdk
 kind: reference
 lang: python
 description: uWSGI integration that calls postfork() inside @uwsgidecorators.postfork.
+validation:
+  # uWSGI isn't installable in the validator container; fall back to
+  # parse-only. The decorator-based fork lifecycle would need a real
+  # uWSGI master process to exercise.
+  scaffold: python-server-sdk/scaffolds/python-syntax-only
 ---
 
 ```python
