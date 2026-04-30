@@ -9,6 +9,7 @@ import (
 
 	"github.com/launchdarkly/sdk-meta/snippets"
 	"github.com/launchdarkly/sdk-meta/snippets/internal/adapters/ldapplication"
+	"github.com/launchdarkly/sdk-meta/snippets/internal/adapters/lddocs"
 	"github.com/launchdarkly/sdk-meta/snippets/internal/validate"
 	"github.com/launchdarkly/sdk-meta/snippets/internal/version"
 )
@@ -36,14 +37,17 @@ func (r *repeatableString) Set(s string) error { *r = append(*r, s); return nil 
 const usage = `snippets — LaunchDarkly SDK snippet generator
 
 usage:
-  snippets render --target=ld-application --entrypoint=<dir> [--entrypoint=<dir2> ...] [--sdks=./sdks]
+  snippets render --target=<target> --entrypoint=<dir> [--entrypoint=<dir2> ...] [--sdks=./sdks]
       Walks each --entrypoint directory in the consumer checkout, finds files
       that contain SDK_SNIPPET:RENDER markers, and rewrites each marked
       region from the snippet sources. --entrypoint may be passed multiple
-      times. Authors run this after editing a snippet; the consumer's
-      sync action runs it on every release.
+      times. --target selects the adapter:
+        ld-application — rewrites JSX children inside marked components
+                         (gonfalon, the LaunchDarkly app)
+        ld-docs        — rewrites fenced code-block bodies in MDX
+                         (ld-docs-private, ld-docs)
 
-  snippets verify --target=ld-application --entrypoint=<dir> [--entrypoint=<dir2> ...] [--sdks=./sdks]
+  snippets verify --target=<target> --entrypoint=<dir> [--entrypoint=<dir2> ...] [--sdks=./sdks]
       Read-only counterpart to render, used by CI in the consumer repo.
       Fails if the rendered bytes would drift from what's on disk, or if
       a marker's hash does not match its current region's content. Never
@@ -84,17 +88,27 @@ func main() {
 
 func runRender(args []string) {
 	fset := flag.NewFlagSet("render", flag.ExitOnError)
-	target := fset.String("target", "", "adapter target: `ld-application`")
+	target := fset.String("target", "", "adapter target: `ld-application` or `ld-docs`")
 	var entrypoints repeatableString
 	fset.Var(&entrypoints, "entrypoint", "directory in the consumer checkout to walk for marker files (repeatable)")
 	sdks := fset.String("sdks", "", "path to a sdks/ directory (default: embedded)")
 	_ = fset.Parse(args)
 
-	if *target != "ld-application" || len(entrypoints) == 0 {
-		fmt.Fprintf(os.Stderr, "render: --target=ld-application and at least one --entrypoint are required\n")
+	if len(entrypoints) == 0 {
+		fmt.Fprintf(os.Stderr, "render: at least one --entrypoint is required\n")
 		os.Exit(2)
 	}
-	changed, err := ldapplication.Render(resolveSDKsFS(*sdks), entrypoints)
+	var changed []string
+	var err error
+	switch *target {
+	case "ld-application":
+		changed, err = ldapplication.Render(resolveSDKsFS(*sdks), entrypoints)
+	case "ld-docs":
+		changed, err = lddocs.Render(resolveSDKsFS(*sdks), entrypoints)
+	default:
+		fmt.Fprintf(os.Stderr, "render: --target must be `ld-application` or `ld-docs`\n")
+		os.Exit(2)
+	}
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "render failed: %v\n", err)
 		os.Exit(1)
@@ -110,17 +124,27 @@ func runRender(args []string) {
 
 func runVerify(args []string) {
 	fset := flag.NewFlagSet("verify", flag.ExitOnError)
-	target := fset.String("target", "", "adapter target: `ld-application`")
+	target := fset.String("target", "", "adapter target: `ld-application` or `ld-docs`")
 	var entrypoints repeatableString
 	fset.Var(&entrypoints, "entrypoint", "directory in the consumer checkout to walk for marker files (repeatable)")
 	sdks := fset.String("sdks", "", "path to a sdks/ directory (default: embedded)")
 	_ = fset.Parse(args)
 
-	if *target != "ld-application" || len(entrypoints) == 0 {
-		fmt.Fprintf(os.Stderr, "verify: --target=ld-application and at least one --entrypoint are required\n")
+	if len(entrypoints) == 0 {
+		fmt.Fprintf(os.Stderr, "verify: at least one --entrypoint is required\n")
 		os.Exit(2)
 	}
-	if err := ldapplication.Verify(resolveSDKsFS(*sdks), entrypoints); err != nil {
+	var err error
+	switch *target {
+	case "ld-application":
+		err = ldapplication.Verify(resolveSDKsFS(*sdks), entrypoints)
+	case "ld-docs":
+		err = lddocs.Verify(resolveSDKsFS(*sdks), entrypoints)
+	default:
+		fmt.Fprintf(os.Stderr, "verify: --target must be `ld-application` or `ld-docs`\n")
+		os.Exit(2)
+	}
+	if err != nil {
 		fmt.Fprintf(os.Stderr, "verify failed: %v\n", err)
 		os.Exit(1)
 	}
