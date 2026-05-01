@@ -24,9 +24,15 @@ func TestSDKsFS_BundlesEverySDK(t *testing.T) {
 
 	// Every SDK directory must carry an sdk.yaml; without it the
 	// ld-application adapter's discoverTargetFiles would skip it.
+	// Underscore-prefixed directories (e.g. _shared) hold cross-SDK
+	// snippets that aren't tied to a specific SDK and have no
+	// `sdk.yaml`; they're skipped.
 	missing := []string{}
 	for _, e := range entries {
 		if !e.IsDir() {
+			continue
+		}
+		if strings.HasPrefix(e.Name(), "_") {
 			continue
 		}
 		if _, err := fs.Stat(fsys, e.Name()+"/sdk.yaml"); err != nil {
