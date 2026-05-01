@@ -3207,10 +3207,16 @@
   ],
   "react-client-sdk": [
     {
+      "major": 4,
+      "minor": 0,
+      "date": "2026-04-30T22:20:29Z",
+      "eol": null
+    },
+    {
       "major": 3,
       "minor": 9,
       "date": "2025-09-30T16:50:53Z",
-      "eol": null
+      "eol": "2027-04-30T00:00:00Z"
     },
     {
       "major": 3,
