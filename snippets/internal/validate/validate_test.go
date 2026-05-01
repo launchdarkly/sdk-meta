@@ -1,6 +1,8 @@
 package validate
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -111,5 +113,196 @@ func TestRuntimeInputsRejectsRuntimeDefaultOnKeys(t *testing.T) {
 		if err == nil || !strings.Contains(err.Error(), "runtime-default") {
 			t.Errorf("%s: want runtime-default rejection, got %v", kind, err)
 		}
+	}
+}
+
+// stageSnippet composes a wrappee into a scaffold's `{{ body }}` slot.
+// The staged file is the scaffold's `file:` path; the bytes are the
+// scaffold body with the wrappee body inlined.
+func TestStageSnippet_ScaffoldComposition(t *testing.T) {
+	wrappee := &model.Snippet{
+		Path: "test/wrappee.snippet.md",
+		Frontmatter: model.Frontmatter{
+			ID:   "test-sdk/docs/eval",
+			SDK:  "test-sdk",
+			Kind: "reference",
+			Lang: "python",
+			Validation: model.Validation{
+				Scaffold: "test-sdk/scaffolds/with-test-data",
+			},
+		},
+		CodeBody: `flag_value = client.variation("your.feature.key", context, False)`,
+	}
+	scaffold := &model.Snippet{
+		Path: "test/scaffold.snippet.md",
+		Frontmatter: model.Frontmatter{
+			ID:   "test-sdk/scaffolds/with-test-data",
+			SDK:  "test-sdk",
+			Kind: "scaffold",
+			Lang: "python",
+			File: "main.py",
+			Inputs: map[string]model.Input{
+				"body": {Type: "string", Description: "Wrappee body"},
+			},
+			Validation: model.Validation{
+				Runtime:      "python",
+				Entrypoint:   "main.py",
+				Requirements: "launchdarkly-server-sdk",
+			},
+		},
+		CodeBody: "import ldclient\n# setup ...\n{{ body }}\nprint(\"feature flag evaluates to\", flag_value)",
+	}
+	all := map[string]*model.Snippet{
+		wrappee.Frontmatter.ID:  wrappee,
+		scaffold.Frontmatter.ID: scaffold,
+	}
+
+	stageDir, err := stageSnippet(wrappee, all, envInputs{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(stageDir)
+
+	// Composed body lives at the scaffold's `file:` path, not the wrappee's.
+	out, err := os.ReadFile(filepath.Join(stageDir, "main.py"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := string(out)
+	if !strings.Contains(got, `flag_value = client.variation("your.feature.key", context, False)`) {
+		t.Errorf("staged body missing wrappee fragment:\n%s", got)
+	}
+	if !strings.Contains(got, "import ldclient") {
+		t.Errorf("staged body missing scaffold prologue:\n%s", got)
+	}
+	if !strings.Contains(got, "feature flag evaluates to") {
+		t.Errorf("staged body missing scaffold epilogue:\n%s", got)
+	}
+
+	// requirements.txt comes from the scaffold.
+	req, err := os.ReadFile(filepath.Join(stageDir, "requirements.txt"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(req), "launchdarkly-server-sdk") {
+		t.Errorf("requirements.txt missing scaffold dep: %q", string(req))
+	}
+}
+
+// scaffold-inputs from the wrappee override env-derived defaults on the
+// scaffold's render.
+func TestStageSnippet_ScaffoldInputsOverride(t *testing.T) {
+	wrappee := &model.Snippet{
+		Frontmatter: model.Frontmatter{
+			ID:   "test-sdk/docs/eval",
+			SDK:  "test-sdk",
+			Kind: "reference",
+			Lang: "python",
+			Validation: model.Validation{
+				Scaffold: "test-sdk/scaffolds/with-flag",
+				ScaffoldInputs: map[string]string{
+					"flagName": "your.feature.key",
+				},
+			},
+		},
+		CodeBody: `# wrappee body`,
+	}
+	scaffold := &model.Snippet{
+		Frontmatter: model.Frontmatter{
+			ID:   "test-sdk/scaffolds/with-flag",
+			SDK:  "test-sdk",
+			Kind: "scaffold",
+			Lang: "python",
+			File: "main.py",
+			Inputs: map[string]model.Input{
+				"body":     {Type: "string"},
+				"flagName": {Type: "string", RuntimeDefault: "default.key"},
+			},
+			Validation: model.Validation{Runtime: "python", Entrypoint: "main.py"},
+		},
+		CodeBody: "FLAG = \"{{ flagName }}\"\n{{ body }}",
+	}
+	all := map[string]*model.Snippet{
+		wrappee.Frontmatter.ID:  wrappee,
+		scaffold.Frontmatter.ID: scaffold,
+	}
+	stageDir, err := stageSnippet(wrappee, all, envInputs{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(stageDir)
+	out, _ := os.ReadFile(filepath.Join(stageDir, "main.py"))
+	got := string(out)
+	if !strings.Contains(got, `FLAG = "your.feature.key"`) {
+		t.Errorf("scaffold-inputs override did not apply:\n%s", got)
+	}
+}
+
+// isValidatable skips scaffolds even when they declare runtime/entrypoint.
+// A standalone scaffold run would have an unbound `{{ body }}` slot.
+func TestIsValidatable_SkipsScaffolds(t *testing.T) {
+	s := &model.Snippet{
+		Frontmatter: model.Frontmatter{
+			Kind: "scaffold",
+			Validation: model.Validation{
+				Runtime:    "python",
+				Entrypoint: "main.py",
+			},
+		},
+	}
+	if isValidatable(s) {
+		t.Error("scaffolds must not be validatable on their own")
+	}
+
+	// Compare with a plain validatable snippet.
+	plain := &model.Snippet{
+		Frontmatter: model.Frontmatter{
+			Kind: "hello-world",
+			Validation: model.Validation{
+				Runtime:    "python",
+				Entrypoint: "main.py",
+			},
+		},
+	}
+	if !isValidatable(plain) {
+		t.Error("plain validatable snippet should be validatable")
+	}
+
+	// And a scaffold-bound snippet (no runtime of its own) IS validatable.
+	scaffolded := &model.Snippet{
+		Frontmatter: model.Frontmatter{
+			Kind: "reference",
+			Validation: model.Validation{
+				Scaffold: "test-sdk/scaffolds/with-test-data",
+			},
+		},
+	}
+	if !isValidatable(scaffolded) {
+		t.Error("scaffold-bound snippet should be validatable via the scaffold")
+	}
+}
+
+// effectiveValidationSnippet errors loudly when the scaffold ID can't be
+// resolved or when the target isn't actually a scaffold.
+func TestEffectiveValidationSnippet_RejectsBadScaffold(t *testing.T) {
+	s := &model.Snippet{
+		Frontmatter: model.Frontmatter{
+			ID:         "test/wrappee",
+			Validation: model.Validation{Scaffold: "nonexistent"},
+		},
+	}
+	if _, err := effectiveValidationSnippet(s, map[string]*model.Snippet{}); err == nil ||
+		!strings.Contains(err.Error(), "scaffold") {
+		t.Errorf("missing scaffold: want error mentioning scaffold, got %v", err)
+	}
+
+	notScaffold := &model.Snippet{
+		Frontmatter: model.Frontmatter{ID: "test/init", Kind: "hello-world"},
+	}
+	s.Frontmatter.Validation.Scaffold = notScaffold.Frontmatter.ID
+	all := map[string]*model.Snippet{notScaffold.Frontmatter.ID: notScaffold}
+	if _, err := effectiveValidationSnippet(s, all); err == nil ||
+		!strings.Contains(err.Error(), "kind=") {
+		t.Errorf("non-scaffold target: want kind error, got %v", err)
 	}
 }
