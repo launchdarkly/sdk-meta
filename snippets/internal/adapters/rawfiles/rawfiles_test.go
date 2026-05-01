@@ -177,31 +177,7 @@ func TestLoadManifest_RejectsMissingOut(t *testing.T) {
 	}
 }
 
-// atomicWriteFile preserves the destination's permission bits when
-// overwriting. Mirrors the contract of ldapplication.atomicWriteFile.
-func TestAtomicWriteFile_PreservesMode(t *testing.T) {
-	tmp := t.TempDir()
-	dest := filepath.Join(tmp, "f.txt")
-	if err := os.WriteFile(dest, []byte("first"), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	if err := atomicWriteFile(dest, []byte("second")); err != nil {
-		t.Fatal(err)
-	}
-	info, err := os.Stat(dest)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if info.Mode().Perm() != 0o600 {
-		t.Fatalf("expected mode 0600 preserved, got %o", info.Mode().Perm())
-	}
-	got, _ := os.ReadFile(dest)
-	if string(got) != "second" {
-		t.Fatalf("body mismatch: %q", got)
-	}
-}
-
-// atomicWriteFile creates intermediate directories when called from
+// atomicfile.Write creates intermediate directories when called from
 // Render — exercises that the Render path mkdir-p's.
 func TestRender_CreatesIntermediateDirs(t *testing.T) {
 	tmp := t.TempDir()

@@ -18,14 +18,14 @@
 package rawfiles
 
 import (
-	"crypto/rand"
-	"encoding/hex"
 	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
+	"github.com/launchdarkly/sdk-meta/snippets/internal/atomicfile"
 	"github.com/launchdarkly/sdk-meta/snippets/internal/model"
 	"github.com/launchdarkly/sdk-meta/snippets/internal/render"
 	"gopkg.in/yaml.v3"
@@ -135,10 +135,11 @@ func (m *Manifest) validate() error {
 // directory (the common case where the manifest sits next to the output
 // directory).
 //
-// Returns the absolute paths of every file written, sorted lexically.
-// Files whose content is byte-identical to what's already on disk are
-// still listed — atomic writes mean the inode changes regardless, and
-// the caller (CI's `git diff`) is the right place to detect no-op runs.
+// Returns the absolute paths of every file written, sorted lexically
+// regardless of manifest entry order. Files whose content is
+// byte-identical to what's already on disk are still listed — atomic
+// writes mean the inode changes regardless, and the caller (CI's
+// `git diff`) is the right place to detect no-op runs.
 func Render(sdksFS fs.FS, manifestPath, consumerDir string) ([]string, error) {
 	m, manifestDir, err := LoadManifest(manifestPath)
 	if err != nil {
@@ -178,11 +179,12 @@ func Render(sdksFS fs.FS, manifestPath, consumerDir string) ([]string, error) {
 		if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
 			return nil, fmt.Errorf("create %s: %w", filepath.Dir(dest), err)
 		}
-		if err := atomicWriteFile(dest, []byte(body)); err != nil {
+		if err := atomicfile.Write(dest, []byte(body)); err != nil {
 			return nil, fmt.Errorf("write %s: %w", dest, err)
 		}
 		written = append(written, dest)
 	}
+	sort.Strings(written)
 	return written, nil
 }
 
@@ -235,41 +237,3 @@ func suggestSimilarIDs(missing string, snippets map[string]*model.Snippet) strin
 	return strings.Join(hits, ", ")
 }
 
-// atomicWriteFile mirrors ldapplication.atomicWriteFile: write to a
-// same-directory tempfile, fsync, rename. Crash-safe and concurrent-safe
-// across parallel renders that target distinct destinations.
-func atomicWriteFile(path string, data []byte) error {
-	dir := filepath.Dir(path)
-	mode := os.FileMode(0o644)
-	if info, err := os.Stat(path); err == nil {
-		mode = info.Mode().Perm()
-	}
-	var sfx [8]byte
-	if _, err := rand.Read(sfx[:]); err != nil {
-		return err
-	}
-	tmp := filepath.Join(dir, "."+filepath.Base(path)+".sdk-snippets."+hex.EncodeToString(sfx[:])+".tmp")
-	f, err := os.OpenFile(tmp, os.O_WRONLY|os.O_CREATE|os.O_EXCL, mode)
-	if err != nil {
-		return err
-	}
-	if _, err := f.Write(data); err != nil {
-		f.Close()
-		os.Remove(tmp)
-		return err
-	}
-	if err := f.Sync(); err != nil {
-		f.Close()
-		os.Remove(tmp)
-		return err
-	}
-	if err := f.Close(); err != nil {
-		os.Remove(tmp)
-		return err
-	}
-	if err := os.Rename(tmp, path); err != nil {
-		os.Remove(tmp)
-		return err
-	}
-	return nil
-}
