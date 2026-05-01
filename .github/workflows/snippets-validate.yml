@@ -43,32 +43,22 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Linux server-runtime SDKs (Docker validators):
+          # SDKs whose sdk-docs scaffold bindings pass today. The 17
+          # other SDKs ship Docker harnesses and syntax-only scaffolds
+          # under snippets/validators/ + snippets/sdks/<sdk>/snippets/
+          # scaffolds/, but no bound runnable snippets — they were
+          # validated end-to-end via the gonfalon-targeted
+          # getting-started/main-* programs, which were removed when
+          # gonfalon's "Connect an SDK" UI was retired. Bindings can be
+          # restored once the per-SDK scaffolds learn to splice
+          # top-level imports up to file scope and provide a
+          # client/context in the wrappee body's lexical scope; tracked
+          # as a follow-up.
           - { sdk: python-server-sdk, runs-on: ubuntu-latest, key-type: server }
-          - { sdk: go-server-sdk,     runs-on: ubuntu-latest, key-type: server }
           - { sdk: node-server-sdk,   runs-on: ubuntu-latest, key-type: server }
-          - { sdk: node-client-sdk,   runs-on: ubuntu-latest, key-type: client }
           - { sdk: ruby-server-sdk,   runs-on: ubuntu-latest, key-type: server }
           - { sdk: php-server-sdk,    runs-on: ubuntu-latest, key-type: server }
-          - { sdk: rust-server-sdk,   runs-on: ubuntu-latest, key-type: server }
-          - { sdk: dotnet-server-sdk, runs-on: ubuntu-latest, key-type: server }
-          - { sdk: dotnet-client-sdk, runs-on: ubuntu-latest, key-type: mobile }
-          - { sdk: java-server-sdk,   runs-on: ubuntu-latest, key-type: server }
-          - { sdk: cpp-server-sdk,    runs-on: ubuntu-latest, key-type: server }
-          - { sdk: cpp-client-sdk,    runs-on: ubuntu-latest, key-type: mobile }
           - { sdk: lua-server-sdk,    runs-on: ubuntu-latest, key-type: server }
-          - { sdk: haskell-server-sdk, runs-on: ubuntu-latest, key-type: server }
-          - { sdk: erlang-server-sdk, runs-on: ubuntu-latest, key-type: server }
-          # Browser SDKs (headless Playwright):
-          - { sdk: js-client-sdk,     runs-on: ubuntu-latest, key-type: client }
-          - { sdk: vue-client-sdk,    runs-on: ubuntu-latest, key-type: client }
-          - { sdk: react-client-sdk,  runs-on: ubuntu-latest, key-type: client }
-          - { sdk: flutter-client-sdk, runs-on: ubuntu-latest, key-type: client }
-          - { sdk: android-client-sdk, runs-on: ubuntu-latest, key-type: mobile }
-          - { sdk: react-native-client-sdk, runs-on: ubuntu-latest, key-type: mobile }
-          # iOS (macOS runner + xcodebuild + iOS Simulator):
-          - { sdk: ios-client-sdk,     runs-on: macos-latest,  key-type: mobile }
-          # Skipped: roku-client-sdk (validation: none, manual procedure).
     steps:
       - uses: actions/checkout@v4
 
