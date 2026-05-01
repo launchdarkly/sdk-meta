@@ -20,16 +20,20 @@ package main
 
 import (
 	"fmt"
+
 	_ "github.com/launchdarkly/go-sdk-common/v3/ldcontext"
 	_ "github.com/launchdarkly/go-sdk-common/v3/ldvalue"
-	_ ld "github.com/launchdarkly/go-server-sdk/v7"
+	_ "github.com/launchdarkly/go-server-sdk/v7"
 )
-
-func _wrappee() {
-{{ body }}
-}
 
 func main() {
 	fmt.Println("feature flag evaluates to true")
+}
+
+// _wrappee compiles the doc-fragment body in a function the harness never
+// invokes — the EXAM-HELLO success line is printed unconditionally above,
+// so we just need the snippet to parse and link.
+func _wrappee() {
+{{ body }}
 }
 ```
