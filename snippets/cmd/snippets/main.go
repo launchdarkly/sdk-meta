@@ -10,6 +10,7 @@ import (
 	"github.com/launchdarkly/sdk-meta/snippets"
 	"github.com/launchdarkly/sdk-meta/snippets/internal/adapters/ldapplication"
 	"github.com/launchdarkly/sdk-meta/snippets/internal/adapters/lddocs"
+	"github.com/launchdarkly/sdk-meta/snippets/internal/adapters/rawfiles"
 	"github.com/launchdarkly/sdk-meta/snippets/internal/validate"
 	"github.com/launchdarkly/sdk-meta/snippets/internal/version"
 )
@@ -46,6 +47,13 @@ usage:
                          (gonfalon, the LaunchDarkly app)
         ld-docs        — rewrites fenced code-block bodies in MDX
                          (ld-docs-private, ld-docs)
+
+  snippets render --target=raw-files --manifest=<path> [--consumer=<dir>] [--sdks=./sdks]
+      Reads a YAML manifest enumerating (snippet-id, output-path) pairs and
+      writes each rendered body to <consumer>/<manifest.out>/<entry.path>.
+      Used by consumers that import snippet text via Vite's "?raw" import
+      pattern (e.g. gonfalon's packages/sdk-info/) where the marker-driven
+      flow doesn't apply. --consumer defaults to the manifest's directory.
 
   snippets verify --target=<target> --entrypoint=<dir> [--entrypoint=<dir2> ...] [--sdks=./sdks]
       Read-only counterpart to render, used by CI in the consumer repo.
@@ -89,31 +97,61 @@ func main() {
 
 func runRender(args []string) {
 	fset := flag.NewFlagSet("render", flag.ExitOnError)
-	target := fset.String("target", "", "adapter target: `ld-application` or `ld-docs`")
+	target := fset.String("target", "", "adapter target: `ld-application`, `ld-docs`, or `raw-files`")
 	var entrypoints repeatableString
-	fset.Var(&entrypoints, "entrypoint", "directory in the consumer checkout to walk for marker files (repeatable)")
+	fset.Var(&entrypoints, "entrypoint", "directory in the consumer checkout to walk for marker files (repeatable; ld-application and ld-docs only)")
+	manifest := fset.String("manifest", "", "path to a raw-files manifest YAML (raw-files only)")
+	consumer := fset.String("consumer", "", "consumer-checkout root that the manifest's `out:` resolves against (default: manifest's directory)")
 	sdks := fset.String("sdks", "", "path to a sdks/ directory (default: embedded)")
 	_ = fset.Parse(args)
 
-	if len(entrypoints) == 0 {
-		fmt.Fprintf(os.Stderr, "render: at least one --entrypoint is required\n")
-		os.Exit(2)
-	}
-	var changed []string
-	var err error
 	switch *target {
 	case "ld-application":
-		changed, err = ldapplication.Render(resolveSDKsFS(*sdks), entrypoints)
+		if len(entrypoints) == 0 {
+			fmt.Fprintf(os.Stderr, "render: --target=ld-application requires at least one --entrypoint\n")
+			os.Exit(2)
+		}
+		changed, err := ldapplication.Render(resolveSDKsFS(*sdks), entrypoints)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "render failed: %v\n", err)
+			os.Exit(1)
+		}
+		printRenderResult(changed)
 	case "ld-docs":
-		changed, err = lddocs.Render(resolveSDKsFS(*sdks), entrypoints)
+		if len(entrypoints) == 0 {
+			fmt.Fprintf(os.Stderr, "render: --target=ld-docs requires at least one --entrypoint\n")
+			os.Exit(2)
+		}
+		changed, err := lddocs.Render(resolveSDKsFS(*sdks), entrypoints)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "render failed: %v\n", err)
+			os.Exit(1)
+		}
+		printRenderResult(changed)
+	case "raw-files":
+		if *manifest == "" {
+			fmt.Fprintf(os.Stderr, "render: --target=raw-files requires --manifest\n")
+			os.Exit(2)
+		}
+		written, err := rawfiles.Render(resolveSDKsFS(*sdks), *manifest, *consumer)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "render failed: %v\n", err)
+			os.Exit(1)
+		}
+		if len(written) == 0 {
+			fmt.Println("no files written")
+			return
+		}
+		for _, p := range written {
+			fmt.Println("wrote", p)
+		}
 	default:
-		fmt.Fprintf(os.Stderr, "render: --target must be `ld-application` or `ld-docs`\n")
+		fmt.Fprintf(os.Stderr, "render: --target must be `ld-application`, `ld-docs`, or `raw-files` (got %q)\n", *target)
 		os.Exit(2)
 	}
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "render failed: %v\n", err)
-		os.Exit(1)
-	}
+}
+
+func printRenderResult(changed []string) {
 	if len(changed) == 0 {
 		fmt.Println("no changes")
 		return
