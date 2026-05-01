@@ -8,30 +8,27 @@ follow-up content pass.
 
 [SDK-2316]: https://launchdarkly.atlassian.net/browse/SDK-2316
 
-## Cursor prompt template uses an unsupported placeholder syntax
+## Cursor prompt template uses an unsupported placeholder syntax (fixed)
 
-**Severity**: medium
+**Severity**: ~~medium~~ resolved
 
 **SDKs affected**: cursor-prompt (root)
 
 **What we observed**: `prompt.txt` uses `{{SDK_NAME}}`, `{{SDK_DOCS_URL}}`,
 `{{SDK_EVENT_DOC_URL}}` placeholders that gonfalon's
-`CursorSdkInstall.tsx` substitutes at runtime via a string-replace.
-sdk-meta's templating DSL parses any `{{ NAME }}` token (with or without
-inner whitespace) into a Var node and round-trips it as `{{ NAME }}`
-(with whitespace) when no input is declared. The lifted body therefore
-renders byte-different from the source file: `{{SDK_NAME}}` becomes
-`{{ SDK_NAME }}`. This is the only file in the 52-file set that does not
-round-trip byte-identical.
+`CursorSdkInstall.tsx` substitutes at runtime via a regex
+(`/{{SDK_NAME}}/g`) that matches the no-whitespace form only. Originally
+the DSL parsed any `{{ NAME }}` token (with or without inner whitespace)
+into a Var node and round-tripped it as `{{ NAME }}` (with whitespace),
+so the lifted body rendered byte-different from the source — gonfalon's
+regex would not have matched the rendered output.
 
-**Recommended action**: Phase 2 (consumer refactor) replaces the
-runtime string-replace with the canonical DSL. Two paths to consider:
-either teach the DSL a "passthrough" mode that emits Var nodes verbatim
-(preserving original whitespace), or migrate the cursor template to use
-the DSL's own input contract and let the `<Snippet>` component supply
-the values. Until then, gonfalon's runtime substitution must continue
-to accept both `{{SDK_NAME}}` and `{{ SDK_NAME }}` so the canonical
-sdk-meta body stays usable.
+**Resolution**: The DSL now captures the original source-text form on
+the `Var` node (`Raw` field) and `literalVar` emits that verbatim for
+undeclared (foreign-template) names. All 52 sdk-info files now round-trip
+byte-identical to the gonfalon source, including the cursor prompt's
+no-whitespace placeholders. Consumers that switch their `?raw` import to
+the rendered output need no further coordination.
 
 ## Inconsistent npm install package-name conventions
 
