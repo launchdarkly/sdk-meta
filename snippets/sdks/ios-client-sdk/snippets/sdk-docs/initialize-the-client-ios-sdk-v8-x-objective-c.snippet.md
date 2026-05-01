@@ -1,0 +1,22 @@
+---
+id: ios-client-sdk/sdk-docs/initialize-the-client-ios-sdk-v8-x-objective-c
+sdk: ios-client-sdk
+kind: reference
+lang: objective-c
+description: "iOS SDK v8.x (Objective-C) in section \"Initialize the client\""
+---
+
+```objectivec
+  LDConfig *config = [[LDConfig alloc] initWithMobileKey:@"example-mobile-key"];
+  
+  // You'll need this context later, but you can ignore it for now.
+  LDContext *context = [[LDContext alloc] initWithKey:@"example-context-key"];
+
+  [LDClient startWithConfiguration:config context:context startWaitSeconds:5.0 completion:^(BOOL timedOut) {
+    if(timedOut) {
+        // Client may not have the most recent flags for the configured context
+    } else {
+        // Client has received flags for the configured context
+    }
+  }];
+```

@@ -1,0 +1,14 @@
+---
+id: dotnet-client-sdk/sdk-docs/initialize-the-client-net-sdk-v4-0-c
+sdk: dotnet-client-sdk
+kind: reference
+lang: csharp
+description: ".NET SDK v4.0+ (C#) in section \"Initialize the client\""
+---
+
+```csharp
+// You'll need this context later, but you can ignore it for now.
+var context = Context.New("example-context-key");
+var timeSpan = TimeSpan.FromSeconds(5);
+client = LdClient.Init("example-mobile-key", ConfigurationBuilder.AutoEnvAttributes.Enabled, context, timeSpan);
+```

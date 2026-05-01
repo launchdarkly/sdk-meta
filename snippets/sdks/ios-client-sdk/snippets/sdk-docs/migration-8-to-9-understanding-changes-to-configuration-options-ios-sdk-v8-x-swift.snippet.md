@@ -1,0 +1,11 @@
+---
+id: ios-client-sdk/sdk-docs/migration-8-to-9-understanding-changes-to-configuration-options-ios-sdk-v8-x-swift
+sdk: ios-client-sdk
+kind: reference
+lang: swift
+description: "iOS SDK v8.x (Swift) in section \"Understanding changes to configuration options\""
+---
+
+```swift
+let config = LDConfig(mobileKey: "example-mobile-key")
+```
