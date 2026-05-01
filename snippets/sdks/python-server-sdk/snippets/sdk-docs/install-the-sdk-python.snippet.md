@@ -1,0 +1,16 @@
+---
+id: python-server-sdk/sdk-docs/install-the-sdk-python
+sdk: python-server-sdk
+kind: reference
+lang: python
+description: "Python in section \"Install the SDK\""
+---
+
+```python
+import ldclient
+from ldclient.config import Config
+
+# optional observability plugin, requires Python SDK v9.12+
+import ldobserve
+from ldobserve import ObservabilityConfig, ObservabilityPlugin, observe
+```

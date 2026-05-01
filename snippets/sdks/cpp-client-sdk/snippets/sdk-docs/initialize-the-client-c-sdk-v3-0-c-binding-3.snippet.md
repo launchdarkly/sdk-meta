@@ -1,0 +1,13 @@
+---
+id: cpp-client-sdk/sdk-docs/initialize-the-client-c-sdk-v3-0-c-binding-3
+sdk: cpp-client-sdk
+kind: reference
+lang: c
+description: "C++ SDK v3.0 (C binding) in section \"Initialize the client\""
+---
+
+```c
+LDClientSDK client = LDClientSDK_New(config, context);
+
+LDClientSDK_Start(client, LD_NONBLOCKING, NULL);
+```

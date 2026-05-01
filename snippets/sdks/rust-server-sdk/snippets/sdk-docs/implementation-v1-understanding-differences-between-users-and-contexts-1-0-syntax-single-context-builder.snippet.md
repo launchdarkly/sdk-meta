@@ -1,0 +1,13 @@
+---
+id: rust-server-sdk/sdk-docs/implementation-v1-understanding-differences-between-users-and-contexts-1-0-syntax-single-context-builder
+sdk: rust-server-sdk
+kind: reference
+lang: rust
+description: "1.0 syntax, single context builder in section \"Understanding differences between users and contexts\""
+---
+
+```rust
+let context = ContextBuilder::new("example-context-key")
+    .kind("organization")
+    .build()?;
+```

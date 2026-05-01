@@ -1,0 +1,15 @@
+---
+id: ruby-server-sdk/sdk-docs/using-unicorn-ruby-unicorn-initialization
+sdk: ruby-server-sdk
+kind: reference
+lang: ruby
+description: "Ruby Unicorn initialization in section \"Using Unicorn\""
+---
+
+```ruby
+client = LaunchDarkly::LDClient.new("YOUR_SDK_KEY")
+
+after_fork do |server,worker|
+  client.postfork
+end
+```
