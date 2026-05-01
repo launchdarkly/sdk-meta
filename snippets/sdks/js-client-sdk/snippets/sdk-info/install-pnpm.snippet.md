@@ -8,5 +8,5 @@ description: Install command for js-client-sdk (pnpm).
 ---
 
 ```shell
-pnpm i launchdarkly-js-client-sdk
+pnpm i @launchdarkly/js-client-sdk
 ```

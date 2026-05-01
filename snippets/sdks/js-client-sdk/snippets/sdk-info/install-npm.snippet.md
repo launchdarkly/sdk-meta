@@ -8,5 +8,5 @@ description: Install command for js-client-sdk (npm).
 ---
 
 ```shell
-npm i launchdarkly-js-client-sdk
+npm i @launchdarkly/js-client-sdk
 ```

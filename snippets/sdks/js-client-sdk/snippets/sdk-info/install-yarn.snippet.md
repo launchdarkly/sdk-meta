@@ -8,5 +8,5 @@ description: Install command for js-client-sdk (yarn).
 ---
 
 ```shell
-yarn add launchdarkly-js-client-sdk
+yarn add @launchdarkly/js-client-sdk
 ```

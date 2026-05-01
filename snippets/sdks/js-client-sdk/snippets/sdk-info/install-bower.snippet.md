@@ -8,5 +8,5 @@ description: Install command for js-client-sdk (bower).
 ---
 
 ```shell
-bower install https://unpkg.com/launchdarkly-js-client-sdk@3
+bower install https://unpkg.com/@launchdarkly/js-client-sdk@4
 ```

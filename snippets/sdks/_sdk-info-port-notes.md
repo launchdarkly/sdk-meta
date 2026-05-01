@@ -34,16 +34,27 @@ the rendered output need no further coordination.
 
 **Severity**: low
 
-**SDKs affected**: js-client-sdk, react-client-sdk, vue-client-sdk,
-node-client-sdk (all use `launchdarkly-<x>-sdk`); node-server-sdk,
+**SDKs affected**: react-client-sdk, vue-client-sdk, node-client-sdk
+(all use `launchdarkly-<x>-sdk`); js-client-sdk, node-server-sdk,
 react-native-client-sdk (use `@launchdarkly/<x>-sdk`)
 
 **What we observed**: Newer SDK packages have moved to the
 `@launchdarkly/` npm scope, but the older packages haven't, so the
-install snippets diverge along package-name lines. This isn't a bug —
-each command is correct for its SDK — but a Phase 2 consumer would
-notice that the install-npm.txt files are nearly-but-not-quite a single
-template parameterized by package name.
+install snippets diverge along package-name lines. Each command is
+correct for its SDK at the time of authoring — but a Phase 2 consumer
+would notice that the install-npm.txt files are nearly-but-not-quite
+a single template parameterized by package name.
+
+**js-client-sdk fix applied**: gonfalon's source had the install
+snippets installing `launchdarkly-js-client-sdk` (v3) while
+`init.txt` already used the v4 API (`createClient` from
+`@launchdarkly/js-client-sdk`). Install commands updated in sdk-meta
+to install `@launchdarkly/js-client-sdk` (npm/pnpm/yarn), and the
+bower install URL bumped from `unpkg.com/launchdarkly-js-client-sdk@3`
+to `unpkg.com/@launchdarkly/js-client-sdk@4` so installed code
+matches the rendered example. This is a deliberate divergence from
+the gonfalon source; the byte-equality round-trip test now expects
+4 differing js-client-sdk install files.
 
 **Recommended action**: When migrating consumers, consider whether
 these can be expressed as a single `install-<pm>` snippet shared across
