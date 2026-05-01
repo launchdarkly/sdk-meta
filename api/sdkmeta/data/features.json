@@ -1717,6 +1717,11 @@
       "introduced": "3.7",
       "removed": null
     },
+    "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "4.0",
+      "removed": null
+    },
     "perContextSummaryEvents": {
       "deprecated": null,
       "introduced": "3.8",
