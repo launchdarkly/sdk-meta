@@ -4,6 +4,8 @@ sdk: node-server-sdk
 kind: reference
 lang: typescript
 description: "Node.js SDK v7.x and later (TypeScript) in section \"Evaluate a context\""
+validation:
+  scaffold: node-server-sdk/scaffolds/node-syntax-only
 ---
 
 ```ts

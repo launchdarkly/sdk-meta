@@ -4,6 +4,8 @@ sdk: dotnet-client-sdk
 kind: reference
 lang: csharp
 description: "C# in section \"Evaluate a flag\""
+validation:
+  scaffold: dotnet-client-sdk/scaffolds/csharp-client-syntax-only
 ---
 
 ```csharp

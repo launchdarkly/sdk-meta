@@ -4,6 +4,8 @@ sdk: android-client-sdk
 kind: reference
 lang: java
 description: "Java in section \"Evaluate a flag\""
+validation:
+  scaffold: android-client-sdk/scaffolds/android-syntax-only
 ---
 
 ```java

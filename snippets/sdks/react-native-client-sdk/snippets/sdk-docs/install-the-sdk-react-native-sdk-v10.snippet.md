@@ -4,6 +4,8 @@ sdk: react-native-client-sdk
 kind: reference
 lang: typescript
 description: "React Native SDK v10 in section \"Install the SDK\""
+validation:
+  scaffold: react-native-client-sdk/scaffolds/react-native-syntax-only
 ---
 
 ```ts

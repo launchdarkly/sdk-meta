@@ -4,6 +4,8 @@ sdk: js-client-sdk
 kind: reference
 lang: javascript
 description: "JavaScript and TypeScript, JS SDK v4.x in section \"Install the SDK\""
+validation:
+  scaffold: js-client-sdk/scaffolds/js-syntax-only
 ---
 
 ```js

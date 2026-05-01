@@ -4,6 +4,8 @@ sdk: ruby-server-sdk
 kind: reference
 lang: ruby
 description: "Ruby SDK v8.11+ in section \"Considerations with worker-based servers\""
+validation:
+  scaffold: ruby-server-sdk/scaffolds/ruby-syntax-only
 ---
 
 ```ruby

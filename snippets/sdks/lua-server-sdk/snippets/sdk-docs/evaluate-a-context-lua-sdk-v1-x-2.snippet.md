@@ -4,6 +4,8 @@ sdk: lua-server-sdk
 kind: reference
 lang: lua
 description: "Lua SDK v1.x in section \"Evaluate a context\""
+validation:
+  scaffold: lua-server-sdk/scaffolds/lua-syntax-only
 ---
 
 ```lua
