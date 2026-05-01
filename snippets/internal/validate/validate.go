@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"maps"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -20,6 +21,7 @@ type Config struct {
 	SDKsFS        fs.FS  // sdks/ as an fs.FS (embedded or os.DirFS)
 	ValidatorsDir string // path to validators/ (must be on disk — Docker COPY needs it)
 	SDK           string // sdk id to validate (empty = all)
+	Snippet       string // snippet id to validate (empty = all in the SDK)
 }
 
 // envInputs holds the environment-derived input values that get substituted
@@ -62,6 +64,9 @@ func Run(cfg Config) error {
 		if cfg.SDK != "" && s.Frontmatter.SDK != cfg.SDK {
 			continue
 		}
+		if cfg.Snippet != "" && s.Frontmatter.ID != cfg.Snippet {
+			continue
+		}
 		if !isValidatable(s) {
 			continue
 		}
@@ -71,27 +76,59 @@ func Run(cfg Config) error {
 		}
 	}
 	if !any {
-		return fmt.Errorf("no validatable snippets found (sdk=%q)", cfg.SDK)
+		return fmt.Errorf("no validatable snippets found (sdk=%q, snippet=%q)", cfg.SDK, cfg.Snippet)
 	}
 	return nil
 }
 
+// isValidatable reports whether the validator should attempt to run a
+// given snippet. Scaffolds (snippets that exist only to wrap other
+// snippets' bodies) are explicitly excluded: their `{{ body }}` slot is
+// unbound when run standalone, so they would always fail.
 func isValidatable(s *model.Snippet) bool {
-	return s.Frontmatter.Validation.Runtime != "" || s.Frontmatter.Validation.Entrypoint != ""
+	if s.Frontmatter.Kind == "scaffold" {
+		return false
+	}
+	v := s.Frontmatter.Validation
+	return v.Runtime != "" || v.Entrypoint != "" || v.Scaffold != ""
+}
+
+// effectiveValidationSnippet returns the snippet whose validation
+// frontmatter (runtime, entrypoint, requirements, companions, file) drives
+// the harness invocation. For scaffold-bound snippets that's the scaffold;
+// otherwise it's the snippet itself.
+func effectiveValidationSnippet(s *model.Snippet, all map[string]*model.Snippet) (*model.Snippet, error) {
+	if s.Frontmatter.Validation.Scaffold == "" {
+		return s, nil
+	}
+	sc, ok := all[s.Frontmatter.Validation.Scaffold]
+	if !ok {
+		return nil, fmt.Errorf("snippet %s: scaffold %q not found", s.Frontmatter.ID, s.Frontmatter.Validation.Scaffold)
+	}
+	if sc.Frontmatter.Kind != "scaffold" {
+		return nil, fmt.Errorf("snippet %s: validation.scaffold target %q has kind=%q (must be `scaffold`)",
+			s.Frontmatter.ID, sc.Frontmatter.ID, sc.Frontmatter.Kind)
+	}
+	return sc, nil
 }
 
 func runOne(cfg Config, s *model.Snippet, all map[string]*model.Snippet, env envInputs) error {
-	runtime := s.Frontmatter.Validation.Runtime
+	eff, err := effectiveValidationSnippet(s, all)
+	if err != nil {
+		return err
+	}
+
+	runtime := eff.Frontmatter.Validation.Runtime
 	if runtime == "" {
-		// Fall back to the snippet's `lang:` frontmatter field, matching
+		// Fall back to the effective snippet's `lang:` field, matching
 		// the documented contract on Validation.Runtime. (CodeLang — the
 		// markdown fence's language tag — is a presentation hint and may
 		// diverge from the author's declared `lang:`; using it here would
 		// silently pick the wrong validator if they don't match.)
-		runtime = s.Frontmatter.Lang
+		runtime = eff.Frontmatter.Lang
 	}
 	if runtime == "" {
-		return fmt.Errorf("snippet %q: cannot determine validator runtime (set validation.runtime or lang)", s.Frontmatter.ID)
+		return fmt.Errorf("snippet %q: cannot determine validator runtime (set validation.runtime or lang on the snippet or its scaffold)", s.Frontmatter.ID)
 	}
 
 	runner, runnerDir, err := loadRunner(cfg.ValidatorsDir, runtime)
@@ -99,8 +136,16 @@ func runOne(cfg Config, s *model.Snippet, all map[string]*model.Snippet, env env
 		return err
 	}
 
+	// Both the wrappee and the scaffold (when distinct) contribute to the
+	// final body, so each one's typed inputs need their env values
+	// satisfied. Companions are checked inside requireEnvForInputs.
 	if err := requireEnvForInputs(s, all, env); err != nil {
 		return err
+	}
+	if eff != s {
+		if err := requireEnvForInputs(eff, all, env); err != nil {
+			return err
+		}
 	}
 
 	stageDir, err := stageSnippet(s, all, env)
@@ -109,8 +154,13 @@ func runOne(cfg Config, s *model.Snippet, all map[string]*model.Snippet, env env
 	}
 	defer os.RemoveAll(stageDir)
 
-	entrypoint := entrypointPath(s)
-	fmt.Printf("--- validate %s (runtime=%s, entrypoint=%s) ---\n", s.Frontmatter.ID, runtime, entrypoint)
+	entrypoint := entrypointPath(eff)
+	if eff == s {
+		fmt.Printf("--- validate %s (runtime=%s, entrypoint=%s) ---\n", s.Frontmatter.ID, runtime, entrypoint)
+	} else {
+		fmt.Printf("--- validate %s (scaffold=%s, runtime=%s, entrypoint=%s) ---\n",
+			s.Frontmatter.ID, eff.Frontmatter.ID, runtime, entrypoint)
+	}
 
 	switch runner.Mode {
 	case "docker":
@@ -132,29 +182,79 @@ func entrypointPath(s *model.Snippet) string {
 	return s.Frontmatter.File
 }
 
-// stageSnippet writes the snippet body and any companion bodies into a
-// temp directory shaped exactly like the project the harness expects.
+// stageSnippet writes the entry snippet's body (or its scaffold-composed
+// body) plus any companion bodies into a temp directory shaped exactly
+// like the project the harness expects.
 //
-// Each snippet (entrypoint + companions) is rendered with runtime inputs and
-// written at its `file:` path under stageDir. A snippet without a `file:`
-// field is an error — we need to know where to put its body.
+// Plain case: each snippet (entry + companions) is rendered with runtime
+// inputs and written at its `file:` path under stageDir.
+//
+// Scaffold case: entry's body is rendered first; that string becomes the
+// `body` input for the scaffold's render, and the scaffold's rendered
+// output is staged at the scaffold's `file:` path. Companions and
+// requirements come from the scaffold.
 func stageSnippet(entry *model.Snippet, all map[string]*model.Snippet, env envInputs) (string, error) {
 	stageDir, err := os.MkdirTemp("", "snippets-validate-")
 	if err != nil {
 		return "", err
 	}
 
-	if err := stageOne(stageDir, entry, env); err != nil {
+	eff, err := effectiveValidationSnippet(entry, all)
+	if err != nil {
 		os.RemoveAll(stageDir)
 		return "", err
 	}
-	for _, cid := range entry.Frontmatter.Validation.Companions {
+
+	if eff == entry {
+		// Plain (no scaffold): render entry with its own inputs.
+		if err := stageRender(stageDir, entry, nil, env); err != nil {
+			os.RemoveAll(stageDir)
+			return "", err
+		}
+	} else {
+		// Scaffolded: render the wrappee body first.
+		wrappeeInputs, err := runtimeInputs(entry, env)
+		if err != nil {
+			os.RemoveAll(stageDir)
+			return "", fmt.Errorf("snippet %s: %w", entry.Frontmatter.ID, err)
+		}
+		wrappeeNodes, err := render.Parse(entry.CodeBody)
+		if err != nil {
+			os.RemoveAll(stageDir)
+			return "", fmt.Errorf("snippet %s: %w", entry.Frontmatter.ID, err)
+		}
+		wrappeeBody, err := render.RenderRuntime(wrappeeNodes, wrappeeInputs)
+		if err != nil {
+			os.RemoveAll(stageDir)
+			return "", fmt.Errorf("snippet %s: %w", entry.Frontmatter.ID, err)
+		}
+
+		// Build the scaffold's input map: env-derived typed inputs from
+		// the scaffold itself, overlaid with the wrappee's
+		// scaffold-inputs, and finally the special `body` slot.
+		scaffoldInputs, err := runtimeInputs(eff, env)
+		if err != nil {
+			os.RemoveAll(stageDir)
+			return "", fmt.Errorf("scaffold %s: %w", eff.Frontmatter.ID, err)
+		}
+		maps.Copy(scaffoldInputs, entry.Frontmatter.Validation.ScaffoldInputs)
+		scaffoldInputs["body"] = wrappeeBody
+
+		if err := stageRender(stageDir, eff, scaffoldInputs, env); err != nil {
+			os.RemoveAll(stageDir)
+			return "", err
+		}
+	}
+
+	// Companions, requirements, and file paths all come from the
+	// effective snippet (the scaffold when one is in use).
+	for _, cid := range eff.Frontmatter.Validation.Companions {
 		comp, ok := all[cid]
 		if !ok {
 			os.RemoveAll(stageDir)
-			return "", fmt.Errorf("snippet %s: companion %q not found", entry.Frontmatter.ID, cid)
+			return "", fmt.Errorf("snippet %s: companion %q not found", eff.Frontmatter.ID, cid)
 		}
-		if err := stageOne(stageDir, comp, env); err != nil {
+		if err := stageRender(stageDir, comp, nil, env); err != nil {
 			os.RemoveAll(stageDir)
 			return "", err
 		}
@@ -163,7 +263,7 @@ func stageSnippet(entry *model.Snippet, all map[string]*model.Snippet, env envIn
 	// Python convention: validation.requirements becomes requirements.txt.
 	// Other runtimes carry their dependency manifest as a companion snippet
 	// (pom.xml, Cargo.toml, etc.).
-	if req := entry.Frontmatter.Validation.Requirements; req != "" {
+	if req := eff.Frontmatter.Validation.Requirements; req != "" {
 		if err := checkRequirements(req); err != nil {
 			os.RemoveAll(stageDir)
 			return "", err
@@ -177,7 +277,12 @@ func stageSnippet(entry *model.Snippet, all map[string]*model.Snippet, env envIn
 	return stageDir, nil
 }
 
-func stageOne(stageDir string, s *model.Snippet, env envInputs) error {
+// stageRender renders a snippet's body and writes it at its `file:` path
+// under stageDir. If overrideInputs is non-nil it's used verbatim as the
+// render-input map (used for scaffolds where the wrappee's body is
+// supplied via the special `body` key); otherwise the snippet's own
+// runtime inputs are derived from env.
+func stageRender(stageDir string, s *model.Snippet, overrideInputs map[string]string, env envInputs) error {
 	rel := s.Frontmatter.File
 	if rel == "" {
 		return fmt.Errorf("snippet %s: frontmatter.file is required for staging", s.Frontmatter.ID)
@@ -185,9 +290,13 @@ func stageOne(stageDir string, s *model.Snippet, env envInputs) error {
 	if err := checkStagePath(rel); err != nil {
 		return fmt.Errorf("snippet %s: %w", s.Frontmatter.ID, err)
 	}
-	inputs, err := runtimeInputs(s, env)
-	if err != nil {
-		return fmt.Errorf("snippet %s: %w", s.Frontmatter.ID, err)
+	inputs := overrideInputs
+	if inputs == nil {
+		var err error
+		inputs, err = runtimeInputs(s, env)
+		if err != nil {
+			return fmt.Errorf("snippet %s: %w", s.Frontmatter.ID, err)
+		}
 	}
 	nodes, err := render.Parse(s.CodeBody)
 	if err != nil {

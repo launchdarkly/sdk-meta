@@ -23,6 +23,13 @@ type Literal struct{ Text string }
 type Var struct {
 	Name   string
 	Filter string // empty if no filter; e.g. "camelCase"
+	// Raw is the source-text form including outer braces and any inner
+	// whitespace, e.g. "{{SDK_NAME}}" or "{{ flag | camelCase }}". Set by
+	// Parse; consumed by literalVar so foreign-template Vars round-trip
+	// byte-identically (the cursor-prompt template uses {{NAME}} with no
+	// surrounding whitespace and gonfalon's runtime regex requires that
+	// exact form).
+	Raw string
 }
 type Cond struct {
 	Var  string
@@ -78,7 +85,7 @@ func Parse(src string) ([]Node, error) {
 			append_(closed)
 		case m[6] >= 0: // "NAME" optionally followed by "| FILTER"
 			name := src[m[6]:m[7]]
-			v := &Var{Name: name}
+			v := &Var{Name: name, Raw: token}
 			if m[8] >= 0 {
 				filter := src[m[8]:m[9]]
 				if filter != "camelCase" {

@@ -149,10 +149,16 @@ func escapeTL(s string) string {
 	return s
 }
 
-// literalVar formats a Var node back to its source `{{ name }}` /
-// `{{ name | filter }}` form. Used when emitting an undeclared name
-// verbatim so foreign-template syntax round-trips intact.
+// literalVar formats a Var node back to its source form. Used when
+// emitting an undeclared name verbatim so foreign-template syntax
+// round-trips intact. Prefers the Raw form captured at parse time so
+// templates like the cursor-prompt's `{{SDK_NAME}}` (no inner whitespace)
+// don't get whitespace-normalized into a form gonfalon's runtime regex
+// won't match.
 func literalVar(v *Var) string {
+	if v.Raw != "" {
+		return v.Raw
+	}
 	if v.Filter == "" {
 		return "{{ " + v.Name + " }}"
 	}

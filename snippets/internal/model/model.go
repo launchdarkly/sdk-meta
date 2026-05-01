@@ -63,6 +63,25 @@ type Validation struct {
 	// `validation.runtime` — they just declare `file:` so the validator
 	// knows where to put them.
 	Companions []string `yaml:"companions"`
+
+	// Scaffold references another snippet (typically `kind: scaffold`)
+	// whose body wraps this snippet's body via a `{{ body }}` placeholder.
+	// Used by docs snippets that aren't standalone-runnable (a single
+	// `variation()` call, a hook class definition, etc.) — the scaffold
+	// supplies the surrounding init+context so a real validator run can
+	// exercise the fragment. The scaffold owns the runtime, entrypoint,
+	// requirements, and companions; this snippet contributes only the body
+	// fragment plus any ScaffoldInputs.
+	//
+	// Mutually exclusive with Runtime/Entrypoint/Requirements/Companions
+	// here — those come from the scaffold.
+	Scaffold string `yaml:"scaffold"`
+
+	// ScaffoldInputs supplies extra named values to the scaffold's
+	// templating beyond the special `body` placeholder. Lets one scaffold
+	// serve several wrappees that need slightly different setup (e.g.
+	// pre-populated flag values, context attributes).
+	ScaffoldInputs map[string]string `yaml:"scaffold-inputs"`
 }
 
 // Snippet pairs the frontmatter with the body of the first fenced code block
