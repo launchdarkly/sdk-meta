@@ -2,14 +2,13 @@ package ldapplication
 
 import (
 	"bytes"
-	"crypto/rand"
-	"encoding/hex"
 	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/launchdarkly/sdk-meta/snippets/internal/atomicfile"
 	"github.com/launchdarkly/sdk-meta/snippets/internal/markers"
 	"github.com/launchdarkly/sdk-meta/snippets/internal/model"
 	"github.com/launchdarkly/sdk-meta/snippets/internal/render"
@@ -246,49 +245,7 @@ func rewriteFile(path string, snippets map[string]*model.Snippet, dryRun bool) (
 	if !changed {
 		return false, nil
 	}
-	return true, atomicWriteFile(path, []byte(sb.String()))
-}
-
-// atomicWriteFile writes to a same-directory tempfile, fsyncs, and renames
-// over the destination. The destination's permission bits are preserved so
-// running `snippets render` on a checkout that has tightened permissions
-// (e.g. read-only mode for a CODEOWNER-protected file) doesn't quietly
-// reset them to 0644.
-func atomicWriteFile(path string, data []byte) error {
-	dir := filepath.Dir(path)
-	mode := os.FileMode(0o644)
-	if info, err := os.Stat(path); err == nil {
-		mode = info.Mode().Perm()
-	}
-	// Random suffix avoids colliding with parallel renders.
-	var sfx [8]byte
-	if _, err := rand.Read(sfx[:]); err != nil {
-		return err
-	}
-	tmp := filepath.Join(dir, "."+filepath.Base(path)+".sdk-snippets."+hex.EncodeToString(sfx[:])+".tmp")
-	f, err := os.OpenFile(tmp, os.O_WRONLY|os.O_CREATE|os.O_EXCL, mode)
-	if err != nil {
-		return err
-	}
-	if _, err := f.Write(data); err != nil {
-		f.Close()
-		os.Remove(tmp)
-		return err
-	}
-	if err := f.Sync(); err != nil {
-		f.Close()
-		os.Remove(tmp)
-		return err
-	}
-	if err := f.Close(); err != nil {
-		os.Remove(tmp)
-		return err
-	}
-	if err := os.Rename(tmp, path); err != nil {
-		os.Remove(tmp)
-		return err
-	}
-	return nil
+	return true, atomicfile.Write(path, []byte(sb.String()))
 }
 
 // renderForJSXChild produces the bytes that go between <Tag> and </Tag>.
