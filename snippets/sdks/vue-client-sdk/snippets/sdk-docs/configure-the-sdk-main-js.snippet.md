@@ -4,8 +4,6 @@ sdk: vue-client-sdk
 kind: reference
 lang: javascript
 description: "main.js in section \"Configure the SDK\""
-validation:
-  scaffold: vue-client-sdk/scaffolds/vue-syntax-only
 ---
 
 ```js

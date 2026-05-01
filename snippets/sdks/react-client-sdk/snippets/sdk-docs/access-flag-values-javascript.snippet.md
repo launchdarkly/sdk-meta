@@ -4,8 +4,6 @@ sdk: react-client-sdk
 kind: reference
 lang: javascript
 description: "JavaScript in section \"Access flag values\""
-validation:
-  scaffold: react-client-sdk/scaffolds/react-syntax-only
 ---
 
 ```js

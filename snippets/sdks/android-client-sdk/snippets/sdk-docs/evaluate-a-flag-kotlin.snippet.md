@@ -4,8 +4,6 @@ sdk: android-client-sdk
 kind: reference
 lang: kotlin
 description: "Kotlin in section \"Evaluate a flag\""
-validation:
-  scaffold: android-client-sdk/scaffolds/android-syntax-only
 ---
 
 ```kotlin

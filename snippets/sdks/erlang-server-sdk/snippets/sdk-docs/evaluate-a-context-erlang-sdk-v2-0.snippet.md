@@ -4,8 +4,6 @@ sdk: erlang-server-sdk
 kind: reference
 lang: erlang
 description: "Erlang SDK v2.0+ in section \"Evaluate a context\""
-validation:
-  scaffold: erlang-server-sdk/scaffolds/erlang-syntax-only
 ---
 
 ```erlang

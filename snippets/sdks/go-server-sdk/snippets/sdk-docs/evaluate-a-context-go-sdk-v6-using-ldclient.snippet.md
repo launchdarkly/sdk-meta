@@ -4,8 +4,6 @@ sdk: go-server-sdk
 kind: reference
 lang: go
 description: "Go SDK v6+, using LDClient in section \"Evaluate a context\""
-validation:
-  scaffold: go-server-sdk/scaffolds/go-syntax-only
 ---
 
 ```go

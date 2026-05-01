@@ -4,8 +4,6 @@ sdk: dotnet-server-sdk
 kind: reference
 lang: csharp
 description: ".NET SDK v6.x (C#) in section \"Evaluate a context\""
-validation:
-  scaffold: dotnet-server-sdk/scaffolds/csharp-syntax-only
 ---
 
 ```csharp

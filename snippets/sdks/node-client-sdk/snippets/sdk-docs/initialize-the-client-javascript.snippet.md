@@ -4,8 +4,6 @@ sdk: node-client-sdk
 kind: reference
 lang: javascript
 description: "JavaScript in section \"Initialize the client\""
-validation:
-  scaffold: node-client-sdk/scaffolds/node-client-syntax-only
 ---
 
 ```js

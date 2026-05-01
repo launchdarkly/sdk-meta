@@ -4,8 +4,6 @@ sdk: cpp-client-sdk
 kind: reference
 lang: c
 description: "C SDK v2.x (native) in section \"Evaluate a flag\""
-validation:
-  scaffold: cpp-client-sdk/scaffolds/cpp-client-syntax-only
 ---
 
 ```c

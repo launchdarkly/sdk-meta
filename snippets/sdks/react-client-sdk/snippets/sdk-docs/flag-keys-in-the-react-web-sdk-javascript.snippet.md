@@ -4,8 +4,6 @@ sdk: react-client-sdk
 kind: reference
 lang: javascript
 description: "JavaScript in section \"Flag keys in the React Web SDK\""
-validation:
-  scaffold: react-client-sdk/scaffolds/react-syntax-only
 ---
 
 ```js

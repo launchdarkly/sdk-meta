@@ -4,8 +4,6 @@ sdk: cpp-server-sdk
 kind: reference
 lang: cpp
 description: "Using launchdarkly namespace in section \"About the SDK namespaces\""
-validation:
-  scaffold: cpp-server-sdk/scaffolds/cpp-syntax-only
 ---
 
 ```cpp

@@ -4,8 +4,6 @@ sdk: dotnet-client-sdk
 kind: reference
 lang: csharp
 description: ".NET SDK v3.0 (C#) in section \"Initialize the client\""
-validation:
-  scaffold: dotnet-client-sdk/scaffolds/csharp-client-syntax-only
 ---
 
 ```csharp
