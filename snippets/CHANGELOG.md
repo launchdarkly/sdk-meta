@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.2.1...snippets/v0.3.0) (2026-05-01)
+
+
+### Features
+
+* Port "sdk-info" snippets. ([#413](https://github.com/launchdarkly/sdk-meta/issues/413)) ([b8e9a4e](https://github.com/launchdarkly/sdk-meta/commit/b8e9a4ea8a5421cf87be84dba206662af11dabe9))
+* Port ld-docs SDK reference pages into snippet store ([#414](https://github.com/launchdarkly/sdk-meta/issues/414)) ([57b1904](https://github.com/launchdarkly/sdk-meta/commit/57b1904aaa1e0b14ea4f8786a0497628954d8a0e))
+* **snippets:** ld-docs render target + scaffold-based validation (python-server-sdk slice) ([#411](https://github.com/launchdarkly/sdk-meta/issues/411)) ([974573d](https://github.com/launchdarkly/sdk-meta/commit/974573dad5095a822758c85c0c58f5e2291068ac))
+
 ## [0.2.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.2.0...snippets/v0.2.1) (2026-04-30)
 
 
