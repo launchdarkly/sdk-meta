@@ -83,6 +83,17 @@ type Validation struct {
 	// pre-populated flag values, context attributes).
 	ScaffoldInputs map[string]string `yaml:"scaffold-inputs"`
 
+	// Env maps validator-specific env-var names to literal values that
+	// the dispatcher forwards into the harness's process environment.
+	// Used by per-snippet binding metadata that the harness reads at
+	// run time — e.g. ios-install's `INSTALL_KIND` discriminator that
+	// picks `swift-package` vs `podfile` vs `cartfile`.
+	//
+	// Keys are restricted to a snippet-author-defined set; the
+	// dispatcher does not touch the value (no env lookup, no template
+	// substitution). Use Placeholders for the env-derived case.
+	Env map[string]string `yaml:"env"`
+
 	// Placeholders maps literal source-text fragments inside the snippet
 	// body to environment-variable names. After the body is rendered (and
 	// after any scaffold composition), the dispatcher does a literal

@@ -162,11 +162,24 @@ func runOne(cfg Config, s *model.Snippet, all map[string]*model.Snippet, env env
 			s.Frontmatter.ID, eff.Frontmatter.ID, runtime, entrypoint)
 	}
 
+	// Forward any per-snippet validation.env entries (the entry's
+	// declarations win; scaffold-supplied entries fill in gaps so a
+	// scaffold can publish defaults that a wrappee can override).
+	extraEnv := map[string]string{}
+	if eff != s {
+		for k, v := range eff.Frontmatter.Validation.Env {
+			extraEnv[k] = v
+		}
+	}
+	for k, v := range s.Frontmatter.Validation.Env {
+		extraEnv[k] = v
+	}
+
 	switch runner.Mode {
 	case "docker":
-		return runDocker(cfg, runner, runnerDir, stageDir, entrypoint, env)
+		return runDocker(cfg, runner, runnerDir, stageDir, entrypoint, env, extraEnv)
 	case "native":
-		return runNative(runnerDir, stageDir, entrypoint, env)
+		return runNative(runnerDir, stageDir, entrypoint, env, extraEnv)
 	default:
 		return fmt.Errorf("validator runtime %q: unknown mode %q", runtime, runner.Mode)
 	}
@@ -352,7 +365,7 @@ func checkStagePath(rel string) error {
 // Build context is the entire `validators/` tree so each Dockerfile can pull
 // from `shared/` (the shared harness library) as well as its own
 // `languages/<runtime>/` subtree.
-func runDocker(cfg Config, runner *Runner, runnerDir, stageDir, entrypoint string, env envInputs) error {
+func runDocker(cfg Config, runner *Runner, runnerDir, stageDir, entrypoint string, env envInputs, extraEnv map[string]string) error {
 	dockerfile := filepath.Join(runnerDir, "Dockerfile")
 	if _, err := os.Stat(dockerfile); err != nil {
 		return fmt.Errorf("validator Dockerfile not found at %s: %w", runnerDir, err)
@@ -378,6 +391,9 @@ func runDocker(cfg Config, runner *Runner, runnerDir, stageDir, entrypoint strin
 	for _, kv := range envForRun(env) {
 		args = append(args, "-e", kv)
 	}
+	for k, v := range extraEnv {
+		args = append(args, "-e", k+"="+v)
+	}
 	args = append(args, tag)
 	run := exec.Command("docker", args...)
 	run.Stdout = os.Stdout
@@ -392,7 +408,7 @@ func runDocker(cfg Config, runner *Runner, runnerDir, stageDir, entrypoint strin
 // path passed as $SNIPPET_DIR. Used for runtimes whose toolchains can't run
 // in a Linux container (iOS / xcodebuild) or are too heavy to dockerize for
 // CI (Android emulator, Flutter).
-func runNative(runnerDir, stageDir, entrypoint string, env envInputs) error {
+func runNative(runnerDir, stageDir, entrypoint string, env envInputs, extraEnv map[string]string) error {
 	script := filepath.Join(runnerDir, "harness", "run.sh")
 	if _, err := os.Stat(script); err != nil {
 		return fmt.Errorf("native validator run.sh not found at %s: %w", script, err)
@@ -405,6 +421,9 @@ func runNative(runnerDir, stageDir, entrypoint string, env envInputs) error {
 		"SNIPPET_ENTRYPOINT="+entrypoint,
 	)
 	cmd.Env = append(cmd.Env, envForRun(env)...)
+	for k, v := range extraEnv {
+		cmd.Env = append(cmd.Env, k+"="+v)
+	}
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("native validator failed: %w", err)
 	}
