@@ -155,7 +155,136 @@ snippet as documentation-only (no `validation:` block) and rely on a
 separate runnable `Package.swift` companion under `getting-started/`
 for end-to-end coverage.
 
-## Rendered files always end with a trailing newline
+## python-server-sdk flagEval.txt has an empty if/else body (fixed)
+
+**Severity**: ~~medium~~ resolved
+
+**SDKs affected**: python-server-sdk
+
+**What we observed**: `flagEval.txt` reads:
+
+```python
+if flag_value:
+    # TODO: Put your feature here
+else:
+    # TODO: Put your fallback behavior here
+```
+
+A bare comment is not a statement; Python rejects this with
+`SyntaxError: expected an indented block after 'if' statement`. The
+snippet is presented as the "Add the SDK to your code" example and is
+copy-pasted by users into their own program — pasting verbatim
+produces an immediate syntax error before the user's TODO has a chance
+to replace the comments.
+
+**Resolution**: Each branch was rewritten as `pass  # TODO: …` so the
+fragment is syntactically complete and parses cleanly with the
+`python-server-sdk/scaffolds/python-syntax-only` validator. The visible
+TODO hint is preserved as a trailing comment; users still know where
+to insert their feature code.
+
+## go-server-sdk init.txt has an unused import (fixed)
+
+**Severity**: ~~medium~~ resolved
+
+**SDKs affected**: go-server-sdk
+
+**What we observed**: `init.txt` imports
+`github.com/launchdarkly/go-sdk-common/v3/ldcontext` but never references
+any symbol from that package. Go rejects unused imports as a compile
+error, so following the snippet verbatim into a `main.go` produces:
+
+```
+imported and not used: "github.com/launchdarkly/go-sdk-common/v3/ldcontext"
+```
+
+**Resolution**: Unused import removed. Deliberate divergence from
+gonfalon's `packages/sdk-info/src/snippets/go-server-sdk/init.txt`;
+the contradiction (the snippet doesn't reference `ldcontext` but
+imports it) exists in the gonfalon source today and is a correctness
+bug worth correcting before extended validation runs against the
+rendered output.
+
+## js-client-sdk install-bower URL is not a valid bower target
+
+**Severity**: low (deferred — bower is deprecated)
+
+**SDKs affected**: js-client-sdk
+
+**What we observed**: `install-bower.txt` reads
+`bower install https://unpkg.com/@launchdarkly/js-client-sdk@4`. Bower's
+URL resolver expects a tarball, zipfile, or git remote — unpkg.com
+returns a `text/javascript` body for that URL, which produces:
+
+```
+ENORESTARGET URL sources can't resolve targets
+```
+
+The original gonfalon source had the same issue against the v3 unpkg
+URL; bumping to v4 (this branch) didn't change the underlying
+incompatibility. Bower itself has been deprecated since 2017.
+
+**Recommended action**: Skip validation for this snippet; leave the body
+unchanged so gonfalon's `?raw` import keeps shipping the canonical
+fragment. When the wider consumer-refactor lands, drop the bower
+install entry from the install-card surface — bower is no longer a
+realistic install path.
+
+## Validation coverage and deferred snippets
+
+**Severity**: informational
+
+**Context**: Extended validation was added for sdk-info snippets in a
+follow-up PR. Coverage today:
+
+- 23 install snippets (npm/pnpm/yarn × Node-family SDKs, pip × python,
+  go × go-server) → `validation.runtime: shell-install`. The new
+  validator under `validators/languages/shell-install/` runs the body
+  in a clean ephemeral dir against a real package registry and asserts
+  the package landed where expected.
+- 6 flag-eval snippets (python, node-server, java, js-client, dotnet-client) →
+  bound to per-language syntax-only scaffolds. React-client flag-eval
+  is unbound: the body has top-level imports plus an unguarded
+  `useFlags()` call, so wrapping it in a function-scope scaffold
+  produces "imports not at top level" while letting it run at module
+  scope crashes outside a React render context.
+- 3 init snippets (python-server, node-server, go-server) → bound to
+  per-SDK init-runner scaffolds with `validation.placeholders` for
+  `YOUR_SDK_KEY`. End-to-end against the LD sandbox key in CI; the
+  wrappee is exec'd through runpy / dynamic import / `os/exec` so
+  the EXAM-HELLO success line is emitted on a successful init.
+
+**Deferred (no current validation)**:
+
+- iOS install snippets (Cartfile, Package.swift, Podfile) — need a
+  Mac runner for cocoapods + swift package manager + carthage. The
+  Package.swift body is also a `//...`-bracketed fragment, not a
+  complete manifest.
+- Android install snippets (groovy + kotlin) — manifest fragments
+  meant to be pasted into `build.gradle`; no standalone runnable
+  surface.
+- Java/Maven install (xml + gradle) — same shape as Android: dependency
+  manifest fragments, not standalone units.
+- .NET install (PowerShell `Install-Package`) — runs only under the
+  legacy NuGet PowerShell host, not modern `dotnet add package`. See
+  the dedicated note above.
+- React-client flag-eval — top-level imports prevent wrapping; body
+  isn't standalone-runnable without rewriting.
+- Java/dotnet-server/all-mobile init snippets (java-server,
+  dotnet-server, android, ios, dotnet-client, react-native, vue,
+  js-client, react, node-client) — frontend/mobile inits need GUI or
+  ASP.NET runtime; Java init's `public class Main` plus the harness's
+  entrypoint-class discovery would need a wrapper-class refactor.
+- js-client-sdk install-bower — bower's resolver can't fetch the
+  unpkg URL; documented separately above.
+
+**Recommended action**: When mobile SDK validation lands (Mac runners),
+revisit iOS / Android / dotnet-client init snippets. When the wider
+consumer refactor lands, evaluate whether the manifest-fragment install
+snippets should ship as full-file scaffolds with a copy-paste hint, or
+remain documentation fragments outside the runnable validation surface.
+
+>## Rendered files always end with a trailing newline
 
 **Severity**: informational
 
