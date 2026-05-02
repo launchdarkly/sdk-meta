@@ -28,10 +28,10 @@ type Config struct {
 // into snippets at validation time. Each field maps to one EXAM-HELLO env
 // var and to a snippet-input type.
 type envInputs struct {
-	sdkKey        string // LAUNCHDARKLY_SDK_KEY        ↔ type: sdk-key
-	flagKey       string // LAUNCHDARKLY_FLAG_KEY       ↔ type: flag-key
-	mobileKey     string // LAUNCHDARKLY_MOBILE_KEY     ↔ type: mobile-key
-	clientSideID  string // LAUNCHDARKLY_CLIENT_SIDE_ID ↔ type: client-side-id
+	sdkKey       string // LAUNCHDARKLY_SDK_KEY        ↔ type: sdk-key
+	flagKey      string // LAUNCHDARKLY_FLAG_KEY       ↔ type: flag-key
+	mobileKey    string // LAUNCHDARKLY_MOBILE_KEY     ↔ type: mobile-key
+	clientSideID string // LAUNCHDARKLY_CLIENT_SIDE_ID ↔ type: client-side-id
 }
 
 // Run finds validatable snippets under cfg.SDKsDir and routes each through
@@ -228,6 +228,16 @@ func stageSnippet(entry *model.Snippet, all map[string]*model.Snippet, env envIn
 			os.RemoveAll(stageDir)
 			return "", fmt.Errorf("snippet %s: %w", entry.Frontmatter.ID, err)
 		}
+		// Wrappee-declared placeholders apply to the wrappee body before
+		// it's spliced into the scaffold. Scaffold-side substitution would
+		// also catch the strings, but doing it here matches authors'
+		// expectations: "this snippet's `'YOUR_SDK_KEY'` placeholder
+		// becomes the env value."
+		wrappeeBody, err = applyPlaceholders(wrappeeBody, entry.Frontmatter.Validation.Placeholders, env)
+		if err != nil {
+			os.RemoveAll(stageDir)
+			return "", fmt.Errorf("snippet %s: %w", entry.Frontmatter.ID, err)
+		}
 
 		// Build the scaffold's input map: env-derived typed inputs from
 		// the scaffold itself, overlaid with the wrappee's
@@ -243,6 +253,17 @@ func stageSnippet(entry *model.Snippet, all map[string]*model.Snippet, env envIn
 		if err := stageRender(stageDir, eff, scaffoldInputs, env); err != nil {
 			os.RemoveAll(stageDir)
 			return "", err
+		}
+	}
+
+	// Plain-snippet placeholders: rewrite the staged file in place. (For
+	// scaffolded snippets the substitution already happened on the
+	// wrappee body, before scaffold composition.)
+	if eff == entry && len(entry.Frontmatter.Validation.Placeholders) > 0 {
+		if err := applyPlaceholdersToFile(filepath.Join(stageDir, entry.Frontmatter.File),
+			entry.Frontmatter.Validation.Placeholders, env); err != nil {
+			os.RemoveAll(stageDir)
+			return "", fmt.Errorf("snippet %s: %w", entry.Frontmatter.ID, err)
 		}
 	}
 
@@ -406,8 +427,9 @@ func envForRun(env envInputs) []string {
 
 // requireEnvForInputs walks the entrypoint snippet AND its companions; for
 // every input typed as one of the EXAM-HELLO key types, the corresponding
-// env var must be set. This produces a clear error before a downstream pip-
-// install or docker-build has wasted time.
+// env var must be set. Same check is applied to validation.placeholders.
+// This produces a clear error before a downstream pip-install or
+// docker-build has wasted time.
 func requireEnvForInputs(entry *model.Snippet, all map[string]*model.Snippet, env envInputs) error {
 	check := func(s *model.Snippet) error {
 		for name, in := range s.Frontmatter.Inputs {
@@ -428,6 +450,28 @@ func requireEnvForInputs(entry *model.Snippet, all map[string]*model.Snippet, en
 				if env.clientSideID == "" {
 					return fmt.Errorf("snippet %s input %q (type=client-side-id) requires LAUNCHDARKLY_CLIENT_SIDE_ID to be set", s.Frontmatter.ID, name)
 				}
+			}
+		}
+		for needle, envName := range s.Frontmatter.Validation.Placeholders {
+			switch envName {
+			case "LAUNCHDARKLY_SDK_KEY":
+				if env.sdkKey == "" {
+					return fmt.Errorf("snippet %s placeholder %q requires LAUNCHDARKLY_SDK_KEY to be set", s.Frontmatter.ID, needle)
+				}
+			case "LAUNCHDARKLY_FLAG_KEY":
+				if env.flagKey == "" {
+					return fmt.Errorf("snippet %s placeholder %q requires LAUNCHDARKLY_FLAG_KEY to be set", s.Frontmatter.ID, needle)
+				}
+			case "LAUNCHDARKLY_MOBILE_KEY":
+				if env.mobileKey == "" {
+					return fmt.Errorf("snippet %s placeholder %q requires LAUNCHDARKLY_MOBILE_KEY to be set", s.Frontmatter.ID, needle)
+				}
+			case "LAUNCHDARKLY_CLIENT_SIDE_ID":
+				if env.clientSideID == "" {
+					return fmt.Errorf("snippet %s placeholder %q requires LAUNCHDARKLY_CLIENT_SIDE_ID to be set", s.Frontmatter.ID, needle)
+				}
+			default:
+				return fmt.Errorf("snippet %s placeholder %q maps to unknown env var %q", s.Frontmatter.ID, needle, envName)
 			}
 		}
 		return nil
@@ -481,6 +525,53 @@ func runtimeInputs(s *model.Snippet, env envInputs) (map[string]string, error) {
 		}
 	}
 	return out, nil
+}
+
+// applyPlaceholders rewrites every literal occurrence of each key in the
+// placeholders map with the corresponding env-var value. Returns an error
+// if a placeholder maps to an env var that's empty or to a name outside
+// the allow-list.
+func applyPlaceholders(body string, placeholders map[string]string, env envInputs) (string, error) {
+	if len(placeholders) == 0 {
+		return body, nil
+	}
+	for needle, envName := range placeholders {
+		var val string
+		switch envName {
+		case "LAUNCHDARKLY_SDK_KEY":
+			val = env.sdkKey
+		case "LAUNCHDARKLY_FLAG_KEY":
+			val = env.flagKey
+		case "LAUNCHDARKLY_MOBILE_KEY":
+			val = env.mobileKey
+		case "LAUNCHDARKLY_CLIENT_SIDE_ID":
+			val = env.clientSideID
+		default:
+			return "", fmt.Errorf("placeholder %q maps to unknown env var %q (allowed: LAUNCHDARKLY_SDK_KEY, LAUNCHDARKLY_FLAG_KEY, LAUNCHDARKLY_MOBILE_KEY, LAUNCHDARKLY_CLIENT_SIDE_ID)", needle, envName)
+		}
+		if val == "" {
+			return "", fmt.Errorf("placeholder %q requires %s to be set", needle, envName)
+		}
+		if !strings.Contains(body, needle) {
+			return "", fmt.Errorf("placeholder %q not found in snippet body", needle)
+		}
+		body = strings.ReplaceAll(body, needle, val)
+	}
+	return body, nil
+}
+
+// applyPlaceholdersToFile reads the file, applies placeholders, and writes
+// the result back. Used for plain (non-scaffolded) snippets.
+func applyPlaceholdersToFile(path string, placeholders map[string]string, env envInputs) error {
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	out, err := applyPlaceholders(string(raw), placeholders, env)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path, []byte(out), 0o644)
 }
 
 // checkRequirements rejects values that would let a snippet author smuggle

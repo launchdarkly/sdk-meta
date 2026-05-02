@@ -24,8 +24,8 @@ type Frontmatter struct {
 	Lang        string           `yaml:"lang"`
 	File        string           `yaml:"file"`
 	Description string           `yaml:"description"`
-	Inputs     map[string]Input `yaml:"inputs"`
-	Validation Validation       `yaml:"validation"`
+	Inputs      map[string]Input `yaml:"inputs"`
+	Validation  Validation       `yaml:"validation"`
 }
 
 type Input struct {
@@ -82,6 +82,27 @@ type Validation struct {
 	// serve several wrappees that need slightly different setup (e.g.
 	// pre-populated flag values, context attributes).
 	ScaffoldInputs map[string]string `yaml:"scaffold-inputs"`
+
+	// Placeholders maps literal source-text fragments inside the snippet
+	// body to environment-variable names. After the body is rendered (and
+	// after any scaffold composition), the dispatcher does a literal
+	// string-replace: every occurrence of the key is replaced with the
+	// value of the named env var.
+	//
+	// Use case: gonfalon's sdk-info init snippets carry literal
+	// `'YOUR_SDK_KEY'` / `'YOUR_MOBILE_KEY'` / `'YOUR_CLIENT_SIDE_ID'`
+	// placeholders that the user is expected to swap manually. Validating
+	// the snippet end-to-end against a real LaunchDarkly env requires
+	// substituting a real key — but rewriting the body to use a
+	// `{{ sdk_key }}` template marker would make the rendered output
+	// (consumed by gonfalon) lose the human-readable placeholder.
+	// Placeholders keep the snippet body unchanged at render time and
+	// only swap at validate time.
+	//
+	// Only a small allow-list of env var names is honored:
+	// LAUNCHDARKLY_SDK_KEY, LAUNCHDARKLY_FLAG_KEY, LAUNCHDARKLY_MOBILE_KEY,
+	// LAUNCHDARKLY_CLIENT_SIDE_ID. The dispatcher rejects any other name.
+	Placeholders map[string]string `yaml:"placeholders"`
 }
 
 // Snippet pairs the frontmatter with the body of the first fenced code block
@@ -95,6 +116,7 @@ type Snippet struct {
 }
 
 var frontmatterRe = regexp.MustCompile(`(?s)\A---\n(.*?)\n---\n`)
+
 // `[ \t]*` (not `\s*`) for the trailing horizontal whitespace because
 // `\s` includes `\n`: a greedy `\s*$` will consume the line-terminating
 // newline, and then the `after = after[1:]` step in firstCodeBlock skips
