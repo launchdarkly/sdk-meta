@@ -14,21 +14,33 @@ trap 'rm -rf "$WORK"' EXIT
 cp -r /snippet/. "$WORK/"
 cd "$WORK"
 
-# The gonfalon snippet says "Remove the prepopulated lines except the
-# first line" — the "first line" is `package com.launchdarkly.tutorial;`
-# which `mvn archetype:generate` writes for the user. The snippet itself
-# doesn't carry it (gonfalon's UI is showing only the body to type), so
-# we add it back here so javac can resolve the mainClass declared in
-# the synthesized pom.xml.
+# Discover the entrypoint's package + class so the synthesized pom.xml
+# can wire mainClass to whatever the staged file declares. Gonfalon's
+# original "Remove the prepopulated lines except the first line" hint
+# implies `package com.launchdarkly.tutorial;` + class `App`; the
+# scaffold-based callers (java-syntax-only) declare their own package
+# and class. The harness reads both from the file rather than hard-
+# coding either.
 appfile="$SNIPPET_ENTRYPOINT"
-if [ -f "$appfile" ] && ! head -1 "$appfile" | grep -q '^package '; then
+if [ ! -f "$appfile" ]; then
+    echo "validator: snippet entrypoint not found: $appfile" >&2
+    exit 1
+fi
+
+if ! head -1 "$appfile" | grep -q '^package '; then
+    # Bodies that don't declare a package are presumed to want the
+    # tutorial layout — same as before.
     tmp=$(mktemp)
     printf 'package com.launchdarkly.tutorial;\n\n' > "$tmp"
     cat "$appfile" >> "$tmp"
     mv "$tmp" "$appfile"
 fi
 
-cat > pom.xml <<'EOF'
+PKG=$(grep -m1 '^package ' "$appfile" | sed -e 's/^package //' -e 's/;.*//')
+CLS=$(basename "$appfile" .java)
+MAIN_CLASS="$PKG.$CLS"
+
+cat > pom.xml <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0">
   <modelVersion>4.0.0</modelVersion>
@@ -45,7 +57,7 @@ cat > pom.xml <<'EOF'
       <groupId>com.launchdarkly</groupId>
       <artifactId>launchdarkly-java-server-sdk</artifactId>
       <!-- Pin a recent release so the validator is deterministic. The
-           gonfalon snippet shows ${version} fetched from Maven Central;
+           gonfalon snippet shows \${version} fetched from Maven Central;
            we don't reach out from inside the harness. -->
       <version>7.13.4</version>
     </dependency>
@@ -57,7 +69,7 @@ cat > pom.xml <<'EOF'
         <configuration>
           <archive>
             <manifest>
-              <mainClass>com.launchdarkly.tutorial.App</mainClass>
+              <mainClass>${MAIN_CLASS}</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>

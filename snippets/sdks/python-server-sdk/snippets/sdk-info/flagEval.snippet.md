@@ -5,6 +5,8 @@ kind: flag-eval
 lang: python
 file: python-server-sdk/flagEval.txt
 description: Flag evaluation example for python-server-sdk.
+validation:
+  scaffold: python-server-sdk/scaffolds/python-syntax-only
 ---
 
 ```python

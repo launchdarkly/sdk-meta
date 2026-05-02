@@ -5,6 +5,8 @@ kind: flag-eval
 lang: csharp
 file: dotnet-client-sdk/flagEval.txt
 description: Flag evaluation example for dotnet-client-sdk.
+validation:
+  scaffold: dotnet-client-sdk/scaffolds/csharp-client-syntax-only
 ---
 
 ```csharp
