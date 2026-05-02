@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: react-native-client-sdk/install-npm.txt
 description: Install command for react-native-client-sdk (npm).
+validation:
+  runtime: shell-install
 ---
 
 ```shell
