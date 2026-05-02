@@ -234,55 +234,81 @@ realistic install path.
 
 **Severity**: informational
 
-**Context**: Extended validation was added for sdk-info snippets in a
-follow-up PR. Coverage today:
+**Context**: Extended validation was added for sdk-info snippets across
+two PRs. Current coverage:
 
-- 23 install snippets (npm/pnpm/yarn × Node-family SDKs, pip × python,
-  go × go-server) → `validation.runtime: shell-install`. The new
-  validator under `validators/languages/shell-install/` runs the body
-  in a clean ephemeral dir against a real package registry and asserts
-  the package landed where expected.
-- 6 flag-eval snippets (python, node-server, java, js-client, dotnet-client) →
-  bound to per-language syntax-only scaffolds. React-client flag-eval
-  is unbound: the body has top-level imports plus an unguarded
-  `useFlags()` call, so wrapping it in a function-scope scaffold
-  produces "imports not at top level" while letting it run at module
-  scope crashes outside a React render context.
-- 3 init snippets (python-server, node-server, go-server) → bound to
+**Install (26 of 29 snippets validated end-to-end)**:
+
+- 23 Linux-runnable installs (npm/pnpm/yarn × Node-family SDKs, pip ×
+  python, go × go-server) → `validation.runtime: shell-install` runs
+  the body in a clean dir and asserts the package landed.
+- 3 iOS installs (Cartfile, Package.swift, Podfile) →
+  `validation.runtime: ios-install` runs on macos-latest. Each kind
+  (selected via `validation.env: { INSTALL_KIND: ... }`) wraps the
+  fragment in a minimal stub project (synthesized Package.swift /
+  Podfile + xcodeproj-generated stub project / Cartfile) and runs the
+  real package manager (`swift package resolve` / `pod install` /
+  `carthage update --no-build`).
+
+**Init (10 of 13 snippets validated end-to-end)**:
+
+- python-server, node-server, go-server, java-server, dotnet-server →
   per-SDK init-runner scaffolds with `validation.placeholders` for
-  `YOUR_SDK_KEY`. End-to-end against the LD sandbox key in CI; the
-  wrappee is exec'd through runpy / dynamic import / `os/exec` so
-  the EXAM-HELLO success line is emitted on a successful init.
+  `YOUR_SDK_KEY`. EXAM-HELLO success line emitted on a real LD init.
+- node-client, dotnet-client, js-client, react-client, vue-client →
+  per-SDK init-runner scaffolds with `YOUR_CLIENT_SIDE_ID` /
+  `YOUR_MOBILE_KEY` placeholders.
+  - js-client/react-client/vue-client run in headless Chromium via
+    Playwright (Vite/tsdown bundle + preview server).
+  - node-client runs under Node's dynamic-import path, asserting
+    `client.waitForInitialization` resolves.
+  - dotnet-client wraps top-level statements in a `Microsoft.NET.Sdk`
+    console project with `LaunchDarkly.ClientSdk` pulled from NuGet.
+- react-native-client → existing jest+react-native-preset harness;
+  init scaffold supplies a `YourComponent` that calls
+  `useLDClient().waitForInitialization()` and renders the
+  EXAM-HELLO sentinel on success. The harness was hardened to wait
+  for jest's exit code (the original `await_success_line` matched
+  jest's failure output, which echoes the regex pattern).
+
+**Flag-eval (5 of 6 snippets validated)**:
+
+- python, node-server, java, js-client, dotnet-client →
+  per-language syntax-only scaffolds.
+- react-client flag-eval is unbound: top-level imports plus an
+  unguarded `useFlags()` call, so wrapping in a function-scope
+  scaffold produces "imports not at top level" while running at
+  module scope crashes outside a React render context.
 
 **Deferred (no current validation)**:
 
-- iOS install snippets (Cartfile, Package.swift, Podfile) — need a
-  Mac runner for cocoapods + swift package manager + carthage. The
-  Package.swift body is also a `//...`-bracketed fragment, not a
-  complete manifest.
+- ios-client/sdk-info/init — Swift `LDClient.start(...)` requires a
+  full Apple toolchain runtime (macOS app or simulator); SwiftPM
+  resolve on its own won't execute init code. Defer until we have
+  an iOS-simulator-driven runner.
+- android-client/sdk-info/init — Kotlin body uses
+  `this@BaseApplication` (an Activity context) plus
+  `com.launchdarkly.sdk.android.LDClient.init`, both of which require
+  the Android runtime. Defer pending an Android-emulator-driven
+  runner.
 - Android install snippets (groovy + kotlin) — manifest fragments
   meant to be pasted into `build.gradle`; no standalone runnable
   surface.
-- Java/Maven install (xml + gradle) — same shape as Android: dependency
-  manifest fragments, not standalone units.
+- Java/Maven install (xml + gradle) — same shape as Android:
+  dependency manifest fragments, not standalone units.
 - .NET install (PowerShell `Install-Package`) — runs only under the
   legacy NuGet PowerShell host, not modern `dotnet add package`. See
   the dedicated note above.
-- React-client flag-eval — top-level imports prevent wrapping; body
-  isn't standalone-runnable without rewriting.
-- Java/dotnet-server/all-mobile init snippets (java-server,
-  dotnet-server, android, ios, dotnet-client, react-native, vue,
-  js-client, react, node-client) — frontend/mobile inits need GUI or
-  ASP.NET runtime; Java init's `public class Main` plus the harness's
-  entrypoint-class discovery would need a wrapper-class refactor.
+- React-client flag-eval (above).
 - js-client-sdk install-bower — bower's resolver can't fetch the
   unpkg URL; documented separately above.
 
-**Recommended action**: When mobile SDK validation lands (Mac runners),
-revisit iOS / Android / dotnet-client init snippets. When the wider
-consumer refactor lands, evaluate whether the manifest-fragment install
-snippets should ship as full-file scaffolds with a copy-paste hint, or
-remain documentation fragments outside the runnable validation surface.
+**Recommended action**: When iOS and Android runtime runners land
+(simulator/emulator), revisit the ios-client and android-client init
+snippets. When the wider consumer refactor lands, evaluate whether
+the manifest-fragment install snippets should ship as full-file
+scaffolds with a copy-paste hint, or remain documentation fragments
+outside the runnable validation surface.
 
 >## Rendered files always end with a trailing newline
 

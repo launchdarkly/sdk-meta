@@ -62,22 +62,57 @@ jobs:
           # Mobile-key SDKs.
           - { sdk: dotnet-client-sdk, runs-on: ubuntu-latest, key-type: mobile }
 
-          # Install-only matrix rows. The shell-install validator
-          # sniffs the body's leading token (npm/pnpm/yarn/pip/go/bower)
-          # and runs the real package manager in a clean working dir;
-          # no LaunchDarkly key is needed. We pass `key-type: server` so
-          # the verify-hello-app action injects an unused server key
-          # rather than failing on no-key-set.
-          - { sdk: node-client-sdk,         runs-on: ubuntu-latest, key-type: server }
-          - { sdk: react-client-sdk,        runs-on: ubuntu-latest, key-type: server }
-          - { sdk: react-native-client-sdk, runs-on: ubuntu-latest, key-type: server }
-          - { sdk: vue-client-sdk,          runs-on: ubuntu-latest, key-type: server }
+          # SDKs whose only validatable surface is the shell-install
+          # snippets — no init/flagEval bindings yet. The shell-install
+          # validator sniffs the body's leading token
+          # (npm/pnpm/yarn/pip/go/bower) and runs the real package
+          # manager in a clean working dir; no LaunchDarkly key is
+          # needed. We pass `key-type: server` so the verify-hello-app
+          # action injects an unused server key rather than failing on
+          # no-key-set.
+          - { sdk: dotnet-server-sdk,       runs-on: ubuntu-latest, key-type: server }
+
+          # Client/mobile-key SDKs with end-to-end init bindings.
+          - { sdk: node-client-sdk,         runs-on: ubuntu-latest, key-type: client }
+          - { sdk: react-client-sdk,        runs-on: ubuntu-latest, key-type: client }
+          - { sdk: vue-client-sdk,          runs-on: ubuntu-latest, key-type: client }
+
+          # React Native init runs under jest with the RN preset (no
+          # emulator). Mobile key.
+          - { sdk: react-native-client-sdk, runs-on: ubuntu-latest, key-type: mobile }
+
+          # iOS install fragments (Cartfile, Package.swift, Podfile)
+          # need real Apple toolchains; macos-latest has Swift +
+          # CocoaPods preinstalled. The validator runs in `native` mode
+          # because docker isn't available on macos runners.
+          # Carthage is installed on-demand via `brew install
+          # carthage` in the harness setup step, since macos-latest
+          # doesn't ship it preinstalled.
+          - { sdk: ios-client-sdk,          runs-on: macos-latest,  key-type: mobile }
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-go@v5
         with:
           go-version: '1.24'
+
+      - name: Install iOS toolchain (macos only)
+        if: matrix.runs-on == 'macos-latest'
+        run: |
+          # macos-latest images ship Xcode + Swift + Ruby preinstalled.
+          # CocoaPods and the xcodeproj gem (used by the Podfile harness
+          # to synthesize a stub Xcode project) and Carthage are not
+          # always preinstalled — install both, gracefully no-oping if
+          # they're already there. Carthage installation can be slow on
+          # cold runners, so prefer brew's bottle when available.
+          set -e
+          if ! command -v carthage >/dev/null; then
+              brew install carthage
+          fi
+          if ! command -v pod >/dev/null; then
+              sudo gem install cocoapods --no-document
+          fi
+          sudo gem install xcodeproj --no-document
 
       - name: Validate
         id: validate
