@@ -5,6 +5,10 @@ kind: init
 lang: java
 file: java-server-sdk/init.txt
 description: Client initialization snippet for java-server-sdk.
+validation:
+  scaffold: java-server-sdk/scaffolds/init-runner
+  placeholders:
+    YOUR_SDK_KEY: LAUNCHDARKLY_SDK_KEY
 ---
 
 ```java
