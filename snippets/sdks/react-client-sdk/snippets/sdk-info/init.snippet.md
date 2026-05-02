@@ -5,6 +5,10 @@ kind: init
 lang: tsx
 file: react-client-sdk/init.txt
 description: Client initialization snippet for react-client-sdk.
+validation:
+  scaffold: react-client-sdk/scaffolds/init-runner
+  placeholders:
+    YOUR_CLIENT_SIDE_ID: LAUNCHDARKLY_CLIENT_SIDE_ID
 ---
 
 ```tsx

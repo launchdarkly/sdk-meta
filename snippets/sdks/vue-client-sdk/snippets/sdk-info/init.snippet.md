@@ -5,6 +5,10 @@ kind: init
 lang: javascript
 file: vue-client-sdk/init.txt
 description: Client initialization snippet for vue-client-sdk.
+validation:
+  scaffold: vue-client-sdk/scaffolds/init-runner
+  placeholders:
+    YOUR_CLIENT_SIDE_ID: LAUNCHDARKLY_CLIENT_SIDE_ID
 ---
 
 ```javascript
