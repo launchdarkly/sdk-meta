@@ -15,7 +15,7 @@ context = Context.builder("context-key-123abc").name("Sandy").build()
 flag_value = client.variation("featureKey", context, False)
 
 if flag_value:
-    # TODO: Put your feature here
+    pass  # TODO: Put your feature here
 else:
-    # TODO: Put your fallback behavior here
+    pass  # TODO: Put your fallback behavior here
 ```
