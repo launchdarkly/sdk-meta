@@ -43,22 +43,35 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # SDKs whose sdk-docs scaffold bindings pass today. The 17
-          # other SDKs ship Docker harnesses and syntax-only scaffolds
-          # under snippets/validators/ + snippets/sdks/<sdk>/snippets/
-          # scaffolds/, but no bound runnable snippets — they were
-          # validated end-to-end via the gonfalon-targeted
-          # getting-started/main-* programs, which were removed when
-          # gonfalon's "Connect an SDK" UI was retired. Bindings can be
-          # restored once the per-SDK scaffolds learn to splice
-          # top-level imports up to file scope and provide a
-          # client/context in the wrappee body's lexical scope; tracked
-          # as a follow-up.
+          # The first block — server-key SDKs — covers both the original
+          # sdk-docs scaffold bindings AND the newly-wired sdk-info
+          # install/init/flagEval bindings under each SDK's snippets/
+          # sdk-info/ group.
           - { sdk: python-server-sdk, runs-on: ubuntu-latest, key-type: server }
           - { sdk: node-server-sdk,   runs-on: ubuntu-latest, key-type: server }
+          - { sdk: go-server-sdk,     runs-on: ubuntu-latest, key-type: server }
+          - { sdk: java-server-sdk,   runs-on: ubuntu-latest, key-type: server }
           - { sdk: ruby-server-sdk,   runs-on: ubuntu-latest, key-type: server }
           - { sdk: php-server-sdk,    runs-on: ubuntu-latest, key-type: server }
           - { sdk: lua-server-sdk,    runs-on: ubuntu-latest, key-type: server }
+
+          # Client SDKs whose validators run a real bundle and assert
+          # a flag evaluation against the LD sandbox env.
+          - { sdk: js-client-sdk,     runs-on: ubuntu-latest, key-type: client }
+
+          # Mobile-key SDKs.
+          - { sdk: dotnet-client-sdk, runs-on: ubuntu-latest, key-type: mobile }
+
+          # Install-only matrix rows. The shell-install validator
+          # sniffs the body's leading token (npm/pnpm/yarn/pip/go/bower)
+          # and runs the real package manager in a clean working dir;
+          # no LaunchDarkly key is needed. We pass `key-type: server` so
+          # the verify-hello-app action injects an unused server key
+          # rather than failing on no-key-set.
+          - { sdk: node-client-sdk,         runs-on: ubuntu-latest, key-type: server }
+          - { sdk: react-client-sdk,        runs-on: ubuntu-latest, key-type: server }
+          - { sdk: react-native-client-sdk, runs-on: ubuntu-latest, key-type: server }
+          - { sdk: vue-client-sdk,          runs-on: ubuntu-latest, key-type: server }
     steps:
       - uses: actions/checkout@v4
 
