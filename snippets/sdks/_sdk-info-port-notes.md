@@ -155,6 +155,53 @@ snippet as documentation-only (no `validation:` block) and rely on a
 separate runnable `Package.swift` companion under `getting-started/`
 for end-to-end coverage.
 
+## go-server-sdk init.txt has an unused import (fixed)
+
+**Severity**: ~~medium~~ resolved
+
+**SDKs affected**: go-server-sdk
+
+**What we observed**: `init.txt` imports
+`github.com/launchdarkly/go-sdk-common/v3/ldcontext` but never references
+any symbol from that package. Go rejects unused imports as a compile
+error, so following the snippet verbatim into a `main.go` produces:
+
+```
+imported and not used: "github.com/launchdarkly/go-sdk-common/v3/ldcontext"
+```
+
+**Resolution**: Unused import removed. Deliberate divergence from
+gonfalon's `packages/sdk-info/src/snippets/go-server-sdk/init.txt`;
+the contradiction (the snippet doesn't reference `ldcontext` but
+imports it) exists in the gonfalon source today and is a correctness
+bug worth correcting before extended validation runs against the
+rendered output.
+
+## js-client-sdk install-bower URL is not a valid bower target
+
+**Severity**: low (deferred — bower is deprecated)
+
+**SDKs affected**: js-client-sdk
+
+**What we observed**: `install-bower.txt` reads
+`bower install https://unpkg.com/@launchdarkly/js-client-sdk@4`. Bower's
+URL resolver expects a tarball, zipfile, or git remote — unpkg.com
+returns a `text/javascript` body for that URL, which produces:
+
+```
+ENORESTARGET URL sources can't resolve targets
+```
+
+The original gonfalon source had the same issue against the v3 unpkg
+URL; bumping to v4 (this branch) didn't change the underlying
+incompatibility. Bower itself has been deprecated since 2017.
+
+**Recommended action**: Skip validation for this snippet; leave the body
+unchanged so gonfalon's `?raw` import keeps shipping the canonical
+fragment. When the wider consumer-refactor lands, drop the bower
+install entry from the install-card surface — bower is no longer a
+realistic install path.
+
 ## Rendered files always end with a trailing newline
 
 **Severity**: informational
