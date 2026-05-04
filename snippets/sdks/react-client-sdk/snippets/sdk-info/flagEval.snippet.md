@@ -8,14 +8,15 @@ description: Flag evaluation example for react-client-sdk.
 ---
 
 ```javascript
-import { useFlags } from 'launchdarkly-react-client-sdk';
+import { useBoolVariation } from '@launchdarkly/react-sdk';
 
-// We added your flag key. The React SDK uses camelCase for flag keys automatically
-// useFlags is a custom hook which returns all feature flags
-const { featureKey } = useFlags();
+const flagKey = 'featureKey';
+
+// useBoolVariation evaluates a boolean feature flag and returns its value.
+const flagValue = useBoolVariation(flagKey, false);
 
 // In your component, find where your feature is instantiated
-if (featureKey) {
+if (flagValue) {
 
     // TODO: Put your feature here
 

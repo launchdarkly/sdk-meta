@@ -8,5 +8,5 @@ description: Install command for react-client-sdk (npm).
 ---
 
 ```shell
-npm i launchdarkly-react-client-sdk
+npm i @launchdarkly/react-sdk
 ```

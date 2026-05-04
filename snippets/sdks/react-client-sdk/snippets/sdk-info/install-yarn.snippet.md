@@ -8,5 +8,5 @@ description: Install command for react-client-sdk (yarn).
 ---
 
 ```shell
-yarn add launchdarkly-react-client-sdk
+yarn add @launchdarkly/react-sdk
 ```
