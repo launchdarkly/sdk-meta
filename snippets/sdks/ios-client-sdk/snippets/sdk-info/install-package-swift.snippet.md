@@ -10,7 +10,7 @@ description: Install command for ios-client-sdk (package-swift).
 ```swift
 //...
     dependencies: [
-        .package(url: "https://github.com/launchdarkly/ios-client-sdk.git", .upToNextMajor("9.15.0")),
+        .package(url: "https://github.com/launchdarkly/ios-client-sdk.git", .upToNextMajor(from: "9.15.0")),
    ],
     targets: [
         .target(
