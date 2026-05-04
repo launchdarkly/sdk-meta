@@ -211,6 +211,7 @@ jobs:
           [ -f /tmp/validate.log ] && cp /tmp/validate.log /tmp/result/log
 
       - name: Compute artifact suffix
+        if: always()
         id: art
         env:
           LABEL: ${{ matrix.label }}

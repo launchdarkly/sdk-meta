@@ -4,8 +4,14 @@ FROM eclipse-temurin:17-jdk-noble
 # the snippet needs. We *don't* install the emulator: Robolectric runs
 # the activity lifecycle in the JVM, which is enough to exercise the
 # snippet's init+evaluate path against the real LD streaming API.
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        curl unzip git ca-certificates python3 \
+# apt-get update against the noble repos is occasionally flaky on
+# build hosts; retry with a small backoff before giving up so a single
+# failed-to-fetch InRelease line doesn't fail the whole image build.
+RUN for i in 1 2 3; do \
+        apt-get update && break || sleep 5; \
+    done \
+    && apt-get install -y --no-install-recommends \
+        curl unzip git ca-certificates python3-minimal \
     && rm -rf /var/lib/apt/lists/*
 
 ENV ANDROID_HOME=/opt/android-sdk

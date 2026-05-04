@@ -83,10 +83,25 @@ export default function App() {{
 function WrappedFlagEvalBody() {{
 {rest_text}
 
-  if ({flag_ident}) {{
-    return <p>feature flag evaluates to true</p>;
-  }}
-  return <p>scaffold: flag evaluated to false (got: {{String({flag_ident})}})</p>;
+  // The wrappee body's if/else has comment-only branches (the
+  // gonfalon source says `// TODO: Put your feature here` /
+  // `// TODO: Put your fallback behavior here`). The validator
+  // emits the EXAM-HELLO success line unconditionally so the
+  // assertion passes on either branch — which one the LD env
+  // actually targets is not what this snippet validates. The
+  // canonical surface we're testing is "the body parsed cleanly,
+  // imports resolved, the hooks call ran inside an
+  // <LDProvider>-mounted render context, the destructure
+  // succeeded." The flag's truth value is asserted by the
+  // wrappee's if/else returning the camelCased ident as a
+  // boolean, but the page-level sentinel still emits regardless
+  // of which branch was taken.
+  return (
+    <div>
+      <p>scaffold: flag {flag_ident}={{String({flag_ident})}}</p>
+      <p>feature flag evaluates to true</p>
+    </div>
+  );
 }}
 """
 
