@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: vue-client-sdk/install-pnpm.txt
 description: Install command for vue-client-sdk (pnpm).
+validation:
+  runtime: shell-install
 ---
 
 ```shell

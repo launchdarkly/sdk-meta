@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: node-client-sdk/install-yarn.txt
 description: Install command for node-client-sdk (yarn).
+validation:
+  runtime: shell-install
 ---
 
 ```shell

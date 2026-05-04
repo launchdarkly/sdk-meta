@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: react-native-client-sdk/install-yarn.txt
 description: Install command for react-native-client-sdk (yarn).
+validation:
+  runtime: shell-install
 ---
 
 ```shell

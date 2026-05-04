@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: vue-client-sdk/install-yarn.txt
 description: Install command for vue-client-sdk (yarn).
+validation:
+  runtime: shell-install
 ---
 
 ```shell

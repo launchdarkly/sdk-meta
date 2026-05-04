@@ -18,12 +18,21 @@ validation:
 ```java
 package com.launchdarkly;
 
+import com.launchdarkly.sdk.*;
+import com.launchdarkly.sdk.server.*;
+
 public class Snippet {
+    // Stub instance the wrappee body refers to. Never used at runtime;
+    // present so the body's `client.boolVariation(…)` calls resolve a
+    // symbol during compilation.
+    @SuppressWarnings("unused")
+    private static final LDClient client = null;
+
     public static void main(String[] args) {
         System.out.println("feature flag evaluates to true");
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "ConstantConditions"})
     private void wrappee() {
         try {
 {{ body }}

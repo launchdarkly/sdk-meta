@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: go-server-sdk/install-go.txt
 description: Install command for go-server-sdk (go).
+validation:
+  runtime: shell-install
 ---
 
 ```shell

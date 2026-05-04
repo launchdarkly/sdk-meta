@@ -5,6 +5,8 @@ kind: flag-eval
 lang: java
 file: java-server-sdk/flagEval.txt
 description: Flag evaluation example for java-server-sdk.
+validation:
+  scaffold: java-server-sdk/scaffolds/java-syntax-only
 ---
 
 ```java

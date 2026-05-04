@@ -5,6 +5,10 @@ kind: install
 lang: swift
 file: ios-client-sdk/install-package-swift.txt
 description: Install command for ios-client-sdk (package-swift).
+validation:
+  runtime: ios-install
+  env:
+    INSTALL_KIND: swift-package
 ---
 
 ```swift

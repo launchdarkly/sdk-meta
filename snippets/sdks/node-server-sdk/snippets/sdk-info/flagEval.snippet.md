@@ -5,6 +5,8 @@ kind: flag-eval
 lang: javascript
 file: node-server-sdk/flagEval.txt
 description: Flag evaluation example for node-server-sdk.
+validation:
+  scaffold: node-server-sdk/scaffolds/node-syntax-only
 ---
 
 ```javascript

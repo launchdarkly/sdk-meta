@@ -5,6 +5,10 @@ kind: init
 lang: javascript
 file: node-client-sdk/init.txt
 description: Client initialization snippet for node-client-sdk.
+validation:
+  scaffold: node-client-sdk/scaffolds/init-runner
+  placeholders:
+    YOUR_CLIENT_SIDE_ID: LAUNCHDARKLY_CLIENT_SIDE_ID
 ---
 
 ```javascript

@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: react-native-client-sdk/install-npm-async-storage.txt
 description: Install command for react-native-client-sdk (npm-async-storage).
+validation:
+  runtime: shell-install
 ---
 
 ```shell

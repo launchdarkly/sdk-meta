@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: js-client-sdk/install-pnpm.txt
 description: Install command for js-client-sdk (pnpm).
+validation:
+  runtime: shell-install
 ---
 
 ```shell

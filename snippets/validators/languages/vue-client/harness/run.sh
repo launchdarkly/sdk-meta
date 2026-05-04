@@ -6,11 +6,19 @@ set -eu
 . /harness-shared/lib.sh
 require_env LAUNCHDARKLY_CLIENT_SIDE_ID LAUNCHDARKLY_FLAG_KEY SNIPPET_ENTRYPOINT
 
-# Stage the snippet body + its companion (main.js) into the pre-baked
-# Vue project. The snippet's `file:` paths are project-relative
-# (src/App.vue, src/main.js).
-cp "/snippet/src/main.js" /opt/hello-vue/src/main.js
-cp "/snippet/$SNIPPET_ENTRYPOINT" "/opt/hello-vue/$SNIPPET_ENTRYPOINT"
+# Stage every src/* file the snippet ships into the pre-baked Vue
+# project. The snippet's `file:` paths are project-relative
+# (src/App.vue, src/main.js); init scaffolds also stage a companion
+# App.vue. We copy whatever the snippet provided rather than naming
+# specific files so an init scaffold can ship its own App.vue companion
+# alongside main.js.
+for f in /snippet/src/*; do
+    [ -f "$f" ] || continue
+    cp "$f" "/opt/hello-vue/src/$(basename "$f")"
+done
+if [ -n "${SNIPPET_ENTRYPOINT:-}" ] && [ -f "/snippet/$SNIPPET_ENTRYPOINT" ]; then
+    cp "/snippet/$SNIPPET_ENTRYPOINT" "/opt/hello-vue/$SNIPPET_ENTRYPOINT"
+fi
 
 cd /opt/hello-vue
 npm run build >/tmp/build.log 2>&1 \

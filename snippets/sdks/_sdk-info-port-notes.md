@@ -155,7 +155,162 @@ snippet as documentation-only (no `validation:` block) and rely on a
 separate runnable `Package.swift` companion under `getting-started/`
 for end-to-end coverage.
 
-## Rendered files always end with a trailing newline
+## python-server-sdk flagEval.txt has an empty if/else body (fixed)
+
+**Severity**: ~~medium~~ resolved
+
+**SDKs affected**: python-server-sdk
+
+**What we observed**: `flagEval.txt` reads:
+
+```python
+if flag_value:
+    # TODO: Put your feature here
+else:
+    # TODO: Put your fallback behavior here
+```
+
+A bare comment is not a statement; Python rejects this with
+`SyntaxError: expected an indented block after 'if' statement`. The
+snippet is presented as the "Add the SDK to your code" example and is
+copy-pasted by users into their own program — pasting verbatim
+produces an immediate syntax error before the user's TODO has a chance
+to replace the comments.
+
+**Resolution**: Each branch was rewritten as `pass  # TODO: …` so the
+fragment is syntactically complete and parses cleanly with the
+`python-server-sdk/scaffolds/python-syntax-only` validator. The visible
+TODO hint is preserved as a trailing comment; users still know where
+to insert their feature code.
+
+## go-server-sdk init.txt has an unused import (fixed)
+
+**Severity**: ~~medium~~ resolved
+
+**SDKs affected**: go-server-sdk
+
+**What we observed**: `init.txt` imports
+`github.com/launchdarkly/go-sdk-common/v3/ldcontext` but never references
+any symbol from that package. Go rejects unused imports as a compile
+error, so following the snippet verbatim into a `main.go` produces:
+
+```
+imported and not used: "github.com/launchdarkly/go-sdk-common/v3/ldcontext"
+```
+
+**Resolution**: Unused import removed. Deliberate divergence from
+gonfalon's `packages/sdk-info/src/snippets/go-server-sdk/init.txt`;
+the contradiction (the snippet doesn't reference `ldcontext` but
+imports it) exists in the gonfalon source today and is a correctness
+bug worth correcting before extended validation runs against the
+rendered output.
+
+## js-client-sdk install-bower URL is not a valid bower target
+
+**Severity**: low (deferred — bower is deprecated)
+
+**SDKs affected**: js-client-sdk
+
+**What we observed**: `install-bower.txt` reads
+`bower install https://unpkg.com/@launchdarkly/js-client-sdk@4`. Bower's
+URL resolver expects a tarball, zipfile, or git remote — unpkg.com
+returns a `text/javascript` body for that URL, which produces:
+
+```
+ENORESTARGET URL sources can't resolve targets
+```
+
+The original gonfalon source had the same issue against the v3 unpkg
+URL; bumping to v4 (this branch) didn't change the underlying
+incompatibility. Bower itself has been deprecated since 2017.
+
+**Recommended action**: Skip validation for this snippet; leave the body
+unchanged so gonfalon's `?raw` import keeps shipping the canonical
+fragment. When the wider consumer-refactor lands, drop the bower
+install entry from the install-card surface — bower is no longer a
+realistic install path.
+
+## Validation coverage and deferred snippets
+
+**Severity**: informational
+
+**Context**: Extended validation was added for sdk-info snippets across
+two PRs. Current coverage:
+
+**Install (26 of 29 snippets validated end-to-end)**:
+
+- 23 Linux-runnable installs (npm/pnpm/yarn × Node-family SDKs, pip ×
+  python, go × go-server) → `validation.runtime: shell-install` runs
+  the body in a clean dir and asserts the package landed.
+- 3 iOS installs (Cartfile, Package.swift, Podfile) →
+  `validation.runtime: ios-install` runs on macos-latest. Each kind
+  (selected via `validation.env: { INSTALL_KIND: ... }`) wraps the
+  fragment in a minimal stub project (synthesized Package.swift /
+  Podfile + xcodeproj-generated stub project / Cartfile) and runs the
+  real package manager (`swift package resolve` / `pod install` /
+  `carthage update --no-build`).
+
+**Init (10 of 13 snippets validated end-to-end)**:
+
+- python-server, node-server, go-server, java-server, dotnet-server →
+  per-SDK init-runner scaffolds with `validation.placeholders` for
+  `YOUR_SDK_KEY`. EXAM-HELLO success line emitted on a real LD init.
+- node-client, dotnet-client, js-client, react-client, vue-client →
+  per-SDK init-runner scaffolds with `YOUR_CLIENT_SIDE_ID` /
+  `YOUR_MOBILE_KEY` placeholders.
+  - js-client/react-client/vue-client run in headless Chromium via
+    Playwright (Vite/tsdown bundle + preview server).
+  - node-client runs under Node's dynamic-import path, asserting
+    `client.waitForInitialization` resolves.
+  - dotnet-client wraps top-level statements in a `Microsoft.NET.Sdk`
+    console project with `LaunchDarkly.ClientSdk` pulled from NuGet.
+- react-native-client → existing jest+react-native-preset harness;
+  init scaffold supplies a `YourComponent` that calls
+  `useLDClient().waitForInitialization()` and renders the
+  EXAM-HELLO sentinel on success. The harness was hardened to wait
+  for jest's exit code (the original `await_success_line` matched
+  jest's failure output, which echoes the regex pattern).
+
+**Flag-eval (5 of 6 snippets validated)**:
+
+- python, node-server, java, js-client, dotnet-client →
+  per-language syntax-only scaffolds.
+- react-client flag-eval is unbound: top-level imports plus an
+  unguarded `useFlags()` call, so wrapping in a function-scope
+  scaffold produces "imports not at top level" while running at
+  module scope crashes outside a React render context.
+
+**Deferred (no current validation)**:
+
+- ios-client/sdk-info/init — Swift `LDClient.start(...)` requires a
+  full Apple toolchain runtime (macOS app or simulator); SwiftPM
+  resolve on its own won't execute init code. Defer until we have
+  an iOS-simulator-driven runner.
+- android-client/sdk-info/init — Kotlin body uses
+  `this@BaseApplication` (an Activity context) plus
+  `com.launchdarkly.sdk.android.LDClient.init`, both of which require
+  the Android runtime. Defer pending an Android-emulator-driven
+  runner.
+- Android install snippets (groovy + kotlin) — manifest fragments
+  meant to be pasted into `build.gradle`; no standalone runnable
+  surface.
+- Java/Maven install (xml + gradle) — same shape as Android:
+  dependency manifest fragments, not standalone units.
+- .NET install (PowerShell `Install-Package`) — runs only under the
+  legacy NuGet PowerShell host, not modern `dotnet add package`. See
+  the dedicated note above.
+- React-client flag-eval (above).
+- js-client-sdk install-bower — bower's resolver can't fetch the
+  unpkg URL; documented separately above.
+
+**Recommended action**: When iOS and Android runtime runners land
+(simulator/emulator), revisit the ios-client and android-client init
+snippets. When the wider consumer refactor lands, evaluate whether
+the manifest-fragment install snippets should ship as full-file
+scaffolds with a copy-paste hint, or remain documentation fragments
+outside the runnable validation surface.
+
+>## Rendered files always end with a trailing newline
 
 **Severity**: informational
 

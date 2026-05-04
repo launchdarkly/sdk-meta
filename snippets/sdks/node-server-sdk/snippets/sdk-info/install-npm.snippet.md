@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: node-server-sdk/install-npm.txt
 description: Install command for node-server-sdk (npm).
+validation:
+  runtime: shell-install
 ---
 
 ```shell
