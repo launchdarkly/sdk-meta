@@ -183,6 +183,31 @@ fragment is syntactically complete and parses cleanly with the
 TODO hint is preserved as a trailing comment; users still know where
 to insert their feature code.
 
+## android-client-sdk init.txt missing `AutoEnvAttributes` import (fixed)
+
+**Severity**: ~~medium~~ resolved
+
+**SDKs affected**: android-client-sdk
+
+**What we observed**: `init.txt` references `AutoEnvAttributes.Enabled`
+as a bare token but its imports are wildcards
+(`com.launchdarkly.sdk.*` and `com.launchdarkly.sdk.android.*`) which
+do not bring nested types into scope. `AutoEnvAttributes` is a nested
+enum inside `LDConfig.Builder` — its fully qualified name is
+`com.launchdarkly.sdk.android.LDConfig.Builder.AutoEnvAttributes` —
+so kotlinc rejects the verbatim snippet with
+`Unresolved reference 'AutoEnvAttributes'`. The companion hello-android
+reference repo includes the explicit nested-type import
+(`import com.launchdarkly.sdk.android.LDConfig.Builder.AutoEnvAttributes`),
+confirming the missing import is a verbatim drift between gonfalon's
+sdk-info source and the SDK's actual surface.
+
+**Resolution**: Added the explicit nested-type import alongside the
+existing wildcards. Deliberate divergence from gonfalon's
+`packages/sdk-info/src/snippets/android-client-sdk/init.txt`; the
+extended-validation harness now compiles and runs the body under
+Robolectric end-to-end against the real LD streaming API.
+
 ## go-server-sdk init.txt has an unused import (fixed)
 
 **Severity**: ~~medium~~ resolved

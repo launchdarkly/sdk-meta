@@ -10,6 +10,7 @@ description: Client initialization snippet for android-client-sdk.
 ```kotlin
 import com.launchdarkly.sdk.*
 import com.launchdarkly.sdk.android.*;
+import com.launchdarkly.sdk.android.LDConfig.Builder.AutoEnvAttributes
 
 // This is your mobile key.
 val ldConfig = LDConfig.Builder(AutoEnvAttributes.Enabled)
