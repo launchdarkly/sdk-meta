@@ -378,7 +378,11 @@ func runDocker(cfg Config, runner *Runner, runnerDir, stageDir, entrypoint strin
 	if err != nil {
 		return err
 	}
-	build := exec.Command("docker", "build", "--quiet",
+	// `--progress=plain` keeps stdout tame (a one-line-per-step log
+	// rather than the interactive multi-line redraws) while leaving
+	// failure output visible — important for diagnosing apt/network
+	// failures inside the build that --quiet would otherwise swallow.
+	build := exec.Command("docker", "build", "--progress=plain",
 		"-f", dockerfile,
 		"-t", tag,
 		cfg.ValidatorsDir,
