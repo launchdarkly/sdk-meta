@@ -88,7 +88,7 @@ jobs:
           # Carthage is installed on-demand via `brew install
           # carthage` in the harness setup step, since macos-latest
           # doesn't ship it preinstalled.
-          - { sdk: ios-client-sdk,          runs-on: macos-latest,  key-type: mobile }
+          - { sdk: ios-client-sdk,          runs-on: macos-latest,  key-type: none }
     steps:
       - uses: actions/checkout@v4
 
@@ -116,6 +116,14 @@ jobs:
 
       - name: Validate
         id: validate
+        # SDKs whose only bound snippets are install fragments (e.g.
+        # ios-client-sdk: cartfile/package-swift/podfile) don't run any
+        # LaunchDarkly client code — they just run package managers in
+        # an empty dir. They don't need (and shouldn't pretend to need)
+        # the verify-hello-app wrapper, which assumes the validate
+        # output will contain "feature flag evaluates to true". Use a
+        # plain run for those; verify-hello-app for everything else.
+        if: matrix.key-type != 'none'
         uses: launchdarkly/gh-actions/actions/verify-hello-app@verify-hello-app-v2.0.1
         with:
           use_server_key: ${{ matrix.key-type == 'server' }}
@@ -128,11 +136,26 @@ jobs:
             go run ./cmd/snippets validate --sdk=${{ matrix.sdk }} \
               --sdks=./sdks --validators=./validators 2>&1 | tee /tmp/validate.log
 
+      - name: Validate (no key)
+        if: matrix.key-type == 'none'
+        id: validate-no-key
+        run: |
+          set -o pipefail
+          cd snippets
+          go run ./cmd/snippets validate --sdk=${{ matrix.sdk }} \
+            --sdks=./sdks --validators=./validators 2>&1 | tee /tmp/validate.log
+
       - name: Record result
         if: always()
+        env:
+          OUTCOME_KEYED: ${{ steps.validate.outcome }}
+          OUTCOME_NOKEY: ${{ steps.validate-no-key.outcome }}
         run: |
+          # Exactly one of the two validate steps ran (selected by
+          # key-type); the other reports outcome == 'skipped'. Treat
+          # 'success' as ok, anything else as fail.
           mkdir -p /tmp/result
-          if [ "${{ steps.validate.outcome }}" = "success" ]; then
+          if [ "$OUTCOME_KEYED" = "success" ] || [ "$OUTCOME_NOKEY" = "success" ]; then
               echo "ok" > /tmp/result/status
           else
               echo "fail" > /tmp/result/status
