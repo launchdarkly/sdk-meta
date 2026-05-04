@@ -15,7 +15,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/launchdarkly/go-sdk-common/v3/ldcontext"
 	ld "github.com/launchdarkly/go-server-sdk/v7"
 )
 
