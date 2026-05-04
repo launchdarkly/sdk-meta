@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.3.0...snippets/v0.4.0) (2026-05-04)
+
+
+### Features
+
+* **snippets:** extended validation for sdk-info snippets ([#418](https://github.com/launchdarkly/sdk-meta/issues/418)) ([6a79b62](https://github.com/launchdarkly/sdk-meta/commit/6a79b62906b006f5524771645bc628ada4ceba8f))
+
+
+### Bug Fixes
+
+* **snippets:** correct sdk-info content errors found during validation ([#417](https://github.com/launchdarkly/sdk-meta/issues/417)) ([af0518f](https://github.com/launchdarkly/sdk-meta/commit/af0518f865f2a5e607563d57ddc2d2df669f827c))
+
 ## [0.3.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.2.1...snippets/v0.3.0) (2026-05-01)
 
 
