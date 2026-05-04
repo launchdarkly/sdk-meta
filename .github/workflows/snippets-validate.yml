@@ -37,7 +37,7 @@ concurrency:
 
 jobs:
   validate:
-    name: ${{ matrix.sdk }}
+    name: ${{ matrix.label || matrix.sdk }}
     runs-on: ${{ matrix.runs-on }}
     strategy:
       fail-fast: false
@@ -88,7 +88,34 @@ jobs:
           # Carthage is installed on-demand via `brew install
           # carthage` in the harness setup step, since macos-latest
           # doesn't ship it preinstalled.
-          - { sdk: ios-client-sdk,          runs-on: macos-latest,  key-type: none }
+          #
+          # The install row excludes the init snippet (snippet-skip) so
+          # verify-hello-app's EXAM-HELLO grep doesn't see install
+          # output. The init runs in its own row below with key-type:
+          # mobile, where xcodebuild test boots the iOS Simulator and
+          # runs LDClient.start(...) end-to-end against the LD env.
+          - sdk: ios-client-sdk
+            runs-on: macos-latest
+            key-type: none
+            label: ios-client-sdk (install)
+            snippet_skip: ios-client-sdk/sdk-info/init
+          - sdk: ios-client-sdk
+            runs-on: macos-latest
+            key-type: mobile
+            label: ios-client-sdk (init)
+            snippet: ios-client-sdk/sdk-info/init
+
+          # Android init: scaffolded with a MainApplication that
+          # exercises LDClient.init(this@MainApplication, ...) under
+          # Robolectric. The existing android-client docker validator
+          # runs the Android framework in the JVM (no emulator), so the
+          # cell stays on a regular ubuntu runner — no KVM/emulator
+          # setup required.
+          - sdk: android-client-sdk
+            runs-on: ubuntu-latest
+            key-type: mobile
+            label: android-client-sdk (init)
+            snippet: android-client-sdk/sdk-info/init
     steps:
       - uses: actions/checkout@v4
 
@@ -123,8 +150,19 @@ jobs:
         # the verify-hello-app wrapper, which assumes the validate
         # output will contain "feature flag evaluates to true". Use a
         # plain run for those; verify-hello-app for everything else.
+        #
+        # `MATRIX_SNIPPET` and `MATRIX_SNIPPET_SKIP` are optional
+        # filters: a row can validate just one snippet (sdk=ios + an
+        # init row) or exclude one (sdk=ios + the install row that
+        # excludes init). The shell builds the right --snippet /
+        # --snippet-skip flags from the env so empty values stay out
+        # of the command line.
         if: matrix.key-type != 'none'
         uses: launchdarkly/gh-actions/actions/verify-hello-app@verify-hello-app-v2.0.1
+        env:
+          MATRIX_SDK: ${{ matrix.sdk }}
+          MATRIX_SNIPPET: ${{ matrix.snippet }}
+          MATRIX_SNIPPET_SKIP: ${{ matrix.snippet_skip }}
         with:
           use_server_key: ${{ matrix.key-type == 'server' }}
           use_client_key: ${{ matrix.key-type == 'client' }}
@@ -133,16 +171,26 @@ jobs:
           command: |
             set -o pipefail
             cd snippets
-            go run ./cmd/snippets validate --sdk=${{ matrix.sdk }} \
+            args="--sdk=$MATRIX_SDK"
+            [ -n "$MATRIX_SNIPPET" ] && args="$args --snippet=$MATRIX_SNIPPET"
+            [ -n "$MATRIX_SNIPPET_SKIP" ] && args="$args --snippet-skip=$MATRIX_SNIPPET_SKIP"
+            go run ./cmd/snippets validate $args \
               --sdks=./sdks --validators=./validators 2>&1 | tee /tmp/validate.log
 
       - name: Validate (no key)
         if: matrix.key-type == 'none'
         id: validate-no-key
+        env:
+          MATRIX_SDK: ${{ matrix.sdk }}
+          MATRIX_SNIPPET: ${{ matrix.snippet }}
+          MATRIX_SNIPPET_SKIP: ${{ matrix.snippet_skip }}
         run: |
           set -o pipefail
           cd snippets
-          go run ./cmd/snippets validate --sdk=${{ matrix.sdk }} \
+          args="--sdk=$MATRIX_SDK"
+          [ -n "$MATRIX_SNIPPET" ] && args="$args --snippet=$MATRIX_SNIPPET"
+          [ -n "$MATRIX_SNIPPET_SKIP" ] && args="$args --snippet-skip=$MATRIX_SNIPPET_SKIP"
+          go run ./cmd/snippets validate $args \
             --sdks=./sdks --validators=./validators 2>&1 | tee /tmp/validate.log
 
       - name: Record result
@@ -162,11 +210,28 @@ jobs:
           fi
           [ -f /tmp/validate.log ] && cp /tmp/validate.log /tmp/result/log
 
+      - name: Compute artifact suffix
+        id: art
+        env:
+          LABEL: ${{ matrix.label }}
+          SDK: ${{ matrix.sdk }}
+        run: |
+          # Two rows can share matrix.sdk (ios-client-sdk has separate
+          # `install` and `init` rows). Disambiguate via matrix.label
+          # — falling back to sdk for the unlabelled rows. Strip
+          # characters that aren't safe in artifact paths.
+          if [ -n "$LABEL" ]; then
+            slug=$(printf '%s' "$LABEL" | tr ' ()/' '----' | tr -s '-' | sed 's/-$//')
+          else
+            slug=$SDK
+          fi
+          echo "slug=$slug" >> "$GITHUB_OUTPUT"
+
       - name: Upload result
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: result-${{ matrix.sdk }}
+          name: result-${{ steps.art.outputs.slug }}
           path: /tmp/result/
           if-no-files-found: ignore
           retention-days: 14

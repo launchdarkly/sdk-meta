@@ -22,6 +22,7 @@ type Config struct {
 	ValidatorsDir string // path to validators/ (must be on disk — Docker COPY needs it)
 	SDK           string // sdk id to validate (empty = all)
 	Snippet       string // snippet id to validate (empty = all in the SDK)
+	SnippetSkip   string // snippet id to skip (empty = none)
 }
 
 // envInputs holds the environment-derived input values that get substituted
@@ -65,6 +66,9 @@ func Run(cfg Config) error {
 			continue
 		}
 		if cfg.Snippet != "" && s.Frontmatter.ID != cfg.Snippet {
+			continue
+		}
+		if cfg.SnippetSkip != "" && s.Frontmatter.ID == cfg.SnippetSkip {
 			continue
 		}
 		if !isValidatable(s) {

@@ -5,6 +5,10 @@ kind: init
 lang: kotlin
 file: android-client-sdk/init.txt
 description: Client initialization snippet for android-client-sdk.
+validation:
+  scaffold: android-client-sdk/scaffolds/init-runner
+  placeholders:
+    YOUR_MOBILE_KEY: LAUNCHDARKLY_MOBILE_KEY
 ---
 
 ```kotlin

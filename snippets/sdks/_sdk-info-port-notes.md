@@ -275,7 +275,7 @@ two PRs. Current coverage:
   real package manager (`swift package resolve` / `pod install` /
   `carthage update --no-build`).
 
-**Init (10 of 13 snippets validated end-to-end)**:
+**Init (13 of 13 snippets validated end-to-end)**:
 
 - python-server, node-server, go-server, java-server, dotnet-server →
   per-SDK init-runner scaffolds with `validation.placeholders` for
@@ -295,27 +295,51 @@ two PRs. Current coverage:
   EXAM-HELLO sentinel on success. The harness was hardened to wait
   for jest's exit code (the original `await_success_line` matched
   jest's failure output, which echoes the regex pattern).
+- ios-client → init-runner scaffold splices the body into
+  `application(_:didFinishLaunchingWithOptions:)` of an
+  `AppDelegate`, with a companion `ViewController` that observes
+  the test flag and writes the EXAM-HELLO line into
+  `featureFlagLabel`. Runs on macos-latest via the existing
+  `ios-client` validator harness (xcodegen + xcodebuild test +
+  iOS Simulator). The harness lifts any `import` lines out of the
+  spliced body to file scope (Swift requires imports at top level)
+  and uses `validation.placeholders` to substitute
+  `YOUR_MOBILE_KEY` for the env-injected mobile key. CI matrix has
+  separate rows for the install fragments (`key-type: none`) and
+  the init snippet (`key-type: mobile`).
+- android-client → init-runner scaffold splices the body into
+  `MainApplication.onCreate()` (subclass of `Application`); the
+  scaffold's class name is `MainApplication` and the harness
+  rewrites the body's `this@BaseApplication` literal to
+  `this@MainApplication` so the gonfalon-source verbatim still
+  resolves. The companion `MainActivity.kt` reads the flag and
+  writes the EXAM-HELLO line into `R.id.textview`. Runs under the
+  existing Robolectric-based docker harness — no emulator
+  required, the Android framework executes in the JVM. The
+  harness also lifts in-function `import` lines (the gonfalon
+  body uses wildcard imports that legally only sit at file
+  scope).
 
-**Flag-eval (5 of 6 snippets validated)**:
+**Flag-eval (6 of 6 snippets validated)**:
 
 - python, node-server, java, js-client, dotnet-client →
   per-language syntax-only scaffolds.
-- react-client flag-eval is unbound: top-level imports plus an
-  unguarded `useFlags()` call, so wrapping in a function-scope
-  scaffold produces "imports not at top level" while running at
-  module scope crashes outside a React render context.
+- react-client → flag-eval-runner scaffold stages the body
+  verbatim at `src/snippet-body.tsx`; the validator harness
+  (in `SNIPPET_MODE=flag-eval` mode) reads the body, lifts
+  module-scope `import` lines out of the wrappee block, computes
+  `lodash.camelCase(LAUNCHDARKLY_FLAG_KEY)` to match the React
+  SDK's auto-camelCase, substitutes the snippet's placeholder
+  destructure target (`featureKey`) for the camelCased
+  identifier, and synthesizes a fresh `App.tsx` + `main.tsx`
+  that renders the wrapped body inside `<LDProvider>`. The
+  existing Playwright DOM check observes the EXAM-HELLO success
+  line on a true evaluation. The same docker image is reused
+  for init and flag-eval modes, dispatched on
+  `validation.env.SNIPPET_MODE`.
 
 **Deferred (no current validation)**:
 
-- ios-client/sdk-info/init — Swift `LDClient.start(...)` requires a
-  full Apple toolchain runtime (macOS app or simulator); SwiftPM
-  resolve on its own won't execute init code. Defer until we have
-  an iOS-simulator-driven runner.
-- android-client/sdk-info/init — Kotlin body uses
-  `this@BaseApplication` (an Activity context) plus
-  `com.launchdarkly.sdk.android.LDClient.init`, both of which require
-  the Android runtime. Defer pending an Android-emulator-driven
-  runner.
 - Android install snippets (groovy + kotlin) — manifest fragments
   meant to be pasted into `build.gradle`; no standalone runnable
   surface.
@@ -324,16 +348,13 @@ two PRs. Current coverage:
 - .NET install (PowerShell `Install-Package`) — runs only under the
   legacy NuGet PowerShell host, not modern `dotnet add package`. See
   the dedicated note above.
-- React-client flag-eval (above).
 - js-client-sdk install-bower — bower's resolver can't fetch the
   unpkg URL; documented separately above.
 
-**Recommended action**: When iOS and Android runtime runners land
-(simulator/emulator), revisit the ios-client and android-client init
-snippets. When the wider consumer refactor lands, evaluate whether
-the manifest-fragment install snippets should ship as full-file
-scaffolds with a copy-paste hint, or remain documentation fragments
-outside the runnable validation surface.
+**Recommended action**: When the wider consumer refactor lands,
+evaluate whether the manifest-fragment install snippets should ship
+as full-file scaffolds with a copy-paste hint, or remain
+documentation fragments outside the runnable validation surface.
 
 >## Rendered files always end with a trailing newline
 

@@ -5,7 +5,7 @@ FROM eclipse-temurin:17-jdk-noble
 # the activity lifecycle in the JVM, which is enough to exercise the
 # snippet's init+evaluate path against the real LD streaming API.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        curl unzip git ca-certificates \
+        curl unzip git ca-certificates python3 \
     && rm -rf /var/lib/apt/lists/*
 
 ENV ANDROID_HOME=/opt/android-sdk
