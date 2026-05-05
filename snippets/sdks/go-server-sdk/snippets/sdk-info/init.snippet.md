@@ -5,6 +5,10 @@ kind: init
 lang: go
 file: go-server-sdk/init.txt
 description: Client initialization snippet for go-server-sdk.
+validation:
+  scaffold: go-server-sdk/scaffolds/init-runner
+  placeholders:
+    YOUR_SDK_KEY: LAUNCHDARKLY_SDK_KEY
 ---
 
 ```go
@@ -15,7 +19,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/launchdarkly/go-sdk-common/v3/ldcontext"
 	ld "github.com/launchdarkly/go-server-sdk/v7"
 )
 

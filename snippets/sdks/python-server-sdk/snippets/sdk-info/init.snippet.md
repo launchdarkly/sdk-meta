@@ -5,6 +5,10 @@ kind: init
 lang: python
 file: python-server-sdk/init.txt
 description: Client initialization snippet for python-server-sdk.
+validation:
+  scaffold: python-server-sdk/scaffolds/init-runner
+  placeholders:
+    YOUR_SDK_KEY: LAUNCHDARKLY_SDK_KEY
 ---
 
 ```python

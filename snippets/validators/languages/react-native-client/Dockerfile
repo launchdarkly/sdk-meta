@@ -21,7 +21,7 @@ RUN cat > package.json <<EOF
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "test": "jest --colors=false"
+    "test": "jest --colors=false --forceExit"
   },
   "dependencies": {
     "@launchdarkly/react-native-client-sdk": "${LD_RN_SDK_VERSION}",

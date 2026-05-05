@@ -1,0 +1,18 @@
+# iOS install-fragment validator. Runs in `native` mode on macos-latest:
+# the snippet body is an SPM/Cocoapods/Carthage dependency fragment that
+# gets wrapped in a minimal stub project before the package manager is
+# invoked. macos runners can't easily build/run docker images, so the
+# Go validator execs harness/run.sh directly with the staged snippet
+# path passed as $SNIPPET_DIR.
+#
+# Three install kinds dispatched on $INSTALL_KIND:
+#   - swift-package : wrap snippet in Package.swift skeleton, run
+#                     `swift package resolve`, assert Package.resolved
+#                     references the SDK.
+#   - podfile       : wrap snippet in a Podfile + xcodeproj stub, run
+#                     `pod install`, assert Pods/LaunchDarkly/ exists.
+#   - cartfile      : drop snippet body as Cartfile, run `carthage
+#                     update --use-xcframeworks --no-build`, assert
+#                     Cartfile.resolved references the SDK.
+mode: native
+runs-on: macos-latest

@@ -5,6 +5,10 @@ kind: init
 lang: tsx
 file: react-native-client-sdk/init.txt
 description: Client initialization snippet for react-native-client-sdk.
+validation:
+  scaffold: react-native-client-sdk/scaffolds/init-runner
+  placeholders:
+    YOUR_MOBILE_KEY: LAUNCHDARKLY_MOBILE_KEY
 ---
 
 ```tsx

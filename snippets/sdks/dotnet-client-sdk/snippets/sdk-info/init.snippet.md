@@ -5,6 +5,10 @@ kind: init
 lang: csharp
 file: dotnet-client-sdk/init.txt
 description: Client initialization snippet for dotnet-client-sdk.
+validation:
+  scaffold: dotnet-client-sdk/scaffolds/init-runner
+  placeholders:
+    YOUR_MOBILE_KEY: LAUNCHDARKLY_MOBILE_KEY
 ---
 
 ```csharp

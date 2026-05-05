@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: node-server-sdk/install-pnpm.txt
 description: Install command for node-server-sdk (pnpm).
+validation:
+  runtime: shell-install
 ---
 
 ```shell

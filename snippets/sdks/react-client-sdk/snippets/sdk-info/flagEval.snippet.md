@@ -5,6 +5,8 @@ kind: flag-eval
 lang: javascript
 file: react-client-sdk/flagEval.txt
 description: Flag evaluation example for react-client-sdk.
+validation:
+  scaffold: react-client-sdk/scaffolds/flag-eval-runner
 ---
 
 ```javascript

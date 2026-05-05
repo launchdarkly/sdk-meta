@@ -13,8 +13,11 @@ cp -r /snippet/. "$WORK/"
 cd "$WORK"
 
 # .NET wants a project file; gonfalon's flow uses Visual Studio's "new
-# console app" wizard which creates one. We synthesize the minimum.
-cat > HelloDotNet.csproj <<'EOF'
+# console app" wizard which creates one. We synthesize the minimum unless
+# the snippet's scaffold staged its own `.csproj` (e.g. an ASP.NET Core
+# init that needs `Microsoft.NET.Sdk.Web`).
+if ! ls *.csproj >/dev/null 2>&1; then
+    cat > HelloDotNet.csproj <<'EOF'
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -25,6 +28,7 @@ cat > HelloDotNet.csproj <<'EOF'
   </PropertyGroup>
 </Project>
 EOF
+fi
 
 if [ -f requirements.txt ]; then
     while IFS= read -r line; do

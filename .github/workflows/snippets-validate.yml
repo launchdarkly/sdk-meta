@@ -37,28 +37,85 @@ concurrency:
 
 jobs:
   validate:
-    name: ${{ matrix.sdk }}
+    name: ${{ matrix.label || matrix.sdk }}
     runs-on: ${{ matrix.runs-on }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          # SDKs whose sdk-docs scaffold bindings pass today. The 17
-          # other SDKs ship Docker harnesses and syntax-only scaffolds
-          # under snippets/validators/ + snippets/sdks/<sdk>/snippets/
-          # scaffolds/, but no bound runnable snippets — they were
-          # validated end-to-end via the gonfalon-targeted
-          # getting-started/main-* programs, which were removed when
-          # gonfalon's "Connect an SDK" UI was retired. Bindings can be
-          # restored once the per-SDK scaffolds learn to splice
-          # top-level imports up to file scope and provide a
-          # client/context in the wrappee body's lexical scope; tracked
-          # as a follow-up.
+          # The first block — server-key SDKs — covers both the original
+          # sdk-docs scaffold bindings AND the newly-wired sdk-info
+          # install/init/flagEval bindings under each SDK's snippets/
+          # sdk-info/ group.
           - { sdk: python-server-sdk, runs-on: ubuntu-latest, key-type: server }
           - { sdk: node-server-sdk,   runs-on: ubuntu-latest, key-type: server }
+          - { sdk: go-server-sdk,     runs-on: ubuntu-latest, key-type: server }
+          - { sdk: java-server-sdk,   runs-on: ubuntu-latest, key-type: server }
           - { sdk: ruby-server-sdk,   runs-on: ubuntu-latest, key-type: server }
           - { sdk: php-server-sdk,    runs-on: ubuntu-latest, key-type: server }
           - { sdk: lua-server-sdk,    runs-on: ubuntu-latest, key-type: server }
+
+          # Client SDKs whose validators run a real bundle and assert
+          # a flag evaluation against the LD sandbox env.
+          - { sdk: js-client-sdk,     runs-on: ubuntu-latest, key-type: client }
+
+          # Mobile-key SDKs.
+          - { sdk: dotnet-client-sdk, runs-on: ubuntu-latest, key-type: mobile }
+
+          # SDKs whose only validatable surface is the shell-install
+          # snippets — no init/flagEval bindings yet. The shell-install
+          # validator sniffs the body's leading token
+          # (npm/pnpm/yarn/pip/go/bower) and runs the real package
+          # manager in a clean working dir; no LaunchDarkly key is
+          # needed. We pass `key-type: server` so the verify-hello-app
+          # action injects an unused server key rather than failing on
+          # no-key-set.
+          - { sdk: dotnet-server-sdk,       runs-on: ubuntu-latest, key-type: server }
+
+          # Client/mobile-key SDKs with end-to-end init bindings.
+          - { sdk: node-client-sdk,         runs-on: ubuntu-latest, key-type: client }
+          - { sdk: react-client-sdk,        runs-on: ubuntu-latest, key-type: client }
+          - { sdk: vue-client-sdk,          runs-on: ubuntu-latest, key-type: client }
+
+          # React Native init runs under jest with the RN preset (no
+          # emulator). Mobile key.
+          - { sdk: react-native-client-sdk, runs-on: ubuntu-latest, key-type: mobile }
+
+          # iOS install fragments (Cartfile, Package.swift, Podfile)
+          # need real Apple toolchains; macos-latest has Swift +
+          # CocoaPods preinstalled. The validator runs in `native` mode
+          # because docker isn't available on macos runners.
+          # Carthage is installed on-demand via `brew install
+          # carthage` in the harness setup step, since macos-latest
+          # doesn't ship it preinstalled.
+          #
+          # The install row excludes the init snippet (snippet-skip) so
+          # verify-hello-app's EXAM-HELLO grep doesn't see install
+          # output. The init runs in its own row below with key-type:
+          # mobile, where xcodebuild test boots the iOS Simulator and
+          # runs LDClient.start(...) end-to-end against the LD env.
+          - sdk: ios-client-sdk
+            runs-on: macos-latest
+            key-type: none
+            label: ios-client-sdk (install)
+            snippet_skip: ios-client-sdk/sdk-info/init
+          - sdk: ios-client-sdk
+            runs-on: macos-latest
+            key-type: mobile
+            label: ios-client-sdk (init)
+            snippet: ios-client-sdk/sdk-info/init
+
+          # Android init: scaffolded with a MainApplication that
+          # exercises LDClient.init(this@MainApplication, ...) under
+          # Robolectric. The existing android-client docker validator
+          # runs the Android framework in the JVM (no emulator), so the
+          # cell stays on a regular ubuntu runner — no KVM/emulator
+          # setup required.
+          - sdk: android-client-sdk
+            runs-on: ubuntu-latest
+            key-type: mobile
+            label: android-client-sdk (init)
+            snippet: android-client-sdk/sdk-info/init
     steps:
       - uses: actions/checkout@v4
 
@@ -66,9 +123,46 @@ jobs:
         with:
           go-version: '1.24'
 
+      - name: Install iOS toolchain (macos only)
+        if: matrix.runs-on == 'macos-latest'
+        run: |
+          # macos-latest images ship Xcode + Swift + Ruby preinstalled.
+          # CocoaPods and the xcodeproj gem (used by the Podfile harness
+          # to synthesize a stub Xcode project) and Carthage are not
+          # always preinstalled — install both, gracefully no-oping if
+          # they're already there. Carthage installation can be slow on
+          # cold runners, so prefer brew's bottle when available.
+          set -e
+          if ! command -v carthage >/dev/null; then
+              brew install carthage
+          fi
+          if ! command -v pod >/dev/null; then
+              sudo gem install cocoapods --no-document
+          fi
+          sudo gem install xcodeproj --no-document
+
       - name: Validate
         id: validate
+        # SDKs whose only bound snippets are install fragments (e.g.
+        # ios-client-sdk: cartfile/package-swift/podfile) don't run any
+        # LaunchDarkly client code — they just run package managers in
+        # an empty dir. They don't need (and shouldn't pretend to need)
+        # the verify-hello-app wrapper, which assumes the validate
+        # output will contain "feature flag evaluates to true". Use a
+        # plain run for those; verify-hello-app for everything else.
+        #
+        # `MATRIX_SNIPPET` and `MATRIX_SNIPPET_SKIP` are optional
+        # filters: a row can validate just one snippet (sdk=ios + an
+        # init row) or exclude one (sdk=ios + the install row that
+        # excludes init). The shell builds the right --snippet /
+        # --snippet-skip flags from the env so empty values stay out
+        # of the command line.
+        if: matrix.key-type != 'none'
         uses: launchdarkly/gh-actions/actions/verify-hello-app@verify-hello-app-v2.0.1
+        env:
+          MATRIX_SDK: ${{ matrix.sdk }}
+          MATRIX_SNIPPET: ${{ matrix.snippet }}
+          MATRIX_SNIPPET_SKIP: ${{ matrix.snippet_skip }}
         with:
           use_server_key: ${{ matrix.key-type == 'server' }}
           use_client_key: ${{ matrix.key-type == 'client' }}
@@ -77,25 +171,68 @@ jobs:
           command: |
             set -o pipefail
             cd snippets
-            go run ./cmd/snippets validate --sdk=${{ matrix.sdk }} \
+            args="--sdk=$MATRIX_SDK"
+            [ -n "$MATRIX_SNIPPET" ] && args="$args --snippet=$MATRIX_SNIPPET"
+            [ -n "$MATRIX_SNIPPET_SKIP" ] && args="$args --snippet-skip=$MATRIX_SNIPPET_SKIP"
+            go run ./cmd/snippets validate $args \
               --sdks=./sdks --validators=./validators 2>&1 | tee /tmp/validate.log
+
+      - name: Validate (no key)
+        if: matrix.key-type == 'none'
+        id: validate-no-key
+        env:
+          MATRIX_SDK: ${{ matrix.sdk }}
+          MATRIX_SNIPPET: ${{ matrix.snippet }}
+          MATRIX_SNIPPET_SKIP: ${{ matrix.snippet_skip }}
+        run: |
+          set -o pipefail
+          cd snippets
+          args="--sdk=$MATRIX_SDK"
+          [ -n "$MATRIX_SNIPPET" ] && args="$args --snippet=$MATRIX_SNIPPET"
+          [ -n "$MATRIX_SNIPPET_SKIP" ] && args="$args --snippet-skip=$MATRIX_SNIPPET_SKIP"
+          go run ./cmd/snippets validate $args \
+            --sdks=./sdks --validators=./validators 2>&1 | tee /tmp/validate.log
 
       - name: Record result
         if: always()
+        env:
+          OUTCOME_KEYED: ${{ steps.validate.outcome }}
+          OUTCOME_NOKEY: ${{ steps.validate-no-key.outcome }}
         run: |
+          # Exactly one of the two validate steps ran (selected by
+          # key-type); the other reports outcome == 'skipped'. Treat
+          # 'success' as ok, anything else as fail.
           mkdir -p /tmp/result
-          if [ "${{ steps.validate.outcome }}" = "success" ]; then
+          if [ "$OUTCOME_KEYED" = "success" ] || [ "$OUTCOME_NOKEY" = "success" ]; then
               echo "ok" > /tmp/result/status
           else
               echo "fail" > /tmp/result/status
           fi
           [ -f /tmp/validate.log ] && cp /tmp/validate.log /tmp/result/log
 
+      - name: Compute artifact suffix
+        if: always()
+        id: art
+        env:
+          LABEL: ${{ matrix.label }}
+          SDK: ${{ matrix.sdk }}
+        run: |
+          # Two rows can share matrix.sdk (ios-client-sdk has separate
+          # `install` and `init` rows). Disambiguate via matrix.label
+          # — falling back to sdk for the unlabelled rows. Strip
+          # characters that aren't safe in artifact paths.
+          if [ -n "$LABEL" ]; then
+            slug=$(printf '%s' "$LABEL" | tr ' ()/' '----' | tr -s '-' | sed 's/-$//')
+          else
+            slug=$SDK
+          fi
+          echo "slug=$slug" >> "$GITHUB_OUTPUT"
+
       - name: Upload result
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: result-${{ matrix.sdk }}
+          name: result-${{ steps.art.outputs.slug }}
           path: /tmp/result/
           if-no-files-found: ignore
           retention-days: 14

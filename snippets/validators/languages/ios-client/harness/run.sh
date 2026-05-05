@@ -24,6 +24,55 @@ cp -R "$SCAFFOLD"/. "$WORK"/
 cp "$SNIPPET_DIR/AppDelegate.swift" "$WORK/Sources/AppDelegate.swift"
 cp "$SNIPPET_DIR/ViewController.swift" "$WORK/Sources/ViewController.swift"
 
+# Swift only allows `import` declarations at file scope. The init
+# scaffold splices the snippet body inside a function (so the body's
+# `LDClient.start(...)` runs with an Application lifecycle); any
+# `import` lines that came along in the body need to be lifted out.
+# Idempotent on files that don't have a misplaced import.
+python3 - "$WORK/Sources/AppDelegate.swift" <<'PYEOF'
+import re, sys
+path = sys.argv[1]
+with open(path) as f:
+    text = f.read()
+
+lines = text.splitlines()
+file_imports = set()
+in_func_imports = []
+saw_func = False
+out = []
+for line in lines:
+    s = line.strip()
+    if s.startswith("func "):
+        saw_func = True
+    if saw_func and re.match(r"^\s*import\s+[A-Za-z_][A-Za-z0-9_.]*\s*$", line):
+        m = re.match(r"^\s*import\s+([A-Za-z_][A-Za-z0-9_.]*)\s*$", line)
+        in_func_imports.append(m.group(1))
+        continue  # drop from in-place position
+    if not saw_func:
+        m = re.match(r"^\s*import\s+([A-Za-z_][A-Za-z0-9_.]*)\s*$", line)
+        if m:
+            file_imports.add(m.group(1))
+    out.append(line)
+
+new_top = []
+for mod in in_func_imports:
+    if mod not in file_imports:
+        new_top.append(f"import {mod}")
+        file_imports.add(mod)
+
+if new_top:
+    insert_at = 0
+    for i, line in enumerate(out):
+        if line.strip().startswith("import "):
+            insert_at = i + 1
+        elif line.strip() and insert_at:
+            break
+    out[insert_at:insert_at] = new_top
+
+with open(path, "w") as f:
+    f.write("\n".join(out) + ("\n" if text.endswith("\n") else ""))
+PYEOF
+
 cd "$WORK"
 
 if ! command -v xcodegen >/dev/null 2>&1; then

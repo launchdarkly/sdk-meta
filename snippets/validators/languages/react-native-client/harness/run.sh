@@ -17,15 +17,21 @@ cp "/snippet/src/welcome.tsx" "${PROJECT}/src/welcome.tsx"
 
 cd "${PROJECT}"
 
+# Don't use await_success_line here: jest's failure output prints the
+# expected regex pattern verbatim ("Expected pattern: /feature flag
+# evaluates to true/i"), which would falsely match before jest had a
+# chance to exit non-zero. Wait for jest to exit, then check both its
+# exit code and that the success line appeared. The test prints the
+# rendered text via console.log only after `expect().toMatch` passes.
 LOG=$(mktemp)
-timeout --signal=TERM 180s npm test --silent >"$LOG" 2>&1 &
-PID=$!
+if ! timeout --signal=TERM 180s npm test --silent >"$LOG" 2>&1; then
+    fail_with_log "$LOG" "jest exited non-zero"
+fi
 
-deadline=$(( $(date +%s) + 170 ))
-if await_success_line "$LOG" "$PID" "$deadline"; then
+if grep -E "feature flag evaluates to [Tt]rue" "$LOG" >/dev/null 2>&1; then
+    grep -E "feature flag evaluates to [Tt]rue" "$LOG" | head -1
+    echo "validator: ok"
     exit 0
 fi
 
-kill -TERM "$PID" 2>/dev/null || true
-wait "$PID" 2>/dev/null || true
 fail_with_log "$LOG" "did not see expected line: feature flag evaluates to true"
