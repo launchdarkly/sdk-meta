@@ -7,15 +7,18 @@ description: "JavaScript in section \"Access flag values\""
 ---
 
 ```js
-import { withLDConsumer } from 'launchdarkly-react-client-sdk';
+import { useBoolVariation, useLDClient } from '@launchdarkly/react-sdk';
 
-const Home = ({ flags, ldClient /*, ...otherProps */ }) => {
+function Home() {
+  const ldClient = useLDClient();
 
   // You can call any of the methods from the JavaScript SDK
   // ldClient.identify({...})
 
-  return flags.devTestFlag ? <div>Flag on</div> : <div>Flag off</div>;
-};
+  const devTestFlag = useBoolVariation('dev-test-flag', false);
 
-export default withLDConsumer()(Home);
+  return devTestFlag ? <div>Flag on</div> : <div>Flag off</div>;
+}
+
+export default Home;
 ```

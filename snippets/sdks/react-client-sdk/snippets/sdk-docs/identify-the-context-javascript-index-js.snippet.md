@@ -9,22 +9,21 @@ description: "JavaScript: index.js in section \"Identify the context\""
 ```js
 // index.js
 import React from 'react';
-import ReactDOM from 'react-dom';
-import App from 'app.js';
-import { asyncWithLDProvider } from 'launchdarkly-react-client-sdk';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import { createLDReactProvider } from '@launchdarkly/react-sdk';
 
-const renderApp = async () => {
-  const LDProvider = await asyncWithLDProvider({ clientSideID: 'example-client-side-id' });
+const LDReactProvider = createLDReactProvider('example-client-side-id', {
+  kind: 'user',
+  key: 'example-context-key',
+});
 
-  ReactDOM.render(
-    <React.StrictMode>
-      <LDProvider>
-        <App />
-      </LDProvider>
-    </React.StrictMode>,
-    document.getElementById('root')
-  )
-}
-
-renderApp();
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <LDReactProvider>
+      <App />
+    </LDReactProvider>
+  </React.StrictMode>
+);
 ```

@@ -7,10 +7,7 @@ description: "JavaScript in section \"Flag keys in the React Web SDK\""
 ---
 
 ```js
-export default withLDProvider({
-  clientSideID: 'example-client-side-id',
-  reactOptions: {
-    useCamelCaseFlagKeys: false
-  }
-})(App);
+import { useBoolVariation } from '@launchdarkly/react-sdk';
+
+const myFlag = useBoolVariation('my-flag-key', false);
 ```

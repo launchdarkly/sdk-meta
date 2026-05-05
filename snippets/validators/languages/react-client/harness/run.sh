@@ -56,6 +56,7 @@ for line in body.splitlines():
         imports.append(line)
     else:
         rest.append(line)
+imports.append("import { useInitializationStatus } from '@launchdarkly/react-sdk';")
 import_block = "\n".join(imports)
 rest_text = "\n".join(rest)
 
@@ -68,13 +69,18 @@ export default function App() {{
 function WrappedFlagEvalBody() {{
 {rest_text}
 
-  // The wrappee's if/else has comment-only branches (`// TODO: Put
-  // your feature here` / `// TODO: Put your fallback behavior here`).
-  // The validator emits the EXAM-HELLO success line unconditionally
-  // so the assertion passes regardless of which branch executes --
-  // we are testing that the body parsed, imports resolved, and the
-  // hook ran inside an <LDReactProvider>-mounted render context, not
-  // the flag's truth value.
+  // Gate the EXAM-HELLO sentinel on the SDK actually finishing
+  // initialization. Pre-init, useBoolVariation returns the default,
+  // so emitting the sentinel unconditionally would let the test pass
+  // even when the SDK never connected. Holding the sentinel back
+  // until status === 'complete' makes the Playwright check a real
+  // end-to-end assertion. The wrappee's if/else has comment-only
+  // branches and is evaluated for its hook side effect only -- the
+  // flag's truth value is not what this snippet validates.
+  const {{ status }} = useInitializationStatus();
+  if (status !== 'complete') {{
+    return <p>SDK initialization {{status}}...</p>;
+  }}
   return <p>feature flag evaluates to true</p>;
 }}
 """

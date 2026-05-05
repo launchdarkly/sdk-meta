@@ -16,11 +16,6 @@ description: |
       `if (...) { ... }` form a block that's only legal *inside a
       render context* (a React component called inside
       `<LDReactProvider>`).
-    - The wrappee's flag-key string (e.g. `'feature-key'`) is a
-      human-readable placeholder; the live flag key comes from
-      `LAUNCHDARKLY_FLAG_KEY` and is substituted upstream via the
-      wrappee's `validation.placeholders` block before the body
-      reaches this scaffold.
 
   Splicing the body verbatim into a function body would yield a parse
   error on the `import`. Splicing at module scope would crash on the
@@ -31,10 +26,9 @@ description: |
   wraps the remainder in a `WrappedFlagEvalBody` function component,
   and emits `src/main.tsx` + `src/App.tsx` boilerplate that mounts
   the component inside `<LDReactProvider>`. The `WrappedFlagEvalBody`
-  unconditionally renders the EXAM-HELLO success line so the
-  Playwright check passes once the body has mounted -- the assertion
-  surface is "the body parsed, imports resolved, the hook ran inside
-  a render context", not the flag's truth value.
+  gates the EXAM-HELLO sentinel on `useInitializationStatus()`
+  reporting `status === 'complete'`, only promoting to the success
+  line after the SDK has actually initialized.
 inputs:
   body:
     type: string
