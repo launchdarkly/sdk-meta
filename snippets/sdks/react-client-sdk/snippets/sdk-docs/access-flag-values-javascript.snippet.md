@@ -7,18 +7,13 @@ description: "JavaScript in section \"Access flag values\""
 ---
 
 ```js
-import { useBoolVariation, useLDClient } from '@launchdarkly/react-sdk';
+import { useBoolVariation } from '@launchdarkly/react-sdk';
 
-function Home() {
-  const ldClient = useLDClient();
+const Home = () => {
+  const showNewFeature = useBoolVariation('show-new-feature', false);
 
-  // You can call any of the methods from the JavaScript SDK
-  // ldClient.identify({...})
-
-  const devTestFlag = useBoolVariation('dev-test-flag', false);
-
-  return devTestFlag ? <div>Flag on</div> : <div>Flag off</div>;
-}
+  return showNewFeature ? <div>Flag on</div> : <div>Flag off</div>;
+};
 
 export default Home;
 ```

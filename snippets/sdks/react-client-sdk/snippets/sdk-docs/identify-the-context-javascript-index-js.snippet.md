@@ -10,20 +10,19 @@ description: "JavaScript: index.js in section \"Identify the context\""
 // index.js
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import App from 'app.js';
 import { createLDReactProvider } from '@launchdarkly/react-sdk';
 
-const LDReactProvider = createLDReactProvider('example-client-side-id', {
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+const LDProvider = createLDReactProvider('example-client-side-id', {
   kind: 'user',
-  key: 'example-context-key',
+  anonymous: true,
 });
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <LDReactProvider>
-      <App />
-    </LDReactProvider>
-  </React.StrictMode>
+  <LDProvider>
+    <App />
+  </LDProvider>
 );
 ```
