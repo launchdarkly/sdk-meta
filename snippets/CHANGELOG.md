@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.4.0...snippets/v0.5.0) (2026-05-05)
+
+
+### Features
+
+* **snippets:** finish runtime validation for the 3 deferred sdk-info snippets ([#421](https://github.com/launchdarkly/sdk-meta/issues/421)) ([1e3648c](https://github.com/launchdarkly/sdk-meta/commit/1e3648c3c550bd55f9c0153f2fcc18e85550a14d))
+
 ## [0.4.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.3.0...snippets/v0.4.0) (2026-05-04)
 
 
