@@ -7,15 +7,15 @@ file: react-client-sdk/flagEval.txt
 description: Flag evaluation example for react-client-sdk.
 validation:
   scaffold: react-client-sdk/scaffolds/flag-eval-runner
+  placeholders:
+    feature-key: LAUNCHDARKLY_FLAG_KEY
 ---
 
 ```javascript
 import { useBoolVariation } from '@launchdarkly/react-sdk';
 
-const flagKey = 'featureKey';
-
 // useBoolVariation evaluates a boolean feature flag and returns its value.
-const flagValue = useBoolVariation(flagKey, false);
+const flagValue = useBoolVariation('feature-key', false);
 
 // In your component, find where your feature is instantiated
 if (flagValue) {

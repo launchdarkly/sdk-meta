@@ -7,21 +7,23 @@
 # `validation.env`):
 #
 #   - SNIPPET_MODE unset (init): the staged snippet body is a complete
-#     entrypoint — `src/main.tsx` (or `src/index.tsx`) plus a
-#     companion App.tsx. We copy them in, point index.html at the
-#     entrypoint, and run vite build + preview.
+#     entrypoint -- `src/main.tsx` plus a companion App.tsx. We copy
+#     them in and run vite build + preview.
 #
 #   - SNIPPET_MODE=flag-eval: the staged file at $SNIPPET_ENTRYPOINT
 #     contains the wrappee body verbatim, which has a top-level
 #     `import` plus a hooks call that's only legal inside a render
 #     context. We rewrite it in-place: lift `import` lines to module
-#     scope, map the snippet's `featureKey` token to the camelCased
-#     form of LAUNCHDARKLY_FLAG_KEY (matches the React SDK's
-#     auto-camelCase), wrap the rest in a `WrappedFlagEvalBody`
-#     component, and emit a fresh src/main.tsx + src/App.tsx that
-#     mounts the component inside `<LDProvider>`. The wrapped
-#     component returns a sentinel string when the flag is true; the
-#     standard Playwright check observes the EXAM-HELLO success line.
+#     scope, wrap the rest in a `WrappedFlagEvalBody` component, and
+#     emit a fresh src/main.tsx + src/App.tsx that mounts the
+#     component inside `<LDReactProvider>`. The wrapping component
+#     unconditionally renders the EXAM-HELLO success line; the
+#     standard Playwright check observes it.
+#
+#     The wrappee's flag-key string is substituted with the live
+#     LAUNCHDARKLY_FLAG_KEY upstream via the snippet's
+#     `validation.placeholders` block, so this harness does not need
+#     to do any flag-key rewriting.
 set -eu
 
 . /harness-shared/lib.sh
@@ -36,30 +38,18 @@ if [ "$MODE" = "flag-eval" ]; then
         exit 1
     fi
 
-    # Generate src/App.tsx and src/main.tsx in one Python pass — keeps
+    # Generate src/App.tsx and src/main.tsx in one Python pass -- keeps
     # multi-line string handling out of /bin/sh's hands.
-    python3 - "$BODY_FILE" "$LAUNCHDARKLY_FLAG_KEY" "$LAUNCHDARKLY_CLIENT_SIDE_ID" <<'PYEOF'
+    python3 - "$BODY_FILE" "$LAUNCHDARKLY_CLIENT_SIDE_ID" <<'PYEOF'
 import re, sys
-body_path, flag_key, client_side_id = sys.argv[1], sys.argv[2], sys.argv[3]
+body_path, client_side_id = sys.argv[1], sys.argv[2]
 with open(body_path) as f:
     body = f.read()
-
-# camelCase the flag key the same way lodash.camelcase does — split on
-# any non-alnum, lowercase the first segment, TitleCase the rest.
-# Mirrors react-client-sdk's camelCaseKeys(rawFlags). Without this the
-# wrappee body's `featureKey` identifier would never resolve to a real
-# value in the LDProvider's flags object.
-parts = [p for p in re.split(r"[^A-Za-z0-9]+", flag_key) if p]
-if not parts:
-    sys.exit("LAUNCHDARKLY_FLAG_KEY is empty after camelCase split")
-flag_ident = parts[0][:1].lower() + parts[0][1:]
-for p in parts[1:]:
-    flag_ident += p[:1].upper() + p[1:]
 
 # Lift static `import` lines to module scope; everything else moves
 # into the wrapped component body. ESM forbids `import` inside a
 # function body, and the wrappee's hooks call is only legal inside a
-# render context — so the body has to be split at validate time.
+# render context -- so the body has to be split at validate time.
 imports, rest = [], []
 for line in body.splitlines():
     if re.match(r"^\s*import\s.+;?\s*$", line):
@@ -68,11 +58,6 @@ for line in body.splitlines():
         rest.append(line)
 import_block = "\n".join(imports)
 rest_text = "\n".join(rest)
-
-# Replace the snippet's `featureKey` destructure target with the
-# camelCased real flag identifier. Word-boundary sub avoids touching
-# anything else in the body.
-rest_text = re.sub(r"\bfeatureKey\b", flag_ident, rest_text)
 
 app_tsx = f"""{import_block}
 
@@ -83,43 +68,30 @@ export default function App() {{
 function WrappedFlagEvalBody() {{
 {rest_text}
 
-  // The wrappee body's if/else has comment-only branches (the
-  // gonfalon source says `// TODO: Put your feature here` /
-  // `// TODO: Put your fallback behavior here`). The validator
-  // emits the EXAM-HELLO success line unconditionally so the
-  // assertion passes on either branch — which one the LD env
-  // actually targets is not what this snippet validates. The
-  // canonical surface we're testing is "the body parsed cleanly,
-  // imports resolved, the hooks call ran inside an
-  // <LDProvider>-mounted render context, the destructure
-  // succeeded." The flag's truth value is asserted by the
-  // wrappee's if/else returning the camelCased ident as a
-  // boolean, but the page-level sentinel still emits regardless
-  // of which branch was taken.
-  return (
-    <div>
-      <p>scaffold: flag {flag_ident}={{String({flag_ident})}}</p>
-      <p>feature flag evaluates to true</p>
-    </div>
-  );
+  // The wrappee's if/else has comment-only branches (`// TODO: Put
+  // your feature here` / `// TODO: Put your fallback behavior here`).
+  // The validator emits the EXAM-HELLO success line unconditionally
+  // so the assertion passes regardless of which branch executes --
+  // we are testing that the body parsed, imports resolved, and the
+  // hook ran inside an <LDReactProvider>-mounted render context, not
+  // the flag's truth value.
+  return <p>feature flag evaluates to true</p>;
 }}
 """
 
-main_tsx = f"""import {{ StrictMode }} from 'react';
-import {{ createRoot }} from 'react-dom/client';
-import {{ LDProvider }} from 'launchdarkly-react-client-sdk';
+main_tsx = f"""import {{ createRoot }} from 'react-dom/client';
+import {{ createLDReactProvider, LDContext }} from '@launchdarkly/react-sdk';
 import App from './App';
 
-// Match the init scaffold's context fixture — the LD sandbox env's
-// `hello-boolean` flag is targeted to this user/email pair.
-const context = {{ kind: 'user', key: 'EXAMPLE_CONTEXT_KEY', email: 'biz@face.dev' }};
+// Match the init scaffold's context fixture -- the LD sandbox env's
+// boolean flag is targeted to this user/email pair.
+const context: LDContext = {{ kind: 'user', key: 'EXAMPLE_CONTEXT_KEY', email: 'biz@face.dev' }};
+const LDReactProvider = createLDReactProvider('{client_side_id}', context);
 
 createRoot(document.getElementById('root') as HTMLElement).render(
-  <StrictMode>
-    <LDProvider clientSideID="{client_side_id}" context={{context}}>
-      <App />
-    </LDProvider>
-  </StrictMode>,
+  <LDReactProvider>
+    <App />
+  </LDReactProvider>,
 );
 """
 
@@ -128,7 +100,7 @@ with open("/opt/hello-react/src/App.tsx", "w") as f:
 with open("/opt/hello-react/src/main.tsx", "w") as f:
     f.write(main_tsx)
 
-print(f"validator: rewrote App.tsx + main.tsx for flag {flag_key} (ident={flag_ident})")
+print("validator: rewrote App.tsx + main.tsx for flag-eval body")
 PYEOF
 
     cd /opt/hello-react

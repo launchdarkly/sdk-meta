@@ -4,7 +4,7 @@ FROM mcr.microsoft.com/playwright:v1.59.1-noble
 # SDK installed. Per-validate cycles drop the snippet's entrypoint
 # (src/index.tsx for legacy, src/main.tsx for createApp) plus its App.tsx
 # companion into src/ and re-run vite build.
-ARG LD_REACT_SDK_VERSION=3.9.0
+ARG LD_REACT_SDK_VERSION=4.0.0
 ARG REACT_VERSION=19.2.5
 ARG VITE_VERSION=8.0.10
 ARG VITE_PLUGIN_REACT_VERSION=6.0.1
@@ -22,7 +22,7 @@ RUN printf '{\n\
     "preview": "vite preview --port=4173 --host"\n\
   },\n\
   "dependencies": {\n\
-    "launchdarkly-react-client-sdk": "%s",\n\
+    "@launchdarkly/react-sdk": "%s",\n\
     "react": "%s",\n\
     "react-dom": "%s"\n\
   },\n\

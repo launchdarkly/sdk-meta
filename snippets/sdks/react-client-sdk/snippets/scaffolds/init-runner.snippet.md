@@ -8,18 +8,17 @@ description: |
   Runs an `init.txt`-style React snippet end-to-end against a real
   LaunchDarkly env. The init body is a complete entrypoint: it imports
   React + the LD provider, declares an `App` component, and calls
-  `createRoot(...).render(<LDProvider>...<App />...</LDProvider>)`. The
-  scaffold drops the body verbatim into `src/main.tsx`, then appends a
-  poll loop that watches the React-rendered DOM. As soon as the body's
-  `App` renders its sentinel text inside `#root`, we mirror the
-  EXAM-HELLO success line into `document.body` so the validator's
+  `createRoot(...).render(<LDReactProvider>...<App />...</LDReactProvider>)`.
+  The scaffold drops the body verbatim into `src/main.tsx`, then
+  appends a poll loop that watches the React-rendered DOM. As soon as
+  the body's `App` renders its sentinel text inside `#root`, we mirror
+  the EXAM-HELLO success line into `document.body` so the validator's
   Playwright check matches.
 
-  LDProvider only renders its children after the SDK has initialized
-  (or its `deferInitialization` timeout fires); seeing the body's
-  sentinel text is the end-to-end signal that init succeeded against a
-  real LD env. If init fails, the children never mount and the poll
-  times out.
+  Seeing the body's sentinel text is the end-to-end signal that the
+  provider mounted successfully against a real LD env. If the bundle
+  fails to build or the provider throws on mount, the sentinel never
+  renders and the poll times out.
 inputs:
   body:
     type: string
@@ -47,7 +46,7 @@ validation:
       setTimeout(tick, 200);
       return;
     }
-    document.body.innerHTML = '<p>scaffold: sentinel never rendered (LDProvider did not finish initializing)</p>';
+    document.body.innerHTML = '<p>scaffold: sentinel never rendered (LDReactProvider did not mount the body)</p>';
   };
   tick();
 })();
