@@ -116,6 +116,23 @@ jobs:
             key-type: mobile
             label: android-client-sdk (init)
             snippet: android-client-sdk/sdk-info/init
+
+          # SDKs whose sdk-docs slice picked up bound syntax-only
+          # validators in the docs-validation pass (PR
+          # rlamb/sdk-docs-validation). Each matrix row builds the
+          # per-SDK Docker image (or, for ios-install, runs the
+          # native macos toolchain) and validates every bound
+          # sdk-docs snippet end-to-end. The harness consumes a
+          # server SDK key for these; the syntax-only scaffolds
+          # never reach the LD env (the wrappee body is
+          # never-instantiated / never-called), but the harness
+          # uniformly requires the env var.
+          - { sdk: cpp-client-sdk,    runs-on: ubuntu-latest, key-type: mobile }
+          - { sdk: cpp-server-sdk,    runs-on: ubuntu-latest, key-type: server }
+          - { sdk: electron-client-sdk, runs-on: ubuntu-latest, key-type: client }
+          - { sdk: flutter-client-sdk,  runs-on: ubuntu-latest, key-type: client }
+          - { sdk: haskell-server-sdk,  runs-on: ubuntu-latest, key-type: server }
+          - { sdk: rust-server-sdk,     runs-on: ubuntu-latest, key-type: server }
     steps:
       - uses: actions/checkout@v4
 

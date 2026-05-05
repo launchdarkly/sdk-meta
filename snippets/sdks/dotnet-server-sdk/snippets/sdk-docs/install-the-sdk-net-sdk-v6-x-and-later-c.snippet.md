@@ -4,6 +4,8 @@ sdk: dotnet-server-sdk
 kind: reference
 lang: csharp
 description: ".NET SDK v6.x and later (C#) in section \"Install the SDK\""
+validation:
+  scaffold: dotnet-server-sdk/scaffolds/csharp-syntax-only
 ---
 
 ```csharp

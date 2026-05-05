@@ -4,6 +4,8 @@ sdk: go-server-sdk
 kind: reference
 lang: go
 description: "Go SDK, using LDScopedClient in section \"Initialize the client\""
+validation:
+  scaffold: go-server-sdk/scaffolds/go-syntax-only
 ---
 
 ```go
@@ -11,7 +13,7 @@ client, _ := ld.MakeCustomClient("YOUR_SDK_KEY",
   ld.Config{
     // optional observability plugin, requires Go SDK v7.11+
     Plugins: []ldplugins.Plugin{
-      ldobserve.NewObservabilityPlugin()
+      ldobserve.NewObservabilityPlugin(),
     },
   }, 5*time.Second)
 

@@ -4,6 +4,8 @@ sdk: node-client-sdk
 kind: reference
 lang: typescript
 description: "TypeScript in section \"Initialize the client\""
+validation:
+  scaffold: node-client-sdk/scaffolds/node-client-syntax-only
 ---
 
 ```ts

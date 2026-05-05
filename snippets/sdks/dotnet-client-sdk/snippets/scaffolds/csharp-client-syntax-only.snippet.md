@@ -22,18 +22,23 @@ validation:
 ```csharp
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Client;
+using System;
+using LaunchDarkly.Sdk.Client.Integrations;
+// USING_LIFT_MARKER
 
 namespace LaunchDarklySnippet
 {
     public class Program
     {
-        // Stub so the wrappee body's `client.BoolVariation(...)`,
+        // Stub fields so the wrappee body's `client.BoolVariation(...)`,
         // `client.StringVariation(...)`, etc. resolve at compile time.
-        // Never invoked at runtime — Main below short-circuits to print
-        // the EXAM-HELLO line.
-        #pragma warning disable CS8625
-        private static LdClient client = null;
-        #pragma warning restore CS8625
+        // Typing `client` as `dynamic` makes the body forward-compatible
+        // across .NET client SDK versions whose APIs differ slightly
+        // (LdClient.Init signatures changed across v3 / v4 / v5). Never
+        // invoked at runtime — Main below short-circuits.
+        #pragma warning disable CS8625, CS0414, CS0649
+        private static dynamic client = null;
+        #pragma warning restore CS8625, CS0414, CS0649
 
         public static void Main(string[] args)
         {
@@ -41,9 +46,12 @@ namespace LaunchDarklySnippet
         }
 
         #pragma warning disable CS0162
-        private void Wrappee()
+        private async System.Threading.Tasks.Task Wrappee()
         {
+            try {
 {{ body }}
+            } catch (System.Exception) { /* never reached */ }
+            await System.Threading.Tasks.Task.CompletedTask;
         }
         #pragma warning restore CS0162
     }

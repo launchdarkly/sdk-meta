@@ -4,6 +4,8 @@ sdk: cpp-client-sdk
 kind: reference
 lang: cpp
 description: "No namespace in section \"Understand the SDK namespaces\""
+validation:
+  scaffold: cpp-client-sdk/scaffolds/cpp-client-syntax-only
 ---
 
 ```cpp

@@ -4,6 +4,8 @@ sdk: cpp-server-sdk
 kind: reference
 lang: c
 description: "C++ SDK v3.0 (C binding) in section \"Evaluate a context\""
+validation:
+  scaffold: cpp-server-sdk/scaffolds/cpp-syntax-only
 ---
 
 ```c

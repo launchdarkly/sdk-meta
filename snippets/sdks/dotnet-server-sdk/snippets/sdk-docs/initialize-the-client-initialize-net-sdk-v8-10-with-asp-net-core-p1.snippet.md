@@ -4,6 +4,11 @@ sdk: dotnet-server-sdk
 kind: reference
 lang: csharp
 description: "Initialize, .NET SDK v8.10+ with ASP.Net Core in section \"Initialize the client\""
+# Bucket C: ASP.NET Core init fragment. Requires Microsoft.AspNetCore +
+# LaunchDarkly.Observability + ObservabilityPlugin types that the
+# csharp-syntax-only scaffold doesn't pull in, plus the body references
+# the bare identifier `args` which is only in scope inside the
+# top-level Main(string[] args). See _sdk-docs-port-notes.md.
 ---
 
 ```csharp

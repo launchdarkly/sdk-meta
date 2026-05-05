@@ -4,6 +4,8 @@ sdk: go-server-sdk
 kind: reference
 lang: go
 description: "Go SDK, using LDClient and default configuration in section \"Initialize the client\""
+validation:
+  scaffold: go-server-sdk/scaffolds/go-syntax-only
 ---
 
 ```go

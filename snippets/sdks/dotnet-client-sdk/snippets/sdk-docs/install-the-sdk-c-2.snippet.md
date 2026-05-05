@@ -4,6 +4,8 @@ sdk: dotnet-client-sdk
 kind: reference
 lang: csharp
 description: "C# in section \"Install the SDK\""
+validation:
+  scaffold: dotnet-client-sdk/scaffolds/csharp-client-syntax-only
 ---
 
 ```csharp

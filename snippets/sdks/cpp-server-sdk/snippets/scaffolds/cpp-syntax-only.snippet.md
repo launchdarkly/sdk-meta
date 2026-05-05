@@ -17,7 +17,15 @@ validation:
 
 ```cpp
 #include <iostream>
+#include <launchdarkly/server_side/client.hpp>
+#include <launchdarkly/server_side/bindings/c/sdk.h>
 
+// Wrappee is a never-instantiated template — body is parsed but
+// most type-checks are deferred to instantiation (which never
+// happens). Keeps doc fragments that reference an undeclared
+// `client` (e.g. evaluate-a-context fragments) from failing the
+// build.
+template <int = 0>
 void _wrappee() {
 {{ body }}
 }

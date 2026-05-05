@@ -4,6 +4,8 @@ sdk: electron-client-sdk
 kind: reference
 lang: javascript
 description: "JavaScript in section \"Server-side Node.js SDK compatibility\""
+validation:
+  scaffold: electron-client-sdk/scaffolds/electron-syntax-only
 ---
 
 ```js

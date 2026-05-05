@@ -4,6 +4,8 @@ sdk: ios-client-sdk
 kind: reference
 lang: swift
 description: "iOS SDK v9.0 (Swift) in section \"Background fetch\""
+validation:
+  scaffold: ios-client-sdk/scaffolds/swift-syntax-only
 ---
 
 ```swift

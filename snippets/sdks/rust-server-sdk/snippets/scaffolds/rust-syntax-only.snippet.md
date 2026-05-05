@@ -16,12 +16,28 @@ validation:
 ---
 
 ```rust
-#[allow(dead_code, unused)]
-fn _wrappee() {
+// Pull SDK types into scope so doc-fragment bodies referencing
+// `ContextBuilder`, `MultiContextBuilder`, `Reference`, `Client`, etc.
+// resolve at compile time without requiring each fragment to repeat
+// the imports.
+#[allow(unused_imports)]
+use launchdarkly_server_sdk::{
+    AttributeValue, Client, ConfigBuilder, Context, ContextBuilder,
+    MultiContextBuilder, Reference,
+};
+#[allow(unused_imports)]
+use std::collections::HashMap;
+
+#[allow(dead_code, unused, unused_variables, unused_must_use)]
+async fn _wrappee() -> Result<(), Box<dyn std::error::Error>> {
+    let client: Client = unimplemented!();
+    let context = ContextBuilder::new("stub").build()?;
 {{ body }}
+    Ok(())
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
     println!("feature flag evaluates to true");
 }
 ```

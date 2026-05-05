@@ -4,6 +4,8 @@ sdk: rust-server-sdk
 kind: reference
 lang: rust
 description: "1.0 syntax, attribute marked private for one context in section \"Understanding changes to private attributes\""
+validation:
+  scaffold: rust-server-sdk/scaffolds/rust-syntax-only
 ---
 
 ```rust

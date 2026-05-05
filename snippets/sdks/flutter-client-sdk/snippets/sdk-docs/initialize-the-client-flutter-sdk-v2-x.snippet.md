@@ -4,6 +4,8 @@ sdk: flutter-client-sdk
 kind: reference
 lang: dart
 description: "Flutter SDK v2.x in section \"Initialize the client\""
+validation:
+  scaffold: flutter-client-sdk/scaffolds/flutter-syntax-only
 ---
 
 ```dart
