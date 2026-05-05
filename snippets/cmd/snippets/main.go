@@ -194,6 +194,7 @@ func runValidate(args []string) {
 	fset := flag.NewFlagSet("validate", flag.ExitOnError)
 	sdk := fset.String("sdk", "", "sdk id to validate (required)")
 	snippet := fset.String("snippet", "", "snippet id to validate (optional; restricts to one snippet)")
+	snippetSkip := fset.String("snippet-skip", "", "snippet id to skip (optional; useful for splitting one SDK across CI rows)")
 	sdks := fset.String("sdks", "", "path to a sdks/ directory (default: embedded)")
 	validators := fset.String("validators", "./validators", "path to the validators/ directory")
 	_ = fset.Parse(args)
@@ -207,6 +208,7 @@ func runValidate(args []string) {
 		ValidatorsDir: *validators,
 		SDK:           *sdk,
 		Snippet:       *snippet,
+		SnippetSkip:   *snippetSkip,
 	}); err != nil {
 		fmt.Fprintf(os.Stderr, "validate failed: %v\n", err)
 		os.Exit(1)

@@ -22,6 +22,7 @@ type Config struct {
 	ValidatorsDir string // path to validators/ (must be on disk — Docker COPY needs it)
 	SDK           string // sdk id to validate (empty = all)
 	Snippet       string // snippet id to validate (empty = all in the SDK)
+	SnippetSkip   string // snippet id to skip (empty = none)
 }
 
 // envInputs holds the environment-derived input values that get substituted
@@ -65,6 +66,9 @@ func Run(cfg Config) error {
 			continue
 		}
 		if cfg.Snippet != "" && s.Frontmatter.ID != cfg.Snippet {
+			continue
+		}
+		if cfg.SnippetSkip != "" && s.Frontmatter.ID == cfg.SnippetSkip {
 			continue
 		}
 		if !isValidatable(s) {
@@ -374,7 +378,11 @@ func runDocker(cfg Config, runner *Runner, runnerDir, stageDir, entrypoint strin
 	if err != nil {
 		return err
 	}
-	build := exec.Command("docker", "build", "--quiet",
+	// `--progress=plain` keeps stdout tame (a one-line-per-step log
+	// rather than the interactive multi-line redraws) while leaving
+	// failure output visible — important for diagnosing apt/network
+	// failures inside the build that --quiet would otherwise swallow.
+	build := exec.Command("docker", "build", "--progress=plain",
 		"-f", dockerfile,
 		"-t", tag,
 		cfg.ValidatorsDir,

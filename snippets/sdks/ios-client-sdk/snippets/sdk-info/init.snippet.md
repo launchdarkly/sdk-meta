@@ -5,6 +5,10 @@ kind: init
 lang: swift
 file: ios-client-sdk/init.txt
 description: Client initialization snippet for ios-client-sdk.
+validation:
+  scaffold: ios-client-sdk/scaffolds/init-runner
+  placeholders:
+    YOUR_MOBILE_KEY: LAUNCHDARKLY_MOBILE_KEY
 ---
 
 ```swift
