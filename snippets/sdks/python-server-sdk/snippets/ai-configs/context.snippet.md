@@ -8,10 +8,12 @@ description: Build an evaluation context for python-server-sdk AI Configs.
 ---
 
 ```python
-context = Context.builder("context-key-123abc")
+context = (
+    Context.builder("context-key-123abc")
     .set("firstName", "Sandy")
     .set("lastName", "Smith")
     .set("email", "sandy@example.com")
     .set("groups", ["Google", "Microsoft"])
     .build()
+)
 ```

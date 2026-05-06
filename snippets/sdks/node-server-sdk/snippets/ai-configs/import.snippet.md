@@ -8,6 +8,6 @@ description: Import statements for node-server-sdk AI Configs.
 ---
 
 ```javascript
-import { init, LDContext } from '@launchdarkly/node-server-sdk';
+import { init, LDClient } from '@launchdarkly/node-server-sdk';
 import { initAi, LDAIClient, LDAIConfig } from '@launchdarkly/server-sdk-ai';
 ```

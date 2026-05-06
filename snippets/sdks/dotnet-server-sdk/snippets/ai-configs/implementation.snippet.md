@@ -14,7 +14,7 @@ var fallbackConfig = LdAiConfig.New()
   .AddMessage("", Role.system)
   .SetModelProviderName("my-default-provider")
   .SetEnabled(true)
-  .Build()
+  .Build();
 
 var tracker = aiClient.Config(
   "{{configKey}}",

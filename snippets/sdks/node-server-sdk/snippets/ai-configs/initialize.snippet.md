@@ -10,7 +10,7 @@ description: Initialize the LaunchDarkly client and AI Configs client for node-s
 ```javascript
 const ldClient: LDClient = init('{{sdkkey}}');
 try {
-await ldClient.waitForInitialization({ timeout: 10 });
+    await ldClient.waitForInitialization({ timeout: 10 });
     // initialization complete
 } catch (error) {
     // timeout or SDK failed to initialize

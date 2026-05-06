@@ -8,7 +8,7 @@ description: Resolve an AI Config with a fallback for go-server-sdk.
 ---
 
 ```go
-fallbackValue := NewConfig().
+fallbackValue := ldai.NewConfig().
   Enable().
   WithModelName("my-default-model").
   WithModelParam("temperature", ldvalue.Float64(0.8)).

@@ -9,7 +9,12 @@ description: Import block for go-server-sdk AI Configs.
 
 ```go
 import (
+  "time"
+
+  "github.com/launchdarkly/go-sdk-common/v3/ldcontext"
+  "github.com/launchdarkly/go-sdk-common/v3/ldvalue"
   ld "github.com/launchdarkly/go-server-sdk/v7"
   "github.com/launchdarkly/go-server-sdk/ldai"
+  "github.com/launchdarkly/go-server-sdk/ldai/datamodel"
 )
 ```
