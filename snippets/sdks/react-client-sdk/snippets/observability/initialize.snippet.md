@@ -9,7 +9,7 @@ description: Initialize react-client-sdk via withLDProvider with observability +
 
 ```javascript
 const LDProvider = withLDProvider({
-  clientSideId: 'SDK_KEY',
+  clientSideID: 'SDK_KEY',
   // … your existing config, if relevant
   options: {
     plugins: [
