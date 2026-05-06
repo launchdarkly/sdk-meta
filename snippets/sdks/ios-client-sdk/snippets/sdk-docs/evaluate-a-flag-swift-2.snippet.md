@@ -13,7 +13,7 @@ let showFeature = client.boolVariation(forKey: "example-flag-key", defaultValue:
 
 if showFeature {
   // Application code to show the feature
-else {
+} else {
   // The code to run if the feature is off
 }
 ```

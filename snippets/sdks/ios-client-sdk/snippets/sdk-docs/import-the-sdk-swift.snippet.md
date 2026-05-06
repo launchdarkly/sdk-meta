@@ -4,8 +4,6 @@ sdk: ios-client-sdk
 kind: reference
 lang: swift
 description: "Swift in section \"Import the SDK\""
-validation:
-  scaffold: ios-client-sdk/scaffolds/swift-syntax-only
 ---
 
 ```swift

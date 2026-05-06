@@ -310,6 +310,41 @@ I install" direction the rest of the bindings reflect. The current
 v4 init fragment (`initialize-the-client-flutter-sdk-v4`) does
 bind cleanly.
 
+## iOS v8.x init / background fragments
+
+**Severity**: low (older API surface)
+
+**Snippets affected**:
+`ios-client-sdk/sdk-docs/background-fetch-ios-sdk-v8-0-and-earlier-swift`,
+`ios-client-sdk/sdk-docs/initialize-the-client-ios-sdk-v8-x-swift`.
+
+**Why unbindable**: both fragments reference the v8.0-and-earlier
+`LDConfig(mobileKey:)` initializer that doesn't take an
+`autoEnvAttributes:` argument. The scaffold's `project.yml` pins
+`launchdarkly-ios-client-sdk` `from: 11.0.0`, which made the
+`autoEnvAttributes:` parameter mandatory in v9.0. Pinning a parallel
+v8.x package alongside v11 would require a separate Xcode project
+shape and the validator would compile two SDKs into the same
+binary — out of scope for the syntax-only path.
+
+## iOS Observability plugin fragments
+
+**Severity**: low (extra plugin not in the validator's deps)
+
+**Snippets affected**:
+`ios-client-sdk/sdk-docs/import-the-sdk-swift`,
+`ios-client-sdk/sdk-docs/initialize-the-client-ios-sdk-v9-x-swift`.
+
+**Why unbindable**: each fragment references the
+`LaunchDarklyObservability` Swift package (`Observability(...)`,
+`import LaunchDarklyObservability`) to demonstrate the plugin
+integration. The ios-client validator's `project.yml` declares only
+the `LaunchDarkly` package, so the plugin's `Observability` type
+isn't in scope and the Swift compiler rejects the fragment. Adding
+the observability plugin would let these compile but introduces a
+transitive dep the rest of the matrix doesn't need; cleaner to
+defer until a dedicated observability validator exists.
+
 ## Rust v1.0 / Beta-syntax fragments
 
 **Severity**: low (older API surface)

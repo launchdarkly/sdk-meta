@@ -4,8 +4,6 @@ sdk: ios-client-sdk
 kind: reference
 lang: swift
 description: "iOS SDK v8.x (Swift) in section \"Initialize the client\""
-validation:
-  scaffold: ios-client-sdk/scaffolds/swift-syntax-only
 ---
 
 ```swift
