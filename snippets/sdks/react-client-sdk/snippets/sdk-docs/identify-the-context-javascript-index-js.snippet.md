@@ -4,13 +4,15 @@ sdk: react-client-sdk
 kind: reference
 lang: javascript
 description: "JavaScript: index.js in section \"Identify the context\""
+validation:
+  scaffold: react-client-sdk/scaffolds/react-syntax-only
 ---
 
 ```js
 // index.js
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from 'app.js';
+import App from './App';
 import { createLDReactProvider } from '@launchdarkly/react-sdk';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

@@ -4,6 +4,8 @@ sdk: react-client-sdk
 kind: reference
 lang: javascript
 description: "JavaScript: Root.tsx in section \"Multi-environment support\""
+validation:
+  scaffold: react-client-sdk/scaffolds/react-syntax-only
 ---
 
 ```js

@@ -4,6 +4,8 @@ sdk: react-client-sdk
 kind: reference
 lang: javascript
 description: "React Web SDK v4.0 in section \"React Web\" (via `startOptions`)"
+validation:
+  scaffold: react-client-sdk/scaffolds/react-syntax-only
 ---
 
 ```js

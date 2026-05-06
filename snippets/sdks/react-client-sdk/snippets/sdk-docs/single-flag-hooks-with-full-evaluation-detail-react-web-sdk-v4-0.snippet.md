@@ -4,6 +4,8 @@ sdk: react-client-sdk
 kind: reference
 lang: javascript
 description: "React Web SDK v4.0 in section \"Single-flag hooks with full evaluation detail\""
+validation:
+  scaffold: react-client-sdk/scaffolds/react-syntax-only
 ---
 
 ```js

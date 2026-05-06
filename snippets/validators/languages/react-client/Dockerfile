@@ -67,6 +67,11 @@ RUN touch src/index.css src/App.css
 RUN printf "import { createRoot } from 'react-dom/client';\nimport App from './App';\ncreateRoot(document.getElementById('root')).render(<App />);\n" > src/main.tsx
 RUN printf "export default function App() { return <div>placeholder</div>; }\n" > src/App.tsx
 
+# Stub multi-environment module so sdk-docs parse-only snippets that
+# `import { ProdLDContext, StagingLDContext } from './environments'`
+# resolve.
+RUN printf "import { initLDReactContext } from '@launchdarkly/react-sdk';\nexport const ProdLDContext = initLDReactContext();\nexport const StagingLDContext = initLDReactContext();\n" > src/environments.ts
+
 RUN printf '<!doctype html>\n\
 <html lang="en">\n\
   <head><meta charset="UTF-8" /><title>hello-react</title></head>\n\
