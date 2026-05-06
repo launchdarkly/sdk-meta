@@ -16,18 +16,75 @@ validation:
 ---
 
 ```cpp
+#include <chrono>
+#include <future>
 #include <iostream>
+#include <string>
+// Native C++ headers.
 #include <launchdarkly/server_side/client.hpp>
+#include <launchdarkly/server_side/config/config_builder.hpp>
+#include <launchdarkly/context_builder.hpp>
+#include <launchdarkly/value.hpp>
+// C-binding headers — doc fragments mix C-binding and native styles.
 #include <launchdarkly/server_side/bindings/c/sdk.h>
+#include <launchdarkly/server_side/bindings/c/config/builder.h>
+#include <launchdarkly/bindings/c/context.h>
+#include <launchdarkly/bindings/c/context_builder.h>
+
+// Polymorphic stub so a body can use `client.BoolVariation(...)`
+// (native-style) AND `LDServerSDK_BoolVariation(client, ...)`
+// (C-binding-style) without needing the scaffold to know which
+// shape the body uses. The wrappee is a never-instantiated template,
+// so the conversion operator and member functions exist at the type
+// system level but are never invoked.
+struct _AnyClient {
+    operator LDServerSDK() const { return nullptr; }
+    template <typename... Args> bool BoolVariation(Args&&...) const { return false; }
+    template <typename... Args> int IntVariation(Args&&...) const { return 0; }
+    template <typename... Args> double DoubleVariation(Args&&...) const { return 0; }
+    template <typename... Args> std::string StringVariation(Args&&...) const { return {}; }
+    template <typename... Args> auto JsonVariation(Args&&...) const { return launchdarkly::Value{}; }
+    template <typename... Args> auto AllFlagsState(Args&&...) const { return false; }
+    template <typename... Args> void TrackEvent(Args&&...) const {}
+    template <typename... Args> void Identify(Args&&...) const {}
+    template <typename... Args> auto StartAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
+};
 
 // Wrappee is a never-instantiated template — body is parsed but
 // most type-checks are deferred to instantiation (which never
-// happens). Keeps doc fragments that reference an undeclared
-// `client` (e.g. evaluate-a-context fragments) from failing the
-// build.
+// happens). The body lives in a nested block so it can re-declare
+// `client` / `context` when the fragment shows the native or
+// C-binding init form (e.g. `server_side::Client client(*config);`,
+// `LDServerSDK client = LDServerSDK_New(...)`).
 template <int = 0>
 void _wrappee() {
+    // Doc fragments mix unqualified names from `launchdarkly` and
+    // `launchdarkly::server_side` (e.g. `ContextBuilder`,
+    // `ConfigBuilder`, `Client`, `server_side::ConfigBuilder`).
+    // Lifting both namespaces inside the template body lets bodies
+    // that omit the namespace prefix (the "no-namespace" /
+    // "using-launchdarkly-server-side-namespace" doc style) compile
+    // without losing the namespace-qualified bodies — those still
+    // resolve through the qualified name first.
+    using namespace launchdarkly;
+    using namespace launchdarkly::server_side;
+    _AnyClient client;
+    LDContext context = nullptr;
+    LDServerConfig config = nullptr;
+    // `maxwait` is referenced by both native-style fragments
+    // (`wait_for(maxwait)` — needs a chrono duration) and C-binding
+    // fragments (`LDServerSDK_Start(client, maxwait, ...)` — needs an
+    // unsigned int milliseconds count). The polymorphic stub provides
+    // implicit conversions to both so neither shape needs to declare
+    // it locally.
+    struct _Maxwait {
+        operator unsigned int() const { return 10000; }
+        operator std::chrono::milliseconds() const { return std::chrono::milliseconds{10000}; }
+        operator std::chrono::seconds() const { return std::chrono::seconds{10}; }
+    } maxwait;
+    {
 {{ body }}
+    }
 }
 
 int main() {

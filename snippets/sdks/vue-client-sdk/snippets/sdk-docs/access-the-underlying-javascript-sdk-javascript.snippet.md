@@ -5,7 +5,7 @@ kind: reference
 lang: javascript
 description: "JavaScript in section \"Access the underlying JavaScript SDK\""
 validation:
-  scaffold: vue-client-sdk/scaffolds/vue-syntax-only
+  scaffold: vue-client-sdk/scaffolds/vue-sfc-syntax-only
 ---
 
 ```js

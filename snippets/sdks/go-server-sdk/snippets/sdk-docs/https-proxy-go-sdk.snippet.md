@@ -4,8 +4,6 @@ sdk: go-server-sdk
 kind: reference
 lang: go
 description: "Go SDK in section \"HTTPS Proxy\""
-validation:
-  scaffold: go-server-sdk/scaffolds/go-syntax-only
 ---
 
 ```go

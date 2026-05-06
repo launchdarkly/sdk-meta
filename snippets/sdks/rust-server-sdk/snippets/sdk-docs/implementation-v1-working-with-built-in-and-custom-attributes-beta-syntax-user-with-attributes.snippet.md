@@ -4,8 +4,6 @@ sdk: rust-server-sdk
 kind: reference
 lang: rust
 description: "Beta syntax, user with attributes in section \"Working with built-in and custom attributes\""
-validation:
-  scaffold: rust-server-sdk/scaffolds/rust-syntax-only
 ---
 
 ```rust

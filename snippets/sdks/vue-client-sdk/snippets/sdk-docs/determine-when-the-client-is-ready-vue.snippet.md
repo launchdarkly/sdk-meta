@@ -5,7 +5,7 @@ kind: reference
 lang: html
 description: "Vue in section \"Determine when the client is ready\""
 validation:
-  scaffold: vue-client-sdk/scaffolds/vue-syntax-only
+  scaffold: vue-client-sdk/scaffolds/vue-sfc-syntax-only
 ---
 
 ```html

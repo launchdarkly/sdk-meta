@@ -5,7 +5,7 @@ kind: reference
 lang: html
 description: "App.vue, Vue SDK v2.x in section \"Initialize the client and context\""
 validation:
-  scaffold: vue-client-sdk/scaffolds/vue-syntax-only
+  scaffold: vue-client-sdk/scaffolds/vue-sfc-syntax-only
 ---
 
 ```html

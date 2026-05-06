@@ -10,14 +10,13 @@ description: |
   The body is dropped inside `_wrappee = do { … }`. Doc fragments that
   show top-level constructs (`import …`, `name :: Type`, top-level
   bindings) won't fit inside a `do` block — Haskell wants those at the
-  module level. The harness pre-stage rewrite (in run.sh) splits the
-  body into top-level lines vs in-block lines using a simple
-  indentation rule: any line that begins with `import `, `data `,
-  `type `, `newtype `, `class `, `instance `, or matches `name :: …`
-  (a type-signature line) is lifted to the TOP_LIFT_MARKER above the
-  module, along with any subsequent line that starts at column 0
-  (top-level binding for that name). Everything else stays in the
-  `do` block.
+  module level. The harness pre-stage rewrite (in `run.sh`) splits the
+  body using `--BODY_BEGIN--` / `--BODY_END--` markers: any body line
+  at column 0 that begins with a top-level keyword (`import `, `data `,
+  `type `, `newtype `, `class `, `instance `) or matches a type-sig /
+  binding shape (`name ::` or `name =`) is lifted to the
+  `--TOP_LIFT_TARGET--` marker at module scope. Body residue stays
+  inline but is indented two spaces so it lands inside the do-block.
 inputs:
   body:
     type: string
@@ -28,17 +27,24 @@ validation:
 ---
 
 ```haskell
+{-# LANGUAGE OverloadedStrings #-}
 module Main where
 
-import qualified Data.Function as _LD
+import LaunchDarkly.Server
+import qualified Data.Function as LDStub
 
--- TOP_LIFT_MARKER
+--TOP_LIFT_TARGET--
 
 main :: IO ()
 main = putStrLn "feature flag evaluates to true"
 
+-- Body lives inside a do-block. The harness BB / BE markers
+-- delimit body content; the awk pre-step lifts top-level decls
+-- found there to the target marker above.
 _wrappee :: IO ()
 _wrappee = do
+--BODY_BEGIN--
 {{ body }}
+--BODY_END--
   return ()
 ```

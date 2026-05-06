@@ -89,21 +89,34 @@ jobs:
           # carthage` in the harness setup step, since macos-latest
           # doesn't ship it preinstalled.
           #
-          # The install row excludes the init snippet (snippet-skip) so
-          # verify-hello-app's EXAM-HELLO grep doesn't see install
-          # output. The init runs in its own row below with key-type:
-          # mobile, where xcodebuild test boots the iOS Simulator and
-          # runs LDClient.start(...) end-to-end against the LD env.
+          # iOS validation is split across three rows so each row
+          # can carry the correct credentials and toolchain
+          # configuration:
+          #
+          #   - install: just the sdk-info install fragments (no LD
+          #     keys; native package-manager runs)
+          #   - init: the sdk-info/init snippet (mobile key,
+          #     xcodebuild test boots the simulator and runs
+          #     LDClient.start end-to-end)
+          #   - sdk-docs: the swift-syntax-only-bound reference
+          #     fragments (no LD keys; xcodebuild type-checks the
+          #     never-instantiated wrappee)
           - sdk: ios-client-sdk
             runs-on: macos-latest
             key-type: none
             label: ios-client-sdk (install)
+            group: sdk-info
             snippet_skip: ios-client-sdk/sdk-info/init
           - sdk: ios-client-sdk
             runs-on: macos-latest
             key-type: mobile
             label: ios-client-sdk (init)
             snippet: ios-client-sdk/sdk-info/init
+          - sdk: ios-client-sdk
+            runs-on: macos-latest
+            key-type: none
+            label: ios-client-sdk (sdk-docs)
+            group: sdk-docs
 
           # Android init: scaffolded with a MainApplication that
           # exercises LDClient.init(this@MainApplication, ...) under
@@ -180,6 +193,7 @@ jobs:
           MATRIX_SDK: ${{ matrix.sdk }}
           MATRIX_SNIPPET: ${{ matrix.snippet }}
           MATRIX_SNIPPET_SKIP: ${{ matrix.snippet_skip }}
+          MATRIX_GROUP: ${{ matrix.group }}
         with:
           use_server_key: ${{ matrix.key-type == 'server' }}
           use_client_key: ${{ matrix.key-type == 'client' }}
@@ -191,6 +205,7 @@ jobs:
             args="--sdk=$MATRIX_SDK"
             [ -n "$MATRIX_SNIPPET" ] && args="$args --snippet=$MATRIX_SNIPPET"
             [ -n "$MATRIX_SNIPPET_SKIP" ] && args="$args --snippet-skip=$MATRIX_SNIPPET_SKIP"
+            [ -n "$MATRIX_GROUP" ] && args="$args --group=$MATRIX_GROUP"
             go run ./cmd/snippets validate $args \
               --sdks=./sdks --validators=./validators 2>&1 | tee /tmp/validate.log
 
@@ -201,12 +216,14 @@ jobs:
           MATRIX_SDK: ${{ matrix.sdk }}
           MATRIX_SNIPPET: ${{ matrix.snippet }}
           MATRIX_SNIPPET_SKIP: ${{ matrix.snippet_skip }}
+          MATRIX_GROUP: ${{ matrix.group }}
         run: |
           set -o pipefail
           cd snippets
           args="--sdk=$MATRIX_SDK"
           [ -n "$MATRIX_SNIPPET" ] && args="$args --snippet=$MATRIX_SNIPPET"
           [ -n "$MATRIX_SNIPPET_SKIP" ] && args="$args --snippet-skip=$MATRIX_SNIPPET_SKIP"
+          [ -n "$MATRIX_GROUP" ] && args="$args --group=$MATRIX_GROUP"
           go run ./cmd/snippets validate $args \
             --sdks=./sdks --validators=./validators 2>&1 | tee /tmp/validate.log
 

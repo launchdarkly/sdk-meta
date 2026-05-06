@@ -9,5 +9,5 @@ validation:
 ---
 
 ```rust
-ContextBuilder::new("example-context-key").add_private_attribute(Reference::new("/address/street"))
+ContextBuilder::new("example-context-key").add_private_attribute(Reference::new("/address/street"));
 ```

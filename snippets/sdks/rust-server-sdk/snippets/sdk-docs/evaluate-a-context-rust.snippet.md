@@ -9,7 +9,7 @@ validation:
 ---
 
 ```rust
-let context = ContextBuilder::new("example-context-key").build();
+let context = ContextBuilder::new("example-context-key").build()?;
 let show_feature = client.bool_variation(&context, "example-flag-key", false);
 
 if show_feature {

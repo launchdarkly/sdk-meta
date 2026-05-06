@@ -9,14 +9,14 @@ validation:
 ---
 
 ```c
-LDClientConfigBuilder builder = LDClientConfigBuilder_New("YOUR_SDK_KEY");
+LDServerConfigBuilder builder = LDServerConfigBuilder_New("YOUR_SDK_KEY");
 
-LDClientConfig config;
-LDStatus status = LDClientConfigBuilder_Build(builder, &config);
+LDServerConfig config;
+LDStatus status = LDServerConfigBuilder_Build(builder, &config);
 
 if (!LDStatus_Ok(status)) {
      /* an error occurred, config is not valid */
 }
 
-LDClientSDK client = LDClientSDK_New(config);
+LDServerSDK client = LDServerSDK_New(config);
 ```

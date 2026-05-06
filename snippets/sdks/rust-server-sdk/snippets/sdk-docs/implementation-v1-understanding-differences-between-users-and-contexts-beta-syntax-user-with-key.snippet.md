@@ -4,8 +4,6 @@ sdk: rust-server-sdk
 kind: reference
 lang: rust
 description: "Beta syntax, user with key in section \"Understanding differences between users and contexts\""
-validation:
-  scaffold: rust-server-sdk/scaffolds/rust-syntax-only
 ---
 
 ```rust

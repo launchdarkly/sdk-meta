@@ -27,19 +27,33 @@ validation:
 import 'package:flutter/material.dart';
 // ignore: unused_import
 import 'package:launchdarkly_flutter_client_sdk/launchdarkly_flutter_client_sdk.dart';
+//IMPORT_LIFT_TARGET
 
 // ignore: unused_element
 Future<void> _wrappee() async {
-  // Stub locals so the wrappee body's symbols resolve at compile time.
-  // Never reached at runtime — main() short-circuits to the success
-  // widget below.
+  // Stub locals so wrappee bodies referencing `client`, `context`,
+  // `flagKey` resolve at compile time. Initialize each with a
+  // value-of-the-right-type expression so Dart's analyzer doesn't
+  // flag a definitely-unassigned read. The body lives in a nested
+  // block so it can re-declare `context`, `flagKey`, etc. without
+  // colliding with the stubs (Dart allows shadowing across blocks).
+  //
+  // Body imports (e.g. `import 'package:launchdarkly_flutter_client_sdk/...';`)
+  // get lifted to module scope by the harness's awk pre-step using the
+  // BODY_BEGIN / BODY_END / IMPORT_LIFT_TARGET markers — Dart forbids
+  // imports inside a function body, so a fragment that shows an
+  // install-time import would otherwise fail to compile.
   // ignore: unused_local_variable
-  late final dynamic client;
+  dynamic client = Object();
   // ignore: unused_local_variable
-  late final dynamic context;
+  dynamic context = Object();
   // ignore: unused_local_variable
-  late final String flagKey;
+  String flagKey = '';
+  {
+//BODY_BEGIN
 {{ body }}
+//BODY_END
+  }
 }
 
 void main() {

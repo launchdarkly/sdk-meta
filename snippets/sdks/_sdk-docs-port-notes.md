@@ -261,6 +261,113 @@ the canonical sdk-info install snippets, not arbitrary doc
 fragments. These are byte-equality-checked through the marker
 hash.
 
+## Haskell evaluate-a-context fragments
+
+**Severity**: medium
+
+**Snippets affected**:
+`haskell-server-sdk/sdk-docs/evaluate-a-context-haskell-sdk-v3-x`,
+`haskell-server-sdk/sdk-docs/evaluate-a-context-haskell-sdk-v4-0`.
+
+**Why unbindable**: both fragments reference a free `client` identifier
+(no `<- bind`, no top-level definition) — the docs assume the reader
+has the `client :: IO Client` from the surrounding init snippet in
+scope. Wiring this up would require either body changes (introducing
+`<- client` bindings) or a scaffold-level `client = undefined` stub
+that conflicts with the init snippet's own `client = makeClient $
+makeConfig …` top-level binding (the harness's TOP_LIFT awk relocates
+the body's binding to module scope, where it duplicates the stub).
+The v3.x fragment also calls `makeUser :: Text -> Context`, which
+was renamed to `makeContext "user" key` in v4.0 of the Haskell SDK
+the validator pins.
+
+The init / install fragments under `haskell-server-sdk/sdk-docs/` do
+bind cleanly through `haskell-syntax-only` thanks to the
+`--TOP_LIFT_TARGET--` / `--BODY_BEGIN--` / `--BODY_END--` markers
+the harness preprocesses into a top-level lift.
+
+## Flutter v1.x / v2.x / v3.x init fragments
+
+**Severity**: medium (older API surface)
+
+**Snippets affected**:
+`flutter-client-sdk/sdk-docs/initialize-the-client-flutter-sdk-v1-x`,
+`flutter-client-sdk/sdk-docs/initialize-the-client-flutter-sdk-v1-x-2`,
+`flutter-client-sdk/sdk-docs/initialize-the-client-flutter-sdk-v2-x`,
+`flutter-client-sdk/sdk-docs/initialize-the-client-flutter-sdk-v2-x-2`,
+`flutter-client-sdk/sdk-docs/initialize-the-client-flutter-sdk-v3-x`,
+`flutter-client-sdk/sdk-docs/initialize-the-client-flutter-sdk-v3-x-2`.
+
+**Why unbindable**: each fragment references identifiers (`LDUser`,
+`LDUserBuilder`, `LDConfigBuilder`, `LDClient.start(config, user)`,
+`AutoEnvAttributes.Enabled`) that the validator's pinned
+`launchdarkly_flutter_client_sdk` v4.x package does not export.
+v4 renamed `LDConfigBuilder` to `LDConfig`, `LDClient.start` to
+`client.start()`, `Enabled` to `enabled`, and dropped the user
+model entirely. Pinning a parallel v1.x/v2.x/v3.x package would
+let these compile but would diverge from the canonical "what should
+I install" direction the rest of the bindings reflect. The current
+v4 init fragment (`initialize-the-client-flutter-sdk-v4`) does
+bind cleanly.
+
+## Rust v1.0 / Beta-syntax fragments
+
+**Severity**: low (older API surface)
+
+**Snippets affected**:
+`rust-server-sdk/sdk-docs/implementation-v1-understanding-changes-to-private-attributes-1-0-syntax-two-attributes-marked-private-for-all-contexts`,
+`rust-server-sdk/sdk-docs/implementation-v1-understanding-differences-between-users-and-contexts-beta-syntax-user-with-key`,
+`rust-server-sdk/sdk-docs/implementation-v1-working-with-built-in-and-custom-attributes-beta-syntax-user-with-attributes`,
+`rust-server-sdk/sdk-docs/initialize-the-client-rust-v3-0`.
+
+**Why unbindable**: each fragment references identifiers that the
+validator's pinned `launchdarkly-server-sdk` v2.6.x crate doesn't
+ship — `User::with_key` and the `hashmap!` macro (beta syntax that
+predates the User->Context renaming), `EventProcessorBuilder::new()`
+without the type-parameter argument required by the current generic
+shape, and the `&YOUR_SDK_KEY` placeholder treated as a `&str`
+identifier reference rather than a string literal. The
+init-rust-v3-0 fragment also opens a fresh `async fn main()` which
+collides with the scaffold's own `main`. Pinning a parallel v0.x /
+beta crate would let these compile but would diverge from the
+canonical v2.x guidance the rest of the bindings reflect.
+
+## Vue main.js fragment with @launchdarkly/observability
+
+**Severity**: low (extra plugin not on the validator's dep list)
+
+**Snippets affected**:
+`vue-client-sdk/sdk-docs/initialize-the-client-and-context-main-js`.
+
+**Why unbindable**: the body imports `@launchdarkly/observability`
+and `@launchdarkly/session-replay` to demonstrate the LDPlugin
+options for those auxiliary plugins. The vue-client validator's
+Dockerfile only installs `vue` + `launchdarkly-vue-client-sdk`, so
+the build fails on Rolldown's "failed to resolve" check before the
+fragment gets a chance to syntax-check. Adding both plugins to the
+Dockerfile would let it build but introduces transitive deps the
+rest of the matrix doesn't need; cleaner to defer until a
+dedicated observability validator exists. The companion
+`vue-client-sdk/sdk-docs/configure-the-sdk-main-js` fragment
+(no observability imports) does bind through `vue-syntax-only`.
+
+## Go HTTPS proxy fragment
+
+**Severity**: low (incomplete code unit)
+
+**Snippets affected**: `go-server-sdk/sdk-docs/https-proxy-go-sdk`.
+
+**Why unbindable**: the body shows two top-level statements —
+`var config ld.Config` followed by `config.HTTP = ldcomponents.HTTPConfiguration().ProxyURL(...)`.
+The second is a struct-field assignment, which Go forbids at file
+scope. The go-syntax-only scaffold's `splitTopLevel` heuristic
+groups both lines as a top-level decl block (the `var` keyword
+triggers `consumeBraced`, which keeps lines together until a
+`)`-terminated line) and the resulting `package main\n\nvar config ld.Config\nconfig.HTTP = …` doesn't parse. The fragment is a teaching
+fragment, not a complete unit; the right disposition would be
+either a wrapper-function variant of the syntax-only scaffold or
+adjusting the source MDX to wrap the assignment in `init()`.
+
 ## iOS / Android UIKit / Activity fragments
 
 **Severity**: medium (fragments compile-checked but not run)

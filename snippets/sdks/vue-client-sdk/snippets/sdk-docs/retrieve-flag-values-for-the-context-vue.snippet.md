@@ -5,7 +5,7 @@ kind: reference
 lang: html
 description: "Vue in section \"Retrieve flag values for the context\""
 validation:
-  scaffold: vue-client-sdk/scaffolds/vue-syntax-only
+  scaffold: vue-client-sdk/scaffolds/vue-sfc-syntax-only
 ---
 
 ```html
