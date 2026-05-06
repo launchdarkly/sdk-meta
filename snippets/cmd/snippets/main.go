@@ -61,13 +61,16 @@ usage:
       a marker's hash does not match its current region's content. Never
       writes; never executes any snippet code.
 
-  snippets validate --sdk=<sdk-id> [--snippet=<id>] [--sdks=./sdks] [--validators=./validators]
+  snippets validate --sdk=<sdk-id> [--snippet=<id>] [--snippet-skip=<id>]
+                    [--group=<sdk-info|sdk-docs>] [--sdks=./sdks] [--validators=./validators]
       Builds the SDK's per-language validator (Docker image or native harness),
       stages each runnable snippet with concrete input values, and runs it
       against a real LaunchDarkly environment. Exercises the snippet code end
       to end; requires LAUNCHDARKLY_SDK_KEY (or _MOBILE_KEY / _CLIENT_SIDE_ID)
       and LAUNCHDARKLY_FLAG_KEY in the env. Pass --snippet=<id> to validate
-      a single snippet (useful while developing scaffolds).
+      a single snippet (useful while developing scaffolds). --group filters
+      to one snippet group (the middle segment of the snippet id), which is
+      how CI splits one SDK across multiple matrix rows.
 
   snippets version
       Print the snippets generator version.
@@ -195,6 +198,7 @@ func runValidate(args []string) {
 	sdk := fset.String("sdk", "", "sdk id to validate (required)")
 	snippet := fset.String("snippet", "", "snippet id to validate (optional; restricts to one snippet)")
 	snippetSkip := fset.String("snippet-skip", "", "snippet id to skip (optional; useful for splitting one SDK across CI rows)")
+	group := fset.String("group", "", "snippet group to validate (optional; e.g. `sdk-info` or `sdk-docs`)")
 	sdks := fset.String("sdks", "", "path to a sdks/ directory (default: embedded)")
 	validators := fset.String("validators", "./validators", "path to the validators/ directory")
 	_ = fset.Parse(args)
@@ -209,6 +213,7 @@ func runValidate(args []string) {
 		SDK:           *sdk,
 		Snippet:       *snippet,
 		SnippetSkip:   *snippetSkip,
+		Group:         *group,
 	}); err != nil {
 		fmt.Fprintf(os.Stderr, "validate failed: %v\n", err)
 		os.Exit(1)

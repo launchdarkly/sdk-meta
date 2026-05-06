@@ -12,6 +12,41 @@ trap 'rm -rf "$WORK"' EXIT
 cp -r /snippet/. "$WORK/"
 cd "$WORK"
 
+# If the staged Program.cs (csharp-syntax-only scaffold) contains the
+# USING_LIFT_MARKER, lift any `using …;` line that's between the
+# marker and the next class declaration up to the marker — C# wants
+# `using` at file or namespace scope, not inside method bodies. This
+# is the same idea as the JVM harness's IMPORT_LIFT_MARKER pre-step.
+if [ -f "$SNIPPET_ENTRYPOINT" ] && grep -q 'USING_LIFT_MARKER' "$SNIPPET_ENTRYPOINT"; then
+    python3 - "$SNIPPET_ENTRYPOINT" <<'PYEOF'
+import sys
+fp = sys.argv[1]
+with open(fp) as f:
+    lines = f.read().splitlines()
+marker_idx = next((i for i, l in enumerate(lines) if 'USING_LIFT_MARKER' in l), None)
+if marker_idx is None:
+    sys.exit(0)
+# Walk lines BELOW the marker. Collect any `using …;` line into a
+# block to splice ABOVE the marker, replace each lifted line with a
+# blank to preserve numbering. `using (var x = …)` C# statement form
+# is excluded by requiring a `;` immediately after the namespace path
+# (no `(`).
+import re
+lift = []
+for i in range(marker_idx + 1, len(lines)):
+    s = lines[i].lstrip()
+    m = re.match(r'using\s+([A-Za-z_][A-Za-z0-9_.]*)\s*;\s*$', s)
+    if m:
+        if s not in lift:
+            lift.append(s.rstrip())
+        lines[i] = ''
+if lift:
+    lines = lines[:marker_idx] + lift + lines[marker_idx:]
+with open(fp, 'w') as f:
+    f.write('\n'.join(lines) + '\n')
+PYEOF
+fi
+
 # .NET wants a project file; gonfalon's flow uses Visual Studio's "new
 # console app" wizard which creates one. We synthesize the minimum unless
 # the snippet's scaffold staged its own `.csproj` (e.g. an ASP.NET Core

@@ -4,6 +4,8 @@ sdk: js-client-sdk
 kind: reference
 lang: typescript
 description: "JavaScript SDK, v4.x (TypeScript) in section \"Use promises to determine when the client is ready\""
+validation:
+  scaffold: js-client-sdk/scaffolds/js-syntax-only
 ---
 
 ```ts

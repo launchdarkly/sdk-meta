@@ -4,6 +4,7 @@ sdk: android-client-sdk
 kind: reference
 lang: java
 description: "Android SDK v4.x (Java) in section \"Initialize the client\""
+# Bucket C: jvm validator pulls launchdarkly-java-server-sdk, not the android-client SDK (which lives in Google Maven as an aar). See _sdk-docs-port-notes.md.
 ---
 
 ```java

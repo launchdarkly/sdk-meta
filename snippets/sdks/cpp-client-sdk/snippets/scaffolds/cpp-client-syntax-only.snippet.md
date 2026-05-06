@@ -6,6 +6,19 @@ lang: cpp
 file: main.cpp
 description: |
   Parse-only validator for C++ client SDK doc fragments.
+
+  Wrappee is a never-instantiated template so the body is
+  syntactically parsed but type-checks against unbound names are
+  deferred until instantiation (which never happens). Include the
+  SDK headers at file scope so doc fragments that show
+  `#include <launchdarkly/...>` directives at the top of the body
+  re-include cheaply (header guards) and without conflict.
+
+  Doc fragments that don't declare a `client` or `context` and
+  reference them as if pre-existing won't compile through this
+  scaffold; in practice the v3 fragments either declare those
+  themselves or the build catches the issue. v2.x fragments are
+  Bucket C — see `_sdk-docs-port-notes.md`.
 inputs:
   body:
     type: string
@@ -16,10 +29,72 @@ validation:
 ---
 
 ```cpp
+#include <chrono>
+#include <future>
 #include <iostream>
+#include <string>
+// Native C++ headers.
+#include <launchdarkly/client_side/client.hpp>
+#include <launchdarkly/context_builder.hpp>
+#include <launchdarkly/value.hpp>
+// C-binding headers — doc fragments mix C-binding and native styles.
+#include <launchdarkly/client_side/bindings/c/sdk.h>
+#include <launchdarkly/client_side/bindings/c/config/builder.h>
+#include <launchdarkly/bindings/c/context.h>
+#include <launchdarkly/bindings/c/context_builder.h>
 
+// Polymorphic stub so a body can use `client.BoolVariation(...)`
+// (native-style) AND `LDClientSDK_BoolVariation(client, ...)`
+// (C-binding-style) without needing the scaffold to know which
+// shape the body uses. The wrappee is a never-instantiated template,
+// so the conversion operator and member functions exist at the type
+// system level but are never invoked.
+struct _AnyClient {
+    operator LDClientSDK() const { return nullptr; }
+    template <typename... Args> bool BoolVariation(Args&&...) const { return false; }
+    template <typename... Args> int IntVariation(Args&&...) const { return 0; }
+    template <typename... Args> double DoubleVariation(Args&&...) const { return 0; }
+    template <typename... Args> std::string StringVariation(Args&&...) const { return {}; }
+    template <typename... Args> auto JsonVariation(Args&&...) const { return launchdarkly::Value{}; }
+    template <typename... Args> auto AllFlags(Args&&...) const { return launchdarkly::Value{}; }
+    template <typename... Args> void TrackEvent(Args&&...) const {}
+    template <typename... Args> void Identify(Args&&...) const {}
+    template <typename... Args> auto StartAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
+};
+
+template <int = 0>
 void _wrappee() {
+    // Body lives in a nested block so it can re-declare `client` /
+    // `context` (e.g. native-API init fragments that say
+    // `client_side::Client client(...)`, or C-binding init fragments
+    // that say `LDClientSDK client = LDClientSDK_New(...)`) without
+    // colliding with the stubs above. Bodies that use `client`
+    // without declaring it (e.g. evaluate-a-flag fragments) pick up
+    // the polymorphic stub from the outer scope.
+    //
+    // Doc fragments mix unqualified `ContextBuilder`,
+    // `client_side::Client`, etc. with the
+    // `launchdarkly::` prefix. Lifting both namespaces lets bodies
+    // that omit the prefix compile without breaking
+    // namespace-qualified bodies.
+    using namespace launchdarkly;
+    using namespace launchdarkly::client_side;
+    _AnyClient client;
+    LDContext context = nullptr;
+    LDClientConfig config = nullptr;
+    // `maxwait` is referenced by both native-style fragments
+    // (`wait_for(maxwait)` — needs a chrono duration) and C-binding
+    // fragments (`LDClientSDK_Start(client, maxwait, ...)` — needs an
+    // unsigned int milliseconds count). The polymorphic stub provides
+    // implicit conversions to both.
+    struct _Maxwait {
+        operator unsigned int() const { return 10000; }
+        operator std::chrono::milliseconds() const { return std::chrono::milliseconds{10000}; }
+        operator std::chrono::seconds() const { return std::chrono::seconds{10}; }
+    } maxwait;
+    {
 {{ body }}
+    }
 }
 
 int main() {

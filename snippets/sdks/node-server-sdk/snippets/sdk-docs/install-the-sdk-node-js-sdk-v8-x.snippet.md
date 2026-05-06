@@ -4,6 +4,8 @@ sdk: node-server-sdk
 kind: reference
 lang: javascript
 description: "Node.js SDK v8.x+ in section \"Install the SDK\""
+validation:
+  scaffold: node-server-sdk/scaffolds/node-syntax-only
 ---
 
 ```js

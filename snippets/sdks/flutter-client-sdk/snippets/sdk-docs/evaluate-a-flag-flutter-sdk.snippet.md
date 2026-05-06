@@ -4,6 +4,8 @@ sdk: flutter-client-sdk
 kind: reference
 lang: dart
 description: "Flutter SDK in section \"Evaluate a flag\""
+validation:
+  scaffold: flutter-client-sdk/scaffolds/flutter-syntax-only
 ---
 
 ```dart
