@@ -114,7 +114,7 @@ jobs:
             snippet: ios-client-sdk/sdk-info/init
           - sdk: ios-client-sdk
             runs-on: macos-latest
-            key-type: none
+            key-type: mobile
             label: ios-client-sdk (sdk-docs)
             group: sdk-docs
 
