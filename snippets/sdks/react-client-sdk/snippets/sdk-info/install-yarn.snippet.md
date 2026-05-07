@@ -10,5 +10,5 @@ validation:
 ---
 
 ```shell
-yarn add launchdarkly-react-client-sdk
+yarn add @launchdarkly/react-sdk
 ```

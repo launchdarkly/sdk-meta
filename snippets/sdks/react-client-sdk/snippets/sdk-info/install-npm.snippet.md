@@ -10,5 +10,5 @@ validation:
 ---
 
 ```shell
-npm i launchdarkly-react-client-sdk
+npm i @launchdarkly/react-sdk
 ```

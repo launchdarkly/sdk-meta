@@ -1,9 +1,9 @@
 ---
-id: react-client-sdk/sdk-docs/flag-keys-in-the-react-web-sdk-javascript
+id: react-client-sdk/sdk-docs/bootstrap-react-web-startoptions-react-web-sdk-v4-0
 sdk: react-client-sdk
 kind: reference
 lang: javascript
-description: "JavaScript in section \"Flag keys and the deprecated `useFlags` hook\""
+description: "React Web SDK v4.0 in section \"React Web\" (via `startOptions`)"
 validation:
   scaffold: react-client-sdk/scaffolds/react-syntax-only
 ---
@@ -15,8 +15,8 @@ const LDProvider = createLDReactProvider(
   'example-client-side-id',
   { kind: 'user', key: 'example-user-key' },
   {
-    ldOptions: {
-      useCamelCaseFlagKeys: false,
+    startOptions: {
+      bootstrap: flags,
     },
   },
 );

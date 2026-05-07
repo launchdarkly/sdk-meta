@@ -4,7 +4,7 @@ FROM mcr.microsoft.com/playwright:v1.59.1-noble
 # SDK installed. Per-validate cycles drop the snippet's entrypoint
 # (src/index.tsx for legacy, src/main.tsx for createApp) plus its App.tsx
 # companion into src/ and re-run vite build.
-ARG LD_REACT_SDK_VERSION=3.9.0
+ARG LD_REACT_SDK_VERSION=4.0.0
 ARG REACT_VERSION=19.2.5
 ARG VITE_VERSION=8.0.10
 ARG VITE_PLUGIN_REACT_VERSION=6.0.1
@@ -22,7 +22,7 @@ RUN printf '{\n\
     "preview": "vite preview --port=4173 --host"\n\
   },\n\
   "dependencies": {\n\
-    "launchdarkly-react-client-sdk": "%s",\n\
+    "@launchdarkly/react-sdk": "%s",\n\
     "react": "%s",\n\
     "react-dom": "%s"\n\
   },\n\
@@ -66,6 +66,11 @@ RUN touch src/index.css src/App.css
 # index.html to point at whichever entrypoint the snippet declared.
 RUN printf "import { createRoot } from 'react-dom/client';\nimport App from './App';\ncreateRoot(document.getElementById('root')).render(<App />);\n" > src/main.tsx
 RUN printf "export default function App() { return <div>placeholder</div>; }\n" > src/App.tsx
+
+# Stub multi-environment module so sdk-docs parse-only snippets that
+# `import { ProdLDContext, StagingLDContext } from './environments'`
+# resolve.
+RUN printf "import { initLDReactContext } from '@launchdarkly/react-sdk';\nexport const ProdLDContext = initLDReactContext();\nexport const StagingLDContext = initLDReactContext();\n" > src/environments.ts
 
 RUN printf '<!doctype html>\n\
 <html lang="en">\n\

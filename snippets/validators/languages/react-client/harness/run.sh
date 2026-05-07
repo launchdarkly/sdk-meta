@@ -7,26 +7,35 @@
 # `validation.env`):
 #
 #   - SNIPPET_MODE unset (init): the staged snippet body is a complete
-#     entrypoint — `src/main.tsx` (or `src/index.tsx`) plus a
-#     companion App.tsx. We copy them in, point index.html at the
-#     entrypoint, and run vite build + preview.
+#     entrypoint -- `src/main.tsx` plus a companion App.tsx. We copy
+#     them in and run vite build + preview.
+#
+#     If the staged entrypoint contains the
+#     `react-syntax-only`-scaffold's `//IMPORT_LIFT_TARGET` /
+#     `//BODY_BEGIN` / `//BODY_END` markers, an awk pre-step lifts
+#     any `import …;` lines from inside the body block up to module
+#     scope (ESM forbids imports inside function bodies, so doc
+#     fragments that show install-time imports would otherwise fail
+#     to compile).
 #
 #   - SNIPPET_MODE=flag-eval: the staged file at $SNIPPET_ENTRYPOINT
 #     contains the wrappee body verbatim, which has a top-level
 #     `import` plus a hooks call that's only legal inside a render
 #     context. We rewrite it in-place: lift `import` lines to module
-#     scope, map the snippet's `featureKey` token to the camelCased
-#     form of LAUNCHDARKLY_FLAG_KEY (matches the React SDK's
-#     auto-camelCase), wrap the rest in a `WrappedFlagEvalBody`
-#     component, and emit a fresh src/main.tsx + src/App.tsx that
-#     mounts the component inside `<LDProvider>`. The wrapped
-#     component returns a sentinel string when the flag is true; the
-#     standard Playwright check observes the EXAM-HELLO success line.
+#     scope, wrap the rest in a `WrappedFlagEvalBody` component, and
+#     emit a fresh src/main.tsx + src/App.tsx that mounts the
+#     component inside `<LDReactProvider>`. The wrapping component
+#     unconditionally renders the EXAM-HELLO success line; the
+#     standard Playwright check observes it.
+#
+#     The wrappee's flag-key string is substituted with the live
+#     LAUNCHDARKLY_FLAG_KEY upstream via the snippet's
+#     `validation.placeholders` block, so this harness does not need
+#     to do any flag-key rewriting.
 set -eu
 
 . /harness-shared/lib.sh
 require_env LAUNCHDARKLY_CLIENT_SIDE_ID LAUNCHDARKLY_FLAG_KEY SNIPPET_ENTRYPOINT
-
 MODE="${SNIPPET_MODE:-init}"
 
 if [ "$MODE" = "flag-eval" ]; then
@@ -36,43 +45,27 @@ if [ "$MODE" = "flag-eval" ]; then
         exit 1
     fi
 
-    # Generate src/App.tsx and src/main.tsx in one Python pass — keeps
+    # Generate src/App.tsx and src/main.tsx in one Python pass -- keeps
     # multi-line string handling out of /bin/sh's hands.
-    python3 - "$BODY_FILE" "$LAUNCHDARKLY_FLAG_KEY" "$LAUNCHDARKLY_CLIENT_SIDE_ID" <<'PYEOF'
+    python3 - "$BODY_FILE" "$LAUNCHDARKLY_CLIENT_SIDE_ID" <<'PYEOF'
 import re, sys
-body_path, flag_key, client_side_id = sys.argv[1], sys.argv[2], sys.argv[3]
+body_path, client_side_id = sys.argv[1], sys.argv[2]
 with open(body_path) as f:
     body = f.read()
-
-# camelCase the flag key the same way lodash.camelcase does — split on
-# any non-alnum, lowercase the first segment, TitleCase the rest.
-# Mirrors react-client-sdk's camelCaseKeys(rawFlags). Without this the
-# wrappee body's `featureKey` identifier would never resolve to a real
-# value in the LDProvider's flags object.
-parts = [p for p in re.split(r"[^A-Za-z0-9]+", flag_key) if p]
-if not parts:
-    sys.exit("LAUNCHDARKLY_FLAG_KEY is empty after camelCase split")
-flag_ident = parts[0][:1].lower() + parts[0][1:]
-for p in parts[1:]:
-    flag_ident += p[:1].upper() + p[1:]
 
 # Lift static `import` lines to module scope; everything else moves
 # into the wrapped component body. ESM forbids `import` inside a
 # function body, and the wrappee's hooks call is only legal inside a
-# render context — so the body has to be split at validate time.
+# render context -- so the body has to be split at validate time.
 imports, rest = [], []
 for line in body.splitlines():
     if re.match(r"^\s*import\s.+;?\s*$", line):
         imports.append(line)
     else:
         rest.append(line)
+imports.append("import { useInitializationStatus } from '@launchdarkly/react-sdk';")
 import_block = "\n".join(imports)
 rest_text = "\n".join(rest)
-
-# Replace the snippet's `featureKey` destructure target with the
-# camelCased real flag identifier. Word-boundary sub avoids touching
-# anything else in the body.
-rest_text = re.sub(r"\bfeatureKey\b", flag_ident, rest_text)
 
 app_tsx = f"""{import_block}
 
@@ -83,43 +76,35 @@ export default function App() {{
 function WrappedFlagEvalBody() {{
 {rest_text}
 
-  // The wrappee body's if/else has comment-only branches (the
-  // gonfalon source says `// TODO: Put your feature here` /
-  // `// TODO: Put your fallback behavior here`). The validator
-  // emits the EXAM-HELLO success line unconditionally so the
-  // assertion passes on either branch — which one the LD env
-  // actually targets is not what this snippet validates. The
-  // canonical surface we're testing is "the body parsed cleanly,
-  // imports resolved, the hooks call ran inside an
-  // <LDProvider>-mounted render context, the destructure
-  // succeeded." The flag's truth value is asserted by the
-  // wrappee's if/else returning the camelCased ident as a
-  // boolean, but the page-level sentinel still emits regardless
-  // of which branch was taken.
-  return (
-    <div>
-      <p>scaffold: flag {flag_ident}={{String({flag_ident})}}</p>
-      <p>feature flag evaluates to true</p>
-    </div>
-  );
+  // Gate the EXAM-HELLO sentinel on the SDK actually finishing
+  // initialization. Pre-init, useBoolVariation returns the default,
+  // so emitting the sentinel unconditionally would let the test pass
+  // even when the SDK never connected. Holding the sentinel back
+  // until status === 'complete' makes the Playwright check a real
+  // end-to-end assertion. The wrappee's if/else has comment-only
+  // branches and is evaluated for its hook side effect only -- the
+  // flag's truth value is not what this snippet validates.
+  const {{ status }} = useInitializationStatus();
+  if (status !== 'complete') {{
+    return <p>SDK initialization {{status}}...</p>;
+  }}
+  return <p>feature flag evaluates to true</p>;
 }}
 """
 
-main_tsx = f"""import {{ StrictMode }} from 'react';
-import {{ createRoot }} from 'react-dom/client';
-import {{ LDProvider }} from 'launchdarkly-react-client-sdk';
+main_tsx = f"""import {{ createRoot }} from 'react-dom/client';
+import {{ createLDReactProvider, LDContext }} from '@launchdarkly/react-sdk';
 import App from './App';
 
-// Match the init scaffold's context fixture — the LD sandbox env's
-// `hello-boolean` flag is targeted to this user/email pair.
-const context = {{ kind: 'user', key: 'EXAMPLE_CONTEXT_KEY', email: 'biz@face.dev' }};
+// Match the init scaffold's context fixture -- the LD sandbox env's
+// boolean flag is targeted to this user/email pair.
+const context: LDContext = {{ kind: 'user', key: 'EXAMPLE_CONTEXT_KEY', email: 'biz@face.dev' }};
+const LDReactProvider = createLDReactProvider('{client_side_id}', context);
 
 createRoot(document.getElementById('root') as HTMLElement).render(
-  <StrictMode>
-    <LDProvider clientSideID="{client_side_id}" context={{context}}>
-      <App />
-    </LDProvider>
-  </StrictMode>,
+  <LDReactProvider>
+    <App />
+  </LDReactProvider>,
 );
 """
 
@@ -128,7 +113,7 @@ with open("/opt/hello-react/src/App.tsx", "w") as f:
 with open("/opt/hello-react/src/main.tsx", "w") as f:
     f.write(main_tsx)
 
-print(f"validator: rewrote App.tsx + main.tsx for flag {flag_key} (ident={flag_ident})")
+print("validator: rewrote App.tsx + main.tsx for flag-eval body")
 PYEOF
 
     cd /opt/hello-react
@@ -164,6 +149,89 @@ for f in /snippet/src/*.tsx; do
     bn=$(basename "$f")
     cp "$f" "/opt/hello-react/src/$bn"
 done
+
+# If the staged entrypoint uses the react-syntax-only scaffold's body
+# marker pair, do two things to make the body legal inside the
+# scaffold's `_wrappee` function:
+#
+#   1. Lift any `import …;` directives from inside the body block up
+#      to module scope (ESM forbids imports inside a function body).
+#   2. Strip the `export` / `export default` keywords from any
+#      declaration that opens a body line. ESM `export` statements
+#      are module-scope-only too, but the wrappee function never
+#      executes (`if (false)` guard), so the export's semantic
+#      meaning is irrelevant — only syntactic validity matters.
+#      Stripping the keyword leaves a plain declaration / expression
+#      statement, which is legal anywhere.
+#
+# Mirrors flutter-client/harness/run.sh (which only needs the
+# import-lift step; Dart has no top-level `export` keyword to strip).
+if grep -qF -- '//IMPORT_LIFT_TARGET' "/opt/hello-react/$SNIPPET_ENTRYPOINT"; then
+    awk '
+    /^\/\/IMPORT_LIFT_TARGET$/ {
+        target_seen = 1;
+        pre[++npre] = $0;
+        target_index = npre;
+        next;
+    }
+    /^\/\/BODY_BEGIN$/ {
+        in_body = 1;
+        next;
+    }
+    /^\/\/BODY_END$/ {
+        in_body = 0;
+        body_done = 1;
+        next;
+    }
+    {
+        if (in_body) {
+            # Continuing a multi-line import? Accumulate until ; terminator.
+            if (in_multi_import) {
+                sub(/^[ \t]+/, "", $0);
+                multi_import_buf = multi_import_buf "\n" $0;
+                if ($0 ~ /;[ \t]*$/) {
+                    lift[++nlift] = multi_import_buf;
+                    in_multi_import = 0;
+                    multi_import_buf = "";
+                }
+                next;
+            }
+            if ($0 ~ /^[ \t]*import[ \t]/) {
+                sub(/^[ \t]+/, "", $0);
+                if ($0 ~ /;[ \t]*$/) {
+                    lift[++nlift] = $0;
+                } else {
+                    multi_import_buf = $0;
+                    in_multi_import = 1;
+                }
+                next;
+            }
+            # Strip module-scope-only export keywords; body is dead code under if(false).
+            sub(/^[ \t]*export[ \t]+default[ \t]+/, "", $0);
+            sub(/^[ \t]*export[ \t]+/, "", $0);
+            rest[++nrest] = $0;
+        } else if (body_done) {
+            post[++npost] = $0;
+        } else if (target_seen) {
+            mid[++nmid] = $0;
+        } else {
+            pre[++npre] = $0;
+        }
+    }
+    END {
+        for (i = 1; i <= npre; i++) {
+            print pre[i];
+            if (target_seen && i == target_index) {
+                for (j = 1; j <= nlift; j++) print lift[j];
+            }
+        }
+        for (i = 1; i <= nmid; i++) print mid[i];
+        for (i = 1; i <= nrest; i++) print rest[i];
+        for (i = 1; i <= npost; i++) print post[i];
+    }
+    ' "/opt/hello-react/$SNIPPET_ENTRYPOINT" > /tmp/lifted.tsx
+    mv /tmp/lifted.tsx "/opt/hello-react/$SNIPPET_ENTRYPOINT"
+fi
 
 # Point index.html at whichever entrypoint the snippet uses (index.tsx
 # for legacy, main.tsx for createApp).

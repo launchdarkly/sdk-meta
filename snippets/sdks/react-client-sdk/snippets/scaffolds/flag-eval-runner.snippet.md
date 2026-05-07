@@ -10,15 +10,12 @@ description: |
   complete module-scope program), the flag-eval body is *not*
   standalone:
 
-    - Its top-level `import { useFlags } from '...'` is module-scope
-      syntax that we want to keep at module scope.
-    - Its `const { ... } = useFlags();` and `if (...) { ... }` form a
-      block that's only legal *inside a render context* (a React
-      component called inside `<LDProvider>`).
-    - Its destructured identifier (`featureKey`) is the human-readable
-      placeholder; the React SDK exposes the live flag under the
-      camelCased form of `LAUNCHDARKLY_FLAG_KEY` (e.g. `hello-boolean`
-      becomes `helloBoolean`).
+    - Its top-level `import { useBoolVariation } from '...'` is
+      module-scope syntax that we want to keep at module scope.
+    - Its `const flagValue = useBoolVariation(...)` and
+      `if (...) { ... }` form a block that's only legal *inside a
+      render context* (a React component called inside
+      `<LDReactProvider>`).
 
   Splicing the body verbatim into a function body would yield a parse
   error on the `import`. Splicing at module scope would crash on the
@@ -26,12 +23,12 @@ description: |
   `src/snippet-body.tsx`, and the `react-client` validator harness
   (in flag-eval mode, selected via `validation.env: SNIPPET_MODE`)
   rewrites it: it lifts top-level `import` lines to module scope,
-  substitutes the body's `featureKey` token for the camelCased flag
-  identifier, wraps the remainder in a `WrappedFlagEvalBody` function
-  component, and emits `src/main.tsx` + `src/App.tsx` boilerplate that
-  mounts the component inside `<LDProvider>`. The `WrappedFlagEvalBody`
-  returns a sentinel string that the harness's Playwright check
-  promotes into the EXAM-HELLO success line on a true evaluation.
+  wraps the remainder in a `WrappedFlagEvalBody` function component,
+  and emits `src/main.tsx` + `src/App.tsx` boilerplate that mounts
+  the component inside `<LDReactProvider>`. The `WrappedFlagEvalBody`
+  gates the EXAM-HELLO sentinel on `useInitializationStatus()`
+  reporting `status === 'complete'`, only promoting to the success
+  line after the SDK has actually initialized.
 inputs:
   body:
     type: string

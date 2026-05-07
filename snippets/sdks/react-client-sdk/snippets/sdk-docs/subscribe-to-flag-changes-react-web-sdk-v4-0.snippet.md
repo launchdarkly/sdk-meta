@@ -1,9 +1,9 @@
 ---
-id: react-client-sdk/sdk-docs/flag-keys-in-the-react-web-sdk-javascript
+id: react-client-sdk/sdk-docs/subscribe-to-flag-changes-react-web-sdk-v4-0
 sdk: react-client-sdk
 kind: reference
 lang: javascript
-description: "JavaScript in section \"Flag keys and the deprecated `useFlags` hook\""
+description: "React Web SDK v4.0 in section \"Subscribe to flag changes\""
 validation:
   scaffold: react-client-sdk/scaffolds/react-syntax-only
 ---
@@ -16,7 +16,7 @@ const LDProvider = createLDReactProvider(
   { kind: 'user', key: 'example-user-key' },
   {
     ldOptions: {
-      useCamelCaseFlagKeys: false,
+      streaming: false, // or `true` to enable
     },
   },
 );

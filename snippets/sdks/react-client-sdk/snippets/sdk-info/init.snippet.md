@@ -13,27 +13,26 @@ validation:
 
 ```tsx
 // Add the code below to the root of your React app.
-import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { LDProvider } from 'launchdarkly-react-client-sdk';
+import { createLDReactProvider, LDContext } from '@launchdarkly/react-sdk';
 
 function App() {
   return <div>Let your feature flags fly!</div>
 }
 
 // A "context" is a data object representing users, devices, organizations, and other entities.
-const context = {
+const context: LDContext = {
   kind: 'user',
   key: 'EXAMPLE_CONTEXT_KEY',
   email: 'biz@face.dev',
 };
 
 // This is your client-side ID.
+const LDReactProvider = createLDReactProvider('YOUR_CLIENT_SIDE_ID', context);
+
 createRoot(document.getElementById('root') as HTMLElement).render(
-  <StrictMode>
-    <LDProvider clientSideID="YOUR_CLIENT_SIDE_ID" context={context}>
-      <App />
-    </LDProvider>
-  </StrictMode>,
+  <LDReactProvider>
+    <App />
+  </LDReactProvider>,
 );
 ```

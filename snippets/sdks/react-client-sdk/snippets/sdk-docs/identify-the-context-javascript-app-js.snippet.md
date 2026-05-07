@@ -4,15 +4,16 @@ sdk: react-client-sdk
 kind: reference
 lang: javascript
 description: "JavaScript: app.js in section \"Identify the context\""
+validation:
+  scaffold: react-client-sdk/scaffolds/react-syntax-only
 ---
 
 ```js
 // app.js
 import React, { useEffect } from 'react';
-import { useFlags, useLDClient } from 'launchdarkly-react-client-sdk';
+import { useLDClient } from '@launchdarkly/react-sdk';
 
-export default function App {
-  const flags = useFlags();
+export default function App() {
   const ldClient = useLDClient();
 
   useEffect(() => {
