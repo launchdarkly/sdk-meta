@@ -4,6 +4,7 @@ sdk: ios-client-sdk
 kind: reference
 lang: objective-c
 description: "iOS SDK v8.x (Objective-C) in section \"Initialize the client\""
+# Bucket C: . See _sdk-docs-port-notes.md.
 ---
 
 ```objectivec

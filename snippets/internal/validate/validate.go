@@ -23,6 +23,7 @@ type Config struct {
 	SDK           string // sdk id to validate (empty = all)
 	Snippet       string // snippet id to validate (empty = all in the SDK)
 	SnippetSkip   string // snippet id to skip (empty = none)
+	Group         string // snippet group to validate (empty = all; e.g. "sdk-info" or "sdk-docs")
 }
 
 // envInputs holds the environment-derived input values that get substituted
@@ -70,6 +71,15 @@ func Run(cfg Config) error {
 		}
 		if cfg.SnippetSkip != "" && s.Frontmatter.ID == cfg.SnippetSkip {
 			continue
+		}
+		if cfg.Group != "" {
+			// Snippet IDs are <sdk>/<group>/<name>; filter on the
+			// middle segment so a CI row can validate just one group
+			// (e.g. sdk-info installs vs sdk-docs reference fragments).
+			parts := strings.Split(s.Frontmatter.ID, "/")
+			if len(parts) < 2 || parts[1] != cfg.Group {
+				continue
+			}
 		}
 		if !isValidatable(s) {
 			continue

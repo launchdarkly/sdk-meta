@@ -4,6 +4,8 @@ sdk: python-server-sdk
 kind: reference
 lang: python
 description: "Python SDK v9.11+ in section \"Considerations with worker-based servers\""
+validation:
+  scaffold: python-server-sdk/scaffolds/python-syntax-only
 ---
 
 ```python

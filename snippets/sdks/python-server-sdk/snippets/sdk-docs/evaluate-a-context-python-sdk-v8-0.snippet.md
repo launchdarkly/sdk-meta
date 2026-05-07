@@ -4,6 +4,8 @@ sdk: python-server-sdk
 kind: reference
 lang: python
 description: "Python SDK v8.0+ in section \"Evaluate a context\""
+validation:
+  scaffold: python-server-sdk/scaffolds/with-test-data
 ---
 
 ```python
@@ -14,6 +16,8 @@ flag_value = client.variation("example-flag-key", context, False)
 
 if flag_value:
     # application code to show the feature
+    pass
 else:
     # the code to run if the feature is off
+    pass
 ```

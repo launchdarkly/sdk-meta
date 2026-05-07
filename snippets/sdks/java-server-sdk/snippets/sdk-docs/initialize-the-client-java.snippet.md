@@ -4,6 +4,8 @@ sdk: java-server-sdk
 kind: reference
 lang: java
 description: "Java in section \"Initialize the client\""
+validation:
+  scaffold: java-server-sdk/scaffolds/java-syntax-only
 ---
 
 ```java

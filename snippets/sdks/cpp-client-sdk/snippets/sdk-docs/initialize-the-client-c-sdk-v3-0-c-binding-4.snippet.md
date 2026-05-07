@@ -4,6 +4,8 @@ sdk: cpp-client-sdk
 kind: reference
 lang: c
 description: "C++ SDK v3.0 (C binding) in section \"Initialize the client\""
+validation:
+  scaffold: cpp-client-sdk/scaffolds/cpp-client-syntax-only
 ---
 
 ```c
@@ -14,7 +16,7 @@ if (LDClientSDK_Start(client, maxwait, &initialized_successfully)) {
   /* The client's attempt to initialize succeeded or failed in the specified amount of time. */
   if (initialized_successfully) {
     /* Initialization succeeded. */
-  else {
+  } else {
     /* Initialization failed. */
   }
 } else {

@@ -4,6 +4,8 @@ sdk: cpp-client-sdk
 kind: reference
 lang: cpp
 description: "Using launchdarkly::client_side namespace in section \"Understand the SDK namespaces\""
+validation:
+  scaffold: cpp-client-sdk/scaffolds/cpp-client-syntax-only
 ---
 
 ```cpp

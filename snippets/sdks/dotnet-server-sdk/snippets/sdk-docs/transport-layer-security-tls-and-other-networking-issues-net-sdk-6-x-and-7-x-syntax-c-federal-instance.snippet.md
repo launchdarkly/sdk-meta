@@ -4,6 +4,8 @@ sdk: dotnet-server-sdk
 kind: reference
 lang: csharp
 description: ".NET SDK 6.x and 7.x syntax (C#), federal instance in section \"Transport Layer Security (TLS) and other networking issues\""
+validation:
+  scaffold: dotnet-server-sdk/scaffolds/csharp-syntax-only
 ---
 
 ```csharp

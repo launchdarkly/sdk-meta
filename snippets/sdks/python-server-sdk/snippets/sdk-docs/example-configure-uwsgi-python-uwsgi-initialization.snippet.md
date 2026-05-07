@@ -4,6 +4,10 @@ sdk: python-server-sdk
 kind: reference
 lang: python
 description: "Python uWSGI initialization in section \"Example: Configure uWSGI\""
+validation:
+  # uWSGI isn't installable in the validator container; fall back to
+  # parse-only. Same constraint as the existing uwsgi-init binding.
+  scaffold: python-server-sdk/scaffolds/python-syntax-only
 ---
 
 ```python

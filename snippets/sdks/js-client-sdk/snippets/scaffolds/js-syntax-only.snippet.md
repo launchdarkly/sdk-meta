@@ -24,9 +24,16 @@ validation:
 ---
 
 ```javascript
-function _wrappee() {
+// Wrap in an async IIFE so the wrappee body can use top-level `await`
+// (e.g. `await client.waitForInitialization(...)`). tsdown's parser
+// rejects bare top-level `await` outside a module-scope `async` IIFE.
+// The body never executes — the IIFE's `if (false)` guard means the
+// EXAM-HELLO line is the only side effect.
+(async function _wrappee() {
+  if (false) {
 {{ body }}
-}
+  }
+})();
 
 document.body.textContent = 'feature flag evaluates to true';
 ```

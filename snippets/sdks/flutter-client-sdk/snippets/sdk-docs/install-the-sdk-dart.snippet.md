@@ -4,6 +4,8 @@ sdk: flutter-client-sdk
 kind: reference
 lang: dart
 description: "Dart in section \"Install the SDK\""
+validation:
+  scaffold: flutter-client-sdk/scaffolds/flutter-syntax-only
 ---
 
 ```dart

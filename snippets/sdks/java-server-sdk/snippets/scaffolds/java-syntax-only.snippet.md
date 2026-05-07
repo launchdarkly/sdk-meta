@@ -6,6 +6,16 @@ lang: java
 file: src/main/java/com/launchdarkly/Snippet.java
 description: |
   Parse-only validator for Java server SDK doc fragments.
+
+  The wrappee body is dropped inside `wrappee()` (where unresolved
+  `client.boolVariation(...)` calls don't fail compilation thanks to
+  the stub `client` field). Java forbids `import` statements inside a
+  method body, so any top-level `import …;` lines in the wrappee are
+  lifted out at validate-time by the harness's pre-stage rewrite —
+  `Snippet.java`'s body section reaches the compiler with imports
+  already at file scope. The IMPORT_LIFT_MARKER comment is the cue
+  the rewrite uses to splice extracted imports above the class
+  declaration.
 inputs:
   body:
     type: string
@@ -20,6 +30,7 @@ package com.launchdarkly;
 
 import com.launchdarkly.sdk.*;
 import com.launchdarkly.sdk.server.*;
+// IMPORT_LIFT_MARKER
 
 public class Snippet {
     // Stub instance the wrappee body refers to. Never used at runtime;

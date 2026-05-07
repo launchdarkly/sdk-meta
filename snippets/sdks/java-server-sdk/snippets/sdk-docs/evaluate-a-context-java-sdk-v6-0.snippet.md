@@ -4,6 +4,8 @@ sdk: java-server-sdk
 kind: reference
 lang: java
 description: "Java SDK v6.0+ in section \"Evaluate a context\""
+validation:
+  scaffold: java-server-sdk/scaffolds/java-syntax-only
 ---
 
 ```java

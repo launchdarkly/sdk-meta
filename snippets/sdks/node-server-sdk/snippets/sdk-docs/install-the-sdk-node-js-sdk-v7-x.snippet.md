@@ -4,6 +4,8 @@ sdk: node-server-sdk
 kind: reference
 lang: typescript
 description: "Node.js SDK v7.x in section \"Install the SDK\""
+validation:
+  scaffold: node-server-sdk/scaffolds/node-syntax-only
 ---
 
 ```ts

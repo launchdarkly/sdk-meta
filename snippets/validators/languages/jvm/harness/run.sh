@@ -27,6 +27,39 @@ if [ ! -f "$appfile" ]; then
     exit 1
 fi
 
+# If the staged file contains the IMPORT_LIFT_MARKER comment, lift any
+# `import …;` lines that appear after it (i.e. inside the wrappee body)
+# up to the marker line. Java doesn't permit imports inside method
+# bodies, so doc fragments that show install-time imports would
+# otherwise fail compilation. The lift is line-based and idempotent.
+if grep -q 'IMPORT_LIFT_MARKER' "$appfile"; then
+    python3 - "$appfile" <<'PYEOF'
+import sys
+fp = sys.argv[1]
+with open(fp) as f:
+    lines = f.read().splitlines()
+marker_idx = next((i for i, l in enumerate(lines) if 'IMPORT_LIFT_MARKER' in l), None)
+if marker_idx is None:
+    sys.exit(0)
+# Walk from marker downwards, collect any line whose lstrip() begins
+# with `import ` (and ends with `;` to avoid pulling Python-style
+# `import_x` identifiers). Replace each with a blank line in the body
+# and inject a deduplicated block above the marker.
+imports = []
+for i in range(marker_idx + 1, len(lines)):
+    stripped = lines[i].lstrip()
+    if stripped.startswith('import ') and stripped.rstrip().endswith(';'):
+        imp = stripped.rstrip()
+        if imp not in imports:
+            imports.append(imp)
+        lines[i] = ''
+if imports:
+    lines = lines[:marker_idx] + imports + lines[marker_idx:]
+with open(fp, 'w') as f:
+    f.write('\n'.join(lines) + '\n')
+PYEOF
+fi
+
 if ! head -1 "$appfile" | grep -q '^package '; then
     # Bodies that don't declare a package are presumed to want the
     # tutorial layout — same as before.
