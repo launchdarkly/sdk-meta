@@ -26,7 +26,19 @@ set -eu
 require_env SNIPPET_ENTRYPOINT
 
 WORK=$(mktemp -d)
-trap 'rm -rf "$WORK"' EXIT
+# `set -e` kills before assert_node_modules / fail_with_log can dump the LOG
+# captured by run_in_log, so a failed install command otherwise produces zero
+# diagnostic output. Dump the LOG on non-zero exit so CI artifacts surface the
+# real error.
+cleanup() {
+    rc=$?
+    if [ "$rc" -ne 0 ] && [ -n "${LOG:-}" ] && [ -s "$LOG" ]; then
+        echo "=== shell-install/run.sh exiting with $rc; LOG dump follows ==="
+        cat "$LOG"
+    fi
+    rm -rf "$WORK"
+}
+trap cleanup EXIT
 cd "$WORK"
 
 BODY="/snippet/$SNIPPET_ENTRYPOINT"

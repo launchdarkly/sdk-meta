@@ -35,9 +35,17 @@ RUN curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" \
 ENV PATH=/usr/local/go/bin:/root/go/bin:$PATH
 ENV GOFLAGS=-mod=mod
 
-# Enable corepack-shipped package managers without prompting.
+# Enable corepack-shipped package managers without prompting. Pin pnpm and
+# yarn to versions compatible with the Node 20 base above; without an
+# explicit pin, corepack auto-fetches `latest` on first invocation, and pnpm
+# 11+ requires Node 22.13+ (uses the `node:sqlite` builtin) which crashes
+# the harness with `ERR_UNKNOWN_BUILTIN_MODULE`. pnpm 9 is the last major
+# that supports Node 20; yarn 1 is the classic line that every install
+# snippet uses.
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-RUN corepack enable
+RUN corepack enable \
+ && corepack prepare pnpm@9 --activate \
+ && corepack prepare yarn@1 --activate
 
 WORKDIR /work
 
