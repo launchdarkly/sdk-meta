@@ -4,6 +4,8 @@ sdk: electron-client-sdk
 kind: reference
 lang: typescript
 description: "TypeScript in section \"Evaluate a flag\""
+validation:
+  scaffold: electron-client-sdk/scaffolds/electron-syntax-only
 ---
 
 ```ts

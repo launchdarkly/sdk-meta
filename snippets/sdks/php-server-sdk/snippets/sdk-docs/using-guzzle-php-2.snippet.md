@@ -4,6 +4,8 @@ sdk: php-server-sdk
 kind: reference
 lang: php
 description: "PHP in section \"Using Guzzle\""
+validation:
+  scaffold: php-server-sdk/scaffolds/php-syntax-only
 ---
 
 ```php

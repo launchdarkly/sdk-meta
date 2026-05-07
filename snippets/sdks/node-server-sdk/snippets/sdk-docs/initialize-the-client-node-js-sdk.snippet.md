@@ -4,6 +4,8 @@ sdk: node-server-sdk
 kind: reference
 lang: javascript
 description: "Node.js SDK in section \"Initialize the client\""
+validation:
+  scaffold: node-server-sdk/scaffolds/node-syntax-only
 ---
 
 ```js

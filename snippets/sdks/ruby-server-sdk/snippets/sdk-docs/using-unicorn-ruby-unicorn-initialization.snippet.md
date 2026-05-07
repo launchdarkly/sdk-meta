@@ -4,6 +4,8 @@ sdk: ruby-server-sdk
 kind: reference
 lang: ruby
 description: "Ruby Unicorn initialization in section \"Using Unicorn\""
+validation:
+  scaffold: ruby-server-sdk/scaffolds/ruby-syntax-only
 ---
 
 ```ruby

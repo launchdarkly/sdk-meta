@@ -4,6 +4,8 @@ sdk: python-server-sdk
 kind: reference
 lang: python
 description: Initialize the singleton ldclient with the SDK key and the optional observability plugin.
+validation:
+  scaffold: python-server-sdk/scaffolds/python-syntax-only
 ---
 
 ```python

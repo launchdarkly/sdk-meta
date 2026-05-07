@@ -4,6 +4,8 @@ sdk: rust-server-sdk
 kind: reference
 lang: rust
 description: "1.0 syntax in section \"Understanding changes to alias events\""
+validation:
+  scaffold: rust-server-sdk/scaffolds/rust-syntax-only
 ---
 
 ```rust

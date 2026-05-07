@@ -4,6 +4,8 @@ sdk: go-server-sdk
 kind: reference
 lang: go
 description: "Example: Using LDScopedClient in Go context in section \"Use Go contexts with LDScopedClient\""
+validation:
+  scaffold: go-server-sdk/scaffolds/go-syntax-only
 ---
 
 ```go

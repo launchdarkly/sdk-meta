@@ -4,6 +4,8 @@ sdk: haskell-server-sdk
 kind: reference
 lang: haskell
 description: "Haskell in section \"Initialize the client\""
+validation:
+  scaffold: haskell-server-sdk/scaffolds/haskell-syntax-only
 ---
 
 ```haskell

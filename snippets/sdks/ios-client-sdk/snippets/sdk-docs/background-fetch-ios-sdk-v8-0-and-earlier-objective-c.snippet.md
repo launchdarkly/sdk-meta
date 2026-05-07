@@ -4,6 +4,7 @@ sdk: ios-client-sdk
 kind: reference
 lang: objective-c
 description: "iOS SDK v8.0 and earlier (Objective-C) in section \"Background fetch\""
+# Bucket C: . See _sdk-docs-port-notes.md.
 ---
 
 ```objectivec

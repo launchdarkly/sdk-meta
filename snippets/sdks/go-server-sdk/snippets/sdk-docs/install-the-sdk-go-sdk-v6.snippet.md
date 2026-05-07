@@ -4,6 +4,8 @@ sdk: go-server-sdk
 kind: reference
 lang: go
 description: "Go SDK v6 in section \"Install the SDK\""
+validation:
+  scaffold: go-server-sdk/scaffolds/go-syntax-only
 ---
 
 ```go

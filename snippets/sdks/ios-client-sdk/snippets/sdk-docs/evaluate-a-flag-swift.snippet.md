@@ -4,6 +4,8 @@ sdk: ios-client-sdk
 kind: reference
 lang: swift
 description: "Swift in section \"Evaluate a flag\""
+validation:
+  scaffold: ios-client-sdk/scaffolds/swift-syntax-only
 ---
 
 ```swift

@@ -6,6 +6,12 @@ lang: csharp
 file: Program.cs
 description: |
   Parse-only validator for .NET server SDK doc fragments.
+
+  C# requires `using` directives at the top of the file (or inside a
+  namespace), not inside a method body. The `// USING_LIFT_MARKER`
+  comment cues the harness pre-stage rewrite to lift any `using …;`
+  lines from the wrappee body up to the marker, so doc fragments that
+  show install-time `using LaunchDarkly.Sdk;` etc. can compile.
 inputs:
   body:
     type: string
@@ -13,13 +19,32 @@ inputs:
 validation:
   runtime: dotnet-server
   entrypoint: Program.cs
+  requirements: |
+    LaunchDarkly.ServerSdk
+    LaunchDarkly.Observability
 ---
 
 ```csharp
+// USING_LIFT_MARKER
+using LaunchDarkly.Sdk;
+using LaunchDarkly.Sdk.Server;
+
 namespace LaunchDarklySnippet
 {
     public class Program
     {
+        // Stub fields the wrappee body refers to. Never used at runtime.
+        // The body's `client.BoolVariation(...)` calls resolve through
+        // these so the C# compiler is happy. v6 docs use `User` and
+        // v6 overloads of variation methods, v7+ uses `Context` —
+        // typing `client` as `dynamic` lets any overload resolve at
+        // runtime so the same scaffold validates both API surfaces.
+#pragma warning disable CS0414, CS0649
+        private static dynamic client = null;
+        private static User user = null;
+        private static Context context = default;
+#pragma warning restore CS0414, CS0649
+
         public static void Main(string[] args)
         {
             System.Console.WriteLine("feature flag evaluates to true");
@@ -27,7 +52,9 @@ namespace LaunchDarklySnippet
 
         private void Wrappee()
         {
+            try {
 {{ body }}
+            } catch (System.Exception) { /* never reached */ }
         }
     }
 }
