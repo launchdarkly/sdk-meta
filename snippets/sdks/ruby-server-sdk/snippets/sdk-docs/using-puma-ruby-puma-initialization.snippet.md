@@ -4,6 +4,8 @@ sdk: ruby-server-sdk
 kind: reference
 lang: ruby
 description: "Ruby Puma initialization in section \"Using Puma\""
+validation:
+  scaffold: ruby-server-sdk/scaffolds/ruby-syntax-only
 ---
 
 ```ruby

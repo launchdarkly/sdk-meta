@@ -4,6 +4,7 @@ sdk: python-server-sdk
 kind: reference
 lang: shell
 description: Mac/Linux HTTPS_PROXY environment variable.
+# Bucket C: bare shell export/set commands; not a package-manager install, no harness fits. See _sdk-docs-port-notes.md.
 ---
 
 ```shell

@@ -4,6 +4,8 @@ sdk: lua-server-sdk
 kind: reference
 lang: lua
 description: "Lua in section \"Install the SDK\""
+validation:
+  scaffold: lua-server-sdk/scaffolds/lua-syntax-only
 ---
 
 ```lua

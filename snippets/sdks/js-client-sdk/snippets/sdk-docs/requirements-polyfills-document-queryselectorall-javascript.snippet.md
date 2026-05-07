@@ -4,6 +4,8 @@ sdk: js-client-sdk
 kind: reference
 lang: javascript
 description: "JavaScript in section \"document.querySelectorAll()\""
+validation:
+  scaffold: js-client-sdk/scaffolds/js-syntax-only
 ---
 
 ```js

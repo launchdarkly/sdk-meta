@@ -4,6 +4,8 @@ sdk: cpp-client-sdk
 kind: reference
 lang: c
 description: "C++ SDK v3 (native) in section \"Include the LaunchDarkly headers\""
+validation:
+  scaffold: cpp-client-sdk/scaffolds/cpp-client-syntax-only
 ---
 
 ```c

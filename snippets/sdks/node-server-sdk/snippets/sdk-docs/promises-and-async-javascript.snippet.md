@@ -4,6 +4,8 @@ sdk: node-server-sdk
 kind: reference
 lang: javascript
 description: "JavaScript in section \"Promises and async\""
+validation:
+  scaffold: node-server-sdk/scaffolds/node-syntax-only
 ---
 
 ```js

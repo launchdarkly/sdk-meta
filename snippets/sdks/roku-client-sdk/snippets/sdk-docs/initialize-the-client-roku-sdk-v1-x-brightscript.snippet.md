@@ -4,6 +4,7 @@ sdk: roku-client-sdk
 kind: reference
 lang: brightscript
 description: "Roku SDK v1.x (BrightScript) in section \"Initialize the client\""
+# Bucket C: no Roku BrightScript validator. See _sdk-docs-port-notes.md.
 ---
 
 ```brightscript

@@ -4,6 +4,8 @@ sdk: js-client-sdk
 kind: reference
 lang: javascript
 description: "JavaScript SDK, v3.x, v4.x in section \"Use events to determine when the client is ready\""
+validation:
+  scaffold: js-client-sdk/scaffolds/js-syntax-only
 ---
 
 ```js

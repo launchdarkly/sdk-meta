@@ -4,6 +4,8 @@ sdk: python-server-sdk
 kind: reference
 lang: python
 description: "Python in section \"Initialize the client\""
+validation:
+  scaffold: python-server-sdk/scaffolds/python-syntax-only
 ---
 
 ```python

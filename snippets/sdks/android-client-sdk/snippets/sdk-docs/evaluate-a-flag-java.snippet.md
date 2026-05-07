@@ -4,6 +4,7 @@ sdk: android-client-sdk
 kind: reference
 lang: java
 description: "Java in section \"Evaluate a flag\""
+# Bucket C: jvm validator pulls launchdarkly-java-server-sdk, not the android-client SDK (which lives in Google Maven as an aar). See _sdk-docs-port-notes.md.
 ---
 
 ```java

@@ -4,6 +4,8 @@ sdk: python-server-sdk
 kind: reference
 lang: python
 description: Set HTTPS_PROXY from inside Python.
+validation:
+  scaffold: python-server-sdk/scaffolds/python-syntax-only
 ---
 
 ```python

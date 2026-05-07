@@ -4,6 +4,12 @@ sdk: dotnet-server-sdk
 kind: reference
 lang: csharp
 description: "Initialize, .NET SDK v8.10+ with ASP.Net Core in section \"Initialize the client\""
+# Bucket C: ASP.NET Framework Global.asax fragment that nests
+# `protected void Application_Start()` / `Application_End()` method
+# definitions inside the wrappee body. Nested method definitions with
+# `protected` modifiers aren't valid inside another method, so the
+# csharp-syntax-only scaffold's wrapper makes this uncompilable.
+# See _sdk-docs-port-notes.md.
 ---
 
 ```csharp

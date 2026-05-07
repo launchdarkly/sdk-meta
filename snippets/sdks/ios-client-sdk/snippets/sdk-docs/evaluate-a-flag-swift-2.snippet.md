@@ -4,6 +4,8 @@ sdk: ios-client-sdk
 kind: reference
 lang: swift
 description: "Swift in section \"Evaluate a flag\""
+validation:
+  scaffold: ios-client-sdk/scaffolds/swift-syntax-only
 ---
 
 ```swift
@@ -11,7 +13,7 @@ let showFeature = client.boolVariation(forKey: "example-flag-key", defaultValue:
 
 if showFeature {
   // Application code to show the feature
-else {
+} else {
   // The code to run if the feature is off
 }
 ```

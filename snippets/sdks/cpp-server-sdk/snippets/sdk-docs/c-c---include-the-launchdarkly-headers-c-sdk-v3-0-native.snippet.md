@@ -4,6 +4,8 @@ sdk: cpp-server-sdk
 kind: reference
 lang: cpp
 description: "C++ SDK v3.0 (native) in section \"Include the LaunchDarkly headers\""
+validation:
+  scaffold: cpp-server-sdk/scaffolds/cpp-syntax-only
 ---
 
 ```cpp
