@@ -5,6 +5,10 @@ kind: initialize
 lang: javascript
 file: vue-client-sdk/observability/initialize.txt
 description: Initialize vue-client-sdk with observability + session replay plugins.
+validation:
+  scaffold: vue-client-sdk/scaffolds/init-runner-observability
+  placeholders:
+    SDK_KEY: LAUNCHDARKLY_CLIENT_SIDE_ID
 ---
 
 ```javascript

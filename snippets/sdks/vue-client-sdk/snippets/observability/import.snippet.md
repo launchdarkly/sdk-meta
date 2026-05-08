@@ -5,6 +5,8 @@ kind: import
 lang: javascript
 file: vue-client-sdk/observability/import.txt
 description: Import statements for vue-client-sdk observability + session replay plugins.
+validation:
+  scaffold: vue-client-sdk/scaffolds/vue-syntax-only
 ---
 
 ```javascript

@@ -5,6 +5,10 @@ kind: initialize
 lang: python
 file: python-server-sdk/observability/initialize.txt
 description: Initialize python-server-sdk with observability plugin and emit a sample log/span.
+validation:
+  scaffold: python-server-sdk/scaffolds/init-runner-observability
+  placeholders:
+    SDK_KEY: LAUNCHDARKLY_SDK_KEY
 ---
 
 ```python

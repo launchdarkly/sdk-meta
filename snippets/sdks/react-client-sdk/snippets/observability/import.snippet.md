@@ -5,6 +5,8 @@ kind: import
 lang: javascript
 file: react-client-sdk/observability/import.txt
 description: Import statements for react-client-sdk observability + session replay plugins.
+validation:
+  scaffold: react-client-sdk/scaffolds/react-syntax-only
 ---
 
 ```javascript
