@@ -5,6 +5,8 @@ kind: initialize
 lang: go
 file: go-server-sdk/ai-configs/initialize.txt
 description: Initialize the LaunchDarkly client and AI Configs client for go-server-sdk.
+validation:
+  scaffold: go-server-sdk/scaffolds/go-syntax-only
 ---
 
 ```go

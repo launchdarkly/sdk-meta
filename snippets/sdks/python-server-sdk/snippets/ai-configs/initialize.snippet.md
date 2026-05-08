@@ -5,6 +5,8 @@ kind: initialize
 lang: python
 file: python-server-sdk/ai-configs/initialize.txt
 description: Initialize the LaunchDarkly client and AI Configs client for python-server-sdk.
+validation:
+  scaffold: python-server-sdk/scaffolds/python-syntax-only
 ---
 
 ```python

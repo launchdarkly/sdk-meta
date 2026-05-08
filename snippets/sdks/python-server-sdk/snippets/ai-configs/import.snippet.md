@@ -5,6 +5,8 @@ kind: import
 lang: python
 file: python-server-sdk/ai-configs/import.txt
 description: Import statements for python-server-sdk AI Configs.
+validation:
+  scaffold: python-server-sdk/scaffolds/python-syntax-only
 ---
 
 ```python

@@ -5,6 +5,8 @@ kind: context
 lang: python
 file: python-server-sdk/ai-configs/context.txt
 description: Build an evaluation context for python-server-sdk AI Configs.
+validation:
+  scaffold: python-server-sdk/scaffolds/python-syntax-only
 ---
 
 ```python

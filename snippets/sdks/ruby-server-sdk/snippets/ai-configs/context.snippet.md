@@ -5,6 +5,8 @@ kind: context
 lang: ruby
 file: ruby-server-sdk/ai-configs/context.txt
 description: Build an evaluation context for ruby-server-sdk AI Configs.
+validation:
+  scaffold: ruby-server-sdk/scaffolds/ruby-syntax-only
 ---
 
 ```ruby

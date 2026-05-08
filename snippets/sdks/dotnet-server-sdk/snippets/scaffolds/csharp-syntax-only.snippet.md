@@ -22,12 +22,19 @@ validation:
   requirements: |
     LaunchDarkly.ServerSdk
     LaunchDarkly.Observability
+    LaunchDarkly.ServerSdk.Ai
 ---
 
 ```csharp
 // USING_LIFT_MARKER
+using System;
+using System.Collections.Generic;
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Server;
+using LaunchDarkly.Sdk.Server.Ai;
+using LaunchDarkly.Sdk.Server.Ai.Adapters;
+using LaunchDarkly.Sdk.Server.Ai.Config;
+using LaunchDarkly.Sdk.Server.Ai.DataModel;
 
 namespace LaunchDarklySnippet
 {
@@ -39,8 +46,12 @@ namespace LaunchDarklySnippet
         // v6 overloads of variation methods, v7+ uses `Context` —
         // typing `client` as `dynamic` lets any overload resolve at
         // runtime so the same scaffold validates both API surfaces.
+        // `aiClient` is dynamic so AI Config bodies that call
+        // `aiClient.Config(...)` resolve without us pinning the
+        // LdAiClient surface in the stub field type.
 #pragma warning disable CS0414, CS0649
         private static dynamic client = null;
+        private static dynamic aiClient = null;
         private static User user = null;
         private static Context context = default;
 #pragma warning restore CS0414, CS0649

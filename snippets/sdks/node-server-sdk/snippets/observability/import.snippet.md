@@ -5,6 +5,8 @@ kind: import
 lang: javascript
 file: node-server-sdk/observability/import.txt
 description: Import statements for node-server-sdk observability plugin.
+validation:
+  scaffold: node-server-sdk/scaffolds/node-syntax-only
 ---
 
 ```javascript

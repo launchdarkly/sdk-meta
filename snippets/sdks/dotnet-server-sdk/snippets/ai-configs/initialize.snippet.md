@@ -5,6 +5,8 @@ kind: initialize
 lang: csharp
 file: dotnet-server-sdk/ai-configs/initialize.txt
 description: Initialize the LaunchDarkly client and AI Configs client for dotnet-server-sdk.
+validation:
+  scaffold: dotnet-server-sdk/scaffolds/csharp-syntax-only
 ---
 
 ```csharp

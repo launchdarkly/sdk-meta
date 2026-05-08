@@ -5,6 +5,8 @@ kind: implementation
 lang: go
 file: go-server-sdk/ai-configs/implementation.txt
 description: Resolve an AI Config with a fallback for go-server-sdk.
+validation:
+  scaffold: go-server-sdk/scaffolds/go-syntax-only
 ---
 
 ```go

@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: vue-client-sdk/observability/install-npm.txt
 description: npm install commands for vue-client-sdk observability + session replay plugins.
+validation:
+  runtime: shell-install
 ---
 
 ```shell

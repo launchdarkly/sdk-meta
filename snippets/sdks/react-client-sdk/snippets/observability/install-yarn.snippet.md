@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: react-client-sdk/observability/install-yarn.txt
 description: yarn install commands for react-client-sdk observability + session replay plugins.
+validation:
+  runtime: shell-install
 ---
 
 ```shell

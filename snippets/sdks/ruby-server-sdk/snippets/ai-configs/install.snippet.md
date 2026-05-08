@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: ruby-server-sdk/ai-configs/install.txt
 description: gem install commands for ruby-server-sdk and the AI Configs add-on.
+validation:
+  runtime: shell-install
 ---
 
 ```shell
