@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.6.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.5.0...snippets/v0.6.0) (2026-05-08)
+
+
+### Features
+
+* **snippets:** port AI Configs setup snippets from gonfalon ([#424](https://github.com/launchdarkly/sdk-meta/issues/424)) ([759eac0](https://github.com/launchdarkly/sdk-meta/commit/759eac0c64586b45b4e46ef8154adc7a9c8caa63))
+* **snippets:** port observability setup snippets from gonfalon ([#425](https://github.com/launchdarkly/sdk-meta/issues/425)) ([6610cd4](https://github.com/launchdarkly/sdk-meta/commit/6610cd46ba8578cea40a64d3309e95c50d111aa8))
+* **snippets:** wire validation for sdk-docs slice across 24 SDKs ([#423](https://github.com/launchdarkly/sdk-meta/issues/423)) ([b609223](https://github.com/launchdarkly/sdk-meta/commit/b60922306510ffb420965bd3c4f035d740a28e6f))
+
+
+### Bug Fixes
+
+* **snippet:** update react sdk snippet to latest major version ([#402](https://github.com/launchdarkly/sdk-meta/issues/402)) ([6bd1e47](https://github.com/launchdarkly/sdk-meta/commit/6bd1e4750a92f109b6622dd8f2ab29a2bfae6877))
+
 ## [0.5.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.4.0...snippets/v0.5.0) (2026-05-05)
 
 
