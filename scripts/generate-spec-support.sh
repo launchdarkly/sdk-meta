@@ -28,45 +28,61 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-cd "$(dirname "$0")/.."
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$REPO_ROOT"
+
+# `go run` inherits cwd from the shell, so commands invoked from inside tool/
+# need ../-prefixed paths to reach the repo's products/ and _site/ dirs (this
+# matches the convention in Makefile's html target).
 
 if [[ -z "${SKIP_SYNC:-}" ]]; then
   echo "==> sync-repos"
-  go -C tool run ./cmd/genspecs sync-repos --sdk-repos-root "$ROOT"
+  (cd tool && go run ./cmd/genspecs sync-repos \
+    --repos-json ../products/repos.json \
+    --sdk-repos-root "$ROOT")
 fi
 
 echo "==> catalog"
-go -C tool run ./cmd/genspecs catalog \
+(cd tool && go run ./cmd/genspecs catalog \
   --specs-repo "$ROOT/sdk-specs" \
-  --out products/specs.json
+  --out ../products/specs.json)
 
 echo "==> harness"
-go -C tool run ./cmd/genspecs harness \
+(cd tool && go run ./cmd/genspecs harness \
   --harness-repo "$ROOT/sdk-test-harness" \
   --sdk-repos-root "$ROOT" \
-  --repos-json products/repos.json \
-  --out products/harness_signals.json
+  --repos-json ../products/repos.json \
+  --out ../products/harness_signals.json)
 
 if [[ -z "${SKIP_JUDGE:-}" ]]; then
   echo "==> judge"
   if [[ -z "$PROVIDER" ]]; then
     PROVIDER=$([[ -n "${ANTHROPIC_API_KEY:-}" ]] && echo "anthropic" || echo "noop")
   fi
-  go -C tool run ./cmd/genspecs judge \
+  (cd tool && go run ./cmd/genspecs judge \
     --provider "$PROVIDER" \
-    --specs-json products/specs.json \
-    --harness-json products/harness_signals.json \
+    --specs-json ../products/specs.json \
+    --harness-json ../products/harness_signals.json \
+    --features-json ../products/features.json \
+    --feature-info-json ../products/feature_info.json \
+    --types-json ../products/types.json \
+    --names-json ../products/names.json \
+    --languages-json ../products/languages.json \
+    --repos-json ../products/repos.json \
     --sdk-repos-root "$ROOT" \
     --specs-repo "$ROOT/sdk-specs" \
-    --out products/spec_support.json \
-    "${EXTRA_ARGS[@]}"
+    --cache-dir ../tool/specs/.judge-cache \
+    --out ../products/spec_support.json \
+    "${EXTRA_ARGS[@]}")
 fi
 
 echo "==> html"
-go -C tool run ./cmd/genspecs html \
-  --specs-json products/specs.json \
-  --support-json products/spec_support.json \
-  --out-dir _site
+(cd tool && go run ./cmd/genspecs html \
+  --specs-json ../products/specs.json \
+  --support-json ../products/spec_support.json \
+  --types-json ../products/types.json \
+  --names-json ../products/names.json \
+  --out-dir ../_site)
 
 echo "Done. Artifacts:"
 echo "  products/specs.json"
