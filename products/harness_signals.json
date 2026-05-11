@@ -1,0 +1,1127 @@
+{
+  "generated_at": "2026-05-11T22:16:18Z",
+  "harness": {
+    "commit": "c457afb8f43f8e1bdfd36cdd4c0585680e87c8d3",
+    "capabilities": [
+      {
+        "name": "CapabilityAllFlagsClientSideOnly",
+        "value": "all-flags-client-side-only"
+      },
+      {
+        "name": "CapabilityAllFlagsDetailsOnlyForTrackedFlags",
+        "value": "all-flags-details-only-for-tracked-flags"
+      },
+      {
+        "name": "CapabilityAllFlagsWithReasons",
+        "value": "all-flags-with-reasons"
+      },
+      {
+        "name": "CapabilityAnonymousRedaction",
+        "value": "anonymous-redaction"
+      },
+      {
+        "name": "CapabilityAutoEnvAttributes",
+        "value": "auto-env-attributes"
+      },
+      {
+        "name": "CapabilityBigSegments",
+        "value": "big-segments"
+      },
+      {
+        "name": "CapabilityClientIndependence",
+        "value": "client-independence"
+      },
+      {
+        "name": "CapabilityClientPerContextSummaries",
+        "value": "client-per-context-summaries"
+      },
+      {
+        "name": "CapabilityClientPrereqEvents",
+        "value": "client-prereq-events"
+      },
+      {
+        "name": "CapabilityClientSide",
+        "value": "client-side"
+      },
+      {
+        "name": "CapabilityContextComparison",
+        "value": "context-comparison"
+      },
+      {
+        "name": "CapabilityContextType",
+        "value": "context-type"
+      },
+      {
+        "name": "CapabilityETagCaching",
+        "value": "etag-caching"
+      },
+      {
+        "name": "CapabilityEvaluationHooks",
+        "value": "evaluation-hooks"
+      },
+      {
+        "name": "CapabilityEventGzip",
+        "value": "event-gzip"
+      },
+      {
+        "name": "CapabilityEventSampling",
+        "value": "event-sampling"
+      },
+      {
+        "name": "CapabilityFiltering",
+        "value": "filtering"
+      },
+      {
+        "name": "CapabilityFilteringStrict",
+        "value": "filtering-strict"
+      },
+      {
+        "name": "CapabilityFlagChangeListeners",
+        "value": "flag-change-listeners"
+      },
+      {
+        "name": "CapabilityFlagValueChangeListeners",
+        "value": "flag-value-change-listeners"
+      },
+      {
+        "name": "CapabilityHTTPProxy",
+        "value": "http-proxy",
+        "doc": "CapabilityHTTPProxy indicates that the SDK supports setting an HTTP proxy, through which the SDK will make all requests."
+      },
+      {
+        "name": "CapabilityInlineContext",
+        "value": "inline-context"
+      },
+      {
+        "name": "CapabilityInlineContextAll",
+        "value": "inline-context-all"
+      },
+      {
+        "name": "CapabilityInstanceID",
+        "value": "instance-id"
+      },
+      {
+        "name": "CapabilityMigrations",
+        "value": "migrations"
+      },
+      {
+        "name": "CapabilityMobile",
+        "value": "mobile"
+      },
+      {
+        "name": "CapabilityOmitAnonymousContexts",
+        "value": "omit-anonymous-contexts"
+      },
+      {
+        "name": "CapabilityOptionalEventGzip",
+        "value": "optional-event-gzip"
+      },
+      {
+        "name": "CapabilityPHP",
+        "value": "php"
+      },
+      {
+        "name": "CapabilityPersistentDataStoreConsul",
+        "value": "persistent-data-store-consul"
+      },
+      {
+        "name": "CapabilityPersistentDataStoreDynamoDB",
+        "value": "persistent-data-store-dynamodb"
+      },
+      {
+        "name": "CapabilityPersistentDataStoreRedis",
+        "value": "persistent-data-store-redis"
+      },
+      {
+        "name": "CapabilityPollingGzip",
+        "value": "polling-gzip"
+      },
+      {
+        "name": "CapabilityRoku",
+        "value": "roku"
+      },
+      {
+        "name": "CapabilitySecureModeHash",
+        "value": "secure-mode-hash"
+      },
+      {
+        "name": "CapabilityServerSide",
+        "value": "server-side"
+      },
+      {
+        "name": "CapabilityServerSidePolling",
+        "value": "server-side-polling"
+      },
+      {
+        "name": "CapabilityServiceEndpoints",
+        "value": "service-endpoints"
+      },
+      {
+        "name": "CapabilitySingleton",
+        "value": "singleton"
+      },
+      {
+        "name": "CapabilityStronglyTyped",
+        "value": "strongly-typed"
+      },
+      {
+        "name": "CapabilityTLSCustomCA",
+        "value": "tls:custom-ca",
+        "doc": "CapabilityTLSCustomCA means the SDK is capable of establishing a TLS session and configuring peer verification to use a custom CA certificate. The path to this CA cert is provided to the SDK. The SDK should then configure this path as the only CA cert in its trust store (rather than adding it to an existing trust store.)"
+      },
+      {
+        "name": "CapabilityTLSSkipVerifyPeer",
+        "value": "tls:skip-verify-peer",
+        "doc": "CapabilityTLSSkipVerifyPeer means the SDK is capable of establishing a TLS session but can be configured to skip the peer verification step. This allows the SDK to establish a connection with the test harness using a self-signed certificate without a CA. Not all SDKs have this capability."
+      },
+      {
+        "name": "CapabilityTLSVerifyPeer",
+        "value": "tls:verify-peer",
+        "doc": "CapabilityTLSVerifyPeer means the SDK is capable of establishing a TLS session and verifying its peer. This is generally a standard capability of all SDKs. However, the additional tests this enables may cause the suite to run slower than normal and may cause unexpected behavior. Therefore, it should be manually tested first."
+      },
+      {
+        "name": "CapabilityTags",
+        "value": "tags"
+      },
+      {
+        "name": "CapabilityTrackHooks",
+        "value": "track-hooks"
+      },
+      {
+        "name": "CapabilityUserType",
+        "value": "user-type"
+      },
+      {
+        "name": "CapabilityWrapper",
+        "value": "wrapper",
+        "doc": "CapabilityWrapper indicates that the SDK supports setting wrapper name and version and including them in request headers."
+      }
+    ],
+    "test_groups": {
+      "client-side": [
+        {
+          "name": "evaluation",
+          "func": "doClientSideEvalTests"
+        },
+        {
+          "name": "events",
+          "func": "doClientSideEventTests"
+        },
+        {
+          "name": "streaming",
+          "func": "doClientSideStreamTests"
+        },
+        {
+          "name": "polling",
+          "func": "doClientSidePollTests"
+        },
+        {
+          "name": "tags",
+          "func": "doClientSideTagsTests"
+        },
+        {
+          "name": "instance id",
+          "func": "func(t *ldtest.T) {\n\t\tNewCommonInstanceIDTests(t, \"doClientSideInstanceIdTests\").Run(t)\n\t}"
+        },
+        {
+          "name": "context type",
+          "func": "doSDKContextTypeTests"
+        },
+        {
+          "name": "autoEnvAttributes",
+          "func": "doClientSideAutoEnvAttributesTests"
+        },
+        {
+          "name": "client independence",
+          "func": "doClientSideClientIndependenceTests"
+        },
+        {
+          "name": "hooks",
+          "func": "doCommonHooksTests"
+        },
+        {
+          "name": "wrapper",
+          "func": "doClientSideWrapperTests"
+        }
+      ],
+      "php": [
+        {
+          "name": "evaluation",
+          "func": "doPHPEvalTests"
+        },
+        {
+          "name": "events",
+          "func": "doPHPEventTests"
+        },
+        {
+          "name": "context type",
+          "func": "doSDKContextTypeTests"
+        },
+        {
+          "name": "secure mode hash",
+          "func": "doServerSideSecureModeHashTests"
+        },
+        {
+          "name": "migrations",
+          "func": "doServerSideMigrationTests"
+        },
+        {
+          "name": "big segments",
+          "func": "doServerSideBigSegmentsTests"
+        },
+        {
+          "name": "instance id",
+          "func": "func(t *ldtest.T) {\n\t\tNewCommonInstanceIDTests(t, \"doPHPInstanceIdTests\").RunPHP(t)\n\t}"
+        }
+      ],
+      "server-side": [
+        {
+          "name": "evaluation",
+          "func": "doServerSideEvalTests"
+        },
+        {
+          "name": "events",
+          "func": "doServerSideEventTests"
+        },
+        {
+          "name": "streaming",
+          "func": "doServerSideStreamTests"
+        },
+        {
+          "name": "polling",
+          "func": "doServerSidePollTests"
+        },
+        {
+          "name": "big segments",
+          "func": "doServerSideBigSegmentsTests"
+        },
+        {
+          "name": "service endpoints",
+          "func": "doServerSideServiceEndpointsTests"
+        },
+        {
+          "name": "tags",
+          "func": "doServerSideTagsTests"
+        },
+        {
+          "name": "instance id",
+          "func": "func(t *ldtest.T) {\n\t\tNewCommonInstanceIDTests(t, \"doServerSideInstanceIdTests\").Run(t)\n\t}"
+        },
+        {
+          "name": "secure mode hash",
+          "func": "doServerSideSecureModeHashTests"
+        },
+        {
+          "name": "context type",
+          "func": "doSDKContextTypeTests"
+        },
+        {
+          "name": "migrations",
+          "func": "doServerSideMigrationTests"
+        },
+        {
+          "name": "hooks",
+          "func": "doCommonHooksTests"
+        },
+        {
+          "name": "flag change listeners",
+          "func": "doCommonListenerTests"
+        },
+        {
+          "name": "wrapper",
+          "func": "doServerSideWrapperTests"
+        },
+        {
+          "name": "persistent data store",
+          "func": "doServerSidePersistentTests"
+        }
+      ]
+    }
+  },
+  "sdks": {
+    "akamai-base": {
+      "participates": true,
+      "repo": "launchdarkly/js-core",
+      "repo_commit": "c625c5ebe799d813748f1e5c9ceebe0e00a3387d",
+      "suppressions_files": [
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions-fdv2.txt",
+          "variant": "fdv2",
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "streaming/fdv2/reconnection state management/initializes from 2 polling initializers",
+            "streaming/fdv2/reconnection state management/saves previously known state",
+            "streaming/fdv2/reconnection state management/replaces previously known state",
+            "streaming/fdv2/reconnection state management/updates previously known state",
+            "streaming/fdv2/ignores model version",
+            "streaming/fdv2/can discard partial events on errors"
+          ],
+          "comments": []
+        },
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET"
+          ],
+          "comments": []
+        }
+      ],
+      "suppressions_by_top_group": {
+        "polling": 4,
+        "streaming": 14
+      }
+    },
+    "akamai-edgekv": {
+      "participates": true,
+      "repo": "launchdarkly/js-core",
+      "repo_commit": "c625c5ebe799d813748f1e5c9ceebe0e00a3387d",
+      "suppressions_files": [
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions-fdv2.txt",
+          "variant": "fdv2",
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "streaming/fdv2/reconnection state management/initializes from 2 polling initializers",
+            "streaming/fdv2/reconnection state management/saves previously known state",
+            "streaming/fdv2/reconnection state management/replaces previously known state",
+            "streaming/fdv2/reconnection state management/updates previously known state",
+            "streaming/fdv2/ignores model version",
+            "streaming/fdv2/can discard partial events on errors"
+          ],
+          "comments": []
+        },
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET"
+          ],
+          "comments": []
+        }
+      ],
+      "suppressions_by_top_group": {
+        "polling": 4,
+        "streaming": 14
+      }
+    },
+    "android": {
+      "participates": true,
+      "repo": "launchdarkly/android-client-sdk",
+      "repo_commit": "97b35e376b04ef7578f70502f18fe95ccf370a5e",
+      "current_ref": "ta/SDK-2279/adjusting-datasystem-visibility",
+      "suppressions_files": [
+        {
+          "path": "testharness-suppressions-fdv2.txt",
+          "variant": "fdv2",
+          "lines": [
+            "streaming/fdv2/fallback to FDv1 handling"
+          ],
+          "comments": []
+        },
+        {
+          "path": "testharness-suppressions.txt",
+          "variant": null,
+          "lines": [],
+          "comments": []
+        }
+      ],
+      "suppressions_by_top_group": {
+        "streaming": 1
+      }
+    },
+    "apex-server-sdk": {
+      "participates": false,
+      "repo": "launchdarkly/apex-server-sdk",
+      "repo_commit": "ceca1e257b4f40270a0bc49c9387363519b82951"
+    },
+    "browser": {
+      "participates": true,
+      "repo": "launchdarkly/js-core",
+      "repo_commit": "c625c5ebe799d813748f1e5c9ceebe0e00a3387d",
+      "suppressions_files": [
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions-fdv2.txt",
+          "variant": "fdv2",
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "streaming/fdv2/reconnection state management/initializes from 2 polling initializers",
+            "streaming/fdv2/reconnection state management/saves previously known state",
+            "streaming/fdv2/reconnection state management/replaces previously known state",
+            "streaming/fdv2/reconnection state management/updates previously known state",
+            "streaming/fdv2/ignores model version",
+            "streaming/fdv2/can discard partial events on errors"
+          ],
+          "comments": []
+        },
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET"
+          ],
+          "comments": []
+        }
+      ],
+      "suppressions_by_top_group": {
+        "polling": 4,
+        "streaming": 14
+      }
+    },
+    "cloudflare": {
+      "participates": true,
+      "repo": "launchdarkly/js-core",
+      "repo_commit": "c625c5ebe799d813748f1e5c9ceebe0e00a3387d",
+      "suppressions_files": [
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions-fdv2.txt",
+          "variant": "fdv2",
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "streaming/fdv2/reconnection state management/initializes from 2 polling initializers",
+            "streaming/fdv2/reconnection state management/saves previously known state",
+            "streaming/fdv2/reconnection state management/replaces previously known state",
+            "streaming/fdv2/reconnection state management/updates previously known state",
+            "streaming/fdv2/ignores model version",
+            "streaming/fdv2/can discard partial events on errors"
+          ],
+          "comments": []
+        },
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET"
+          ],
+          "comments": []
+        }
+      ],
+      "suppressions_by_top_group": {
+        "polling": 4,
+        "streaming": 14
+      }
+    },
+    "cpp-client-sdk": {
+      "participates": true,
+      "repo": "launchdarkly/cpp-sdks",
+      "repo_commit": "ae832a39a868169803f5a83b274a0d56229335fd"
+    },
+    "cpp-server-sdk": {
+      "participates": true,
+      "repo": "launchdarkly/cpp-sdks",
+      "repo_commit": "ae832a39a868169803f5a83b274a0d56229335fd"
+    },
+    "dotnet-client-sdk": {
+      "participates": false,
+      "repo": "launchdarkly/dotnet-core",
+      "repo_commit": "d4d57b15a4aca36e1eab307ad36fe5ac86f09659"
+    },
+    "dotnet-server-sdk": {
+      "participates": false,
+      "repo": "launchdarkly/dotnet-core",
+      "repo_commit": "d4d57b15a4aca36e1eab307ad36fe5ac86f09659"
+    },
+    "electron": {
+      "participates": false,
+      "repo": "launchdarkly/electron-client-sdk",
+      "repo_commit": "a5685ceb338bb0c636dfa715d66c9a7901208d5c"
+    },
+    "erlang-server-sdk": {
+      "participates": true,
+      "repo": "launchdarkly/erlang-server-sdk",
+      "repo_commit": "66d2e944910b9d6d30e33b76da37f3d3f1b4ab61",
+      "suppressions_files": [
+        {
+          "path": "test-service/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [],
+          "comments": []
+        }
+      ]
+    },
+    "fastly": {
+      "participates": true,
+      "repo": "launchdarkly/js-core",
+      "repo_commit": "c625c5ebe799d813748f1e5c9ceebe0e00a3387d",
+      "suppressions_files": [
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions-fdv2.txt",
+          "variant": "fdv2",
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "streaming/fdv2/reconnection state management/initializes from 2 polling initializers",
+            "streaming/fdv2/reconnection state management/saves previously known state",
+            "streaming/fdv2/reconnection state management/replaces previously known state",
+            "streaming/fdv2/reconnection state management/updates previously known state",
+            "streaming/fdv2/ignores model version",
+            "streaming/fdv2/can discard partial events on errors"
+          ],
+          "comments": []
+        },
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET"
+          ],
+          "comments": []
+        }
+      ],
+      "suppressions_by_top_group": {
+        "polling": 4,
+        "streaming": 14
+      }
+    },
+    "flutter-client-sdk": {
+      "participates": true,
+      "repo": "launchdarkly/flutter-client-sdk",
+      "repo_commit": "fa48b8e2b833b51c4201b4803701a7cc8ec3efec",
+      "suppressions_files": [
+        {
+          "path": "apps/flutter_client_contract_test_service/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [
+            "context type/convert/invalid context/{\"kind\": null, \"key\": \"x\"}",
+            "tags/disallowed characters",
+            "autoEnvAttributes/"
+          ],
+          "comments": []
+        }
+      ],
+      "suppressions_by_top_group": {
+        "autoEnvAttributes": 1,
+        "context type": 1,
+        "tags": 1
+      }
+    },
+    "go-server-sdk": {
+      "participates": false,
+      "repo": "launchdarkly/go-server-sdk",
+      "repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067"
+    },
+    "haskell-server-sdk": {
+      "participates": true,
+      "repo": "launchdarkly/haskell-server-sdk",
+      "repo_commit": "b4681b6a9e5ca10979818316062f95c69a8a8852",
+      "suppressions_files": [
+        {
+          "path": "contract-tests/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [
+            "evaluation/all flags state/client not ready"
+          ],
+          "comments": []
+        }
+      ],
+      "suppressions_by_top_group": {
+        "evaluation": 1
+      }
+    },
+    "java-server-sdk": {
+      "participates": false,
+      "repo": "launchdarkly/java-core",
+      "repo_commit": "0443a44beba7e55f7e9836cf403cc1af6dc60b6c",
+      "current_ref": "ta/SDK-2271/improved-fdv2-logs"
+    },
+    "js-client-sdk": {
+      "participates": false,
+      "repo": "launchdarkly/js-client-sdk",
+      "repo_commit": "ba690fb87bdf4805171476c75e0d0d7a8a89094e"
+    },
+    "lua-server-sdk": {
+      "participates": false,
+      "repo": "launchdarkly/lua-server-sdk",
+      "repo_commit": "5df985e9a70017f54a904020b362097028afd011"
+    },
+    "node-client-sdk": {
+      "participates": false,
+      "repo": "launchdarkly/node-client-sdk",
+      "repo_commit": null
+    },
+    "node-server": {
+      "participates": true,
+      "repo": "launchdarkly/js-core",
+      "repo_commit": "c625c5ebe799d813748f1e5c9ceebe0e00a3387d",
+      "suppressions_files": [
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions-fdv2.txt",
+          "variant": "fdv2",
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "streaming/fdv2/reconnection state management/initializes from 2 polling initializers",
+            "streaming/fdv2/reconnection state management/saves previously known state",
+            "streaming/fdv2/reconnection state management/replaces previously known state",
+            "streaming/fdv2/reconnection state management/updates previously known state",
+            "streaming/fdv2/ignores model version",
+            "streaming/fdv2/can discard partial events on errors"
+          ],
+          "comments": []
+        },
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET"
+          ],
+          "comments": []
+        }
+      ],
+      "suppressions_by_top_group": {
+        "polling": 4,
+        "streaming": 14
+      }
+    },
+    "php-server-sdk": {
+      "participates": true,
+      "repo": "launchdarkly/php-server-sdk",
+      "repo_commit": "e35963e0a42a9104df0db23c13d75173fbbfc396"
+    },
+    "python-server-sdk": {
+      "participates": true,
+      "repo": "launchdarkly/python-server-sdk",
+      "repo_commit": "e542f737a69e29c168a6d5a5877074aba6ce3353"
+    },
+    "react-client-sdk": {
+      "participates": true,
+      "repo": "launchdarkly/js-core",
+      "repo_commit": "c625c5ebe799d813748f1e5c9ceebe0e00a3387d",
+      "suppressions_files": [
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions-fdv2.txt",
+          "variant": "fdv2",
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "streaming/fdv2/reconnection state management/initializes from 2 polling initializers",
+            "streaming/fdv2/reconnection state management/saves previously known state",
+            "streaming/fdv2/reconnection state management/replaces previously known state",
+            "streaming/fdv2/reconnection state management/updates previously known state",
+            "streaming/fdv2/ignores model version",
+            "streaming/fdv2/can discard partial events on errors"
+          ],
+          "comments": []
+        },
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET"
+          ],
+          "comments": []
+        }
+      ],
+      "suppressions_by_top_group": {
+        "polling": 4,
+        "streaming": 14
+      }
+    },
+    "react-native": {
+      "participates": true,
+      "repo": "launchdarkly/js-core",
+      "repo_commit": "c625c5ebe799d813748f1e5c9ceebe0e00a3387d",
+      "suppressions_files": [
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions-fdv2.txt",
+          "variant": "fdv2",
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "streaming/fdv2/reconnection state management/initializes from 2 polling initializers",
+            "streaming/fdv2/reconnection state management/saves previously known state",
+            "streaming/fdv2/reconnection state management/replaces previously known state",
+            "streaming/fdv2/reconnection state management/updates previously known state",
+            "streaming/fdv2/ignores model version",
+            "streaming/fdv2/can discard partial events on errors"
+          ],
+          "comments": []
+        },
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET"
+          ],
+          "comments": []
+        }
+      ],
+      "suppressions_by_top_group": {
+        "polling": 4,
+        "streaming": 14
+      }
+    },
+    "relay-proxy": {
+      "participates": false,
+      "repo": "launchdarkly/ld-relay",
+      "repo_commit": "95211d46b6501ca5bd98b76f738ea26b9097356d",
+      "current_ref": "aaronz/SDK-2337/replace-goreleaser-experiment"
+    },
+    "roku": {
+      "participates": true,
+      "repo": "launchdarkly/roku-client-sdk",
+      "repo_commit": "bbbd77ead12494f82a6ebd59d5a86f3bc82f2718",
+      "suppressions_files": [
+        {
+          "path": "src/contract-tests/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [
+            "polling/requests/context properties/multi-kind/REPORT",
+            "polling/requests/context properties/single kind minimal/REPORT",
+            "polling/requests/context properties/single kind with all attributes/REPORT",
+            "polling/requests/method and headers/REPORT",
+            "polling/requests/URL path is computed correctly/no environment filter/base URI has a trailing slash/REPORT",
+            "polling/requests/URL path is computed correctly/no environment filter/base URI has no trailing slash/REPORT",
+            "streaming/requests",
+            "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/without reasons/type: any",
+            "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/without reasons/type: bool",
+            "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/without reasons/type: double",
+            "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/without reasons/type: int",
+            "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/without reasons/type: string",
+            "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/with reasons/type: any",
+            "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/with reasons/type: bool",
+            "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/with reasons/type: double",
+            "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/with reasons/type: int",
+            "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/with reasons/type: string"
+          ],
+          "comments": [
+            {
+              "comment": "Roku does not yet support using REPORT verb",
+              "applies_to": [
+                "polling/requests/context properties/multi-kind/REPORT",
+                "polling/requests/context properties/single kind minimal/REPORT",
+                "polling/requests/context properties/single kind with all attributes/REPORT",
+                "polling/requests/method and headers/REPORT",
+                "polling/requests/URL path is computed correctly/no environment filter/base URI has a trailing slash/REPORT",
+                "polling/requests/URL path is computed correctly/no environment filter/base URI has no trailing slash/REPORT"
+              ]
+            },
+            {
+              "comment": "Roku streaming support is limited in the contract tests",
+              "applies_to": [
+                "streaming/requests"
+              ]
+            },
+            {
+              "comment": "SDK doesn't parse server date header",
+              "applies_to": [
+                "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/without reasons/type: any",
+                "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/without reasons/type: bool",
+                "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/without reasons/type: double",
+                "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/without reasons/type: int",
+                "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/without reasons/type: string",
+                "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/with reasons/type: any",
+                "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/with reasons/type: bool",
+                "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/with reasons/type: double",
+                "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/with reasons/type: int",
+                "events/debug events/should not see debug event/debugEventsUntilDate is after SDK time/SDK knows LD time is after debugEventsUntilDate/with reasons/type: string"
+              ]
+            }
+          ]
+        }
+      ],
+      "suppressions_by_top_group": {
+        "events": 10,
+        "polling": 6,
+        "streaming": 1
+      }
+    },
+    "ruby-server-sdk": {
+      "participates": true,
+      "repo": "launchdarkly/ruby-server-sdk",
+      "repo_commit": "4b673759a9e517ad36016dcdfcb27295ce418d9b"
+    },
+    "rust-server-sdk": {
+      "participates": true,
+      "repo": "launchdarkly/rust-server-sdk",
+      "repo_commit": "1b3b695e90fad7ffd0bb5c7e1d475b90e6510e9a",
+      "suppressions_files": [
+        {
+          "path": "contract-tests/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [
+            "evaluation/all flags state/client not ready",
+            "evaluation/client not ready",
+            "streaming/validation/drop and reconnect if stream event has malformed JSON/delete event",
+            "streaming/validation/drop and reconnect if stream event has malformed JSON/patch event",
+            "streaming/validation/drop and reconnect if stream event has malformed JSON/put event",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema/delete event",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema/patch event",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema/put event"
+          ],
+          "comments": []
+        }
+      ],
+      "suppressions_by_top_group": {
+        "evaluation": 2,
+        "streaming": 6
+      }
+    },
+    "server-ai": {
+      "participates": true,
+      "repo": "launchdarkly/js-core",
+      "repo_commit": "c625c5ebe799d813748f1e5c9ceebe0e00a3387d",
+      "suppressions_files": [
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions-fdv2.txt",
+          "variant": "fdv2",
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "streaming/fdv2/reconnection state management/initializes from 2 polling initializers",
+            "streaming/fdv2/reconnection state management/saves previously known state",
+            "streaming/fdv2/reconnection state management/replaces previously known state",
+            "streaming/fdv2/reconnection state management/updates previously known state",
+            "streaming/fdv2/ignores model version",
+            "streaming/fdv2/can discard partial events on errors"
+          ],
+          "comments": []
+        },
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET"
+          ],
+          "comments": []
+        }
+      ],
+      "suppressions_by_top_group": {
+        "polling": 4,
+        "streaming": 14
+      }
+    },
+    "shopify-oxygen": {
+      "participates": true,
+      "repo": "launchdarkly/js-core",
+      "repo_commit": "c625c5ebe799d813748f1e5c9ceebe0e00a3387d",
+      "suppressions_files": [
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions-fdv2.txt",
+          "variant": "fdv2",
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "streaming/fdv2/reconnection state management/initializes from 2 polling initializers",
+            "streaming/fdv2/reconnection state management/saves previously known state",
+            "streaming/fdv2/reconnection state management/replaces previously known state",
+            "streaming/fdv2/reconnection state management/updates previously known state",
+            "streaming/fdv2/ignores model version",
+            "streaming/fdv2/can discard partial events on errors"
+          ],
+          "comments": []
+        },
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET"
+          ],
+          "comments": []
+        }
+      ],
+      "suppressions_by_top_group": {
+        "polling": 4,
+        "streaming": 14
+      }
+    },
+    "svelte": {
+      "participates": true,
+      "repo": "launchdarkly/js-core",
+      "repo_commit": "c625c5ebe799d813748f1e5c9ceebe0e00a3387d",
+      "suppressions_files": [
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions-fdv2.txt",
+          "variant": "fdv2",
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "streaming/fdv2/reconnection state management/initializes from 2 polling initializers",
+            "streaming/fdv2/reconnection state management/saves previously known state",
+            "streaming/fdv2/reconnection state management/replaces previously known state",
+            "streaming/fdv2/reconnection state management/updates previously known state",
+            "streaming/fdv2/ignores model version",
+            "streaming/fdv2/can discard partial events on errors"
+          ],
+          "comments": []
+        },
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET"
+          ],
+          "comments": []
+        }
+      ],
+      "suppressions_by_top_group": {
+        "polling": 4,
+        "streaming": 14
+      }
+    },
+    "swift-client-sdk": {
+      "participates": true,
+      "repo": "launchdarkly/ios-client-sdk",
+      "repo_commit": "9f29b759b73fdb62bc574a41a41cdf2b5b7be946",
+      "suppressions_files": [
+        {
+          "path": "ContractTests/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [],
+          "comments": []
+        }
+      ]
+    },
+    "vercel": {
+      "participates": true,
+      "repo": "launchdarkly/js-core",
+      "repo_commit": "c625c5ebe799d813748f1e5c9ceebe0e00a3387d",
+      "suppressions_files": [
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions-fdv2.txt",
+          "variant": "fdv2",
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "streaming/fdv2/reconnection state management/initializes from 2 polling initializers",
+            "streaming/fdv2/reconnection state management/saves previously known state",
+            "streaming/fdv2/reconnection state management/replaces previously known state",
+            "streaming/fdv2/reconnection state management/updates previously known state",
+            "streaming/fdv2/ignores model version",
+            "streaming/fdv2/can discard partial events on errors"
+          ],
+          "comments": []
+        },
+        {
+          "path": "packages/sdk/server-node/contract-tests/testharness-suppressions.txt",
+          "variant": null,
+          "lines": [
+            "streaming/validation/drop and reconnect if stream event has malformed JSON",
+            "streaming/validation/drop and reconnect if stream event has well-formed JSON not matching schema",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "streaming/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has no trailing slash/GET",
+            "polling/requests/URL path is computed correctly/environment_filter_key=\"encoding_not_necessary\"/base URI has a trailing slash/GET"
+          ],
+          "comments": []
+        }
+      ],
+      "suppressions_by_top_group": {
+        "polling": 4,
+        "streaming": 14
+      }
+    },
+    "vue": {
+      "participates": false,
+      "repo": "launchdarkly/vue-client-sdk",
+      "repo_commit": "b4ca9383b1c787758480d5acb7e8f49635792006"
+    }
+  }
+}

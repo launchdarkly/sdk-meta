@@ -2,5 +2,7 @@
 tool/test.sqlite3
 metadata.sqlite3.new
 tool/ingest
+tool/cmd/genspecs/genspecs
+tool/specs/.judge-cache/
 products/features.html
 _site/

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LaunchDarkly SDK Spec Support</title>
+  <style>
+    :root {
+      --bg-primary: #f5f5f5;
+      --bg-secondary: #ffffff;
+      --text-primary: #282828;
+      --text-secondary: #6c757d;
+      --border-color: #dee2e6;
+      --table-header-bg: #282828;
+      --table-header-text: #ffffff;
+      --row-hover: #f8f9fa;
+      --supported: #28a745;
+      --partial: #ffc107;
+      --not-supported: #dc3545;
+      --not-applicable: #adb5bd;
+      --unknown: #ffffff;
+      --unknown-border: #dee2e6;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-primary: #1a1a1a;
+        --bg-secondary: #2d2d2d;
+        --text-primary: #e0e0e0;
+        --text-secondary: #a0a0a0;
+        --border-color: #404040;
+        --table-header-bg: #1a1a1a;
+        --table-header-text: #e0e0e0;
+        --row-hover: #363636;
+        --not-applicable: #555;
+        --unknown: #2d2d2d;
+        --unknown-border: #555;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    h1 { margin: 0 0 4px; font-weight: 600; }
+    .subtitle { color: var(--text-secondary); margin: 0 0 20px; font-size: 0.9rem; }
+
+    .nav-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .nav-tab {
+      padding: 12px 24px;
+      text-decoration: none;
+      color: var(--text-primary);
+      opacity: 0.7;
+      border-bottom: 3px solid transparent;
+    }
+    .nav-tab:hover { opacity: 1; }
+    .nav-tab.active { opacity: 1; border-bottom-color: var(--text-primary); font-weight: 600; }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .controls label { font-size: 0.875rem; }
+    .controls select, .controls input[type=text] {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 0.875rem;
+    }
+
+    .legend {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      font-size: 0.8rem;
+    }
+    .legend .swatch {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      vertical-align: middle;
+      margin-right: 4px;
+      border: 1px solid var(--border-color);
+    }
+
+    .matrix-wrap {
+      overflow: auto;
+      max-height: 75vh;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: var(--bg-secondary);
+    }
+
+    table.matrix {
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.78rem;
+    }
+    table.matrix th, table.matrix td {
+      padding: 4px 6px;
+      border-bottom: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+    table.matrix thead th {
+      position: sticky;
+      top: 0;
+      background: var(--table-header-bg);
+      color: var(--table-header-text);
+      z-index: 2;
+      vertical-align: bottom;
+    }
+    table.matrix thead th.spec-col {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      max-width: 24px;
+      min-width: 24px;
+      height: 180px;
+      font-weight: 500;
+      font-size: 0.72rem;
+    }
+    table.matrix tbody th {
+      position: sticky;
+      left: 0;
+      background: var(--bg-secondary);
+      text-align: left;
+      font-weight: 500;
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      z-index: 1;
+    }
+    table.matrix thead th.sdk-corner {
+      position: sticky;
+      left: 0;
+      z-index: 3;
+    }
+
+    td.cell {
+      width: 24px;
+      min-width: 24px;
+      max-width: 24px;
+      height: 24px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 0.7rem;
+    }
+
+    td.cell[data-state="supported"] { background-color: var(--supported); }
+    td.cell[data-state="partial"] { background-color: var(--partial); color: #000; }
+    td.cell[data-state="not-supported"] { background-color: var(--not-supported); color: #fff; }
+    td.cell[data-state="not-applicable"] { background-color: var(--not-applicable); }
+    td.cell[data-state="unknown"] { background-color: var(--unknown); }
+
+    tbody tr:hover { background-color: var(--row-hover); }
+    tbody tr:hover th { background-color: var(--row-hover); }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal.open { display: flex; }
+    .modal-card {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border-radius: 8px;
+      padding: 20px 24px;
+      max-width: 640px;
+      width: 90%;
+      max-height: 80vh;
+      overflow: auto;
+    }
+    .modal-card h3 { margin: 0 0 4px; }
+    .modal-card .meta { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 12px; }
+    .modal-card .rationale { line-height: 1.4; margin-bottom: 12px; }
+    .modal-card details { margin-top: 12px; }
+    .modal-card pre {
+      background: var(--bg-primary);
+      padding: 12px;
+      border-radius: 4px;
+      overflow: auto;
+      font-size: 0.78rem;
+    }
+    .modal-card .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-right: 6px;
+    }
+    .pill.supported { background: var(--supported); color: #fff; }
+    .pill.partial { background: var(--partial); color: #000; }
+    .pill.not-supported { background: var(--not-supported); color: #fff; }
+    .pill.not-applicable { background: var(--not-applicable); color: #fff; }
+    .pill.unknown { background: var(--unknown); color: var(--text-primary); border: 1px solid var(--unknown-border); }
+    .modal-card button.close {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    .summary {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+    }
+    .summary .stat {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px 12px;
+    }
+    .summary .stat strong { font-size: 1.1rem; display: block; }
+  </style>
+</head>
+<body>
+  <div class="nav-tabs">
+    <a class="nav-tab active" href="spec-support.html">Matrix</a>
+    <a class="nav-tab" href="spec-support-by-sdk.html">By SDK</a>
+    <a class="nav-tab" href="by-sdk.html">Features (by SDK)</a>
+    <a class="nav-tab" href="by-feature.html">Features (by feature)</a>
+  </div>
+
+  <h1>SDK spec support matrix</h1>
+  <p class="subtitle">Generated {{.GeneratedAt}} · specs commit <code>{{shortCommit .SpecsCommit}}</code> · harness commit <code>{{shortCommit .HarnessCommit}}</code> · model <code>{{.Model}}</code> · prompt <code>{{.PromptVersion}}</code></p>
+
+  <div class="legend">
+    <span><span class="swatch" style="background:var(--supported)"></span>supported</span>
+    <span><span class="swatch" style="background:var(--partial)"></span>partial</span>
+    <span><span class="swatch" style="background:var(--not-supported)"></span>not supported</span>
+    <span><span class="swatch" style="background:var(--not-applicable)"></span>n/a</span>
+    <span><span class="swatch" style="background:var(--unknown);border:1px solid var(--unknown-border)"></span>unknown</span>
+  </div>
+
+  <div class="controls">
+    <label>SDK type:
+      <select id="sdkType">
+        <option value="all">all</option>
+        <option value="client-side">client-side</option>
+        <option value="server-side">server-side</option>
+        <option value="edge">edge</option>
+        <option value="ai">ai</option>
+        <option value="relay">relay</option>
+      </select>
+    </label>
+    <label>Spec status:
+      <select id="specStatus">
+        <option value="all">all</option>
+        <option value="ACCEPTED">ACCEPTED</option>
+        <option value="DRAFT">DRAFT</option>
+        <option value="DEPRECATED">DEPRECATED</option>
+        <option value="SUPERSEDED">SUPERSEDED</option>
+      </select>
+    </label>
+    <label><input type="checkbox" id="hideNA" checked> Hide N/A cells</label>
+    <label><input type="checkbox" id="hideEmptySpecs"> Hide spec columns where every cell is N/A</label>
+  </div>
+
+  <div class="summary" id="summary"></div>
+
+  <div class="matrix-wrap">
+    <table class="matrix" id="matrix">
+      <thead>
+        <tr id="headerRow"></tr>
+      </thead>
+      <tbody id="body"></tbody>
+    </table>
+  </div>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <h3 id="modalTitle"></h3>
+      <div class="meta" id="modalMeta"></div>
+      <div class="rationale" id="modalRationale"></div>
+      <div id="modalEvidence"></div>
+      <details>
+        <summary>Raw cell JSON</summary>
+        <pre id="modalRaw"></pre>
+      </details>
+      <button class="close" id="modalClose">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const data = {{.PayloadJSON}};
+    const specs = data.specs;       // map of spec_id -> Spec
+    const sdkOrder = data.sdkOrder; // [sdk_id]
+    const specOrder = data.specOrder; // [spec_id]
+    const types = data.types;       // map sdk_id -> type
+    const names = data.names;       // map sdk_id -> friendly name
+    const cells = data.cells;       // map sdk_id -> map spec_id -> cell
+
+    function render() {
+      const sdkType = document.getElementById('sdkType').value;
+      const specStatus = document.getElementById('specStatus').value;
+      const hideNA = document.getElementById('hideNA').checked;
+      const hideEmptySpecs = document.getElementById('hideEmptySpecs').checked;
+
+      const visibleSdks = sdkOrder.filter(id => sdkType === 'all' || types[id] === sdkType);
+      let visibleSpecs = specOrder.filter(id => specStatus === 'all' || specs[id].status === specStatus);
+
+      if (hideEmptySpecs) {
+        visibleSpecs = visibleSpecs.filter(specId => visibleSdks.some(sdkId => {
+          const c = (cells[sdkId] || {})[specId];
+          return c && c.state !== 'not-applicable';
+        }));
+      }
+
+      const headerRow = document.getElementById('headerRow');
+      headerRow.innerHTML = '';
+      const corner = document.createElement('th');
+      corner.className = 'sdk-corner';
+      corner.textContent = 'SDK \\ spec';
+      headerRow.appendChild(corner);
+      visibleSpecs.forEach(specId => {
+        const th = document.createElement('th');
+        th.className = 'spec-col';
+        const spec = specs[specId];
+        th.textContent = `${specId} — ${spec.title}`;
+        th.title = `${specId} (${spec.status}) — ${spec.title}\n${spec.description || ''}`;
+        headerRow.appendChild(th);
+      });
+
+      const body = document.getElementById('body');
+      body.innerHTML = '';
+      const summary = { supported: 0, partial: 0, 'not-supported': 0, 'not-applicable': 0, unknown: 0 };
+      visibleSdks.forEach(sdkId => {
+        const tr = document.createElement('tr');
+        const th = document.createElement('th');
+        th.textContent = `${names[sdkId] || sdkId} (${types[sdkId] || '?'})`;
+        th.title = sdkId;
+        tr.appendChild(th);
+        visibleSpecs.forEach(specId => {
+          const td = document.createElement('td');
+          td.className = 'cell';
+          const cell = (cells[sdkId] || {})[specId] || { state: 'unknown' };
+          if (hideNA && cell.state === 'not-applicable') {
+            td.style.background = 'transparent';
+            td.style.cursor = 'default';
+          } else {
+            td.dataset.state = cell.state;
+            td.title = `${sdkId} × ${specId}: ${cell.state} (${cell.confidence || '?'})`;
+            td.addEventListener('click', () => openModal(sdkId, specId, cell));
+          }
+          summary[cell.state] = (summary[cell.state] || 0) + 1;
+          tr.appendChild(td);
+        });
+        body.appendChild(tr);
+      });
+
+      const sumEl = document.getElementById('summary');
+      sumEl.innerHTML = '';
+      Object.entries(summary).forEach(([state, n]) => {
+        const div = document.createElement('div');
+        div.className = 'stat';
+        div.innerHTML = `<strong>${n}</strong> ${state}`;
+        sumEl.appendChild(div);
+      });
+    }
+
+    function openModal(sdkId, specId, cell) {
+      const spec = specs[specId];
+      document.getElementById('modalTitle').textContent = `${sdkId} × ${specId}`;
+      const repoLink = spec.path
+        ? `<a href="https://github.com/launchdarkly/sdk-specs/blob/main/${spec.path}/README.md" target="_blank">view spec README</a>`
+        : '';
+      document.getElementById('modalMeta').innerHTML =
+        `<span class="pill ${cell.state}">${cell.state}</span>` +
+        `<span class="pill" style="background:transparent;color:var(--text-secondary);border:1px solid var(--border-color)">${cell.confidence || '?'}</span>` +
+        `<span class="pill" style="background:transparent;color:var(--text-secondary);border:1px solid var(--border-color)">${cell.source || '?'}</span> ` +
+        repoLink;
+      document.getElementById('modalRationale').textContent = cell.rationale || '(no rationale)';
+      const ev = (cell.evidence || []).map(e => {
+        if (e.kind === 'feature') return `feature: ${e.id}`;
+        if (e.kind === 'harness_capability') return `harness capability: ${e.id}`;
+        if (e.kind === 'harness_test_group') return `harness test group: ${e.id}`;
+        if (e.kind === 'harness_suppression') return `harness suppression: ${e.path}`;
+        if (e.kind === 'repo_path') return `repo path: ${e.path}`;
+        return `${e.kind}: ${e.id || e.path || ''}`;
+      });
+      document.getElementById('modalEvidence').innerHTML = ev.length
+        ? `<strong>Evidence</strong><ul>${ev.map(e => `<li>${e}</li>`).join('')}</ul>`
+        : '';
+      document.getElementById('modalRaw').textContent = JSON.stringify(cell, null, 2);
+      document.getElementById('modal').classList.add('open');
+    }
+
+    document.getElementById('modalClose').addEventListener('click', () =>
+      document.getElementById('modal').classList.remove('open'));
+    document.getElementById('modal').addEventListener('click', (e) => {
+      if (e.target.id === 'modal') document.getElementById('modal').classList.remove('open');
+    });
+
+    ['sdkType','specStatus','hideNA','hideEmptySpecs'].forEach(id => {
+      document.getElementById(id).addEventListener('change', render);
+    });
+    render();
+  </script>
+</body>
+</html>

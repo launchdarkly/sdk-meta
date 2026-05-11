@@ -1,0 +1,764 @@
+package main
+
+import (
+	"bytes"
+	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"flag"
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"path/filepath"
+	"sort"
+	"strings"
+	"sync"
+	"time"
+)
+
+var httpClient = &http.Client{Timeout: 5 * time.Minute}
+
+func runJudge(args []string) error {
+	fs := flag.NewFlagSet("judge", flag.ExitOnError)
+	specsJSON := fs.String("specs-json", "products/specs.json", "Path to products/specs.json (input).")
+	harnessJSON := fs.String("harness-json", "products/harness_signals.json", "Path to products/harness_signals.json (input).")
+	featuresJSON := fs.String("features-json", "products/features.json", "Path to products/features.json (input).")
+	featureInfoJSON := fs.String("feature-info-json", "products/feature_info.json", "Path to products/feature_info.json (input).")
+	typesJSON := fs.String("types-json", "products/types.json", "Path to products/types.json (input).")
+	namesJSON := fs.String("names-json", "products/names.json", "Path to products/names.json (input).")
+	languagesJSON := fs.String("languages-json", "products/languages.json", "Path to products/languages.json (input).")
+	reposJSON := fs.String("repos-json", "products/repos.json", "Path to products/repos.json (input).")
+	specsRepoPath := fs.String("specs-repo", filepath.Join(defaultReposRoot(), "sdk-specs"), "Path to local sdk-specs checkout (used to read spec READMEs).")
+	root := fs.String("sdk-repos-root", defaultReposRoot(), "Directory under which SDK repos live.")
+	out := fs.String("out", "products/spec_support.json", "Output path for spec_support.json.")
+	provider := fs.String("provider", defaultProvider(), "Judge provider: 'anthropic' or 'noop'.")
+	model := fs.String("model", defaultModel(), "Model id to use when provider='anthropic'.")
+	concurrency := fs.Int("concurrency", 4, "Maximum concurrent LLM requests.")
+	cacheDir := fs.String("cache-dir", filepath.Join("tool", "specs", ".judge-cache"), "Directory for the per-cell prompt-pack cache.")
+	maxCells := fs.Int("max-cells", 0, "If > 0, only judge this many LLM-bound cells (the rest stay 'unknown'). Useful for incremental runs.")
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+
+	specsProduct, err := loadJSON[SpecsProduct](*specsJSON)
+	if err != nil {
+		return fmt.Errorf("loading specs.json: %w", err)
+	}
+	harnessProduct, err := loadJSON[HarnessProduct](*harnessJSON)
+	if err != nil {
+		return fmt.Errorf("loading harness_signals.json: %w", err)
+	}
+	features, err := loadJSON[map[string]map[string]FeatureSupportLite](*featuresJSON)
+	if err != nil {
+		return fmt.Errorf("loading features.json: %w", err)
+	}
+	featureInfo, err := loadJSON[map[string]FeatureInfoLite](*featureInfoJSON)
+	if err != nil {
+		return fmt.Errorf("loading feature_info.json: %w", err)
+	}
+	types, err := loadJSON[map[string]string](*typesJSON)
+	if err != nil {
+		return fmt.Errorf("loading types.json: %w", err)
+	}
+	names, err := loadJSON[map[string]string](*namesJSON)
+	if err != nil {
+		return fmt.Errorf("loading names.json: %w", err)
+	}
+	languages, err := loadJSON[map[string][]string](*languagesJSON)
+	if err != nil {
+		return fmt.Errorf("loading languages.json: %w", err)
+	}
+	repos, err := readReposJSONFull(*reposJSON)
+	if err != nil {
+		return fmt.Errorf("loading repos.json: %w", err)
+	}
+
+	judge, err := buildJudge(*provider, *model)
+	if err != nil {
+		return fmt.Errorf("building judge: %w", err)
+	}
+
+	if err := os.MkdirAll(*cacheDir, 0o755); err != nil {
+		return fmt.Errorf("creating cache dir: %w", err)
+	}
+
+	// Iterate sdks and specs in stable order.
+	sdkIDs := sortedKeys(types)
+	specIDs := sortedKeys(specsProduct.Specs)
+
+	result := SpecSupportProduct{
+		GeneratedAt:   time.Now().UTC().Format(time.RFC3339),
+		SpecsCommit:   specsProduct.SourceCommit,
+		HarnessCommit: harnessProduct.Harness.Commit,
+		Model:         judge.Model(),
+		PromptVersion: promptVersion,
+		SDKs:          map[string]map[string]Cell{},
+	}
+
+	// Build the work list: every (sdk, spec) cell that survives the applies-to filter.
+	type job struct {
+		sdkID, specID string
+	}
+	var work []job
+	for _, sdkID := range sdkIDs {
+		sdkType := types[sdkID]
+		row := map[string]Cell{}
+		for _, specID := range specIDs {
+			spec := specsProduct.Specs[specID]
+			cell, applicable := appliesToCell(spec, sdkID, sdkType)
+			if !applicable {
+				row[specID] = cell
+				continue
+			}
+			// Reserve an unknown slot; judge step may overwrite.
+			row[specID] = Cell{State: StateUnknown, Source: SourceJudgeFailed, Confidence: ConfidenceLow}
+			work = append(work, job{sdkID, specID})
+		}
+		result.SDKs[sdkID] = row
+	}
+
+	if *maxCells > 0 && len(work) > *maxCells {
+		work = work[:*maxCells]
+		fmt.Fprintf(os.Stderr, "Capping work to first %d cells per --max-cells.\n", *maxCells)
+	}
+
+	fmt.Fprintf(os.Stderr, "Judging %d (SDK, spec) cells with provider=%s model=%s\n", len(work), *provider, judge.Model())
+
+	cache := newCellCache(*cacheDir)
+	sem := make(chan struct{}, *concurrency)
+	var mu sync.Mutex
+	var wg sync.WaitGroup
+	progress := 0
+
+	for _, j := range work {
+		wg.Add(1)
+		j := j
+		go func() {
+			defer wg.Done()
+			sem <- struct{}{}
+			defer func() { <-sem }()
+
+			pack := buildPromptPack(packInputs{
+				spec:            specsProduct.Specs[j.specID],
+				sdkID:           j.sdkID,
+				sdkName:         names[j.sdkID],
+				sdkType:         types[j.sdkID],
+				languages:       languages[j.sdkID],
+				features:        features[j.sdkID],
+				featureInfo:     featureInfo,
+				harness:         harnessProduct.Harness,
+				sdkHarness:      harnessProduct.SDKs[j.sdkID],
+				repoGitHub:      repos[j.sdkID],
+				specsRepoPath:   *specsRepoPath,
+				sdkRepoRoot:     *root,
+				specsCommit:     specsProduct.SourceCommit,
+				harnessCommit:   harnessProduct.Harness.Commit,
+				promptVersion:   promptVersion,
+				modelIdentifier: judge.Model(),
+			})
+
+			cell, fromCache, err := evaluate(context.Background(), judge, pack, cache)
+
+			mu.Lock()
+			defer mu.Unlock()
+			progress++
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "[%d/%d] %-32s %-12s ERROR: %v\n", progress, len(work), j.sdkID, j.specID, err)
+				cell = Cell{
+					State:      StateUnknown,
+					Source:     SourceJudgeFailed,
+					Confidence: ConfidenceLow,
+					Rationale:  truncate("judge failed: "+err.Error(), 240),
+				}
+			} else {
+				marker := "*"
+				if fromCache {
+					marker = "C"
+				}
+				fmt.Fprintf(os.Stderr, "[%d/%d] %s %-32s %-12s %s (%s)\n", progress, len(work), marker, j.sdkID, j.specID, cell.State, cell.Confidence)
+			}
+			result.SDKs[j.sdkID][j.specID] = cell
+		}()
+	}
+	wg.Wait()
+
+	return writeJSON(*out, result)
+}
+
+func evaluate(ctx context.Context, judge Judge, pack PromptPack, cache *cellCache) (Cell, bool, error) {
+	now := time.Now().UTC().Format(time.RFC3339)
+	hash := pack.Hash()
+	if cached, ok := cache.Get(hash); ok {
+		cell := cached
+		cell.JudgedAt = &now
+		// JudgedAgainst stays as the cached value, so reviewers can see exactly
+		// which inputs the cell was judged against.
+		return cell, true, nil
+	}
+
+	resp, err := judge.Judge(ctx, pack)
+	if err != nil {
+		return Cell{}, false, err
+	}
+
+	state := normalizeState(resp.State)
+	if state == "" {
+		return Cell{}, false, fmt.Errorf("judge returned unknown state %q", resp.State)
+	}
+
+	cell := Cell{
+		State:      state,
+		Confidence: normalizeConfidence(resp.Confidence),
+		Source:     SourceLLMJudge,
+		Rationale:  truncate(strings.TrimSpace(resp.Rationale), 480),
+		Evidence:   resp.Evidence,
+		JudgedAt:   &now,
+		JudgedAgainst: &JudgedAgainst{
+			SpecsCommit:   pack.SpecsCommit,
+			HarnessCommit: pack.HarnessCommit,
+			SDKCommit:     pack.SDKCommit,
+			Model:         pack.ModelIdentifier,
+			PromptVersion: pack.PromptVersion,
+		},
+	}
+	if resp.NotesForHuman != "" {
+		n := resp.NotesForHuman
+		cell.NotesForHuman = &n
+	}
+	cache.Put(hash, cell)
+	return cell, false, nil
+}
+
+func appliesToCell(spec Spec, sdkID, sdkType string) (Cell, bool) {
+	// Empty applies-to means foundational; never short-circuit those.
+	if len(spec.AppliesTo) == 0 {
+		return Cell{}, true
+	}
+	canonical := canonicalSDKKind(sdkType)
+	if canonical == "" {
+		return Cell{}, true // can't decide cheaply; let the LLM see it
+	}
+	for _, a := range spec.AppliesTo {
+		if a == canonical {
+			return Cell{}, true
+		}
+	}
+	return Cell{
+		State:      StateNotApplicable,
+		Source:     SourceAppliesTo,
+		Confidence: ConfidenceHigh,
+		Rationale:  fmt.Sprintf("Spec applies to %s; %s is %s.", strings.Join(spec.AppliesTo, "/"), sdkID, sdkType),
+	}, false
+}
+
+// canonicalSDKKind maps the sdk-meta types.json values to the spec
+// applies-to vocabulary. We treat 'edge' as server-side (matches how the
+// specs and existing metadata categorize them) and AI SDKs as server-side
+// by default — both are coarse approximations the LLM step can override
+// via richer evidence when the cell isn't filtered.
+func canonicalSDKKind(t string) string {
+	switch t {
+	case "client-side":
+		return "client-sdk"
+	case "server-side":
+		return "server-sdk"
+	case "edge":
+		return "server-sdk"
+	case "ai":
+		return "server-sdk"
+	case "relay":
+		return "relay-proxy"
+	}
+	return ""
+}
+
+func normalizeState(s string) string {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "supported":
+		return StateSupported
+	case "partial":
+		return StatePartial
+	case "not-supported", "not_supported", "unsupported":
+		return StateNotSupported
+	case "not-applicable", "not_applicable", "n/a", "na":
+		return StateNotApplicable
+	case "unknown":
+		return StateUnknown
+	}
+	return ""
+}
+
+func normalizeConfidence(s string) string {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "high":
+		return ConfidenceHigh
+	case "medium", "med", "moderate":
+		return ConfidenceMedium
+	case "low":
+		return ConfidenceLow
+	case "n/a", "na", "":
+		return ConfidenceNA
+	}
+	return ConfidenceLow
+}
+
+func truncate(s string, max int) string {
+	if len(s) <= max {
+		return s
+	}
+	return s[:max-1] + "…"
+}
+
+func sortedKeys[V any](m map[string]V) []string {
+	out := make([]string, 0, len(m))
+	for k := range m {
+		out = append(out, k)
+	}
+	sort.Strings(out)
+	return out
+}
+
+func loadJSON[T any](path string) (T, error) {
+	var zero T
+	bytes, err := os.ReadFile(path)
+	if err != nil {
+		return zero, err
+	}
+	var v T
+	if err := json.Unmarshal(bytes, &v); err != nil {
+		return zero, err
+	}
+	return v, nil
+}
+
+// FeatureSupportLite is a minimal copy of features.json's per-feature shape,
+// used so we don't depend on the genhtml types.
+type FeatureSupportLite struct {
+	Introduced *string `json:"introduced"`
+	Deprecated *string `json:"deprecated"`
+	Removed    *string `json:"removed"`
+}
+
+type FeatureInfoLite struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+// ---------- prompt pack ----------
+
+type packInputs struct {
+	spec            Spec
+	sdkID           string
+	sdkName         string
+	sdkType         string
+	languages       []string
+	features        map[string]FeatureSupportLite
+	featureInfo     map[string]FeatureInfoLite
+	harness         HarnessInfo
+	sdkHarness      SDKHarnessSignal
+	repoGitHub      string
+	specsRepoPath   string
+	sdkRepoRoot     string
+	specsCommit     string
+	harnessCommit   string
+	promptVersion   string
+	modelIdentifier string
+}
+
+// PromptPack is the full set of inputs the LLM sees for a single (sdk, spec)
+// cell. It's also what we hash for cache lookups.
+type PromptPack struct {
+	SpecID            string                        `json:"spec_id"`
+	SpecTitle         string                        `json:"spec_title"`
+	SpecStatus        string                        `json:"spec_status"`
+	SpecAppliesTo     []string                      `json:"spec_applies_to"`
+	SpecReadmeText    string                        `json:"spec_readme_text"`
+	SpecReadmePath    string                        `json:"spec_readme_path"`
+	SpecRequirementCt int                           `json:"spec_requirement_count"`
+	SpecSubSpecs      []string                      `json:"spec_sub_specs,omitempty"`
+
+	SDKID             string                        `json:"sdk_id"`
+	SDKName           string                        `json:"sdk_name"`
+	SDKType           string                        `json:"sdk_type"`
+	SDKLanguages      []string                      `json:"sdk_languages,omitempty"`
+	SDKRepoGitHub     string                        `json:"sdk_repo_github,omitempty"`
+
+	SDKFeatures       map[string]FeatureSupportLite `json:"sdk_features,omitempty"`
+	FeatureInfo       map[string]FeatureInfoLite    `json:"feature_info,omitempty"`
+
+	HarnessCapabilities []HarnessCapability         `json:"harness_capabilities"`
+	HarnessTestGroups   []TestGroup                 `json:"harness_test_groups"`
+	SDKParticipates     bool                        `json:"sdk_participates"`
+	SDKSuppressions     []SuppressionsFile          `json:"sdk_suppressions,omitempty"`
+
+	SDKRepoTree       []string                      `json:"sdk_repo_tree,omitempty"`
+	SDKRepoReadme     string                        `json:"sdk_repo_readme,omitempty"`
+
+	SpecsCommit       string                        `json:"specs_commit"`
+	HarnessCommit     string                        `json:"harness_commit"`
+	SDKCommit         *string                       `json:"sdk_commit"`
+	ModelIdentifier   string                        `json:"model_identifier"`
+	PromptVersion     string                        `json:"prompt_version"`
+}
+
+// Hash returns a SHA-256 hex digest of the canonical JSON for the pack. Used
+// for cache lookups so unchanged inputs reuse cached results.
+func (p PromptPack) Hash() string {
+	bytes, _ := json.Marshal(p)
+	sum := sha256.Sum256(bytes)
+	return hex.EncodeToString(sum[:])
+}
+
+func buildPromptPack(in packInputs) PromptPack {
+	pack := PromptPack{
+		SpecID:            in.spec.ID,
+		SpecTitle:         in.spec.Title,
+		SpecStatus:        in.spec.Status,
+		SpecAppliesTo:     in.spec.AppliesTo,
+		SpecReadmePath:    in.spec.ReadmePath,
+		SpecRequirementCt: in.spec.RequirementCount,
+		SpecSubSpecs:      in.spec.SubSpecs,
+		SDKID:             in.sdkID,
+		SDKName:           in.sdkName,
+		SDKType:           in.sdkType,
+		SDKLanguages:      in.languages,
+		SDKRepoGitHub:     in.repoGitHub,
+		SDKFeatures:       in.features,
+		HarnessCapabilities: in.harness.Capabilities,
+		SDKParticipates:   in.sdkHarness.Participates,
+		SDKSuppressions:   in.sdkHarness.SuppressionsFiles,
+		SpecsCommit:       in.specsCommit,
+		HarnessCommit:     in.harnessCommit,
+		SDKCommit:         in.sdkHarness.RepoCommit,
+		ModelIdentifier:   in.modelIdentifier,
+		PromptVersion:     in.promptVersion,
+	}
+
+	// Pick the right harness test groups for the SDK kind.
+	switch canonicalSDKKind(in.sdkType) {
+	case "client-sdk":
+		pack.HarnessTestGroups = in.harness.TestGroups["client-side"]
+	case "server-sdk":
+		pack.HarnessTestGroups = in.harness.TestGroups["server-side"]
+	}
+
+	// Trim feature info to just the ones the SDK actually has, so the prompt
+	// stays small and on-topic.
+	if len(in.features) > 0 {
+		pack.FeatureInfo = map[string]FeatureInfoLite{}
+		for fid := range in.features {
+			if info, ok := in.featureInfo[fid]; ok {
+				pack.FeatureInfo[fid] = info
+			}
+		}
+	}
+
+	// Read spec README text. We don't fail the cell if the file went away
+	// since the catalog ran; we just send what we have.
+	if in.spec.ReadmePath != "" {
+		path := filepath.Join(in.specsRepoPath, in.spec.ReadmePath)
+		if bytes, err := os.ReadFile(path); err == nil {
+			pack.SpecReadmeText = string(bytes)
+		}
+	}
+
+	// SDK repo navigational signal: a depth-limited tree + README.
+	_, name := splitOrgRepo(in.repoGitHub)
+	if name != "" {
+		repoDir := filepath.Join(in.sdkRepoRoot, name)
+		pack.SDKRepoTree = repoTree(repoDir, 3, 200)
+		readmePath := filepath.Join(repoDir, "README.md")
+		if bytes, err := os.ReadFile(readmePath); err == nil {
+			// Keep the first ~6KB to bound prompt size.
+			text := string(bytes)
+			if len(text) > 6*1024 {
+				text = text[:6*1024] + "\n…[truncated]"
+			}
+			pack.SDKRepoReadme = text
+		}
+	}
+
+	return pack
+}
+
+// repoTree returns up to maxEntries paths under root, depth-first, omitting
+// noise directories. It's intentionally small: a navigational hint, not a
+// full file listing.
+func repoTree(root string, maxDepth, maxEntries int) []string {
+	var out []string
+	skipDirs := map[string]struct{}{
+		".git": {}, "node_modules": {}, "vendor": {}, "build": {}, "target": {},
+		".gradle": {}, ".idea": {}, "__pycache__": {}, ".venv": {}, "venv": {},
+		"bin": {}, "dist": {},
+	}
+	rootDepth := strings.Count(filepath.Clean(root), string(os.PathSeparator))
+	_ = filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return nil
+		}
+		rel, _ := filepath.Rel(root, path)
+		if rel == "." {
+			return nil
+		}
+		depth := strings.Count(filepath.Clean(path), string(os.PathSeparator)) - rootDepth
+		if d.IsDir() {
+			if _, skip := skipDirs[d.Name()]; skip {
+				return filepath.SkipDir
+			}
+			if depth >= maxDepth {
+				out = append(out, rel+"/")
+				return filepath.SkipDir
+			}
+			out = append(out, rel+"/")
+		} else {
+			out = append(out, rel)
+		}
+		if len(out) >= maxEntries {
+			return filepath.SkipAll
+		}
+		return nil
+	})
+	sort.Strings(out)
+	return out
+}
+
+// ---------- cache ----------
+
+type cellCache struct {
+	dir string
+	mu  sync.Mutex
+}
+
+func newCellCache(dir string) *cellCache { return &cellCache{dir: dir} }
+
+func (c *cellCache) Get(hash string) (Cell, bool) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	bytes, err := os.ReadFile(filepath.Join(c.dir, hash+".json"))
+	if err != nil {
+		return Cell{}, false
+	}
+	var cell Cell
+	if err := json.Unmarshal(bytes, &cell); err != nil {
+		return Cell{}, false
+	}
+	return cell, true
+}
+
+func (c *cellCache) Put(hash string, cell Cell) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	bytes, err := json.MarshalIndent(cell, "", "  ")
+	if err != nil {
+		return
+	}
+	_ = os.WriteFile(filepath.Join(c.dir, hash+".json"), bytes, 0o644)
+}
+
+// ---------- judge providers ----------
+
+type Judge interface {
+	Judge(ctx context.Context, pack PromptPack) (JudgeResponse, error)
+	Model() string
+}
+
+type JudgeResponse struct {
+	State         string     `json:"state"`
+	Confidence    string     `json:"confidence"`
+	Rationale     string     `json:"rationale"`
+	Evidence      []Evidence `json:"evidence"`
+	NotesForHuman string     `json:"notes_for_human,omitempty"`
+}
+
+func defaultProvider() string {
+	if os.Getenv("ANTHROPIC_API_KEY") != "" {
+		return "anthropic"
+	}
+	return "noop"
+}
+
+func defaultModel() string {
+	if v := os.Getenv("GENSPECS_MODEL"); v != "" {
+		return v
+	}
+	return "claude-sonnet-4-5-20250929"
+}
+
+func buildJudge(provider, model string) (Judge, error) {
+	switch provider {
+	case "anthropic":
+		key := os.Getenv("ANTHROPIC_API_KEY")
+		if key == "" {
+			return nil, fmt.Errorf("ANTHROPIC_API_KEY not set")
+		}
+		return &anthropicJudge{apiKey: key, model: model}, nil
+	case "noop":
+		return &noopJudge{}, nil
+	}
+	return nil, fmt.Errorf("unknown provider %q (try 'anthropic' or 'noop')", provider)
+}
+
+// noopJudge returns 'unknown' for every cell. Useful for running the pipeline
+// end-to-end without LLM credentials so the schema/storage paths can be
+// validated.
+type noopJudge struct{}
+
+func (n *noopJudge) Model() string { return "none" }
+func (n *noopJudge) Judge(_ context.Context, _ PromptPack) (JudgeResponse, error) {
+	return JudgeResponse{
+		State:      StateUnknown,
+		Confidence: ConfidenceLow,
+		Rationale:  "No judge provider configured; cell left unknown.",
+	}, nil
+}
+
+type anthropicJudge struct {
+	apiKey string
+	model  string
+}
+
+func (a *anthropicJudge) Model() string { return a.model }
+
+func (a *anthropicJudge) Judge(ctx context.Context, pack PromptPack) (JudgeResponse, error) {
+	systemPrompt := judgeSystemPrompt
+	userPrompt, err := renderUserPrompt(pack)
+	if err != nil {
+		return JudgeResponse{}, err
+	}
+
+	body, err := json.Marshal(map[string]any{
+		"model":      a.model,
+		"max_tokens": 1024,
+		"system":     systemPrompt,
+		"messages": []map[string]any{
+			{"role": "user", "content": userPrompt},
+		},
+	})
+	if err != nil {
+		return JudgeResponse{}, err
+	}
+
+	const url = "https://api.anthropic.com/v1/messages"
+	httpResp, err := postJSON(ctx, url, body, map[string]string{
+		"x-api-key":         a.apiKey,
+		"anthropic-version": "2023-06-01",
+		"content-type":      "application/json",
+	})
+	if err != nil {
+		return JudgeResponse{}, err
+	}
+	defer httpResp.Body.Close()
+	respBytes, err := io.ReadAll(httpResp.Body)
+	if err != nil {
+		return JudgeResponse{}, err
+	}
+	if httpResp.StatusCode/100 != 2 {
+		return JudgeResponse{}, fmt.Errorf("anthropic %s: %s", httpResp.Status, truncate(string(respBytes), 200))
+	}
+
+	var envelope struct {
+		Content []struct {
+			Type string `json:"type"`
+			Text string `json:"text"`
+		} `json:"content"`
+	}
+	if err := json.Unmarshal(respBytes, &envelope); err != nil {
+		return JudgeResponse{}, fmt.Errorf("decoding anthropic response: %w", err)
+	}
+	var text strings.Builder
+	for _, c := range envelope.Content {
+		if c.Type == "text" {
+			text.WriteString(c.Text)
+		}
+	}
+
+	return parseJudgeJSON(text.String())
+}
+
+func parseJudgeJSON(s string) (JudgeResponse, error) {
+	// Pull out the first JSON object in the response. The system prompt asks
+	// the model to return a single JSON object; tolerate code fences and
+	// surrounding prose.
+	s = stripCodeFence(s)
+	start := strings.Index(s, "{")
+	end := strings.LastIndex(s, "}")
+	if start < 0 || end < start {
+		return JudgeResponse{}, fmt.Errorf("no JSON object in response: %q", truncate(s, 200))
+	}
+	candidate := s[start : end+1]
+	var resp JudgeResponse
+	if err := json.Unmarshal([]byte(candidate), &resp); err != nil {
+		return JudgeResponse{}, fmt.Errorf("decoding judge JSON: %w (was: %s)", err, truncate(candidate, 200))
+	}
+	return resp, nil
+}
+
+func stripCodeFence(s string) string {
+	s = strings.TrimSpace(s)
+	if strings.HasPrefix(s, "```") {
+		s = strings.TrimPrefix(s, "```json")
+		s = strings.TrimPrefix(s, "```")
+	}
+	s = strings.TrimSuffix(s, "```")
+	return strings.TrimSpace(s)
+}
+
+const judgeSystemPrompt = `You are a senior LaunchDarkly SDK engineer evaluating, at a high level, whether a given LaunchDarkly SDK supports a given top-level engineering spec.
+
+You will be given:
+- The spec README text and metadata.
+- The SDK's metadata (type, languages, GitHub repo).
+- The SDK's existing entries in sdk-meta features.json (with feature definitions). Many features map closely to specs; use this as evidence when relevant.
+- The sdk-test-harness capability constants (with doc comments) and the harness's top-level test groups for this SDK kind.
+- The SDK's testharness-suppressions file(s), if any. Empty/missing files mean different things — see the 'sdk_participates' field.
+- A depth-limited directory listing of the SDK repo and its README.
+
+Pick exactly one of: "supported", "partial", "not-supported", "not-applicable".
+- "supported" means the SDK clearly implements the bulk of the spec's normative requirements.
+- "partial" means it implements some but is missing or differs on others (suppressions in the harness for the relevant area are a strong signal here).
+- "not-supported" means there is no meaningful implementation evident.
+- "not-applicable" means the spec does not apply to this SDK (only use this if the spec's applies-to or its content makes that clear; a deterministic filter already removed obvious cases).
+
+Also pick a confidence: "high", "medium", or "low".
+
+Return a single JSON object, with no surrounding prose or markdown, matching this shape:
+
+{
+  "state": "supported|partial|not-supported|not-applicable",
+  "confidence": "high|medium|low",
+  "rationale": "one or two sentences (<=240 chars), citing the strongest evidence",
+  "evidence": [
+    {"kind": "feature", "id": "hooks"},
+    {"kind": "harness_capability", "id": "evaluation-hooks"},
+    {"kind": "harness_suppression", "path": "evaluation/all flags state/client not ready"},
+    {"kind": "repo_path", "path": "src/main/java/com/launchdarkly/sdk/server/Hook.java"}
+  ],
+  "notes_for_human": "optional; only if you see something the team should know"
+}
+
+Rules:
+- Be honest about uncertainty. If the only signal is a feature name match but no repo evidence, use "medium" confidence.
+- Do not invent file paths or feature ids. Cite only items present in the inputs.
+- Keep the rationale short and concrete.
+- Output exactly one JSON object. No prose before or after.`
+
+func renderUserPrompt(pack PromptPack) (string, error) {
+	bytes, err := json.MarshalIndent(pack, "", "  ")
+	if err != nil {
+		return "", err
+	}
+	return "Evaluate this (SDK, spec) cell. Inputs are below as JSON.\n\n" + string(bytes), nil
+}
+
+func postJSON(ctx context.Context, url string, body []byte, headers map[string]string) (*http.Response, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
+	if err != nil {
+		return nil, err
+	}
+	for k, v := range headers {
+		req.Header.Set(k, v)
+	}
+	return httpClient.Do(req)
+}

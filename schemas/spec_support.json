@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://launchdarkly.com/sdk-meta/spec_support.json",
+  "title": "SDK Spec Support Matrix",
+  "description": "Per-(SDK, spec) high-level support classification, produced by genspecs judge.",
+  "type": "object",
+  "required": ["specs_commit", "harness_commit", "model", "prompt_version", "sdks"],
+  "properties": {
+    "generated_at": { "type": "string", "format": "date-time" },
+    "specs_commit": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
+    "harness_commit": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
+    "model": { "type": "string", "description": "Model identifier used by the judge, e.g. 'claude-opus-4-5' or 'none'." },
+    "prompt_version": { "type": "string", "description": "Versioned prompt id so cached results from older prompts can be invalidated." },
+    "sdks": {
+      "type": "object",
+      "description": "Map of sdk id to a map of spec id to support cell.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "$ref": "#/$defs/Cell" }
+      }
+    }
+  },
+  "$defs": {
+    "Cell": {
+      "type": "object",
+      "required": ["state", "source"],
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": ["supported", "partial", "not-supported", "not-applicable", "unknown"]
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low", "n/a"]
+        },
+        "source": {
+          "type": "string",
+          "enum": ["applies_to", "llm_judge", "judge_failed"]
+        },
+        "rationale": { "type": "string", "maxLength": 480 },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Evidence" }
+        },
+        "judged_at": { "type": ["string", "null"], "format": "date-time" },
+        "judged_against": {
+          "type": ["object", "null"],
+          "properties": {
+            "specs_commit": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
+            "harness_commit": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
+            "sdk_commit": { "type": ["string", "null"], "pattern": "^[0-9a-f]{7,40}$" },
+            "model": { "type": "string" },
+            "prompt_version": { "type": "string" }
+          }
+        },
+        "notes_for_human": { "type": ["string", "null"] }
+      }
+    },
+    "Evidence": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["feature", "harness_capability", "harness_test_group", "harness_suppression", "repo_path", "other"]
+        },
+        "id": { "type": ["string", "null"] },
+        "path": { "type": ["string", "null"] },
+        "note": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
