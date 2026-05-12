@@ -6,3 +6,4 @@ tool/cmd/genspecs/genspecs
 tool/specs/.judge-cache/
 products/features.html
 _site/
+tool/genspecs

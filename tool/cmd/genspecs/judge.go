@@ -117,7 +117,7 @@ func runJudge(args []string) error {
 				continue
 			}
 			// Reserve an unknown slot; judge step may overwrite.
-			row[specID] = Cell{State: StateUnknown, Source: SourceJudgeFailed, Confidence: ConfidenceLow}
+			row[specID] = Cell{State: StateUnknown, Confidence: ConfidenceLow}
 			work = append(work, job{sdkID, specID})
 		}
 		result.SDKs[sdkID] = row
@@ -172,7 +172,6 @@ func runJudge(args []string) error {
 				fmt.Fprintf(os.Stderr, "[%d/%d] %-32s %-12s ERROR: %v\n", progress, len(work), j.sdkID, j.specID, err)
 				cell = Cell{
 					State:      StateUnknown,
-					Source:     SourceJudgeFailed,
 					Confidence: ConfidenceLow,
 					Rationale:  truncate("judge failed: "+err.Error(), 240),
 				}
@@ -192,14 +191,9 @@ func runJudge(args []string) error {
 }
 
 func evaluate(ctx context.Context, judge Judge, pack PromptPack, cache *cellCache) (Cell, bool, error) {
-	now := time.Now().UTC().Format(time.RFC3339)
 	hash := pack.Hash()
 	if cached, ok := cache.Get(hash); ok {
-		cell := cached
-		cell.JudgedAt = &now
-		// JudgedAgainst stays as the cached value, so reviewers can see exactly
-		// which inputs the cell was judged against.
-		return cell, true, nil
+		return cached, true, nil
 	}
 
 	resp, err := judge.Judge(ctx, pack)
@@ -215,17 +209,7 @@ func evaluate(ctx context.Context, judge Judge, pack PromptPack, cache *cellCach
 	cell := Cell{
 		State:      state,
 		Confidence: normalizeConfidence(resp.Confidence),
-		Source:     SourceLLMJudge,
 		Rationale:  truncate(strings.TrimSpace(resp.Rationale), 480),
-		Evidence:   resp.Evidence,
-		JudgedAt:   &now,
-		JudgedAgainst: &JudgedAgainst{
-			SpecsCommit:   pack.SpecsCommit,
-			HarnessCommit: pack.HarnessCommit,
-			SDKCommit:     pack.SDKCommit,
-			Model:         pack.ModelIdentifier,
-			PromptVersion: pack.PromptVersion,
-		},
 	}
 	if resp.NotesForHuman != "" {
 		n := resp.NotesForHuman
@@ -251,7 +235,6 @@ func appliesToCell(spec Spec, sdkID, sdkType string) (Cell, bool) {
 	}
 	return Cell{
 		State:      StateNotApplicable,
-		Source:     SourceAppliesTo,
 		Confidence: ConfidenceHigh,
 		Rationale:  fmt.Sprintf("Spec applies to %s; %s is %s.", strings.Join(spec.AppliesTo, "/"), sdkID, sdkType),
 	}, false

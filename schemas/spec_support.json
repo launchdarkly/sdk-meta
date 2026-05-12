@@ -23,7 +23,8 @@
   "$defs": {
     "Cell": {
       "type": "object",
-      "required": ["state", "source"],
+      "required": ["state"],
+      "description": "Per-cell support classification. Intentionally slim: state + confidence + a short rationale + optional human-readable notes. Auditing metadata (source provenance, evidence list, judged-at timestamps, judged-against commit hashes, judge model) is preserved in the on-disk judge cache at tool/specs/.judge-cache/, not in this product.",
       "properties": {
         "state": {
           "type": "string",
@@ -33,41 +34,8 @@
           "type": "string",
           "enum": ["high", "medium", "low", "n/a"]
         },
-        "source": {
-          "type": "string",
-          "enum": ["applies_to", "llm_judge", "judge_failed"]
-        },
         "rationale": { "type": "string", "maxLength": 480 },
-        "evidence": {
-          "type": "array",
-          "items": { "$ref": "#/$defs/Evidence" }
-        },
-        "judged_at": { "type": ["string", "null"], "format": "date-time" },
-        "judged_against": {
-          "type": ["object", "null"],
-          "properties": {
-            "specs_commit": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
-            "harness_commit": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
-            "sdk_commit": { "type": ["string", "null"], "pattern": "^[0-9a-f]{7,40}$" },
-            "model": { "type": "string" },
-            "prompt_version": { "type": "string" }
-          }
-        },
         "notes_for_human": { "type": ["string", "null"] }
-      }
-    },
-    "Evidence": {
-      "type": "object",
-      "required": ["kind"],
-      "properties": {
-        "kind": {
-          "type": "string",
-          "minLength": 1,
-          "description": "Free-form evidence kind. Recommended canonical values: 'feature', 'harness_capability', 'harness_test_group', 'harness_suppression', 'repo_path', 'spec_metadata', 'sdk_metadata', 'other'. The LLM judge may emit other descriptive kinds; consumers should treat unknown values as informational."
-        },
-        "id": { "type": ["string", "null"] },
-        "path": { "type": ["string", "null"] },
-        "note": { "type": ["string", "null"] }
       }
     }
   }

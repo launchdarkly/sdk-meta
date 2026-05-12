@@ -137,15 +137,11 @@
       color: var(--text-secondary);
       margin-top: 4px;
     }
-    .evidence {
+    .notes {
       margin-top: 4px;
       font-size: 0.8rem;
       color: var(--text-secondary);
-    }
-    .evidence code {
-      background: var(--bg-primary);
-      padding: 1px 4px;
-      border-radius: 3px;
+      font-style: italic;
     }
     .spec-link { font-size: 0.8rem; }
   </style>
@@ -186,17 +182,10 @@
       picker.appendChild(opt);
     });
 
-    function renderEvidence(ev) {
-      if (!ev || !ev.length) return '';
-      const items = ev.map(e => {
-        if (e.kind === 'feature') return `feature <code>${e.id}</code>`;
-        if (e.kind === 'harness_capability') return `harness capability <code>${e.id}</code>`;
-        if (e.kind === 'harness_test_group') return `harness test group <code>${e.id}</code>`;
-        if (e.kind === 'harness_suppression') return `harness suppression <code>${e.path}</code>`;
-        if (e.kind === 'repo_path') return `repo path <code>${e.path}</code>`;
-        return `${e.kind}: <code>${e.id || e.path || ''}</code>`;
-      });
-      return `<div class="evidence">${items.join(' · ')}</div>`;
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[c]);
     }
 
     function render() {
@@ -238,15 +227,18 @@
           const link = spec.path
             ? `<a class="spec-link" href="https://github.com/launchdarkly/sdk-specs/blob/main/${spec.path}/README.md" target="_blank">README ↗</a>`
             : '';
+          const notesHtml = cell.notes_for_human
+            ? `<div class="notes">${escapeHtml(cell.notes_for_human)}</div>`
+            : '';
           li.innerHTML = `
             <div class="spec-line">
-              <span class="spec-id">${specId}</span>
-              <span class="spec-title">${spec.title || ''}</span>
+              <span class="spec-id">${escapeHtml(specId)}</span>
+              <span class="spec-title">${escapeHtml(spec.title || '')}</span>
               <span style="margin-left:auto">${link}</span>
             </div>
-            <div class="rationale">${cell.rationale || '<em>(no rationale)</em>'}</div>
-            <div class="meta">${cell.confidence || '?'} confidence · source: ${cell.source || '?'}${spec.status ? ' · spec status: ' + spec.status : ''}</div>
-            ${renderEvidence(cell.evidence)}
+            <div class="rationale">${cell.rationale ? escapeHtml(cell.rationale) : '<em>(no rationale)</em>'}</div>
+            <div class="meta">${escapeHtml(cell.confidence || '?')} confidence${spec.status ? ' · spec status: ' + escapeHtml(spec.status) : ''}</div>
+            ${notesHtml}
           `;
           ul.appendChild(li);
         });

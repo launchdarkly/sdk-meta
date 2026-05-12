@@ -302,7 +302,7 @@
       <h3 id="modalTitle"></h3>
       <div class="meta" id="modalMeta"></div>
       <div class="rationale" id="modalRationale"></div>
-      <div id="modalEvidence"></div>
+      <div id="modalNotes"></div>
       <details>
         <summary>Raw cell JSON</summary>
         <pre id="modalRaw"></pre>
@@ -396,21 +396,22 @@
         : '';
       document.getElementById('modalMeta').innerHTML =
         `<span class="pill ${cell.state}">${cell.state}</span>` +
-        `<span class="pill" style="background:transparent;color:var(--text-secondary);border:1px solid var(--border-color)">${cell.confidence || '?'}</span>` +
-        `<span class="pill" style="background:transparent;color:var(--text-secondary);border:1px solid var(--border-color)">${cell.source || '?'}</span> ` +
+        `<span class="pill" style="background:transparent;color:var(--text-secondary);border:1px solid var(--border-color)">${cell.confidence || '?'}</span> ` +
         repoLink;
       document.getElementById('modalRationale').textContent = cell.rationale || '(no rationale)';
-      const ev = (cell.evidence || []).map(e => {
-        if (e.kind === 'feature') return `feature: ${e.id}`;
-        if (e.kind === 'harness_capability') return `harness capability: ${e.id}`;
-        if (e.kind === 'harness_test_group') return `harness test group: ${e.id}`;
-        if (e.kind === 'harness_suppression') return `harness suppression: ${e.path}`;
-        if (e.kind === 'repo_path') return `repo path: ${e.path}`;
-        return `${e.kind}: ${e.id || e.path || ''}`;
-      });
-      document.getElementById('modalEvidence').innerHTML = ev.length
-        ? `<strong>Evidence</strong><ul>${ev.map(e => `<li>${e}</li>`).join('')}</ul>`
-        : '';
+      const notesEl = document.getElementById('modalNotes');
+      notesEl.textContent = '';
+      if (cell.notes_for_human) {
+        const strong = document.createElement('strong');
+        strong.textContent = 'Notes';
+        const div = document.createElement('div');
+        div.style.fontSize = '0.9rem';
+        div.style.color = 'var(--text-secondary)';
+        div.style.marginTop = '6px';
+        div.textContent = cell.notes_for_human;
+        notesEl.appendChild(strong);
+        notesEl.appendChild(div);
+      }
       document.getElementById('modalRaw').textContent = JSON.stringify(cell, null, 2);
       document.getElementById('modal').classList.add('open');
     }

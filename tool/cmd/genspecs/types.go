@@ -84,30 +84,26 @@ type SpecSupportProduct struct {
 	SDKs          map[string]map[string]Cell      `json:"sdks"`
 }
 
+// Cell is intentionally slim. Audit metadata (source, evidence list,
+// judged-at, judged-against commits) is captured in the on-disk judge cache
+// (tool/specs/.judge-cache/), not in the public product. The cache lets us
+// trace any decision back to its inputs without bloating spec_support.json.
 type Cell struct {
-	State         string         `json:"state"`
-	Confidence    string         `json:"confidence,omitempty"`
-	Source        string         `json:"source"`
-	Rationale     string         `json:"rationale,omitempty"`
-	Evidence      []Evidence     `json:"evidence,omitempty"`
-	JudgedAt      *string        `json:"judged_at,omitempty"`
-	JudgedAgainst *JudgedAgainst `json:"judged_against,omitempty"`
-	NotesForHuman *string        `json:"notes_for_human,omitempty"`
+	State         string  `json:"state"`
+	Confidence    string  `json:"confidence,omitempty"`
+	Rationale     string  `json:"rationale,omitempty"`
+	NotesForHuman *string `json:"notes_for_human,omitempty"`
 }
 
+// Evidence is what the LLM cites as it reasons about a cell. We still ask
+// for it in the prompt (chain-of-thought tends to improve answer quality),
+// but we don't persist it in the public product. Kept as a type because the
+// judge response decoder uses it.
 type Evidence struct {
 	Kind string  `json:"kind"`
 	ID   *string `json:"id,omitempty"`
 	Path *string `json:"path,omitempty"`
 	Note *string `json:"note,omitempty"`
-}
-
-type JudgedAgainst struct {
-	SpecsCommit   string  `json:"specs_commit"`
-	HarnessCommit string  `json:"harness_commit"`
-	SDKCommit     *string `json:"sdk_commit"`
-	Model         string  `json:"model"`
-	PromptVersion string  `json:"prompt_version"`
 }
 
 // Cell states.
@@ -117,13 +113,6 @@ const (
 	StateNotSupported  = "not-supported"
 	StateNotApplicable = "not-applicable"
 	StateUnknown       = "unknown"
-)
-
-// Cell sources.
-const (
-	SourceAppliesTo   = "applies_to"
-	SourceLLMJudge    = "llm_judge"
-	SourceJudgeFailed = "judge_failed"
 )
 
 // Confidence levels.
