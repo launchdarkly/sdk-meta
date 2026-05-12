@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"sort"
@@ -33,8 +34,8 @@ func runJudge(args []string) error {
 	specsRepoPath := fs.String("specs-repo", filepath.Join(defaultReposRoot(), "sdk-specs"), "Path to local sdk-specs checkout (used to read spec READMEs).")
 	root := fs.String("sdk-repos-root", defaultReposRoot(), "Directory under which SDK repos live.")
 	out := fs.String("out", "products/spec_support.json", "Output path for spec_support.json.")
-	provider := fs.String("provider", defaultProvider(), "Judge provider: 'anthropic' or 'noop'.")
-	model := fs.String("model", defaultModel(), "Model id to use when provider='anthropic'.")
+	provider := fs.String("provider", defaultProvider(), "Judge provider: 'bedrock' (uses AWS_BEARER_TOKEN_BEDROCK), 'anthropic' (uses ANTHROPIC_API_KEY), or 'noop'.")
+	model := fs.String("model", "", "Model id. Defaults depend on provider: a Bedrock model id when provider='bedrock', the Anthropic native id when provider='anthropic'.")
 	concurrency := fs.Int("concurrency", 4, "Maximum concurrent LLM requests.")
 	cacheDir := fs.String("cache-dir", filepath.Join("tool", "specs", ".judge-cache"), "Directory for the per-cell prompt-pack cache.")
 	maxCells := fs.Int("max-cells", 0, "If > 0, only judge this many LLM-bound cells (the rest stay 'unknown'). Useful for incremental runs.")
@@ -572,22 +573,55 @@ type JudgeResponse struct {
 	NotesForHuman string     `json:"notes_for_human,omitempty"`
 }
 
+// defaultProvider picks the judge based on which credentials are present in
+// the environment. Bedrock takes precedence: at LaunchDarkly we use Anthropic
+// models through AWS Bedrock, so when the bearer token is set that's almost
+// certainly what the operator means to use. The Anthropic-direct provider
+// stays available for anyone running this tool outside the LD environment.
 func defaultProvider() string {
+	if os.Getenv("AWS_BEARER_TOKEN_BEDROCK") != "" {
+		return "bedrock"
+	}
 	if os.Getenv("ANTHROPIC_API_KEY") != "" {
 		return "anthropic"
 	}
 	return "noop"
 }
 
-func defaultModel() string {
+// defaultModelFor picks a sensible default model id for the given provider.
+// `GENSPECS_MODEL` overrides this if set.
+func defaultModelFor(provider string) string {
 	if v := os.Getenv("GENSPECS_MODEL"); v != "" {
 		return v
 	}
-	return "claude-sonnet-4-5-20250929"
+	switch provider {
+	case "bedrock":
+		// us.* is the cross-region inference profile (us-east-1 / us-east-2 /
+		// us-west-2). Sonnet 4.5 is the same model the Anthropic-direct
+		// branch uses below; keeping the choice aligned makes it easier to
+		// compare runs across providers.
+		return "us.anthropic.claude-sonnet-4-5-20250929-v1:0"
+	case "anthropic":
+		return "claude-sonnet-4-5-20250929"
+	}
+	return ""
 }
 
 func buildJudge(provider, model string) (Judge, error) {
+	if model == "" {
+		model = defaultModelFor(provider)
+	}
 	switch provider {
+	case "bedrock":
+		token := os.Getenv("AWS_BEARER_TOKEN_BEDROCK")
+		if token == "" {
+			return nil, fmt.Errorf("AWS_BEARER_TOKEN_BEDROCK not set (generate one at AWS console -> Bedrock -> API Keys -> Generate short-term API keys; tokens are valid 12 hours)")
+		}
+		region := os.Getenv("AWS_REGION")
+		if region == "" {
+			region = "us-east-1"
+		}
+		return &bedrockJudge{token: token, region: region, model: model}, nil
 	case "anthropic":
 		key := os.Getenv("ANTHROPIC_API_KEY")
 		if key == "" {
@@ -597,7 +631,7 @@ func buildJudge(provider, model string) (Judge, error) {
 	case "noop":
 		return &noopJudge{}, nil
 	}
-	return nil, fmt.Errorf("unknown provider %q (try 'anthropic' or 'noop')", provider)
+	return nil, fmt.Errorf("unknown provider %q (try 'bedrock', 'anthropic', or 'noop')", provider)
 }
 
 // noopJudge returns 'unknown' for every cell. Useful for running the pipeline
@@ -612,6 +646,83 @@ func (n *noopJudge) Judge(_ context.Context, _ PromptPack) (JudgeResponse, error
 		Confidence: ConfidenceLow,
 		Rationale:  "No judge provider configured; cell left unknown.",
 	}, nil
+}
+
+// bedrockJudge calls Anthropic models via Amazon Bedrock's Runtime
+// InvokeModel HTTP endpoint, authenticated with the short-term bearer token
+// AWS hands out via "Bedrock -> API Keys -> Generate short-term API keys".
+//
+// The wire body is the same Anthropic Messages API shape, with two
+// differences:
+//   - `anthropic_version` is the Bedrock literal "bedrock-2023-05-31".
+//   - The model id is in the URL path, not the body.
+//
+// See https://docs.anthropic.com/en/api/claude-on-amazon-bedrock for details.
+type bedrockJudge struct {
+	token  string
+	region string
+	model  string
+}
+
+func (b *bedrockJudge) Model() string { return b.model }
+
+func (b *bedrockJudge) Judge(ctx context.Context, pack PromptPack) (JudgeResponse, error) {
+	systemPrompt := judgeSystemPrompt
+	userPrompt, err := renderUserPrompt(pack)
+	if err != nil {
+		return JudgeResponse{}, err
+	}
+
+	body, err := json.Marshal(map[string]any{
+		"anthropic_version": "bedrock-2023-05-31",
+		"max_tokens":        1024,
+		"system":            systemPrompt,
+		"messages": []map[string]any{
+			{"role": "user", "content": userPrompt},
+		},
+	})
+	if err != nil {
+		return JudgeResponse{}, err
+	}
+
+	endpoint := fmt.Sprintf(
+		"https://bedrock-runtime.%s.amazonaws.com/model/%s/invoke",
+		b.region, url.PathEscape(b.model),
+	)
+	httpResp, err := postJSON(ctx, endpoint, body, map[string]string{
+		"authorization": "Bearer " + b.token,
+		"content-type":  "application/json",
+		"accept":        "application/json",
+	})
+	if err != nil {
+		return JudgeResponse{}, err
+	}
+	defer httpResp.Body.Close()
+	respBytes, err := io.ReadAll(httpResp.Body)
+	if err != nil {
+		return JudgeResponse{}, err
+	}
+	if httpResp.StatusCode/100 != 2 {
+		return JudgeResponse{}, fmt.Errorf("bedrock %s: %s", httpResp.Status, truncate(string(respBytes), 240))
+	}
+
+	// Bedrock returns the same envelope shape as the Anthropic Messages API.
+	var envelope struct {
+		Content []struct {
+			Type string `json:"type"`
+			Text string `json:"text"`
+		} `json:"content"`
+	}
+	if err := json.Unmarshal(respBytes, &envelope); err != nil {
+		return JudgeResponse{}, fmt.Errorf("decoding bedrock response: %w", err)
+	}
+	var text strings.Builder
+	for _, c := range envelope.Content {
+		if c.Type == "text" {
+			text.WriteString(c.Text)
+		}
+	}
+	return parseJudgeJSON(text.String())
 }
 
 type anthropicJudge struct {
