@@ -6,14 +6,17 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -615,6 +618,7 @@ func buildJudge(provider, model string) (Judge, error) {
 	if model == "" {
 		model = defaultModelFor(provider)
 	}
+	var inner Judge
 	switch provider {
 	case "bedrock":
 		token := os.Getenv("AWS_BEARER_TOKEN_BEDROCK")
@@ -625,17 +629,156 @@ func buildJudge(provider, model string) (Judge, error) {
 		if region == "" {
 			region = "us-east-1"
 		}
-		return &bedrockJudge{token: token, region: region, model: model}, nil
+		inner = &bedrockJudge{token: token, region: region, model: model}
 	case "anthropic":
 		key := os.Getenv("ANTHROPIC_API_KEY")
 		if key == "" {
 			return nil, fmt.Errorf("ANTHROPIC_API_KEY not set")
 		}
-		return &anthropicJudge{apiKey: key, model: model}, nil
+		inner = &anthropicJudge{apiKey: key, model: model}
 	case "noop":
+		// noop never errors — no retry layer needed.
 		return &noopJudge{}, nil
+	default:
+		return nil, fmt.Errorf("unknown provider %q (try 'bedrock', 'anthropic', or 'noop')", provider)
 	}
-	return nil, fmt.Errorf("unknown provider %q (try 'bedrock', 'anthropic', or 'noop')", provider)
+	return &retryingJudge{inner: inner, maxAttempts: 4}, nil
+}
+
+// ---------- retry layer ----------
+
+// retryableHTTPError is what the HTTP-backed providers return for non-2xx
+// responses. The wrapper inspects it (and `Retry-After` if set) to decide
+// whether to back off and retry.
+type retryableHTTPError struct {
+	StatusCode int
+	Status     string
+	Body       string
+	Provider   string
+	RetryAfter time.Duration // 0 if header absent or unparseable
+}
+
+func (e *retryableHTTPError) Error() string {
+	return fmt.Sprintf("%s %s: %s", e.Provider, e.Status, truncate(e.Body, 240))
+}
+
+// retryable reports whether this HTTP status code is worth retrying. 408
+// (request timeout), 429 (rate limit), and 5xx (server-side) are. Everything
+// else (mainly 4xx) usually means a config error that won't fix itself.
+func (e *retryableHTTPError) retryable() bool {
+	return e.StatusCode == http.StatusRequestTimeout ||
+		e.StatusCode == http.StatusTooManyRequests ||
+		(e.StatusCode >= 500 && e.StatusCode < 600)
+}
+
+// isRetryable classifies any error returned from a provider's Judge() call
+// into "worth a retry" vs "give up". Network-layer errors (timeouts, EOFs,
+// connection resets) are always retryable; HTTP errors are retryable per
+// retryableHTTPError.retryable().
+func isRetryable(err error) bool {
+	if err == nil {
+		return false
+	}
+	if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+		// Caller cancelled or hit a deadline — respect that, don't retry.
+		return false
+	}
+	var hErr *retryableHTTPError
+	if errors.As(err, &hErr) {
+		return hErr.retryable()
+	}
+	// net.Error covers DNS, dial, read timeouts.
+	var nErr interface{ Timeout() bool }
+	if errors.As(err, &nErr) && nErr.Timeout() {
+		return true
+	}
+	if errors.Is(err, io.EOF) || errors.Is(err, io.ErrUnexpectedEOF) {
+		return true
+	}
+	// Fallback: catch the common transient error strings the Go runtime
+	// produces for TCP-level failures that don't always satisfy the
+	// interfaces above (notably "connection reset by peer").
+	msg := strings.ToLower(err.Error())
+	for _, marker := range []string{
+		"connection reset",
+		"connection refused",
+		"broken pipe",
+		"i/o timeout",
+		"tls handshake",
+		"unexpected eof",
+		"no such host", // DNS hiccups during network changes
+	} {
+		if strings.Contains(msg, marker) {
+			return true
+		}
+	}
+	return false
+}
+
+// retryingJudge wraps another Judge with bounded exponential-backoff retries
+// for transient failures. Backoff is base * 2^(attempt-1) with ±25% jitter,
+// capped at 16s. If the underlying error includes a Retry-After hint
+// (typical for 429s), that overrides the backoff schedule.
+type retryingJudge struct {
+	inner       Judge
+	maxAttempts int
+}
+
+func (r *retryingJudge) Model() string    { return r.inner.Model() }
+func (r *retryingJudge) Describe() string { return r.inner.Describe() }
+
+func (r *retryingJudge) Judge(ctx context.Context, pack PromptPack) (JudgeResponse, error) {
+	const baseDelay = 750 * time.Millisecond
+	const maxDelay = 16 * time.Second
+	var lastErr error
+	for attempt := 1; attempt <= r.maxAttempts; attempt++ {
+		resp, err := r.inner.Judge(ctx, pack)
+		if err == nil {
+			return resp, nil
+		}
+		lastErr = err
+		if !isRetryable(err) || attempt == r.maxAttempts {
+			return JudgeResponse{}, err
+		}
+
+		delay := baseDelay << (attempt - 1)
+		if delay > maxDelay {
+			delay = maxDelay
+		}
+		// ±25% jitter so concurrent retriers don't all hit the API in lockstep.
+		jitter := time.Duration((rand.Float64() - 0.5) * float64(delay) * 0.5)
+		delay += jitter
+
+		// Honor server-supplied Retry-After (only on 429s in practice).
+		var hErr *retryableHTTPError
+		if errors.As(err, &hErr) && hErr.RetryAfter > 0 && hErr.RetryAfter < 60*time.Second {
+			delay = hErr.RetryAfter
+		}
+
+		fmt.Fprintf(os.Stderr, "  retry %d/%d for %s/%s after %s: %v\n",
+			attempt, r.maxAttempts-1, pack.SDKID, pack.SpecID, delay.Round(100*time.Millisecond), err)
+
+		select {
+		case <-ctx.Done():
+			return JudgeResponse{}, ctx.Err()
+		case <-time.After(delay):
+		}
+	}
+	return JudgeResponse{}, lastErr
+}
+
+func parseRetryAfter(h string) time.Duration {
+	h = strings.TrimSpace(h)
+	if h == "" {
+		return 0
+	}
+	if secs, err := strconv.Atoi(h); err == nil && secs >= 0 {
+		return time.Duration(secs) * time.Second
+	}
+	if t, err := http.ParseTime(h); err == nil {
+		return time.Until(t)
+	}
+	return 0
 }
 
 // noopJudge returns 'unknown' for every cell. Useful for running the pipeline
@@ -722,7 +865,13 @@ func (b *bedrockJudge) Judge(ctx context.Context, pack PromptPack) (JudgeRespons
 		return JudgeResponse{}, err
 	}
 	if httpResp.StatusCode/100 != 2 {
-		return JudgeResponse{}, fmt.Errorf("bedrock %s: %s", httpResp.Status, truncate(string(respBytes), 240))
+		return JudgeResponse{}, &retryableHTTPError{
+			StatusCode: httpResp.StatusCode,
+			Status:     httpResp.Status,
+			Body:       string(respBytes),
+			Provider:   "bedrock",
+			RetryAfter: parseRetryAfter(httpResp.Header.Get("Retry-After")),
+		}
 	}
 
 	// Bedrock returns the same envelope shape as the Anthropic Messages API.
@@ -786,7 +935,13 @@ func (a *anthropicJudge) Judge(ctx context.Context, pack PromptPack) (JudgeRespo
 		return JudgeResponse{}, err
 	}
 	if httpResp.StatusCode/100 != 2 {
-		return JudgeResponse{}, fmt.Errorf("anthropic %s: %s", httpResp.Status, truncate(string(respBytes), 200))
+		return JudgeResponse{}, &retryableHTTPError{
+			StatusCode: httpResp.StatusCode,
+			Status:     httpResp.Status,
+			Body:       string(respBytes),
+			Provider:   "anthropic",
+			RetryAfter: parseRetryAfter(httpResp.Header.Get("Retry-After")),
+		}
 	}
 
 	var envelope struct {
