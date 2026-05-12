@@ -125,7 +125,7 @@ func runJudge(args []string) error {
 		fmt.Fprintf(os.Stderr, "Capping work to first %d cells per --max-cells.\n", *maxCells)
 	}
 
-	fmt.Fprintf(os.Stderr, "Judging %d (SDK, spec) cells with provider=%s model=%s\n", len(work), *provider, judge.Model())
+	fmt.Fprintf(os.Stderr, "Judging %d (SDK, spec) cells with %s\n", len(work), judge.Describe())
 
 	cache := newCellCache(*cacheDir)
 	sem := make(chan struct{}, *concurrency)
@@ -563,6 +563,10 @@ func (c *cellCache) Put(hash string, cell Cell) {
 type Judge interface {
 	Judge(ctx context.Context, pack PromptPack) (JudgeResponse, error)
 	Model() string
+	// Describe returns a human-readable summary of provider+model+region so
+	// the run-startup log is self-explanatory when something is misconfigured
+	// (e.g. wrong AWS_REGION for the bearer token).
+	Describe() string
 }
 
 type JudgeResponse struct {
@@ -639,7 +643,8 @@ func buildJudge(provider, model string) (Judge, error) {
 // validated.
 type noopJudge struct{}
 
-func (n *noopJudge) Model() string { return "none" }
+func (n *noopJudge) Model() string    { return "none" }
+func (n *noopJudge) Describe() string { return "provider=noop" }
 func (n *noopJudge) Judge(_ context.Context, _ PromptPack) (JudgeResponse, error) {
 	return JudgeResponse{
 		State:      StateUnknown,
@@ -651,6 +656,17 @@ func (n *noopJudge) Judge(_ context.Context, _ PromptPack) (JudgeResponse, error
 // bedrockJudge calls Anthropic models via Amazon Bedrock's Runtime
 // InvokeModel HTTP endpoint, authenticated with the short-term bearer token
 // AWS hands out via "Bedrock -> API Keys -> Generate short-term API keys".
+//
+// LaunchDarkly setup notes (per #proj-building-with-ai and verified
+// 2026-05-12):
+//   - Generate the bearer token from the AWS **Development** account, not
+//     SDK. The PowerUser role in SDK does not have bedrock:CallWithBearerToken
+//     in its identity-based policy.
+//   - Bearer tokens are scoped to the account+region they were generated in.
+//     us-east-2 is known-good in the Development account; us-east-1 may also
+//     work depending on which inference profiles are enabled. Set AWS_REGION
+//     to match the region you generated the token in.
+//   - Tokens expire after 12 hours.
 //
 // The wire body is the same Anthropic Messages API shape, with two
 // differences:
@@ -665,6 +681,9 @@ type bedrockJudge struct {
 }
 
 func (b *bedrockJudge) Model() string { return b.model }
+func (b *bedrockJudge) Describe() string {
+	return fmt.Sprintf("provider=bedrock region=%s model=%s", b.region, b.model)
+}
 
 func (b *bedrockJudge) Judge(ctx context.Context, pack PromptPack) (JudgeResponse, error) {
 	systemPrompt := judgeSystemPrompt
@@ -730,7 +749,8 @@ type anthropicJudge struct {
 	model  string
 }
 
-func (a *anthropicJudge) Model() string { return a.model }
+func (a *anthropicJudge) Model() string    { return a.model }
+func (a *anthropicJudge) Describe() string { return "provider=anthropic model=" + a.model }
 
 func (a *anthropicJudge) Judge(ctx context.Context, pack PromptPack) (JudgeResponse, error) {
 	systemPrompt := judgeSystemPrompt
