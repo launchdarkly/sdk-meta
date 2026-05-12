@@ -62,7 +62,8 @@
       "properties": {
         "kind": {
           "type": "string",
-          "enum": ["feature", "harness_capability", "harness_test_group", "harness_suppression", "repo_path", "other"]
+          "minLength": 1,
+          "description": "Free-form evidence kind. Recommended canonical values: 'feature', 'harness_capability', 'harness_test_group', 'harness_suppression', 'repo_path', 'spec_metadata', 'sdk_metadata', 'other'. The LLM judge may emit other descriptive kinds; consumers should treat unknown values as informational."
         },
         "id": { "type": ["string", "null"] },
         "path": { "type": ["string", "null"] },
