@@ -1,9 +1,2822 @@
 {
-  "generated_at": "2026-05-14T18:10:00Z",
-  "judge": "human (azeisler + assistant), hackathon manual pass",
+  "generated_at": "2026-05-14T20:00:00Z",
+  "judge": "human (azeisler + assistant); PLUGIN judged in hackathon, remaining specs added in batch 1 (v7-spec scan)",
   "prompt_version": "spectre/agents/sdk_worker/prompt.md @ retroactive_check",
   "sdks": {
     "go-server-sdk": {
+      "AIDOC": {
+        "spec_version": "",
+        "spec_path": "specs/AIDOC-ai-documentation/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "sdk-specs/specs/AIDOC-ai-documentation/README.md",
+          "go-server-sdk/ (no AGENTS.md, no llms.txt, no docs/ dir at root)",
+          "go-server-sdk/README.md (standard README, no agent-targeted sections)",
+          "sdk-specs/specs/AIDOC-ai-documentation/README.md (28 requirements counted via `grep -cE '^### Requirement'`)",
+          "AIDOC prereqs: EXAM>=1.0 (also not_supported in this repo) and RELEASE>=1.0 (supported)"
+        ],
+        "rollup": {
+          "applies": true,
+          "veto_reason": null,
+          "state": "not_supported",
+          "complexity": "unknown",
+          "rationale": "AIDOC requires SDK-shipped documentation, metadata, and examples in formats that AI coding agents can ingest (notably: an `AGENTS.md` per the agents.md open format, an `llms.txt` per llms-txt, and per-public-function metadata with examples). The Go server SDK ships none of these today — the repo has no `AGENTS.md`, no `llms.txt`, no `docs/` directory, and no agent-targeted documentation surface. The spec applies-to is `server-sdk,client-sdk`, so it genuinely applies to this SDK; this is a real gap rather than an inapplicability. AIDOC also has prereqs on EXAM (Hello-Apps, also `not-supported` for this repo) and RELEASE (currently `supported`); closing AIDOC presupposes EXAM. A full per-requirement walk across all 28 AIDOC requirements is deferred to a future batch — every one would resolve to `not_supported` against the current repo state, so a brief block accurately conveys the rollup.",
+          "supported_since": null,
+          "supported_since_date": null,
+          "supported_since_evidence": null,
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
+      },
+      "AISDK": {
+        "spec_version": "",
+        "spec_path": "specs/AISDK-ai-sdk/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "sdk-specs/specs/AISDK-ai-sdk/README.md",
+          "go-server-sdk/ldai/ (full package: client.go, tracker.go, judge/, datamodel/)",
+          "go-server-sdk/ldai/README.md ('AI SDK is in pre-release', 'will receive new features at a slower pace' vs Python/Node)",
+          "go-server-sdk/ldai/CHANGELOG.md (oldest visible tag ldai/v0.7.0)",
+          "go-server-sdk/ldai/package_info.go (SDKName='go-server-sdk/ldai', Version='0.8.1')",
+          "git tag --sort=-creatordate: ldai/v0.8.1 → ldai/v0.7.0"
+        ],
+        "rollup": {
+          "applies": true,
+          "veto_reason": null,
+          "state": "partial",
+          "complexity": "moderate",
+          "rationale": "The Go server SDK ships an AI SDK package at `ldai/` (v0.8.1, 2026-02-26). This is in scope for the AISDK spec but is explicitly pre-release ('not subject to backwards compatibility guarantees') and the README notes that 'active feature development is ongoing in the Python and Node.js AI SDKs, so this SDK will receive new features at a slower pace.' This means AISDK should rollup as `partial` rather than the `not-supported` carried in the bulk spec_support.json — the foundational completion-config and tracking surfaces (AICONF, AITRACK) are present, but the newer multi-agent / graph / runner / online-evals sub-specs (AIGRAPH, AIRUNNER, AIGRAPHTRACK, AIEVALS) are not yet implemented in `ldai/`. A proper per-requirement breakdown across the AISDK sub-spec tree is deferred to a future batch — this entry exists so the rollup status reflects reality.",
+          "supported_since": "ldai/v0.7.0",
+          "supported_since_date": "2025-06-09",
+          "supported_since_evidence": "ldai/CHANGELOG.md (oldest tag: ldai/v0.7.0); package_info.go reports SDKName='go-server-sdk/ldai' Version='0.8.1'",
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
+      },
+      "ARCO": {
+        "spec_version": "",
+        "spec_path": "specs/ARCO-architecture-overview/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "specs/ARCO-architecture-overview/README.md",
+          "go-server-sdk/subsystems/data_store.go (DataStore interface)",
+          "go-server-sdk/subsystems/data_source.go (DataSource interface)",
+          "go-server-sdk/subsystems/data_source_update_sink.go (DataSourceUpdateSink interface — ARCO §1.2.5)",
+          "go-server-sdk/internal/datastore/in_memory_data_store_impl.go (Init/Get/GetAll/Upsert/IsInitialized/Close lines 37/57/79/97/129/140)",
+          "go-server-sdk/internal/datastore/persistent_data_store_wrapper.go (cache-wrapped persistent store — ARCO §1.1.3)",
+          "go-server-sdk/internal/datasource/streaming_data_source.go (StreamProcessor with Start lifecycle)",
+          "go-server-sdk/internal/datasource/polling_data_source.go",
+          "go-server-sdk/internal/datasource/data_source_update_sink_impl.go (decorator that sits between data source and store)",
+          "go-server-sdk/internal/bigsegments/ (big segment store — ARCO §1.1.6)",
+          "go-server-sdk/ldcomponents/ (immutable builder pattern per ARCO §3)",
+          "launchdarkly/go-server-sdk-evaluation@v3.0.1 (8394e84196508a715d826c65e56734117003181a) — Evaluator in separate dep repo per ARCO §1.3",
+          "launchdarkly/go-sdk-events@v3.5.0 — Event processor in separate dep repo per ARCO §1.4"
+        ],
+        "rollup": {
+          "applies": true,
+          "veto_reason": null,
+          "state": "supported",
+          "complexity": "moderate",
+          "rationale": "ARCO is an explanatory legacy document (id `SDKC-LEGACY-ARCO`) with zero numbered requirements (zero MUST/SHOULD markers; the only headings are descriptive section titles like '1.1 Data store'). Conformance is therefore evaluated by mapping the four conceptual components — data store, data source, evaluator, event processor — to the Go server SDK's actual architecture. All four are present with idiomatic Go interfaces, fully separated:\n  • Data store: subsystems/data_store.go (DataStore interface), internal/datastore/in_memory_data_store_impl.go and persistent_data_store_wrapper.go (full Init/Get/GetAll/Upsert/IsInitialized/Close, plus the persistent-store-with-cache wrapper ARCO §1.1.3 describes).\n  • Data source: subsystems/data_source.go (DataSource interface), internal/datasource/streaming_data_source.go and polling_data_source.go (with Start/Close lifecycle), plus the data_source_update_sink_impl.go decorator ARCO §1.2.5 describes.\n  • Evaluator: lives in the dependency repo go-server-sdk-evaluation (v3.0.1) — separated exactly per ARCO §1.3 ('the evaluator should be testable independently'). The SDK injects flag/segment lookup via a thin DataProvider interface rather than handing the evaluator the raw store.\n  • Event processor: lives in the dependency repo go-sdk-events (v3.5.0) and is wired by ldcomponents/send_events.go and the evaluator's event-emitting hooks. The fire-and-forget input-queue + background-flush architecture ARCO §1.4.2 describes is implemented in that dep repo.\nConfiguration follows the immutable-builder pattern ARCO §3 calls for: ldcomponents.* helper functions return builder structs with narrow setters; the LDClient takes a Config snapshot at construction. No configuration object is mutable post-init.\nRollup is `supported` rather than `partial` because every ARCO-described component is present and structurally aligned. Complexity `moderate` reflects that ARCO's non-normative status means there's no test harness assertion of compliance — judgment is structural, based on file-and-interface presence.",
+          "supported_since": "v2.0.0",
+          "supported_since_date": "2016-08-08",
+          "supported_since_evidence": "CHANGELOG.md bottom entry [2.0.0] - 2016-08-08 already references all four components (data store, data source via update processor, evaluator, event processor with summary events).",
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
+      },
+      "ATREF": {
+        "spec_version": "",
+        "spec_path": "specs/ATREF-attribute-references/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "specs/ATREF-attribute-references/README.md",
+          "launchdarkly/go-sdk-common@v3.4.0 (4d8d07a5cc1f0b8d805d846c474ee510a1c481b1) — pinned by go-server-sdk go.mod",
+          "launchdarkly/go-sdk-common/ldattr/ref.go (full implementation, 281 lines)",
+          "launchdarkly/go-sdk-common/ldattr/ref_test.go (covers all §1.2.3 example evaluations)",
+          "launchdarkly/go-sdk-common/lderrors/attribute_errors.go (ErrAttributeEmpty, ErrAttributeExtraSlash, ErrAttributeInvalidEscape)"
+        ],
+        "rollup": {
+          "applies": true,
+          "veto_reason": null,
+          "state": "supported",
+          "complexity": "trivial",
+          "rationale": "All 4 numbered MUST requirements are implemented in the go-sdk-common dependency repo at `ldattr/ref.go`. The implementation has been stable since v3.0.0 of go-sdk-common (coincident with go-server-sdk v6.0.0, which introduced contexts). ldattr.Ref carries an `err` field set by NewRef when parsing fails (satisfying §1.1.1's 'non-conforming strings MUST NOT be valid' via Ref.Err()), distinguishes the no-leading-slash case as a literal name (§1.2.1, ref.go:79-82), and unescapes ~1→/ and ~0→~ exactly per §1.2.2 and §1.2.3 in the unescapePath helper (ref.go:252-280). The §1.3 'no public API requirements' optional concepts (Depth, Component, Err) are also all present as public methods on Ref. Test coverage in ref_test.go covers all the example evaluations from §1.2.3's table.",
+          "supported_since": "v6.0.0",
+          "supported_since_date": "2022-12-07",
+          "supported_since_evidence": "go-server-sdk CHANGELOG: '## [6.0.0] - 2022-12-07 — The latest version of this SDK supports LaunchDarkly's new custom contexts feature.' ATREF was introduced as part of the U2C work alongside the context model.",
+          "counts": {
+            "full": 4,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": [
+          {
+            "requirement_id": "1.1.1",
+            "section": "1.1 Syntax",
+            "text": "Non-conforming strings MUST NOT be considered valid Attribute References.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "NewRef stores an error in Ref{} for empty input ('' or '/'), trailing slash (extraSlash), invalid escape sequences. Ref.Err() returns this error and any SDK consumer treats the Ref as invalid. unescapePath returns false on '~' followed by anything other than '0' or '1'.",
+            "findings": [
+              {
+                "file": "launchdarkly/go-sdk-common/ldattr/ref.go",
+                "line": 76,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "NewRef returns Ref{err: ErrAttributeEmpty} for '' or '/'."
+              },
+              {
+                "file": "launchdarkly/go-sdk-common/ldattr/ref.go",
+                "line": 96,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "NewRef returns Ref with err=ErrAttributeExtraSlash for trailing/double-slash paths."
+              },
+              {
+                "file": "launchdarkly/go-sdk-common/ldattr/ref.go",
+                "line": 90,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "NewRef returns Ref with err=ErrAttributeInvalidEscape when unescapePath fails."
+              },
+              {
+                "file": "launchdarkly/go-sdk-common/ldattr/ref.go",
+                "line": 161,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Ref.Err() exposes the validation error to callers."
+              },
+              {
+                "file": "launchdarkly/go-sdk-common/ldattr/ref.go",
+                "line": 274,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "unescapePath returns ('', false) on any '~' followed by neither '0' nor '1'."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.1",
+            "section": "1.2 Evaluation",
+            "text": "An input string that does not begin with '/' MUST be treated as the literal name of a singular attribute.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "NewRef explicitly checks for the no-leading-slash case and stores the entire string as singlePathComponent unchanged (no unescaping, no path splitting).",
+            "findings": [
+              {
+                "file": "launchdarkly/go-sdk-common/ldattr/ref.go",
+                "line": 79,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "NewRef short-circuits when referenceString[0] != '/' and returns Ref{singlePathComponent: referenceString, rawPath: referenceString}."
+              },
+              {
+                "file": "launchdarkly/go-sdk-common/ldattr/ref.go",
+                "line": 117,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "NewLiteralRef does the same for literal-name semantics, used internally where the caller knows the input is not pointer syntax."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.2",
+            "section": "1.2 Evaluation",
+            "text": "In an input string beginning with '/', all instances of the character sequence '~1' MUST be interpreted as '/'.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "unescapePath maps '~' followed by '1' to '/'. This applies only to the path components after the leading '/' (the leading slash itself is stripped before splitting).",
+            "findings": [
+              {
+                "file": "launchdarkly/go-sdk-common/ldattr/ref.go",
+                "line": 273,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "unescapePath case '1': unescaped = '/'."
+              },
+              {
+                "file": "launchdarkly/go-sdk-common/ldattr/ref.go",
+                "line": 92,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Each path component is run through unescapePath after splitting on '/'."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.3",
+            "section": "1.2 Evaluation",
+            "text": "In an input string beginning with '/', all instances of the character sequence '~0' MUST be interpreted as '~'.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "unescapePath maps '~' followed by '0' to '~'. The order-of-operations note in the spec ('replace ~1 first, then ~0') is satisfied by the single-pass byte scan, which examines each '~' once.",
+            "findings": [
+              {
+                "file": "launchdarkly/go-sdk-common/ldattr/ref.go",
+                "line": 271,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "unescapePath case '0': unescaped = '~'."
+              },
+              {
+                "file": "launchdarkly/go-sdk-common/ldattr/ref.go",
+                "line": 258,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Single-pass byte scan ensures order-of-operations correctness without separate find-and-replace passes."
+              }
+            ],
+            "notes_for_human": null
+          }
+        ]
+      },
+      "AUTOCONFIG": {
+        "spec_version": "",
+        "spec_path": "specs/AUTOCONFIG-relay-proxy-autoconfiguration/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "sdk-specs/specs/AUTOCONFIG-relay-proxy-autoconfiguration/README.md (applies-to: relay-proxy)"
+        ],
+        "rollup": {
+          "applies": false,
+          "veto_reason": "Spec applies-to is `relay-proxy` only. The Go server SDK is not the Relay Proxy — auto-configuration is a Relay Proxy Enterprise feature defined by this spec for that product, not for application-side server SDKs that consume LaunchDarkly's APIs.",
+          "state": "not_applicable",
+          "complexity": null,
+          "rationale": "Spec applies-to is `relay-proxy` only. The Go server SDK is not the Relay Proxy — auto-configuration is a Relay Proxy Enterprise feature defined by this spec for that product, not for application-side server SDKs that consume LaunchDarkly's APIs.",
+          "supported_since": null,
+          "supported_since_date": null,
+          "supported_since_evidence": null,
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
+      },
+      "AUTOENVATTR": {
+        "spec_version": "",
+        "spec_path": "specs/AUTOENVATTR-automatic-environment-attributes/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "sdk-specs/specs/AUTOENVATTR-automatic-environment-attributes/README.md",
+          "rg -l 'EnvironmentAttribute|automaticEnv|autoEnv|AutoEnv' go-server-sdk/ → 0 matches",
+          "go-server-sdk/testservice/servicedef/service_params.go (no auto-env capability constant)",
+          "go-server-sdk/CHANGELOG.md (no mention of auto env attrs across all v7.x releases)"
+        ],
+        "rollup": {
+          "applies": true,
+          "veto_reason": null,
+          "state": "not_supported",
+          "complexity": "unknown",
+          "rationale": "The Go server SDK does not auto-collect environment attributes into Contexts. No code in the repo references the spec's concepts (no `EnvironmentAttribute`, no `automaticEnv` / `autoEnv` / `AutoEnv` symbols). The contract-test capability constants in testservice/servicedef do not include the auto-env capability. For a Go server SDK this is a deliberate gap: the spec is primarily aimed at client-side SDKs running in end-user contexts (browser, mobile, embedded) where the execution environment carries useful default attributes. A Go server runs in arbitrary backend environments where there is no canonical 'environment' to harvest from.",
+          "supported_since": null,
+          "supported_since_date": null,
+          "supported_since_evidence": null,
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
+      },
+      "BIGSEG": {
+        "spec_version": "",
+        "spec_path": "specs/BIGSEG-big-segments/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "specs/BIGSEG-big-segments/README.md",
+          "go-server-sdk/subsystems/big_segments.go (BigSegmentStore interface, BigSegmentStoreMetadata, BigSegmentMembership)",
+          "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go (BigSegmentStoreWrapper — central wrapper)",
+          "go-server-sdk/subsystems/ldstoreimpl/big_segments_membership.go (NewBigSegmentMembershipFromSegmentRefs — include/exclude resolution)",
+          "go-server-sdk/internal/bigsegments/user_hash.go (HashForContextKey — sha256 + base64 std)",
+          "go-server-sdk/internal/bigsegments/big_segment_store_status_provider_impl.go (status provider impl)",
+          "go-server-sdk/ldcomponents/big_segments_configuration_builder.go (config defaults + builder)",
+          "go-server-sdk/interfaces/big_segment_store_status_provider.go (BigSegmentStoreStatus, BigSegmentStoreStatusProvider)",
+          "go-server-sdk/internal/broadcasters.go (Broadcaster[T] — listener registration backing)",
+          "go-server-sdk/ldclient_big_segments_test.go (end-to-end coverage)",
+          "launchdarkly/go-server-sdk-evaluation@v3.0.1 (8394e84196508a715d826c65e56734117003181a) — evaluator integration in evaluator_segment.go (lines 12-115, 172-195) and evaluator.go (lines 84-85, 119-121, 188)",
+          "launchdarkly/go-server-sdk-evaluation/evaluator_big_segment_test.go (segment-evaluation test coverage)",
+          "launchdarkly/go-sdk-common@v3.4.0 (4d8d07a5cc1f0b8d805d846c474ee510a1c481b1) — ldreason.BigSegmentsStatus constants + reason JSON marshaling",
+          "launchdarkly/go-server-sdk-redis-redigo @ 51c8f3f63822436bbb3747a9dcb01f30ac7171a7 (redis_big_segments_impl.go for §1.2/§1.11.1)",
+          "launchdarkly/go-server-sdk-dynamodb @ 7c577bb711e502ed79fd0547abd84bc16306b55c (dynamodb_big_segments_impl.go for §1.2/§1.11.2)",
+          "github.com/launchdarkly/ccache (LRU cache library — backs the membership cache per §1.6.1/1.6.3)",
+          "golang.org/x/sync/singleflight (used for concurrent-query deduplication per §1.5.9)"
+        ],
+        "rollup": {
+          "applies": true,
+          "veto_reason": null,
+          "state": "supported",
+          "complexity": "moderate",
+          "rationale": "BIGSEG is comprehensively implemented across the Go SDK and its two official big segment store integrations (go-server-sdk-redis-redigo and go-server-sdk-dynamodb). All 8 store-interface requirements (§1.2), all 3 hashing requirements (§1.3), all 6 configuration requirements (§1.4), all 10 wrapper requirements (§1.5), all 7 cache requirements (§1.6), all 3 staleness requirements (§1.7), all 9 status-provider requirements (§1.8), all 19 evaluation-integration requirements (§1.9), and §1.10 (SDK-init independence) are satisfied. The §1.11 store data format requirements are satisfied by the official Redis and DynamoDB integrations, which match the spec's key/attribute schemas exactly. One MUST is rated `partial`: 1.2.8 (don't close externally-provided clients) — the Redis integration's Close() unconditionally calls pool.Close() even when the user supplied the pool via PoolInterface(). The DynamoDB integration is compliant; only Redis-redigo has this gap.\nConfidence is high because BigSegmentStoreWrapper (subsystems/ldstoreimpl/big_segment_store_wrapper.go) is exposed publicly so the Relay Proxy can reuse it — meaning the wrapper is exercised by both the SDK's own tests and by the Relay Proxy's contract tests. The evaluator integration in the go-server-sdk-evaluation dependency repo includes evaluator_big_segment_test.go, plus go-server-sdk has ldclient_big_segments_test.go for end-to-end coverage.",
+          "supported_since": "v5.5.0",
+          "supported_since_date": "2021-07-20",
+          "supported_since_evidence": "CHANGELOG: '## [5.5.0] - 2021-07-20 — Added: The SDK now supports evaluation of Big Segments. An Early Access Program for creating and syncing Big Segments from customer data platforms is available to enterprise customers.'",
+          "counts": {
+            "full": 65,
+            "partial": 3,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": [
+          {
+            "requirement_id": "1.2.1",
+            "section": "1.2 Big Segment Store Interface",
+            "text": "The SDK MUST define a big segment store interface that is separate from the regular SDK data store interface.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "BigSegmentStore is a distinct interface from DataStore, with its own GetMetadata/GetMembership/Close methods.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/big_segments.go",
+                "line": 39,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "BigSegmentStore interface defined separately from DataStore (subsystems/data_store.go)"
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.2",
+            "section": "1.2 Big Segment Store Interface",
+            "text": "GetMetadata MUST return a metadata object containing a `lastUpToDate` Unix epoch ms timestamp.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "GetMetadata returns BigSegmentStoreMetadata struct whose only field is LastUpToDate, typed as ldtime.UnixMillisecondTime (Unix epoch ms).",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/big_segments.go",
+                "line": 44,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "GetMetadata() (BigSegmentStoreMetadata, error)"
+              },
+              {
+                "file": "go-server-sdk/subsystems/big_segments.go",
+                "line": 55,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "BigSegmentStoreMetadata struct has LastUpToDate ldtime.UnixMillisecondTime — zero if never updated, per spec."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.3",
+            "section": "1.2 Big Segment Store Interface",
+            "text": "GetMembership MUST accept a hashed context key (string) and return membership data; null/empty MUST be treated identically as 'no information'.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "GetMembership(contextHash string) returns BigSegmentMembership; CheckMembership returns OptionalBool{} (undefined) for absent segment refs, which the evaluator treats identically to a nil membership.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/big_segments.go",
+                "line": 51,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "GetMembership(contextHash string) (BigSegmentMembership, error) — input is the pre-hashed key."
+              },
+              {
+                "file": "go-server-sdk/subsystems/big_segments.go",
+                "line": 81,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "CheckMembership returns ldvalue.OptionalBool{} (no value) for undefined membership."
+              },
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 131,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Wrapper caches nil as 'not found' state and returns it as BigSegmentsHealthy with nil membership — null and empty handled identically downstream."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.4",
+            "section": "1.2 Big Segment Store Interface",
+            "text": "Includes MUST take precedence over excludes; SHOULD process excludes first then includes.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "NewBigSegmentMembershipFromSegmentRefs writes excludes first (false), then includes (true), so include entries overwrite exclude entries by map-key. Comments at line 47 explicitly call out 'inclusions override exclusions'.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segments_membership.go",
+                "line": 36,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "for _, exc := range excludedSegmentRefs { ret[exc] = false } — excludes processed first."
+              },
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segments_membership.go",
+                "line": 40,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "for _, inc := range includedSegmentRefs { ret[inc] = true } — includes overwrite excludes per spec."
+              },
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segments_membership.go",
+                "line": 47,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Comment: 'a true value for included keys and a false value for excluded keys that are not also included (inclusions override exclusions)'"
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.5",
+            "section": "1.2 Big Segment Store Interface",
+            "text": "Big segment store implementations SHOULD use connection pooling.",
+            "severity": "should",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Redis-redigo uses redigo.Pool (configurable via Pool() / PoolInterface() / DialOptions builder methods). DynamoDB uses the AWS SDK v2 client which has built-in connection management.",
+            "findings": [
+              {
+                "file": "go-server-sdk-redis-redigo/redis_big_segments_impl.go",
+                "line": 37,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Redis impl uses Pool (newPool() default, or user-provided via PoolInterface)."
+              },
+              {
+                "file": "go-server-sdk-redis-redigo/redis_builder.go",
+                "line": 151,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "StoreBuilder.Pool / PoolInterface allow user-provided pool with custom configuration."
+              },
+              {
+                "file": "go-server-sdk-dynamodb/dynamodb_big_segments_impl.go",
+                "line": 47,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "DynamoDB impl uses the aws-sdk-go-v2 dynamodb.Client which has built-in HTTP connection pooling."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.6",
+            "section": "1.2 Big Segment Store Interface",
+            "text": "Big segment store implementations MUST NOT implement their own caching or retry logic.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Both Redis and DynamoDB impls are thin: GetMembership directly issues SMEMBERS / GetItem and returns. No internal cache, no retry loop. Caching is the wrapper's job; retries are the application's.",
+            "findings": [
+              {
+                "file": "go-server-sdk-redis-redigo/redis_big_segments_impl.go",
+                "line": 62,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "GetMembership is straight Redis SMEMBERS — no cache, no retry."
+              },
+              {
+                "file": "go-server-sdk-dynamodb/dynamodb_big_segments_impl.go",
+                "line": 89,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "GetMembership is straight GetItem — no cache, no retry."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.7",
+            "section": "1.2 Big Segment Store Interface",
+            "text": "BigSegmentStore MUST provide a Close operation; MAY be omitted in request-scoped runtimes.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "BigSegmentStore embeds io.Closer at the interface level, so every implementation MUST provide Close(). Both Redis and DynamoDB impls implement it.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/big_segments.go",
+                "line": 40,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "BigSegmentStore embeds io.Closer (compile-time enforcement)."
+              },
+              {
+                "file": "go-server-sdk-redis-redigo/redis_big_segments_impl.go",
+                "line": 80,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Redis Close() releases pool resources."
+              },
+              {
+                "file": "go-server-sdk-dynamodb/dynamodb_big_segments_impl.go",
+                "line": 118,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "DynamoDB Close() cancels the SDK context."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.8",
+            "section": "1.2 Big Segment Store Interface",
+            "text": "If a store accepts an externally-provided database client, Close MUST NOT close that client; only SDK-created clients may be closed.",
+            "severity": "must",
+            "state": "partial",
+            "complexity": null,
+            "rationale": "DynamoDB compliant: Close() only cancels the SDK's internal context (cancelContext()), never disposes the user-provided AWS client. Redis NOT compliant: Close() unconditionally calls pool.Close() even when the user supplied the pool via PoolInterface(), which would close a pool the application may also be using elsewhere.",
+            "findings": [
+              {
+                "file": "go-server-sdk-dynamodb/dynamodb_big_segments_impl.go",
+                "line": 118,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Close() only calls cancelContext() — never closes the AWS client (whether user-provided via ClientConfig or SDK-created)."
+              },
+              {
+                "file": "go-server-sdk-redis-redigo/redis_big_segments_impl.go",
+                "line": 80,
+                "kind": "evidence",
+                "evidence_type": "anti_pattern",
+                "severity": "info",
+                "relevance": "Close() unconditionally calls store.pool.Close(); if the user supplied the pool via PoolInterface(), this closes a pool the user may share for other purposes."
+              },
+              {
+                "file": "go-server-sdk-redis-redigo/redis_builder.go",
+                "line": 158,
+                "kind": "evidence",
+                "evidence_type": "anti_pattern",
+                "severity": "info",
+                "relevance": "PoolInterface() builder accepts an external pool but the impl doesn't track ownership."
+              }
+            ],
+            "notes_for_human": "Easy fix: store a `userOwnedPool bool` flag in builderOptions; Close() respects it. Worth a small PR to redis-redigo."
+          },
+          {
+            "requirement_id": "1.3.1",
+            "section": "1.3 Context Key Hashing",
+            "text": "Context keys MUST be hashed via base64(sha256(contextKey)) before passing to the store.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "HashForContextKey computes sha256.Sum256([]byte(key)) then base64.StdEncoding.EncodeToString.",
+            "findings": [
+              {
+                "file": "go-server-sdk/internal/bigsegments/user_hash.go",
+                "line": 10,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "HashForContextKey: sha256.Sum256 → base64.StdEncoding.EncodeToString — exact spec algorithm."
+              },
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 123,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Wrapper calls bigsegments.HashForContextKey(contextKey) before issuing the store query."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.3.2",
+            "section": "1.3 Context Key Hashing",
+            "text": "MUST use standard Base64 (RFC 4648 §4 with `+` and `/`), NOT Base64url.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Hashing uses base64.StdEncoding (the standard encoding with `+` and `/`), NOT base64.URLEncoding (which uses `-` and `_`).",
+            "findings": [
+              {
+                "file": "go-server-sdk/internal/bigsegments/user_hash.go",
+                "line": 12,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "base64.StdEncoding.EncodeToString — Go's standard library distinguishes StdEncoding (RFC 4648 §4) from URLEncoding (§5); the SDK uses the former."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.3.3",
+            "section": "1.3 Context Key Hashing",
+            "text": "Hashing MUST be performed by the wrapper, not by individual store implementations.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "The wrapper calls HashForContextKey before invoking store.GetMembership; both Redis and DynamoDB impls receive an already-hashed string.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 123,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Wrapper hashes inside the singleflight.Do block before calling w.store.GetMembership(hash)."
+              },
+              {
+                "file": "go-server-sdk/subsystems/big_segments.go",
+                "line": 47,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Interface comment explicitly states: 'the contextHash is a base64-encoded string produced by hashing the context key... the store implementation does not need to know the details of how this is done.'"
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.4.1",
+            "section": "1.4 Configuration",
+            "text": "MUST accept a configuration option for the store implementation; absence means BigSegments unavailable and bigSegmentsStatus=NOT_CONFIGURED.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "ldcomponents.BigSegments(storeConfigurer) creates the BigSegmentsConfigurationBuilder; Config.BigSegments is nil by default. When nil, the LDClient never instantiates the wrapper, and the evaluator returns NotConfigured.",
+            "findings": [
+              {
+                "file": "go-server-sdk/ldcomponents/big_segments_configuration_builder.go",
+                "line": 71,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "BigSegments(storeConfigurer subsystems.ComponentConfigurer[subsystems.BigSegmentStore])"
+              },
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 52,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Evaluator: if es.owner.bigSegmentProvider == nil, sets BigSegmentsNotConfigured."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.4.2",
+            "section": "1.4 Configuration",
+            "text": "MUST accept a configuration option for max number of cached context lookups, default 1000.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "DefaultBigSegmentsContextCacheSize = 1000; ContextCacheSize() setter on the builder.",
+            "findings": [
+              {
+                "file": "go-server-sdk/ldcomponents/big_segments_configuration_builder.go",
+                "line": 12,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "DefaultBigSegmentsContextCacheSize = 1000 — exact spec default."
+              },
+              {
+                "file": "go-server-sdk/ldcomponents/big_segments_configuration_builder.go",
+                "line": 98,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "ContextCacheSize(int) builder method."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.4.3",
+            "section": "1.4 Configuration",
+            "text": "MUST accept a configuration option for cache TTL, default 5000 ms.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "DefaultBigSegmentsContextCacheTime = time.Second * 5; ContextCacheTime() setter.",
+            "findings": [
+              {
+                "file": "go-server-sdk/ldcomponents/big_segments_configuration_builder.go",
+                "line": 16,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "DefaultBigSegmentsContextCacheTime = time.Second * 5 — exact spec default."
+              },
+              {
+                "file": "go-server-sdk/ldcomponents/big_segments_configuration_builder.go",
+                "line": 111,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "ContextCacheTime(time.Duration) builder method."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.4.4",
+            "section": "1.4 Configuration",
+            "text": "MUST accept a configuration option for staleAfter, default 120000 ms (2 minutes).",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "DefaultBigSegmentsStaleAfter = time.Second * 120; StaleAfter() setter.",
+            "findings": [
+              {
+                "file": "go-server-sdk/ldcomponents/big_segments_configuration_builder.go",
+                "line": 24,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "DefaultBigSegmentsStaleAfter = time.Second * 120 — exact spec default."
+              },
+              {
+                "file": "go-server-sdk/ldcomponents/big_segments_configuration_builder.go",
+                "line": 143,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "StaleAfter(time.Duration) builder method."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.4.5",
+            "section": "1.4 Configuration",
+            "text": "MUST accept a configuration option for status poll interval, default 5000 ms.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "DefaultBigSegmentsStatusPollInterval = time.Second * 5; StatusPollInterval() setter.",
+            "findings": [
+              {
+                "file": "go-server-sdk/ldcomponents/big_segments_configuration_builder.go",
+                "line": 20,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "DefaultBigSegmentsStatusPollInterval = time.Second * 5 — exact spec default."
+              },
+              {
+                "file": "go-server-sdk/ldcomponents/big_segments_configuration_builder.go",
+                "line": 121,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "StatusPollInterval(time.Duration) builder method (clamps zero/negative to default)."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.4.6",
+            "section": "1.4 Configuration",
+            "text": "If status poll interval > stale-after threshold, SHOULD clamp the poll interval to stale-after.",
+            "severity": "should",
+            "state": "full",
+            "complexity": null,
+            "rationale": "In runPollTask: if pollInterval > w.staleTime { pollInterval = w.staleTime } before constructing the ticker.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 253,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if pollInterval > w.staleTime { pollInterval = w.staleTime } — clamp at runPollTask entry."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.5.1",
+            "section": "1.5 Big Segment Store Wrapper",
+            "text": "MUST provide an internal wrapper around the store; evaluator queries the wrapper, not the store directly.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "BigSegmentStoreWrapper wraps the store; the evaluator's bigSegmentProvider field points to this wrapper, never to a raw BigSegmentStore.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 34,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "type BigSegmentStoreWrapper struct — wraps subsystems.BigSegmentStore."
+              },
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 58,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "es.owner.bigSegmentProvider.GetMembership(key) — evaluator calls wrapper, not store."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.5.2",
+            "section": "1.5 Big Segment Store Wrapper",
+            "text": "Wrapper MUST check the membership cache before querying the underlying store.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "GetMembership first calls safeCacheGet(contextKey); only on miss/expired does it run singleflight.Do which calls store.GetMembership.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 117,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "entry := w.safeCacheGet(contextKey) — cache check first."
+              },
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 119,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if entry == nil || entry.Expired() — only then query the store."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.5.3",
+            "section": "1.5 Big Segment Store Wrapper",
+            "text": "Wrapper's membership query MUST return both membership data and a status value (HEALTHY/STALE/NOT_CONFIGURED/STORE_ERROR).",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "GetMembership returns (ldeval.BigSegmentMembership, ldreason.BigSegmentsStatus). The four constants in ldreason match the four spec status strings exactly.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 114,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "func (w *BigSegmentStoreWrapper) GetMembership(contextKey string) (ldeval.BigSegmentMembership, ldreason.BigSegmentsStatus)"
+              },
+              {
+                "file": "go-sdk-common/ldreason/reason.go",
+                "line": 68,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "BigSegmentsHealthy = 'HEALTHY'; BigSegmentsStale = 'STALE'; BigSegmentsNotConfigured = 'NOT_CONFIGURED'; BigSegmentsStoreError = 'STORE_ERROR' — exact spec wire values."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.5.4",
+            "section": "1.5 Big Segment Store Wrapper",
+            "text": "If no big segment store configured, wrapper MUST return NOT_CONFIGURED with null membership.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "When Config.BigSegments is nil, the wrapper isn't instantiated. The evaluator checks bigSegmentProvider == nil and returns BigSegmentsNotConfigured directly.",
+            "findings": [
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 52,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if es.owner.bigSegmentProvider == nil { es.bigSegmentsStatus = ldreason.BigSegmentsNotConfigured }"
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.5.5",
+            "section": "1.5 Big Segment Store Wrapper",
+            "text": "If store query fails, wrapper MUST return STORE_ERROR with null membership; SHOULD log the error.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "GetMembership's singleflight.Do error path: logs Errorf and returns (nil, BigSegmentsStoreError). Log message format closely matches the spec example.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 127,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if err != nil { w.loggers.Errorf(\"Big Segment store returned error: %s\", err); return nil, ldreason.BigSegmentsStoreError } — exact spec example wording."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.5.6",
+            "section": "1.5 Big Segment Store Wrapper",
+            "text": "If query succeeds but data is stale, wrapper MUST return STALE with the membership data.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "After successful GetMembership, wrapper checks GetStatus().Stale and returns BigSegmentsStale alongside the membership.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 152,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if w.GetStatus().Stale { status = ldreason.BigSegmentsStale } — applies to both cache hit and cache miss paths."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.5.7",
+            "section": "1.5 Big Segment Store Wrapper",
+            "text": "If query succeeds and not stale, wrapper MUST return HEALTHY with the membership data.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Default status is BigSegmentsHealthy; only flipped to BigSegmentsStale if GetStatus().Stale is true.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 151,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "status := ldreason.BigSegmentsHealthy — default for successful queries."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.5.8",
+            "section": "1.5 Big Segment Store Wrapper",
+            "text": "On store error during evaluation, wrapper MUST also trigger a status update (Available=false).",
+            "severity": "must",
+            "state": "partial",
+            "complexity": null,
+            "rationale": "The current implementation logs the error and returns BigSegmentsStoreError, but does NOT directly call statusUpdateFn from GetMembership. Status updates flow exclusively through pollStoreAndUpdateStatus (background poller). On a store error, the very next poll cycle will detect it and update status — but there is no synchronous status update from the failed evaluation query path itself.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 127,
+                "kind": "evidence",
+                "evidence_type": "anti_pattern",
+                "severity": "info",
+                "relevance": "Error path returns BigSegmentsStoreError but does NOT invoke w.statusUpdateFn or update w.lastStatus.Available — mismatch with spec §1.5.8."
+              },
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 213,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "pollStoreAndUpdateStatus updates w.lastStatus and notifies statusUpdateFn — but this path is only triggered by the background ticker, not by failed evaluation queries."
+              }
+            ],
+            "notes_for_human": "Spec rationale ('the status provider reflects store errors encountered during evaluation, not only those detected by the background poller') is not honored. Fix would update w.lastStatus.Available=false and call w.statusUpdateFn from the error branch in GetMembership."
+          },
+          {
+            "requirement_id": "1.5.9",
+            "section": "1.5 Big Segment Store Wrapper",
+            "text": "Wrapper MUST be safe for concurrent access; SHOULD deduplicate concurrent queries for the same key.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "All shared state is protected by sync.RWMutex (w.lock). Concurrent queries for the same context key are deduplicated using golang.org/x/sync/singleflight.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 47,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "lock sync.RWMutex protects haveStatus/lastStatus/contextCache/pollCloser."
+              },
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 43,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "requests singleflight.Group — coalesces concurrent in-flight queries for the same key."
+              },
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 122,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "w.requests.Do(contextKey, func() ...) — single in-flight query per key, even under concurrency."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.5.10",
+            "section": "1.5 Big Segment Store Wrapper",
+            "text": "On SDK shutdown, wrapper MUST stop background polling before closing the store; cache MUST be invalidated.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Close() acquires lock, closes pollCloser (signalling polling goroutine to exit), Stops the cache, releases lock, then calls store.Close(). Order matches spec.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 85,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Close() sequence: close(w.pollCloser) → w.contextCache.Stop() → w.lock.Unlock() → w.store.Close()."
+              },
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 92,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "w.contextCache.Stop() invalidates cache state."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.6.1",
+            "section": "1.6 Membership Cache",
+            "text": "MUST maintain an LRU cache of context membership lookups (or external adapter for request-scoped runtimes).",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Uses launchdarkly/ccache (an LRU cache library) configured with MaxSize from ContextCacheSize.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 69,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "contextCache: ccache.New(ccache.Configure().MaxSize(int64(config.ContextCacheSize))) — LRU semantics provided by ccache library."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.6.2",
+            "section": "1.6 Membership Cache",
+            "text": "Cache MUST be keyed by the unhashed context key.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "safeCacheGet/safeCacheSet take contextKey (the original unhashed key). Hashing happens AFTER cache miss, inside the singleflight.Do block.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 117,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "entry := w.safeCacheGet(contextKey) — cache lookup uses raw context key."
+              },
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 122,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Hashing only happens inside singleflight.Do AFTER cache miss — confirms cache is keyed by raw key, not hash."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.6.3",
+            "section": "1.6 Membership Cache",
+            "text": "Cache MUST hold at most ContextCacheSize entries.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "ccache.Configure().MaxSize() enforces the maximum entry count via LRU eviction.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 69,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "MaxSize(int64(config.ContextCacheSize)) — enforced by ccache library."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.6.4",
+            "section": "1.6 Membership Cache",
+            "text": "Each cache entry MUST expire after ContextCacheTime.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "safeCacheSet passes w.cacheTTL (= config.ContextCacheTime) to ccache.Set, which sets per-entry TTL.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 132,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "w.safeCacheSet(contextKey, nil, w.cacheTTL) — TTL applied to cached 'not found' entries."
+              },
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 136,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "w.safeCacheSet(contextKey, membership, w.cacheTTL) — TTL applied to cached membership entries."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.6.5",
+            "section": "1.6 Membership Cache",
+            "text": "Expired entries MUST NOT be used as fallback; treat as cache miss.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "GetMembership: `if entry == nil || entry.Expired()` — expired entries trigger the same path as a true cache miss (fresh store query).",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 119,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if entry == nil || entry.Expired() { /* treat as miss */ } — explicit 'no expired fallback'."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.6.6",
+            "section": "1.6 Membership Cache",
+            "text": "Cache MUST store results for context keys with no membership data (null/empty results).",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "When store returns nil membership, wrapper calls safeCacheSet(contextKey, nil, ttl) — explicitly caching the 'not found' state to avoid repeated queries.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 132,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if value == nil { w.safeCacheSet(contextKey, nil, w.cacheTTL) // we cache the 'not found' status }"
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.6.7",
+            "section": "1.6 Membership Cache",
+            "text": "Store query failures MUST NOT be cached; subsequent queries MUST re-attempt the store.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "On store error, GetMembership returns immediately without calling safeCacheSet. The next call re-enters the cache-miss path and re-attempts the store query.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 127,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if err != nil { w.loggers.Errorf(...); return nil, ldreason.BigSegmentsStoreError } — early return WITHOUT safeCacheSet, so the error isn't cached."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.7.1",
+            "section": "1.7 Staleness Detection",
+            "text": "MUST determine staleness by comparing current time against lastUpToDate.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "isStale: age := time.Duration(unixMillisNow - updateTime) * time.Millisecond.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 247,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "func (w *BigSegmentStoreWrapper) isStale(updateTime ldtime.UnixMillisecondTime) bool { age := time.Duration(uint64(ldtime.UnixMillisNow())-uint64(updateTime)) * time.Millisecond; return age >= w.staleTime }"
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.7.2",
+            "section": "1.7 Staleness Detection",
+            "text": "Data MUST be considered stale if (now - lastUpToDate) exceeds staleAfter.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "age >= w.staleTime — comparison uses staleAfter directly.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 249,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "return age >= w.staleTime — exact spec comparison."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.7.3",
+            "section": "1.7 Staleness Detection",
+            "text": "If lastUpToDate is absent or zero, data MUST be considered stale.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "With updateTime=0, age = unixMillisNow which is always > staleTime → returns true. The 'never synchronized' case correctly evaluates as stale.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 247,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "When updateTime=0, age = current Unix epoch ms (~1.7e12), which exceeds any reasonable staleTime → isStale returns true."
+              },
+              {
+                "file": "go-server-sdk/subsystems/big_segments.go",
+                "line": 56,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "BigSegmentStoreMetadata.LastUpToDate documented as 'zero if the store has never been updated' — explicit zero-value semantics."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.8.1",
+            "section": "1.8 Status Provider",
+            "text": "MUST expose a status provider that allows the application to query the current status.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "BigSegmentStoreStatusProvider exposed via LDClient.GetBigSegmentsStoreStatusProvider().",
+            "findings": [
+              {
+                "file": "go-server-sdk/internal/bigsegments/big_segment_store_status_provider_impl.go",
+                "line": 22,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "NewBigSegmentStoreStatusProviderImpl returns interfaces.BigSegmentStoreStatusProvider."
+              },
+              {
+                "file": "go-server-sdk/ldclient.go",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "LDClient.GetBigSegmentsStoreStatusProvider() exposes the status provider; verified by ldclient_big_segments_test.go."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.8.2",
+            "section": "1.8 Status Provider",
+            "text": "MUST provide GetStatus returning {available bool, stale bool}.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "GetStatus returns interfaces.BigSegmentStoreStatus which has both Available and Stale booleans.",
+            "findings": [
+              {
+                "file": "go-server-sdk/internal/bigsegments/big_segment_store_status_provider_impl.go",
+                "line": 32,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "func (b *bigSegmentStoreStatusProviderImpl) GetStatus() interfaces.BigSegmentStoreStatus"
+              },
+              {
+                "file": "go-server-sdk/interfaces/big_segment_store_status_provider.go",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "BigSegmentStoreStatus struct has Available and Stale boolean fields."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.8.3",
+            "section": "1.8 Status Provider",
+            "text": "MUST support registering and unregistering status change listeners.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "AddStatusListener and RemoveStatusListener methods on the provider; backed by an internal Broadcaster.",
+            "findings": [
+              {
+                "file": "go-server-sdk/internal/bigsegments/big_segment_store_status_provider_impl.go",
+                "line": 39,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "AddStatusListener() <-chan interfaces.BigSegmentStoreStatus"
+              },
+              {
+                "file": "go-server-sdk/internal/bigsegments/big_segment_store_status_provider_impl.go",
+                "line": 43,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "RemoveStatusListener(ch <-chan interfaces.BigSegmentStoreStatus)"
+              },
+              {
+                "file": "go-server-sdk/internal/broadcasters.go",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Generic Broadcaster[T] handles add/remove + notify-on-change semantics."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.8.4",
+            "section": "1.8 Status Provider",
+            "text": "MUST run a background poll task at StatusPollInterval (or rate-limited on-demand in request-scoped runtimes).",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "If StartPolling is true (set by SDK at wrapper init), runPollTask launches a goroutine with time.NewTicker(pollInterval).",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 77,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if config.StartPolling { go w.runPollTask(config.StatusPollInterval, pollCloser) }"
+              },
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 252,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "runPollTask: ticker.NewTicker(pollInterval) → loop calls pollStoreAndUpdateStatus on each tick."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.8.5",
+            "section": "1.8 Status Provider",
+            "text": "Background poll task MUST call GetMetadata and update status based on success + staleness.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "pollStoreAndUpdateStatus calls w.store.GetMetadata; sets Available=true and Stale=isStale(metadata.LastUpToDate) on success, or Available=false on error.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 216,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "metadata, err := w.store.GetMetadata() — followed by Available/Stale computation."
+              },
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 220,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "newStatus.Available = true; newStatus.Stale = w.isStale(metadata.LastUpToDate)"
+              },
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 224,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Errorf logs the error; newStatus.Available = false on error."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.8.6",
+            "section": "1.8 Status Provider",
+            "text": "Listeners MUST only be notified when the status actually changes.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "pollStoreAndUpdateStatus only invokes statusUpdateFn (which broadcasts) when !hadStatus || (newStatus != oldStatus). The struct equality check ensures no spurious notifications.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 233,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if !hadStatus || (newStatus != oldStatus) { ... w.statusUpdateFn(newStatus) }"
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.8.7",
+            "section": "1.8 Status Provider",
+            "text": "Store errors during evaluation MUST also update the status provider's state and notify listeners if status changed.",
+            "severity": "must",
+            "state": "partial",
+            "complexity": null,
+            "rationale": "Same gap as 1.5.8 — evaluation-path errors do NOT update status. The next background poll catches the error condition, but synchronous notification on evaluation-path error is missing.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 127,
+                "kind": "evidence",
+                "evidence_type": "anti_pattern",
+                "severity": "info",
+                "relevance": "GetMembership error path returns immediately without updating w.lastStatus or calling w.statusUpdateFn."
+              }
+            ],
+            "notes_for_human": "Same fix as 1.5.8."
+          },
+          {
+            "requirement_id": "1.8.8",
+            "section": "1.8 Status Provider",
+            "text": "If a membership query is received before the first background poll completes, wrapper MUST ensure a metadata poll occurs before returning.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "GetStatus checks haveStatus; if false, calls pollStoreAndUpdateStatus synchronously on the calling goroutine — exactly the spec's MAY 'trigger a synchronous poll on the calling thread' option.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 174,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if haveStatus { return status }; return w.pollStoreAndUpdateStatus() — synchronous fallback when no status yet."
+              },
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 168,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Doc comment confirms: 'if we have not yet obtained that information (the poll task has not executed yet), then this method immediately does a metadata query and waits for it to succeed or fail.'"
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.8.9",
+            "section": "1.8 Status Provider",
+            "text": "Membership queries during evaluation MUST NOT trigger metadata polls (except per 1.8.8 for the first query).",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "GetMembership never calls pollStoreAndUpdateStatus directly. It only calls GetStatus (line 152), which is a fast cached read in the steady state — and only escalates to a synchronous poll on the very first call (per 1.8.8).",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 152,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if w.GetStatus().Stale { ... } — GetStatus reads cached lastStatus in steady state; no fresh poll."
+              },
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 168,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "GetStatus only triggers pollStoreAndUpdateStatus when haveStatus is false — exactly the 1.8.8 first-query carve-out."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.1.1",
+            "section": "1.9.1 Context Key Selection",
+            "text": "If unboundedContextKind is absent/empty, MUST default to the SDK's default context kind (typically 'user').",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "getApplicableContextKeyByKind handles default-kind selection. For unset UnboundedContextKind on the segment, the evaluator falls back to the default kind via this helper.",
+            "findings": [
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 43,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "key, ok := getApplicableContextKeyByKind(&es.context, s.UnboundedContextKind) — UnboundedContextKind defaults to ldcontext.DefaultKind ('user') in the helper."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.1.2",
+            "section": "1.9.1 Context Key Selection",
+            "text": "Evaluator MUST extract the individual context matching unboundedContextKind from the evaluation context and use its key for the store query.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "getApplicableContextKeyByKind returns (key, true) only when an individual context of the requested kind is present; that key is then passed to bigSegmentProvider.GetMembership.",
+            "findings": [
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 43,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Helper extracts individual context key by kind from multi-context evaluations."
+              },
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 58,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "es.owner.bigSegmentProvider.GetMembership(key) — uses the extracted key."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.1.3",
+            "section": "1.9.1 Context Key Selection",
+            "text": "If evaluation context lacks the requested kind, segment MUST be non-match; MUST NOT query the store; bigSegmentsStatus MUST NOT be set.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "When getApplicableContextKeyByKind returns ok=false, evaluator returns (false, nil) immediately without querying the store and without setting bigSegmentsStatus.",
+            "findings": [
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 44,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if !ok { return false, nil } — no store query, no status set."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.1.4",
+            "section": "1.9.1 Context Key Selection",
+            "text": "Store query MUST use only the context key (not kind); per-evaluation membership cache MUST also be keyed by key alone.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "bigSegmentProvider.GetMembership takes only the context key. The evaluator's per-eval bigSegmentsMemberships map is `map[string]BigSegmentMembership` keyed by key string. Comments at evaluator_segment.go:59-63 explicitly state 'each big segment can only be for one kind'.",
+            "findings": [
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 50,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "membership, wasCached := es.bigSegmentsMemberships[key] — keyed by key alone."
+              },
+              {
+                "file": "go-server-sdk-evaluation/evaluator.go",
+                "line": 84,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "bigSegmentsMemberships map[string]BigSegmentMembership — string key is the context key."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.2.1",
+            "section": "1.9.2 Segment Matching",
+            "text": "When a segment is unbounded, big segment store MUST be used in place of included/excluded/includedContexts/excludedContexts for membership; rules MUST still be evaluated.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "evaluator_segment.go branches on s.Unbounded BEFORE checking included/excluded fields. The unbounded branch (lines 32-76) never falls into the regular target-list checks (lines 77-101).",
+            "findings": [
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 32,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if s.Unbounded { ... // big segment path }"
+              },
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 77,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "} else { // regular path checks IncludedContexts/ExcludedContexts/Included/Excluded — only reached when s.Unbounded is false."
+              },
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 104,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Segment rules loop runs unconditionally after the include/exclude or big-segment block, satisfying the spec's 'falls through to the segment's rules only' requirement."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.2.2",
+            "section": "1.9.2 Segment Matching",
+            "text": "Engine MUST query the wrapper when segment.unbounded=true AND segment.generation has a value.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Evaluator checks both Unbounded and Generation.IsDefined() before invoking the big segment provider.",
+            "findings": [
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 32,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if s.Unbounded { if !s.Generation.IsDefined() { ... NotConfigured ... } else { ... query provider ... } }"
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.2.3",
+            "section": "1.9.2 Segment Matching",
+            "text": "If segment.unbounded=true but generation has no value, MUST set bigSegmentsStatus=NOT_CONFIGURED and treat as non-match.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "The !Generation.IsDefined() branch sets BigSegmentsNotConfigured and returns (false, nil).",
+            "findings": [
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 33,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if !s.Generation.IsDefined() { es.bigSegmentsStatus = ldreason.BigSegmentsNotConfigured; return false, nil }"
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.2.4",
+            "section": "1.9.2 Segment Matching",
+            "text": "If no big segment store configured, MUST set bigSegmentsStatus=NOT_CONFIGURED and treat as non-match.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "When es.owner.bigSegmentProvider == nil, evaluator sets BigSegmentsNotConfigured and continues with membership=nil, which causes CheckMembership to be skipped and segment to be non-match (membership.CheckMembership only invoked at line 71 if membership != nil).",
+            "findings": [
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 52,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if es.owner.bigSegmentProvider == nil { es.bigSegmentsStatus = ldreason.BigSegmentsNotConfigured }"
+              },
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 71,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if membership != nil { ... } — when membership is nil (NotConfigured case), the segment falls through to the rules loop which by default returns (false, nil) for an unbounded segment with no matching rules."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.2.5",
+            "section": "1.9.2 Segment Matching",
+            "text": "Membership in a big segment MUST be tested using segment reference '<segmentKey>.g<generation>'.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "makeBigSegmentRef returns fmt.Sprintf(\"%s.g%d\", s.Key, s.Generation.IntValue()) — exact spec format.",
+            "findings": [
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 12,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "func makeBigSegmentRef(s *ldmodel.Segment) string { return fmt.Sprintf(\"%s.g%d\", s.Key, s.Generation.IntValue()) }"
+              },
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 72,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "included := membership.CheckMembership(makeBigSegmentRef(s)) — exactly the spec format."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.2.6",
+            "section": "1.9.2 Segment Matching",
+            "text": "Membership=true → match; membership=false → non-match; absent → continue to segment rules.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "`included.IsDefined()` distinguishes the absent case (OptionalBool{}) from explicit true/false. When defined, returns included.BoolValue(); when not, falls through to the rules loop.",
+            "findings": [
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 73,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if included.IsDefined() { return included.BoolValue(), nil } — returns true for include, false for exclude."
+              },
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 104,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "If membership absent, falls through to `for _, rule := range s.Rules { ... }` — segment rules evaluated."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.3.1",
+            "section": "1.9.3 Error Handling",
+            "text": "If big segment store returns error during evaluation, segment MUST be treated as non-match.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Wrapper returns (nil, BigSegmentsStoreError) on error. Evaluator stores nil in bigSegmentsMemberships, so membership.CheckMembership at line 71 is skipped (membership is nil), and the segment's rules loop is the only remaining path — returns false unless explicit rules match.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 127,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Wrapper returns nil membership + StoreError on store error."
+              },
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 67,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "es.bigSegmentsMemberships[key] = membership — stores nil; CheckMembership at line 71 is gated on membership != nil."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.3.2",
+            "section": "1.9.3 Error Handling",
+            "text": "If a store error occurs during evaluation, the SDK MUST log an error.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Wrapper logs Errorf 'Big Segment store returned error: %s' before returning the error status — exact spec example wording.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 128,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "w.loggers.Errorf(\"Big Segment store returned error: %s\", err)"
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.3.3",
+            "section": "1.9.3 Error Handling",
+            "text": "Store error during evaluation MUST NOT cause overall evaluation to fail or return the application's fallback value.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "The error is captured in es.bigSegmentsStatus; evaluator returns (false, nil) for the segment, then continues normally with the broader flag evaluation. No error propagates up to the application.",
+            "findings": [
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 67,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Storing membership=nil + setting status doesn't propagate an error — evaluator returns (false, nil) for the segment match check; flag eval continues."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.4.1",
+            "section": "1.9.4 Evaluation Reason Extension",
+            "text": "When a big segment is referenced during evaluation, bigSegmentsStatus field MUST be added to the reason (HEALTHY/STALE/NOT_CONFIGURED/STORE_ERROR).",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "evaluator.go computeUpdatedBigSegmentsStatus rolls up per-query statuses; final reason is built via NewEvalReasonFromReasonWithBigSegmentsStatus when es.bigSegmentsStatus != \"\".",
+            "findings": [
+              {
+                "file": "go-server-sdk-evaluation/evaluator.go",
+                "line": 119,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if es.bigSegmentsStatus != \"\" { reason = NewEvalReasonFromReasonWithBigSegmentsStatus(reason, es.bigSegmentsStatus) }"
+              },
+              {
+                "file": "go-sdk-common/ldreason/reason.go",
+                "line": 215,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "NewEvalReasonFromReasonWithBigSegmentsStatus copies the reason and sets bigSegmentsStatus."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.4.2",
+            "section": "1.9.4 Evaluation Reason Extension",
+            "text": "bigSegmentsStatus MUST be omitted (or null) from the reason if no big segments were referenced.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "es.bigSegmentsStatus stays as the empty string when no big segments are referenced. The line 119 check ensures NewEvalReasonFromReasonWithBigSegmentsStatus is only called when status != \"\". Default reason value has bigSegmentsStatus=\"\" (zero value).",
+            "findings": [
+              {
+                "file": "go-server-sdk-evaluation/evaluator.go",
+                "line": 119,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Guarded: only sets bigSegmentsStatus on the reason when es.bigSegmentsStatus != \"\"."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.4.3",
+            "section": "1.9.4 Evaluation Reason Extension",
+            "text": "If bigSegmentsStatus is null, MUST be redacted from JSON serialization.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "reason.go MarshalJSON: `if r.bigSegmentsStatus != \"\" { obj.Name(\"bigSegmentsStatus\").String(...) }` — empty string is redacted, present value is emitted.",
+            "findings": [
+              {
+                "file": "go-sdk-common/ldreason/reason.go",
+                "line": 286,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if r.bigSegmentsStatus != \"\" { obj.Name(\"bigSegmentsStatus\").String(string(r.bigSegmentsStatus)) }"
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.4.4",
+            "section": "1.9.4 Evaluation Reason Extension",
+            "text": "Across multiple big segments per flag (incl. prereqs) with different statuses, status MUST be resolved by priority: NOT_CONFIGURED > STORE_ERROR > STALE > HEALTHY.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "getBigSegmentsStatusPriority returns 3/2/1/0 for NotConfigured/StoreError/Stale/Healthy. computeUpdatedBigSegmentsStatus uses these priorities to keep the most-problematic status when merging across queries (and across prerequisite sub-scopes via evaluator.go:188).",
+            "findings": [
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 182,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "getBigSegmentsStatusPriority: BigSegmentsNotConfigured=3, BigSegmentsStoreError=2, BigSegmentsStale=1, default(Healthy)=0 — exact spec priority."
+              },
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 172,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "computeUpdatedBigSegmentsStatus picks oldStatus when its priority > newStatus's priority."
+              },
+              {
+                "file": "go-server-sdk-evaluation/evaluator.go",
+                "line": 188,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "es.bigSegmentsStatus = computeUpdatedBigSegmentsStatus(es.bigSegmentsStatus, subScope.bigSegmentsStatus) — applies same priority resolution across prerequisite chains."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.4.5",
+            "section": "1.9.4 Evaluation Reason Extension",
+            "text": "bigSegmentsStatus MUST be included in evaluation reasons embedded in analytics events.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "The same MarshalJSON method (reason.go:286) is used both for returning reasons to the application and for embedding reasons in event payloads. The `if != \"\"` redaction applies uniformly.",
+            "findings": [
+              {
+                "file": "go-sdk-common/ldreason/reason.go",
+                "line": 286,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Single MarshalJSON path used by both API responses and the events serialization (in go-sdk-events)."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.9.5.1",
+            "section": "1.9.5 Membership Caching During Evaluation",
+            "text": "If multiple big segments are evaluated for the same context key in a single evaluation, store MUST be queried at most once for that key.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "evaluator's es.bigSegmentsMemberships map (per-evaluation, not the LRU cache) ensures only the first segment-match for a given context key triggers GetMembership; subsequent segment-matches for the same key reuse the cached BigSegmentMembership.",
+            "findings": [
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 50,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "membership, wasCached := es.bigSegmentsMemberships[key] — per-evaluation cache check."
+              },
+              {
+                "file": "go-server-sdk-evaluation/evaluator_segment.go",
+                "line": 51,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if !wasCached { ... query provider ... store in map }"
+              },
+              {
+                "file": "go-server-sdk-evaluation/evaluator.go",
+                "line": 84,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "bigSegmentsMemberships map[string]BigSegmentMembership lives on evaluationScope (per-evaluation state)."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.10.1",
+            "section": "1.10 SDK Initialization",
+            "text": "SDK's initialization state MUST NOT be affected by the state of the big segment store.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Wrapper construction is independent of LDClient init signal. Wrapper failures (store unavailable) do not block the closeWhenReady channel that gates LDClient.Initialized(). Big segment store status is queried lazily via the status provider.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/ldstoreimpl/big_segment_store_wrapper.go",
+                "line": 59,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Wrapper construction is synchronous and never blocks on store availability — pollCloser channel is created upfront; the goroutine starts only if StartPolling is true."
+              },
+              {
+                "file": "go-server-sdk/ldclient.go",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "LDClient init waits on closeWhenReady from data system, which is independent of big segment store."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.11.1.1",
+            "section": "1.11.1 Redis",
+            "text": "Redis impl MUST use: metadata at `${prefix}:big_segments_synchronized_on` (STRING); include set at `${prefix}:big_segment_include:${contextHash}` (SET); exclude set at `${prefix}:big_segment_exclude:${contextHash}` (SET).",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "redis_big_segments_impl.go bigSegmentsSyncTimeKey/IncludeKey/ExcludeKey produce the exact spec key formats. Default prefix is 'launchdarkly' per spec. SMEMBERS used to read the include/exclude SETs; metadata STRING parsed as Unix epoch milliseconds.",
+            "findings": [
+              {
+                "file": "go-server-sdk-redis-redigo/redis_big_segments_impl.go",
+                "line": 88,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "bigSegmentsSyncTimeKey: '%s:big_segments_synchronized_on'"
+              },
+              {
+                "file": "go-server-sdk-redis-redigo/redis_big_segments_impl.go",
+                "line": 92,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "bigSegmentsIncludeKey: '%s:big_segment_include:%s'"
+              },
+              {
+                "file": "go-server-sdk-redis-redigo/redis_big_segments_impl.go",
+                "line": 96,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "bigSegmentsExcludeKey: '%s:big_segment_exclude:%s'"
+              },
+              {
+                "file": "go-server-sdk-redis-redigo/redis_big_segments_impl.go",
+                "line": 44,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "GetMetadata: GET on syncTimeKey, parsed as uint64 (Unix ms)."
+              },
+              {
+                "file": "go-server-sdk-redis-redigo/redis_big_segments_impl.go",
+                "line": 68,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "GetMembership: SMEMBERS on includedKey AND SMEMBERS on excludedKey, then NewBigSegmentMembershipFromSegmentRefs combines them per 1.2.4."
+              },
+              {
+                "file": "go-server-sdk-redis-redigo/redis_builder.go",
+                "line": 16,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "DefaultPrefix = 'launchdarkly' — exact spec default."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.11.2.1",
+            "section": "1.11.2 DynamoDB",
+            "text": "DynamoDB impl MUST use: metadata namespace=key='${prefix}big_segments_metadata' with synchronizedOn (N); membership namespace='${prefix}big_segments_user' key=contextHash with included/excluded (SS).",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "dynamodb_big_segments_impl.go uses bigSegmentsMetadataKey/bigSegmentsUserDataKey constants; attribute names synchronizedOn/included/excluded match spec exactly. Metadata reads use ConsistentRead=true (spec SHOULD). Default prefix is empty per spec; prefix conjunction via prefixedNamespace.",
+            "findings": [
+              {
+                "file": "go-server-sdk-dynamodb/dynamodb_big_segments_impl.go",
+                "line": 18,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "bigSegmentsMetadataKey = 'big_segments_metadata'; bigSegmentsUserDataKey = 'big_segments_user' — exact spec values."
+              },
+              {
+                "file": "go-server-sdk-dynamodb/dynamodb_big_segments_impl.go",
+                "line": 20,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "bigSegmentsSyncTimeAttr = 'synchronizedOn'; bigSegmentsIncludedAttr = 'included'; bigSegmentsExcludedAttr = 'excluded' — exact spec attribute names."
+              },
+              {
+                "file": "go-server-sdk-dynamodb/dynamodb_big_segments_impl.go",
+                "line": 65,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "GetMetadata uses ConsistentRead: aws.Bool(true) — satisfies the 'metadata reads SHOULD use consistent reads' clause."
+              },
+              {
+                "file": "go-server-sdk-dynamodb/dynamodb_big_segments_impl.go",
+                "line": 67,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Metadata key: tablePartitionKey=key, tableSortKey=key — both equal the namespace string per spec ('Same value as namespace')."
+              },
+              {
+                "file": "go-server-sdk-dynamodb/dynamodb_big_segments_impl.go",
+                "line": 95,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Membership key: tablePartitionKey=prefixedNamespace(prefix, 'big_segments_user'); tableSortKey=contextHashKey."
+              },
+              {
+                "file": "go-server-sdk-dynamodb/dynamodb_big_segments_impl.go",
+                "line": 106,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Combines included + excluded via NewBigSegmentMembershipFromSegmentRefs (which honors include-overrides-exclude per 1.2.4)."
+              },
+              {
+                "file": "go-server-sdk-dynamodb/dynamodb_big_segments_impl.go",
+                "line": 123,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "prefixedNamespace: empty prefix → bare base value; non-empty prefix → 'prefix:base' — matches spec's '{prefix}:{base}' / no-prefix / bare-base'."
+              }
+            ],
+            "notes_for_human": null
+          }
+        ]
+      },
+      "CLM": {
+        "spec_version": "",
+        "spec_path": "specs/CLM-common-log-messages/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "specs/CLM-common-log-messages/README.md",
+          "go-server-sdk/internal/datasource/streaming_data_source.go (all streaming log statements)",
+          "go-server-sdk/internal/datasource/helpers.go (checkIfErrorIsRecoverableAndLog — shared error-logging helper used by streaming + polling)",
+          "go-server-sdk/internal/datasource/data_source_update_sink_impl.go (outageTracker — implements 1.1.6.1)",
+          "go-server-sdk/ldcomponents/logging_configuration_builder.go (LogDataSourceOutageAsErrorAfter setter)",
+          "go-server-sdk/ldclient.go (init-timeout warnings — 1.2.1)"
+        ],
+        "rollup": {
+          "applies": true,
+          "veto_reason": null,
+          "state": "partial",
+          "complexity": "moderate",
+          "rationale": "The Go SDK emits log messages for almost every condition CLM specifies, but the literal wording and (in §1.1.1's case) the log level diverge from the spec template. The spec uses 'log a message of the following form', which is conventionally read as a template requirement (the wording is the form). Under that strict reading, only requirement-by-requirement intent is met — no message text matches verbatim. Under a permissive 'intent only' reading, all requirements except 1.1.3 (closed) and 1.1.5.1 (invalid-payload-debug) would be `full`. We rollup as `partial` to honor the strict template reading; the requirements table below records each delta. Two requirements are genuinely missing implementation: 1.1.3 (clean-close info log) and 1.1.5.1 (invalid-payload debug log). One conditional requirement (1.2.2.1, indefinite blocking) is N/A because zero/negative waitFor in Go means non-blocking, not indefinite.",
+          "supported_since": "v2.0.0",
+          "supported_since_date": "2016-08-08",
+          "supported_since_evidence": "The Go SDK has emitted streaming-related log messages since at least v2.0.0; logDataSourceOutageAsErrorAfter (1.1.6.1) was added with the rich data source status mechanism in the v5.0.0 timeframe (CHANGELOG '5.0.0' - 2021-06).",
+          "counts": {
+            "full": 0,
+            "partial": 7,
+            "not_supported": 2,
+            "not_applicable": 1,
+            "unknown": 0
+          }
+        },
+        "requirements": [
+          {
+            "requirement_id": "1.1.1",
+            "section": "1.1 Streaming Connection Logs",
+            "text": "When the SDK begins establishing a streaming connection it SHOULD log a message of the following form at the `debug` level: `Opening LaunchDarkly streaming connection.`",
+            "severity": "should",
+            "state": "partial",
+            "complexity": null,
+            "rationale": "The SDK does log when establishing a streaming connection, but at INFO (not DEBUG) and with different wording ('Starting LaunchDarkly streaming connection' / 'Connecting to LaunchDarkly stream'). Intent matched; level and template wording diverge.",
+            "findings": [
+              {
+                "file": "internal/datasource/streaming_data_source.go",
+                "line": 123,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "loggers.Info(\"Starting LaunchDarkly streaming connection\") — wrong level (Info vs Debug) and wrong wording."
+              },
+              {
+                "file": "internal/datasource/streaming_data_source.go",
+                "line": 293,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "loggers.Info(\"Connecting to LaunchDarkly stream\") — second connect-attempt message, also Info level."
+              }
+            ],
+            "notes_for_human": "If the spec is interpreted as 'log the appropriate intent at any level' this is `full`; under strict template+level it is `not_supported`. Rated `partial` as a middle ground."
+          },
+          {
+            "requirement_id": "1.1.2",
+            "section": "1.1 Streaming Connection Logs",
+            "text": "When the SDK successfully establishes a streaming connection it SHOULD log a message of the following form at the `info` level: `LaunchDarkly streaming connection established.`",
+            "severity": "should",
+            "state": "partial",
+            "complexity": null,
+            "rationale": "Logged at INFO with wording 'LaunchDarkly streaming is active'. Level matches; wording differs.",
+            "findings": [
+              {
+                "file": "internal/datasource/streaming_data_source.go",
+                "line": 370,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "loggers.Info(\"LaunchDarkly streaming is active\") — fires after the first successful event payload."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.1.3a",
+            "section": "1.1 Streaming Connection Logs",
+            "text": "When the SDK closes a streaming connection for a non-error related reason it SHOULD log a message of the following form at the `info` level: `Closed LaunchDarkly streaming connection.`",
+            "severity": "should",
+            "state": "not_supported",
+            "complexity": null,
+            "rationale": "No matching log on clean stream close. The Close()/halt path closes the underlying eventsource stream silently. (Spec note: this is duplicate-numbered '1.1.3' in the spec; we tag it 1.1.3a to disambiguate from the interrupted-error 1.1.3 below.)",
+            "findings": [
+              {
+                "file": "internal/datasource/streaming_data_source.go",
+                "line": 263,
+                "kind": "evidence",
+                "evidence_type": "anti_pattern",
+                "severity": "info",
+                "relevance": "halt path: stream.Close() with no associated log message."
+              }
+            ],
+            "notes_for_human": "Spec README has two requirements both numbered 1.1.3. The first (closed for non-error reason) has no Go implementation; the second (interrupted, retry) is partially implemented. We disambiguate by suffixing 'a'/'b'."
+          },
+          {
+            "requirement_id": "1.1.3b",
+            "section": "1.1 Streaming Connection Logs",
+            "text": "When the SDK encounters a temporary error condition with the streaming connection it SHOULD log a message of the following form at the `warning` level: `LaunchDarkly streaming connection was interrupted and will retry in ${timeout}. Reason: ${error_desc}`",
+            "severity": "should",
+            "state": "partial",
+            "complexity": null,
+            "rationale": "Errors are logged via checkIfErrorIsRecoverableAndLog at WARN with format 'Error in stream connection (will retry): ${errorDesc}'. Level matches and intent (recoverable error → retry message) is met, but the wording omits the explicit retry timeout duration.",
+            "findings": [
+              {
+                "file": "internal/datasource/helpers.go",
+                "line": 61,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "loggers.Warnf(\"Error %s (%s): %s\", errorContext, recoverableMessage, errorDesc) — fires for recoverable errors."
+              },
+              {
+                "file": "internal/datasource/streaming_data_source.go",
+                "line": 311,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Streaming-side caller passes context='in stream connection' and recoverableMessage='will retry'."
+              }
+            ],
+            "notes_for_human": "The spec template includes the retry timeout (${timeout}); Go's message does not surface the next-retry interval. Adding it would be a minor wording change."
+          },
+          {
+            "requirement_id": "1.1.4",
+            "section": "1.1 Streaming Connection Logs",
+            "text": "When the SDK encounters a permanent error condition with the streaming connection it SHOULD log a message of the following form at the `error` level: `A permanent error has been encountered with the LaunchDarkly streaming connection. It will not retry. Reason: ${error_desc}`",
+            "severity": "should",
+            "state": "partial",
+            "complexity": null,
+            "rationale": "Same checkIfErrorIsRecoverableAndLog branches at ERROR with format 'Error in stream connection (giving up permanently): ${errorDesc}'. Level matches and intent matched; wording diverges from the spec template.",
+            "findings": [
+              {
+                "file": "internal/datasource/helpers.go",
+                "line": 58,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "loggers.Errorf(\"Error %s (giving up permanently): %s\", errorContext, errorDesc) — fires for unrecoverable HTTP errors."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.1.5",
+            "section": "1.1 Streaming Connection Logs",
+            "text": "When the SDK receives an invalid payload from the streaming connection it SHOULD log a message of the following form at the `error` level: `LaunchDarkly streaming connection received invalid data in \"${type}\" message. Re-establishing LaunchDarkly streaming connection.`",
+            "severity": "should",
+            "state": "partial",
+            "complexity": null,
+            "rationale": "Logged at ERROR with wording 'Received streaming \"%s\" event with malformed JSON data (%s); will restart stream'. Level matches; the type and 'will restart' (≈ 'Re-establishing') intent are present; wording diverges.",
+            "findings": [
+              {
+                "file": "internal/datasource/streaming_data_source.go",
+                "line": 158,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "loggers.Errorf(\"Received streaming \\\"%s\\\" event with malformed JSON data (%s); will restart stream\", ...) — fires when an event payload fails to parse."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.1.5.1",
+            "section": "1.1 Streaming Connection Logs",
+            "text": "It SHOULD also log a message of the following form at the `debug` level: `Invalid payload follows: ${data}`",
+            "severity": "should",
+            "state": "not_supported",
+            "complexity": null,
+            "rationale": "The malformed-event log message in 1.1.5 includes a brief error description but does not emit a separate DEBUG log containing the full invalid payload bytes. There is no 'Invalid payload follows: ...' debug log anywhere in internal/datasource/.",
+            "findings": [
+              {
+                "file": "internal/datasource/streaming_data_source.go",
+                "line": 158,
+                "kind": "evidence",
+                "evidence_type": "anti_pattern",
+                "severity": "info",
+                "relevance": "Only ONE log statement on parse failure (the Errorf at line 158); no companion Debug log of the raw payload bytes."
+              }
+            ],
+            "notes_for_human": "Adding a Debug log of the raw payload would be a small change — the data is in scope at the parse-failure call site. Concern: payload data could contain sensitive flag values, so the addition would warrant a security review."
+          },
+          {
+            "requirement_id": "1.1.6.1",
+            "section": "1.1 Streaming Connection Logs",
+            "text": "When the connection is disconnected for a period of time greater than `logDataSourceOutageAsErrorAfter` time, then it should log a message of the following form at the `error` level: `A streaming connection to LaunchDarkly has not been established within ${logDataSourceOutageAsErrorAfter} after the connection was interrupted.` `The following errors were encountered: ${error_list}` (Conditional — applies because Go SDK supports logDataSourceOutageAsErrorAfter via LoggingConfigurationBuilder.LogDataSourceOutageAsErrorAfter)",
+            "severity": "should",
+            "state": "partial",
+            "complexity": null,
+            "rationale": "Go has a complete outageTracker that fires the message after the configured timeout. The error_list format ('NETWORK_ERROR (3 times)') matches the spec exactly. The framing wording differs slightly: 'LaunchDarkly data source outage - updates have been unavailable for at least %s with the following errors:' vs the spec's 'A streaming connection to LaunchDarkly has not been established within ${time} after the connection was interrupted.' Level matches.",
+            "findings": [
+              {
+                "file": "internal/datasource/data_source_update_sink_impl.go",
+                "line": 384,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "loggers.Errorf(\"LaunchDarkly data source outage - updates have been unavailable for at least %s with the following errors: %s\", ...) — fires on outage timeout."
+              },
+              {
+                "file": "internal/datasource/data_source_update_sink_impl.go",
+                "line": 391,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "describeErrors() formats as '${kind} (${count} times)' matching the spec exactly."
+              },
+              {
+                "file": "ldcomponents/logging_configuration_builder.go",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "LoggingConfigurationBuilder.LogDataSourceOutageAsErrorAfter exists, satisfying the precondition of 1.1.6 (and so 1.1.6.1 applies)."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.1",
+            "section": "1.2 Initialization Logs",
+            "text": "When the user-specified initialization timeout is > the max recommended timeout, it SHOULD log a message of the following form at the `warning` level: `Client was configured to block for up to ${given} when initializing. We recommend blocking no longer than ${max}.` The durations MUST include a unit.",
+            "severity": "should",
+            "state": "partial",
+            "complexity": null,
+            "rationale": "Logged at WARN with format 'Client was configured to block for up to %v milliseconds. We recommend blocking no longer than %v milliseconds'. Level matches; durations include a unit ('milliseconds') as the spec MUSTs require; wording omits the 'when initializing' phrase but is otherwise spec-aligned. Threshold is hardcoded to 60 seconds (highWaitForDuration in ldclient.go).",
+            "findings": [
+              {
+                "file": "ldclient.go",
+                "line": 366,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "loggers.Warnf(\"Client was configured to block for up to %v milliseconds. We recommend blocking no longer than %v milliseconds\", waitFor.Milliseconds(), highWaitForDuration.Milliseconds()) — fires when waitFor > 60s."
+              },
+              {
+                "file": "ldclient.go",
+                "line": 365,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Threshold check `if waitFor > highWaitForDuration` matches §1.2.1's max-recommended-timeout for server-side (60s)."
+              }
+            ],
+            "notes_for_human": "The MUST clause ('durations MUST include a unit') is satisfied by the 'milliseconds' literal. The 'when initializing' phrasing miss is cosmetic."
+          },
+          {
+            "requirement_id": "1.2.2.1",
+            "section": "1.2 Initialization Logs",
+            "text": "Conditional Requirement (applies only if the SDK supports zero/negative initialization timeout meaning 'no timeout' / block indefinitely): When the user-specified initialization timeout is zero or negative, it SHOULD log a message of the following form at the `warning` level: `Client was configured to block indefinitely when initializing. We recommend blocking no longer than ${max}.`",
+            "severity": "should",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Go SDK treats zero/negative `waitFor` as non-blocking (the `if waitFor > 0 && !client.offline` check at ldclient.go:359 falls through to the `go func() { <-closeWhenReady }()` path). The condition (zero/negative means indefinite) does not hold, so the requirement does not apply per the spec's 'If zero/negative means non-blocking, this condition does not apply.'",
+            "findings": [
+              {
+                "file": "ldclient.go",
+                "line": 359,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if waitFor > 0 && !client.offline { ... block ... } — zero waitFor means immediate non-blocking return."
+              }
+            ],
+            "notes_for_human": "To support indefinite blocking, ldclient would need to interpret zero/negative as 'wait forever'. There's no application demand for this in the Go ecosystem (Go developers use context.WithCancel for indefinite waits at the call site)."
+          }
+        ]
+      },
+      "CODES": {
+        "spec_version": "",
+        "spec_path": "specs/CODES-log-codes/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "sdk-specs/specs/CODES-log-codes/README.md",
+          "rg -l 'errorLogCode|LogCode|log_code|logCode' go-server-sdk/ → 0 matches",
+          "go-server-sdk/internal/log_messages.go (free-form messages, no codes)"
+        ],
+        "rollup": {
+          "applies": true,
+          "veto_reason": null,
+          "state": "not_supported",
+          "complexity": "unknown",
+          "rationale": "The Go server SDK does not emit standardized log codes. No `LogCode` / `errorLogCode` / `log_code` symbols exist in the repo. Logging is done via go-sdk-common's `ldlog` package with free-form messages, no per-message numeric/alphanumeric code. CLM (Common Log Messages) classification is `supported` and largely unrelated — CLM standardizes the *text* of common log messages, while CODES proposes a separate numeric code scheme that has not been adopted in this SDK.",
+          "supported_since": null,
+          "supported_since_date": null,
+          "supported_since_evidence": null,
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
+      },
+      "CONTEXT": {
+        "spec_version": "",
+        "spec_path": "specs/CONTEXT-context-model/v1.0/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "specs/CONTEXT-context-model/v1.0/README.md",
+          "launchdarkly/go-sdk-common@v3.4.0 (4d8d07a5cc1f0b8d805d846c474ee510a1c481b1)",
+          "launchdarkly/go-sdk-common/ldcontext/context.go (Context value type — Kind/Key/Name/Anonymous/FullyQualifiedKey/Multi/IndividualContextByKind/etc.)",
+          "launchdarkly/go-sdk-common/ldcontext/builder_simple.go (Builder for individual contexts; TryBuild/Build)",
+          "launchdarkly/go-sdk-common/ldcontext/builder_multi.go (MultiBuilder.Add/Build/TryBuild)",
+          "launchdarkly/go-sdk-common/ldcontext/constructors.go (New, NewWithKind, NewMulti shortcut constructors)",
+          "launchdarkly/go-sdk-common/ldcontext/context_marshaling.go (JSON output per §1.5)",
+          "launchdarkly/go-sdk-common/ldcontext/context_unmarshaling.go (JSON input — accepts both individual/multi/old-style-user per §1.5.3)",
+          "launchdarkly/go-sdk-common/ldcontext/kind.go (Kind type + MultiKind constant)",
+          "launchdarkly/go-sdk-common/ldcontext/constants.go (built-in attribute names — kind/key/name/anonymous)",
+          "launchdarkly/go-sdk-common/ldvalue/ (typed JSON value sum type — supports §1.3.4 no-coercion requirement)",
+          "go-server-sdk/testservice/ (sdk-test-harness contract test service)"
+        ],
+        "rollup": {
+          "applies": true,
+          "veto_reason": null,
+          "state": "supported",
+          "complexity": "moderate",
+          "rationale": "CONTEXT v1.0 is an explanatory legacy document (id `SDKC-LEGACY-CONTEXT`) with zero numbered MUST/SHOULD requirements. Conformance is evaluated against the spec's structural sections (§1.1–§1.8). The Go SDK implements every section in the `ldcontext` package of the dependency repo go-sdk-common (v3.4.0):\n  • §1.2 Context kinds (single + multi): ldcontext.New, NewWithKind, NewMulti; Multi() and IndividualContextByKind/ByIndex on Context.\n  • §1.3 Built-in attributes (kind/key/name/anonymous): Context.Kind(), Key(), Name(), Anonymous(); validation in builder_simple.go.\n  • §1.3.4 Attribute value types (bool/number/string/array/object/null with no coercion): represented by ldvalue.Value (typed sum type, no Object→Bool coercion).\n  • §1.3.5 Private attributes: PrivateAttributeCount/ByIndex on Context, Builder.PrivateRef setter, supports object-property-level redaction via ldattr.Ref.\n  • §1.3.6 Canonicalized key: Context.FullyQualifiedKey() with the spec's exact algorithm (kind:url-encoded-key for individual; alphabetical join for multi; bare key when kind=='user' for legacy compatibility).\n  • §1.4 Attribute references: ldattr.Ref (see ATREF entry).\n  • §1.5 JSON representation (individual + multi + old-style user): context_marshaling.go, context_unmarshaling.go, context_serialization.go.\n  • §1.7 Context type in SDKs: a single Context value type that represents both individual and multi contexts (uniform API surface).\n  • §1.8 Validation: TryBuild() returns (Context, error); Build() returns an invalid Context whose Err() is non-nil; deserialization produces an invalid Context for malformed input rather than throwing/panicking.\nComprehensive test coverage in ldcontext/*_test.go. Full harness coverage via sdk-test-harness's context capability (server-side SDK test service in go-server-sdk/testservice/ exercises this).\nRollup is `supported`, complexity `moderate` — the model is large (canonicalized keys, multi-context, private attribute object-property redaction) but the implementation is mature and stable since v6.0.0.",
+          "supported_since": "v6.0.0",
+          "supported_since_date": "2022-12-07",
+          "supported_since_evidence": "go-server-sdk CHANGELOG: '## [6.0.0] - 2022-12-07 — The latest version of this SDK supports LaunchDarkly's new custom contexts feature. Contexts are an evolution of a previously-existing concept, users.'",
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
+      },
+      "CSFDV2": {
+        "spec_version": "",
+        "spec_path": "specs/CSFDV2-client-side-fdv2/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "sdk-specs/specs/CSFDV2-client-side-fdv2/README.md (applies-to: client-sdk)"
+        ],
+        "rollup": {
+          "applies": false,
+          "veto_reason": "Spec applies-to is `client-sdk` only. The server-side equivalent of FDv2 lives in the DATASYSTEM, FDV2PL, and FDV2REL specs; this client-side spec is irrelevant to a server SDK.",
+          "state": "not_applicable",
+          "complexity": null,
+          "rationale": "Spec applies-to is `client-sdk` only. The server-side equivalent of FDv2 lives in the DATASYSTEM, FDV2PL, and FDV2REL specs; this client-side spec is irrelevant to a server SDK.",
+          "supported_since": null,
+          "supported_since_date": null,
+          "supported_since_evidence": null,
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
+      },
+      "CSI": {
+        "spec_version": "",
+        "spec_path": "specs/CSI-client-side-identify/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "sdk-specs/specs/CSI-client-side-identify/README.md (applies-to: client-side)"
+        ],
+        "rollup": {
+          "applies": false,
+          "veto_reason": "Spec is the client-side `identify` lifecycle (single active context per LDClient instance, mutable via identify()). Server SDKs pass an explicit context per evaluation call and never have a notion of a single 'active' context, so this spec has no server-side analogue.",
+          "state": "not_applicable",
+          "complexity": null,
+          "rationale": "Spec is the client-side `identify` lifecycle (single active context per LDClient instance, mutable via identify()). Server SDKs pass an explicit context per evaluation call and never have a notion of a single 'active' context, so this spec has no server-side analogue.",
+          "supported_since": null,
+          "supported_since_date": null,
+          "supported_since_evidence": null,
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
+      },
+      "CSSE": {
+        "spec_version": "",
+        "spec_path": "specs/CSSE-client-side-summary-events/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "sdk-specs/specs/CSSE-client-side-summary-events/README.md (applies-to: client-sdk)"
+        ],
+        "rollup": {
+          "applies": false,
+          "veto_reason": "Spec applies-to is `client-sdk` only — defines per-context summary aggregation specific to client-side SDKs that hold a single active context. Server SDKs aggregate summary events differently (see EVENTS) and this spec does not apply.",
+          "state": "not_applicable",
+          "complexity": null,
+          "rationale": "Spec applies-to is `client-sdk` only — defines per-context summary aggregation specific to client-side SDKs that hold a single active context. Server SDKs aggregate summary events differently (see EVENTS) and this spec does not apply.",
+          "supported_since": null,
+          "supported_since_date": null,
+          "supported_since_evidence": null,
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
+      },
+      "EM": {
+        "spec_version": "",
+        "spec_path": "specs/EM-launchdarkly-sdk-error-monitoring/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "sdk-specs/specs/EM-launchdarkly-sdk-error-monitoring/README.md (applies-to: events,client-sdk)"
+        ],
+        "rollup": {
+          "applies": false,
+          "veto_reason": "Spec applies-to is `events,client-sdk` — defines uncaught error/exception capture from end-user runtime contexts (browser/mobile). Server SDKs do not run in end-user contexts and the spec README itself is a placeholder ('TODO: Placeholder while defining sub-specifications.'), so even the eventual sub-specs are scoped client-side.",
+          "state": "not_applicable",
+          "complexity": null,
+          "rationale": "Spec applies-to is `events,client-sdk` — defines uncaught error/exception capture from end-user runtime contexts (browser/mobile). Server SDKs do not run in end-user contexts and the spec README itself is a placeholder ('TODO: Placeholder while defining sub-specifications.'), so even the eventual sub-specs are scoped client-side.",
+          "supported_since": null,
+          "supported_since_date": null,
+          "supported_since_evidence": null,
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
+      },
+      "EXAM": {
+        "spec_version": "",
+        "spec_path": "specs/EXAM-SDK-example/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "sdk-specs/specs/EXAM-SDK-example/README.md",
+          "go-server-sdk/ (no hello/ or examples/ dir)",
+          "go-server-sdk/Makefile (no hello-* targets)",
+          "Note: launchdarkly/hello-go and friends are separate repos and would need their own spec analysis pass"
+        ],
+        "rollup": {
+          "applies": true,
+          "veto_reason": null,
+          "state": "not_supported",
+          "complexity": "unknown",
+          "rationale": "The EXAM spec governs Hello-Apps and example projects. These live in separate repositories (e.g. launchdarkly/hello-go, launchdarkly/hello-bootstrap-go) rather than in the go-server-sdk repo itself. There is no `hello/` or `examples/` directory in this repo, and the Makefile has no hello-related targets. Compliance with EXAM is therefore out-of-scope for this repository's analysis — it would require evaluating the sibling hello-* repos, which is a separate exercise.",
+          "supported_since": null,
+          "supported_since_date": null,
+          "supported_since_evidence": null,
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
+      },
+      "FDV2PL": {
+        "spec_version": "",
+        "spec_path": "specs/FDV2PL-payload-communication/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "sdk-specs/specs/FDV2PL-payload-communication/README.md",
+          "go-server-sdk/internal/datasystem/fdv2_datasystem.go (FDv2 data system orchestrator)",
+          "go-server-sdk/internal/datasourcev2/ (streaming_data_source.go, polling_data_source.go for FDv2)",
+          "go-server-sdk/internal/memorystorev2/ (FDv2-shaped store)",
+          "go-server-sdk/testhelpers/ldservicesv2/server_sdk_data.go (FDv2 message-type fixtures)",
+          "go-server-sdk/ldclient_end_to_end_fdv2_test.go (end-to-end FDv2 init test)",
+          "go-server-sdk/subsystems/events.go (FDv2 event types in the public subsystems API)",
+          "go-server-sdk/CHANGELOG.md (4+ FDv2 entries: 67b411e initial impl; PRs #330/#332/#337)",
+          "sdk-specs/specs/FDV2PL-payload-communication/README.md (16 requirements counted)"
+        ],
+        "rollup": {
+          "applies": true,
+          "veto_reason": null,
+          "state": "partial",
+          "complexity": "moderate",
+          "rationale": "Go server SDK has substantial FDv2 payload-protocol support: `internal/datasystem/fdv2_datasystem.go` plus the v2 datasource (`internal/datasourcev2/`), v2 memory store (`internal/memorystorev2/`), v2 servicedef test helpers (`testhelpers/ldservicesv2/`), and an end-to-end FDv2 test (`ldclient_end_to_end_fdv2_test.go`). The FDv2 message types the spec defines — `server_intent`, `put-object`, `delete-object`, `goodbye`, `payload-transferred` — all appear in the SDK's parser/test fixtures. Multiple CHANGELOG entries confirm active alignment with this spec ('internal implementation of FDv2 data system' commit `67b411e`; PR #330 'align fdv2 intializer to spec'; PR #332 'Add ChangeSet.Collections to help reduce relay memory usage'; PR #337 fdv2 synchronizer leak fix). However, the FDv2 datasystem is not the SDK's default data system yet (FDv1 streaming remains the default), and a per-requirement walk across all 16 FDV2PL requirements is needed to establish full vs. partial conformance per message type. Rollup is `partial` rather than `supported` until that walk is done; deferred to a future batch.",
+          "supported_since": null,
+          "supported_since_date": null,
+          "supported_since_evidence": "CHANGELOG: 'internal implementation of FDv2 data system' (commit 67b411e); subsequent FDv2 fixes through v7.14.x.",
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
+      },
+      "FDV2REL": {
+        "spec_version": "",
+        "spec_path": "specs/FDV2REL-fdv2-relay-proxy/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+          "go-server-sdk/internal/datasourcev2/ (same v2 datasource works against direct LD or v2 relay)",
+          "go-server-sdk/internal/datasystem/fdv2_datasystem.go",
+          "go-server-sdk/ldcomponents/ (ServiceEndpoints / RelayProxyEndpoints — existing pre-FDv2 base URI mechanism, unchanged for FDv2)",
+          "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md (uses 4-level requirement IDs e.g. 1.1.1.1; majority phrased 'the relay proxy MUST...')"
+        ],
+        "rollup": {
+          "applies": true,
+          "veto_reason": null,
+          "state": "partial",
+          "complexity": "moderate",
+          "rationale": "FDV2REL's `applies-to` lists `client-sdk, server-sdk` but the requirements themselves are overwhelmingly written from the relay-proxy's perspective ('the relay proxy MUST...'), specifying how a relay translates between v1 SDK clients and a v2 backend. The SDK-facing surface — being able to speak the v2 protocol against either LaunchDarkly directly or a v2-aware relay — is satisfied by the same FDv2 datasource implementation evaluated under FDV2PL. There is no SDK-specific code path that distinguishes talking-to-direct-LD from talking-to-v2-relay; the ServiceEndpoints mechanism (existing pre-FDv2) handles base URI swaps. Rollup is `partial` because the SDK-relevant subset is implemented (via FDV2PL coverage), but a per-requirement walk to identify which FDV2REL requirements actually bind to the SDK (vs. solely to the relay) is deferred to a future batch.",
+          "supported_since": null,
+          "supported_since_date": null,
+          "supported_since_evidence": "Same FDv2 datasource that satisfies FDV2PL (commit 67b411e and follow-ups) is what the SDK uses to talk to a v2 relay.",
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
+      },
       "PLUGIN": {
         "spec_version": "",
         "spec_path": "specs/PLUGIN-sdk-plugin-support/README.md",
@@ -478,8 +3291,126 @@
               }
             ],
             "notes_for_human": "This requirement was renumbered from 1.2.3 to 1.2.10 by https://github.com/launchdarkly/sdk-specs/pull/167 to resolve a duplicate `### Requirement 1.2.3` heading. If/when that PR merges, this row's requirement_id is already aligned. If it does not merge, this row should be re-numbered back to 1.2.3 and the original 1.2.3 (register-order) row above merged or relabeled."
-        }
+          }
         ]
+      },
+      "RKSTM": {
+        "spec_version": "",
+        "spec_path": "specs/RKSTM-roku-streaming-connection/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "sdk-specs/specs/RKSTM-roku-streaming-connection/README.md (applies-to: client-sdk (Roku))"
+        ],
+        "rollup": {
+          "applies": false,
+          "veto_reason": "Spec defines the Roku-specific streaming endpoint and handshake protocol. The Roku platform is not a target for the Go server SDK.",
+          "state": "not_applicable",
+          "complexity": null,
+          "rationale": "Spec defines the Roku-specific streaming endpoint and handshake protocol. The Roku platform is not a target for the Go server SDK.",
+          "supported_since": null,
+          "supported_since_date": null,
+          "supported_since_evidence": null,
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
+      },
+      "RPENDPOINTS": {
+        "spec_version": "",
+        "spec_path": "specs/RPENDPOINTS-relay-proxy-endpoints/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "sdk-specs/specs/RPENDPOINTS-relay-proxy-endpoints/README.md (applies-to: relay-proxy)"
+        ],
+        "rollup": {
+          "applies": false,
+          "veto_reason": "Spec defines endpoints used exclusively by the Relay Proxy. The Go server SDK is not the Relay Proxy.",
+          "state": "not_applicable",
+          "complexity": null,
+          "rationale": "Spec defines endpoints used exclusively by the Relay Proxy. The Go server SDK is not the Relay Proxy.",
+          "supported_since": null,
+          "supported_since_date": null,
+          "supported_since_evidence": null,
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
+      },
+      "SPEC": {
+        "spec_version": "",
+        "spec_path": "specs/SPEC-specification-for-specs/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "sdk-specs/specs/SPEC-specification-for-specs/README.md (applies-to: (meta))"
+        ],
+        "rollup": {
+          "applies": false,
+          "veto_reason": "SPEC is a meta-specification defining the format for specs in the sdk-specs repository itself. It does not specify any SDK behavior — it specifies how spec authors write specs. Not applicable to any SDK implementation.",
+          "state": "not_applicable",
+          "complexity": null,
+          "rationale": "SPEC is a meta-specification defining the format for specs in the sdk-specs repository itself. It does not specify any SDK behavior — it specifies how spec authors write specs. Not applicable to any SDK implementation.",
+          "supported_since": null,
+          "supported_since_date": null,
+          "supported_since_evidence": null,
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
+      },
+      "STACK": {
+        "spec_version": "",
+        "spec_path": "specs/STACK-launchdarkly-stack-trace-format/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "sdk-specs/specs/STACK-launchdarkly-stack-trace-format/README.md",
+          "rg -l 'StackTrace|stack_trace|stacktrace' go-server-sdk/ → only CONTRIBUTING.md (unrelated)",
+          "go-server-sdk/server_side_diagnostics.go (no stack-trace event types)"
+        ],
+        "rollup": {
+          "applies": true,
+          "veto_reason": null,
+          "state": "not_supported",
+          "complexity": "unknown",
+          "rationale": "The Go server SDK does not capture or emit stack-trace events. No `StackTrace` / `stack_trace` / `stacktrace` symbols exist in the repo (the only match is in CONTRIBUTING.md, unrelated). The spec is primarily targeted at events/error/client-side use cases — capturing stack traces from client-side error events. A server SDK that runs in arbitrary backend code does not natively own its caller's exception model, so this spec has low natural fit on the server side regardless of effort.",
+          "supported_since": null,
+          "supported_since_date": null,
+          "supported_since_evidence": null,
+          "counts": {
+            "full": 0,
+            "partial": 0,
+            "not_supported": 0,
+            "not_applicable": 0,
+            "unknown": 0
+          }
+        },
+        "requirements": []
       }
     }
   }
