@@ -4,39 +4,6 @@
   "prompt_version": "spectre/agents/sdk_worker/prompt.md @ retroactive_check",
   "sdks": {
     "go-server-sdk": {
-      "AIDOC": {
-        "spec_version": "",
-        "spec_path": "specs/AIDOC-ai-documentation/README.md",
-        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
-        "sdk_repo": "launchdarkly/go-server-sdk",
-        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
-        "sdk_branch": "v7",
-        "evidence_sources_considered": [
-          "sdk-specs/specs/AIDOC-ai-documentation/README.md",
-          "go-server-sdk/ (no AGENTS.md, no llms.txt, no docs/ dir at root)",
-          "go-server-sdk/README.md (standard README, no agent-targeted sections)",
-          "sdk-specs/specs/AIDOC-ai-documentation/README.md (28 requirements counted via `grep -cE '^### Requirement'`)",
-          "AIDOC prereqs: EXAM>=1.0 (also not_supported in this repo) and RELEASE>=1.0 (supported)"
-        ],
-        "rollup": {
-          "applies": true,
-          "veto_reason": null,
-          "state": "not_supported",
-          "complexity": "unknown",
-          "rationale": "AIDOC requires SDK-shipped documentation, metadata, and examples in formats that AI coding agents can ingest (notably: an `AGENTS.md` per the agents.md open format, an `llms.txt` per llms-txt, and per-public-function metadata with examples). The Go server SDK ships none of these today — the repo has no `AGENTS.md`, no `llms.txt`, no `docs/` directory, and no agent-targeted documentation surface. The spec applies-to is `server-sdk,client-sdk`, so it genuinely applies to this SDK; this is a real gap rather than an inapplicability. AIDOC also has prereqs on EXAM (Hello-Apps, also `not-supported` for this repo) and RELEASE (currently `supported`); closing AIDOC presupposes EXAM. A full per-requirement walk across all 28 AIDOC requirements is deferred to a future batch — every one would resolve to `not_supported` against the current repo state, so a brief block accurately conveys the rollup.",
-          "supported_since": null,
-          "supported_since_date": null,
-          "supported_since_evidence": null,
-          "counts": {
-            "full": 0,
-            "partial": 0,
-            "not_supported": 0,
-            "not_applicable": 0,
-            "unknown": 0
-          }
-        },
-        "requirements": []
-      },
       "AISDK": {
         "spec_version": "",
         "spec_path": "specs/AISDK-ai-sdk/README.md",
@@ -52,7 +19,7 @@
           "go-server-sdk/ldai/judge/ (judge sub-package — supports 1.2.2 usage:judge-config)",
           "go-server-sdk/ldai/datamodel/ (AIConfig data model)",
           "rg '\\$ld:ai:' go-server-sdk/ldai/ → 14 unique event-name constants, all prefixed",
-          "Spec sub-spec dirs absent: ls sdk-specs/specs/ | grep -iE 'aiconf|aitrack|aigraph|airunner|aievals' returns 0 matches — only AISDK and AIDOC exist."
+          "Spec sub-spec dirs absent: ls sdk-specs/specs/ | grep -iE 'aiconf|aitrack|aigraph|airunner|aievals' returns 0 matches — only AISDK exists in the AI family on sdk-specs main."
         ],
         "rollup": {
           "applies": true,
