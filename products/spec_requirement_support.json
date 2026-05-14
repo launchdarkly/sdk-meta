@@ -45,31 +45,146 @@
         "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
         "sdk_branch": "v7",
         "evidence_sources_considered": [
-          "sdk-specs/specs/AISDK-ai-sdk/README.md",
-          "go-server-sdk/ldai/ (full package: client.go, tracker.go, judge/, datamodel/)",
-          "go-server-sdk/ldai/README.md ('AI SDK is in pre-release', 'will receive new features at a slower pace' vs Python/Node)",
-          "go-server-sdk/ldai/CHANGELOG.md (oldest visible tag ldai/v0.7.0)",
+          "specs/AISDK-ai-sdk/README.md",
+          "go-server-sdk/ldai/README.md (pre-release status; 'active feature development is ongoing in the Python and Node.js AI SDKs')",
+          "go-server-sdk/ldai/CHANGELOG.md (ldai/v0.7.0 → v0.8.1; v0.8.0 added 'AI Config judge support' #345)",
           "go-server-sdk/ldai/package_info.go (SDKName='go-server-sdk/ldai', Version='0.8.1')",
-          "git tag --sort=-creatordate: ldai/v0.8.1 → ldai/v0.7.0"
+          "go-server-sdk/ldai/judge/ (judge sub-package — supports 1.2.2 usage:judge-config)",
+          "go-server-sdk/ldai/datamodel/ (AIConfig data model)",
+          "rg '\\$ld:ai:' go-server-sdk/ldai/ → 14 unique event-name constants, all prefixed",
+          "Spec sub-spec dirs absent: ls sdk-specs/specs/ | grep -iE 'aiconf|aitrack|aigraph|airunner|aievals' returns 0 matches — only AISDK and AIDOC exist."
         ],
         "rollup": {
           "applies": true,
           "veto_reason": null,
           "state": "partial",
           "complexity": "moderate",
-          "rationale": "The Go server SDK ships an AI SDK package at `ldai/` (v0.8.1, 2026-02-26). This is in scope for the AISDK spec but is explicitly pre-release ('not subject to backwards compatibility guarantees') and the README notes that 'active feature development is ongoing in the Python and Node.js AI SDKs, so this SDK will receive new features at a slower pace.' This means AISDK should rollup as `partial` rather than the `not-supported` carried in the bulk spec_support.json — the foundational completion-config and tracking surfaces (AICONF, AITRACK) are present, but the newer multi-agent / graph / runner / online-evals sub-specs (AIGRAPH, AIRUNNER, AIGRAPHTRACK, AIEVALS) are not yet implemented in `ldai/`. A proper per-requirement breakdown across the AISDK sub-spec tree is deferred to a future batch — this entry exists so the rollup status reflects reality.",
+          "rationale": "AISDK is an umbrella spec with two enforceable numbered requirements (1.2.1, 1.2.2 — event-name prefix conventions) plus a §1.1 SDK Components table that lists six sub-specs (AICONF, AITRACK, AIGRAPH, AIRUNNER, AIGRAPHTRACK, AIEVALS), none of which exist as separate spec directories in sdk-specs yet. The Go AI SDK ships at `go-server-sdk/ldai/` (v0.8.1, 2026-02-26) and satisfies both numbered requirements: every event name in `client.go` and `tracker.go` is prefixed `$ld:ai:`, and the only events categorized as internal usage metrics — `$ld:ai:usage:completion-config` and `$ld:ai:usage:judge-config` — use the `$ld:ai:usage:` sub-prefix.\n\nRollup is `partial` (not `supported`) because: (a) the §1.1 Components table lists six sub-spec areas, and only AICONF (config retrieval) and AITRACK (tracking metrics + feedback) are present in `ldai/`; AIGRAPH, AIRUNNER, AIGRAPHTRACK, and AIEVALS are absent; (b) the package's own README explicitly says 'This AI SDK is in pre-release and not subject to backwards compatibility guarantees' and 'active feature development is ongoing in the Python and Node.js AI SDKs, so this SDK will receive new features at a slower pace.' Both numbered requirements are `full`; the `partial` rollup reflects the umbrella scope. This corrects the bulk LLM judgment which lacked visibility into whether the absent sub-specs are tracked here or in their own rows.",
           "supported_since": "ldai/v0.7.0",
           "supported_since_date": "2025-06-09",
-          "supported_since_evidence": "ldai/CHANGELOG.md (oldest tag: ldai/v0.7.0); package_info.go reports SDKName='go-server-sdk/ldai' Version='0.8.1'",
+          "supported_since_evidence": "ldai/CHANGELOG.md (oldest visible tag ldai/v0.7.0); ldai/package_info.go reports SDKName='go-server-sdk/ldai' Version='0.8.1'.",
           "counts": {
-            "full": 0,
+            "full": 2,
             "partial": 0,
             "not_supported": 0,
             "not_applicable": 0,
             "unknown": 0
           }
         },
-        "requirements": []
+        "requirements": [
+          {
+            "requirement_id": "1.2.1",
+            "section": "1.2 Track Event Keys",
+            "text": "All AI SDK events tracked via `LDClient.track` MUST use event names that start with the prefix `$ld:ai:`.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Every event constant emitted by the Go AI SDK is prefixed `$ld:ai:`. In `client.go`: `$ld:ai:sdk:info`, `$ld:ai:usage:completion-config`, `$ld:ai:usage:judge-config`. In `tracker.go`: `$ld:ai:duration:total`, `$ld:ai:feedback:user:positive`, `$ld:ai:feedback:user:negative`, `$ld:ai:generation:success`, `$ld:ai:generation:error`, `$ld:ai:tokens:ttf`, `$ld:ai:tokens:total`, `$ld:ai:tokens:input`, `$ld:ai:tokens:output`. Repo-wide grep for `LDClient.track|client.Track|TrackCustom` inside `ldai/` only finds these constants being passed.",
+            "findings": [
+              {
+                "file": "go-server-sdk/ldai/client.go",
+                "line": 52,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "sdkInfoEvent = \"$ld:ai:sdk:info\""
+              },
+              {
+                "file": "go-server-sdk/ldai/client.go",
+                "line": 53,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "usageCompletionConfig = \"$ld:ai:usage:completion-config\""
+              },
+              {
+                "file": "go-server-sdk/ldai/client.go",
+                "line": 54,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "usageJudgeConfig = \"$ld:ai:usage:judge-config\""
+              },
+              {
+                "file": "go-server-sdk/ldai/tracker.go",
+                "line": 15,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "duration = \"$ld:ai:duration:total\""
+              },
+              {
+                "file": "go-server-sdk/ldai/tracker.go",
+                "line": 16,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "feedbackPositive = \"$ld:ai:feedback:user:positive\""
+              },
+              {
+                "file": "go-server-sdk/ldai/tracker.go",
+                "line": 18,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "generationSuccess = \"$ld:ai:generation:success\""
+              },
+              {
+                "file": "go-server-sdk/ldai/tracker.go",
+                "line": 21,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "timeToFirstToken = \"$ld:ai:tokens:ttf\""
+              },
+              {
+                "file": "go-server-sdk/ldai/tracker.go",
+                "line": 23,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "tokenTotal = \"$ld:ai:tokens:total\""
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.2",
+            "section": "1.2 Track Event Keys",
+            "text": "All internal AI SDK usage metrics tracked via `LDClient.track` MUST use event names that start with the prefix `$ld:ai:usage:`.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Two events in `client.go` carry the `$ld:ai:usage:` sub-prefix and are the only events categorized as 'internal usage metrics' (per the spec's example list — `usage:completion-config`, `usage:create-model`, `usage:create-judge`). The Go SDK currently emits two of those three: `$ld:ai:usage:completion-config` (Config method) and `$ld:ai:usage:judge-config` (JudgeConfig method). The other event constants in `tracker.go` are user-facing outcomes (token counts, latency, feedback, generation success/error), which are not internal usage metrics and correctly do NOT use the `usage:` sub-prefix. A test in `client_test.go` guards that JudgeConfig does not double-emit the completion-config usage event.",
+            "findings": [
+              {
+                "file": "go-server-sdk/ldai/client.go",
+                "line": 53,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "usageCompletionConfig = \"$ld:ai:usage:completion-config\""
+              },
+              {
+                "file": "go-server-sdk/ldai/client.go",
+                "line": 54,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "usageJudgeConfig = \"$ld:ai:usage:judge-config\""
+              },
+              {
+                "file": "go-server-sdk/ldai/client_test.go",
+                "line": 421,
+                "kind": "evidence",
+                "evidence_type": "test",
+                "severity": "info",
+                "relevance": "Test asserts JudgeConfig MUST NOT emit $ld:ai:usage:completion-config to avoid double-counting — guards 1.2.2 partition between Config and JudgeConfig usage metrics."
+              }
+            ],
+            "notes_for_human": "Spec lists `$ld:ai:usage:create-model` as an example; not yet emitted by Go SDK because the corresponding ManagedModel/AIRUNNER surface isn't implemented here. That's consistent with the rollup `partial` rationale."
+          }
+        ]
       },
       "ARCO": {
         "spec_version": "",
@@ -5350,34 +5465,524 @@
         "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
         "sdk_branch": "v7",
         "evidence_sources_considered": [
-          "sdk-specs/specs/FDV2PL-payload-communication/README.md",
-          "go-server-sdk/internal/datasystem/fdv2_datasystem.go (FDv2 data system orchestrator)",
-          "go-server-sdk/internal/datasourcev2/ (streaming_data_source.go, polling_data_source.go for FDv2)",
-          "go-server-sdk/internal/memorystorev2/ (FDv2-shaped store)",
-          "go-server-sdk/testhelpers/ldservicesv2/server_sdk_data.go (FDv2 message-type fixtures)",
-          "go-server-sdk/ldclient_end_to_end_fdv2_test.go (end-to-end FDv2 init test)",
-          "go-server-sdk/subsystems/events.go (FDv2 event types in the public subsystems API)",
-          "go-server-sdk/CHANGELOG.md (4+ FDv2 entries: 67b411e initial impl; PRs #330/#332/#337)",
-          "sdk-specs/specs/FDV2PL-payload-communication/README.md (16 requirements counted)"
+          "specs/FDV2PL-payload-communication/README.md",
+          "go-server-sdk/internal/datasourcev2/streaming_data_source.go (FDv2 streaming source — 5 event types)",
+          "go-server-sdk/internal/datasourcev2/polling_http_request.go (FDv2 polling requester — same event types in array form)",
+          "go-server-sdk/subsystems/events.go (event constants + ServerIntent UnmarshalJSON)",
+          "go-server-sdk/subsystems/payloads.go (Payload + PollingPayload structs)",
+          "go-server-sdk/subsystems/changeset.go (ChangeSetBuilder: Start/Reset/Finish + intent downgrade)",
+          "go-server-sdk/internal/datasystem/store.go (data system Apply: switches on IntentCode → SetBasis/ApplyDelta)",
+          "go-server-sdk/internal/datasystem/fdv2_datasystem.go (orchestration; see DATASYSTEM spec analysis for full coverage of orchestration concerns)",
+          "go-server-sdk/ldclient_end_to_end_fdv2_test.go (e2e FDv2 init test fixture)",
+          "go-server-sdk/CHANGELOG.md (v7.6.0 onwards: FDv2 entries 67b411e initial impl, PRs #330/#332/#337)"
         ],
         "rollup": {
           "applies": true,
           "veto_reason": null,
           "state": "partial",
           "complexity": "moderate",
-          "rationale": "Go server SDK has substantial FDv2 payload-protocol support: `internal/datasystem/fdv2_datasystem.go` plus the v2 datasource (`internal/datasourcev2/`), v2 memory store (`internal/memorystorev2/`), v2 servicedef test helpers (`testhelpers/ldservicesv2/`), and an end-to-end FDv2 test (`ldclient_end_to_end_fdv2_test.go`). The FDv2 message types the spec defines — `server_intent`, `put-object`, `delete-object`, `goodbye`, `payload-transferred` — all appear in the SDK's parser/test fixtures. Multiple CHANGELOG entries confirm active alignment with this spec ('internal implementation of FDv2 data system' commit `67b411e`; PR #330 'align fdv2 intializer to spec'; PR #332 'Add ChangeSet.Collections to help reduce relay memory usage'; PR #337 fdv2 synchronizer leak fix). However, the FDv2 datasystem is not the SDK's default data system yet (FDv1 streaming remains the default), and a per-requirement walk across all 16 FDV2PL requirements is needed to establish full vs. partial conformance per message type. Rollup is `partial` rather than `supported` until that walk is done; deferred to a future batch.",
+          "rationale": "The Go SDK's FDv2 datasource (streaming + polling) implements the bulk of the FDV2PL protocol. All five message types (`server-intent`, `put-object`, `delete-object`, `payload-transferred`, `goodbye`) are parsed; the changeset builder enforces the spec's atomicity invariant (partial data is only ever committed on `payload-transferred`); the data system honors the three intent codes (`xfer-full` → `SetBasis`, `xfer-changes` → `ApplyDelta`, `none` → no-op); and the wire types are forward-compatible (multi-payload `server-intent` is parsed today by ignoring all but the first payload, satisfying §3.4.2). The `basis` query parameter is dynamically attached to streaming reconnects via `StreamOptionDynamicQueryParams`, satisfying §3.2.1.\n\nTwo issues knock the rollup down to `partial`:\n1. §3.3.5 / §3.3.6 require specific `info`-level log messages with prescribed text on `goodbye` and `error` events. The Go SDK currently logs both at `error` level with different message text (e.g. \"SSE server received error: %s (%v)\" for `goodbye`, and \"Error on %s: %s\" for `error`). Behavior is correct but the log format/level deviates — easy to fix.\n2. §3.3.4 is a placeholder in the spec README (no text after the heading) — flagged `unknown`.\n\n§3.4.1 (no irreversible decisions blocking multi-payload future) is `partial`: today's `Payload` struct is single-payload-shaped (single `Code`, `Reason`, etc.), so evolving to multi-payload would require a new field or type rather than a config switch. Forward-compatible at the wire level (array is parsed) but not at the API level.",
           "supported_since": null,
           "supported_since_date": null,
-          "supported_since_evidence": "CHANGELOG: 'internal implementation of FDv2 data system' (commit 67b411e); subsequent FDv2 fixes through v7.14.x.",
+          "supported_since_evidence": "FDv2 datasource introduced in commit 67b411e ('internal implementation of FDv2 data system'); subsequent fixes through v7.14.x include PRs #330 'align fdv2 initializer to spec', #332 ChangeSet.Collections, #337 synchronizer leak fix.",
           "counts": {
-            "full": 0,
-            "partial": 0,
-            "not_supported": 0,
-            "not_applicable": 0,
-            "unknown": 0
+            "full": 11,
+            "partial": 1,
+            "not_supported": 2,
+            "not_applicable": 1,
+            "unknown": 1
           }
         },
-        "requirements": []
+        "requirements": [
+          {
+            "requirement_id": "2.2.4",
+            "section": "2.2 Polling — Non-Empty Events",
+            "text": "The SDK MUST consider the polling response valid only if the `events` field is a non-null array containing at least 1 element.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "`PollingPayload.Events` is `[]RawEvent json:\"events\"`. A `null` or missing field decodes to a nil slice; an empty `[]` skips the loop body. In both cases the requester returns `fmt.Errorf(\"didn't receive any known protocol events in polling payload\")`, which is treated as a transient error by the polling processor and surfaced as DataSourceStateInterrupted.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/payloads.go",
+                "line": 31,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "type PollingPayload struct { Events []RawEvent `json:\"events\"` }"
+              },
+              {
+                "file": "go-server-sdk/internal/datasourcev2/polling_http_request.go",
+                "line": 132,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Returns error 'didn't receive any known protocol events in polling payload' when no recognized events are processed (covers empty/null/{}/missing-events cases)."
+              },
+              {
+                "file": "go-server-sdk/internal/datasourcev2/polling_data_source.go",
+                "line": 159,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Polling processor classifies that error as recoverable, sets DataSourceStateInterrupted — matches spec's 'transient error' guidance."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "3.1.1",
+            "section": "3.1 General",
+            "text": "The Flag Delivery services MUST provide exactly one payload for an SDK key / environment in this initial version of FDv2.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "This requirement binds to the Flag Delivery service, not the SDK. The SDK is the consumer of this guarantee — it reads only `payloads[0]` (see §3.4.2) and would simply ignore additional payloads if any appeared.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/events.go",
+                "line": 117,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Comment: 'Actual protocol object contains a list of payloads, but currently SDKs only support 1.' — the SDK is built to consume the spec's promised invariant."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "3.2.1",
+            "section": "3.2 Requests",
+            "text": "The SDK SHOULD include payload state information with the initial request to flag delivery.",
+            "severity": "should",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Streaming source attaches the current selector as the `basis` query parameter via `StreamOptionDynamicQueryParams`, which re-runs on every reconnect attempt — so resumption-with-state happens automatically. Polling source likewise attaches `basis` from `selector.State()` when the selector is defined.",
+            "findings": [
+              {
+                "file": "go-server-sdk/internal/datasourcev2/streaming_data_source.go",
+                "line": 410,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "es.SubscribeWithRequestAndOptions(req, es.StreamOptionDynamicQueryParams(func(existing url.Values) url.Values { if selector := ds.Selector(); selector.IsDefined() { existing.Set(\"basis\", selector.State()) }; return existing }), ...)"
+              },
+              {
+                "file": "go-server-sdk/internal/datasourcev2/polling_http_request.go",
+                "line": 151,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if selector.IsDefined() { params[\"basis\"] = []string{selector.State()} }"
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "3.2.2",
+            "section": "3.2 Requests",
+            "text": "The SDK MUST NOT use state information from an invalid/partial/corrupted payload in the payload request.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "The selector is only set on the result channel when `EventPayloadTransferred` is observed and `changeSetBuilder.Finish(selector)` succeeds. Partial/error paths emit `DataSynchronizerResult{State: Interrupted, Error: errorInfo}` with a NIL ChangeSet — the data system's `Selector()` therefore advances only on confirmed-complete payloads, never on partially transferred or error-aborted ones.",
+            "findings": [
+              {
+                "file": "go-server-sdk/internal/datasourcev2/streaming_data_source.go",
+                "line": 269,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "case subsystems.EventPayloadTransferred: ... changeSet, err := changeSetBuilder.Finish(selector); resultChan <- DataSynchronizerResult{ChangeSet: changeSet, State: Valid, ...} — selector only emitted on Finish."
+              },
+              {
+                "file": "go-server-sdk/internal/datasourcev2/streaming_data_source.go",
+                "line": 251,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "case subsystems.EventError: ... sp.loggers.Errorf(...) ... changeSetBuilder.Reset() — partial changes discarded, no selector advance."
+              },
+              {
+                "file": "go-server-sdk/subsystems/changeset.go",
+                "line": 300,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Finish requires c.intent != nil, returns error otherwise — guards against committing without a server-intent."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "3.3.1",
+            "section": "3.3 Event Handling",
+            "text": "The SDK MUST prepare to fully replace its local payload representation when a `server-intent` with `intentCode` `xfer-full` is received.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "`changeSetBuilder.Start(serverIntent)` is called on every server-intent — it sets the new intent and clears any pending changes. When `Finish` builds the ChangeSet for an xfer-full intent, the data system's `Apply` switches on `IntentTransferFull` and calls `Store.setBasis`, which discards prior data and re-initializes. Subsequent updates within the same connection are downgraded to `IntentTransferChanges` automatically (per `changeset.go:315`), so a stream of patches following a single xfer-full is correctly handled.",
+            "findings": [
+              {
+                "file": "go-server-sdk/internal/datasourcev2/streaming_data_source.go",
+                "line": 207,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "changeSetBuilder.Start(serverIntent) — clears existing changes, sets new intent."
+              },
+              {
+                "file": "go-server-sdk/subsystems/changeset.go",
+                "line": 266,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "ChangeSetBuilder.Start: sets intent, clears c.changes."
+              },
+              {
+                "file": "go-server-sdk/internal/datasystem/store.go",
+                "line": 184,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "switch changeSet.IntentCode() { case IntentTransferFull: s.setBasis(...) }"
+              },
+              {
+                "file": "go-server-sdk/internal/datasystem/store.go",
+                "line": 199,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "setBasis: s.memoryStore.SetBasis(collections) — see TXNS spec analysis for the atomic-replace invariant."
+              },
+              {
+                "file": "go-server-sdk/subsystems/changeset.go",
+                "line": 315,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "After IntentTransferFull, builder downgrades intent to IntentTransferChanges so subsequent payloads in same connection are applied as deltas."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "3.3.2",
+            "section": "3.3 Event Handling",
+            "text": "The SDK MUST NOT consider its local payload state X as valid until receiving the `payload-transferred` event for the corresponding payload state X.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "`DataSynchronizerResult{State: Valid, ChangeSet: changeSet, ...}` is only ever emitted on `EventPayloadTransferred` (and on the special `IntentNone` shortcut, where there is nothing to transfer). All intermediate `EventPutObject`/`EventDeleteObject` events accumulate in the builder without producing any DataSourceStateValid signal.",
+            "findings": [
+              {
+                "file": "go-server-sdk/internal/datasourcev2/streaming_data_source.go",
+                "line": 269,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "EventPayloadTransferred is the only branch that emits ChangeSet to the result channel."
+              },
+              {
+                "file": "go-server-sdk/internal/datasourcev2/streaming_data_source.go",
+                "line": 211,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "IntentNone shortcut: when server says 'nothing to transfer', the SDK correctly emits Valid with no ChangeSet."
+              },
+              {
+                "file": "go-server-sdk/internal/datasourcev2/streaming_data_source.go",
+                "line": 224,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "EventPutObject: only buffers via changeSetBuilder.AddPut; does not emit Valid."
+              },
+              {
+                "file": "go-server-sdk/internal/datasourcev2/streaming_data_source.go",
+                "line": 232,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "EventDeleteObject: only buffers via changeSetBuilder.AddDelete; does not emit Valid."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "3.3.3",
+            "section": "3.3 Event Handling",
+            "text": "The SDK SHOULD resume with the previous valid payload state it had locally if a network failure or crash occurs while processing updates.",
+            "severity": "should",
+            "state": "full",
+            "complexity": null,
+            "rationale": "On reconnect, `StreamOptionDynamicQueryParams` re-evaluates `ds.Selector()` and sends the most recent VALID selector as `basis`. Because selectors only advance on Finish (per §3.2.2), the SDK always resumes from the last fully-transferred payload state. The in-memory store is preserved across reconnects (the data system holds `s.active = s.memoryStore` regardless of stream lifecycle).",
+            "findings": [
+              {
+                "file": "go-server-sdk/internal/datasourcev2/streaming_data_source.go",
+                "line": 410,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Dynamic query params lambda re-runs on every reconnect, picking up whatever selector is current at that moment."
+              },
+              {
+                "file": "go-server-sdk/internal/datasourcev2/streaming_data_source.go",
+                "line": 367,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "On recoverable error, processor logs and continues — does not clear the in-memory store or selector."
+              },
+              {
+                "file": "go-server-sdk/internal/datasystem/store.go",
+                "line": 234,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "s.active = s.memoryStore is set once and persists; reconnects do not invalidate the store."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "3.3.4",
+            "section": "3.3 Event Handling",
+            "text": "(Spec README contains an empty `### Requirement 3.3.4` heading with no requirement text.)",
+            "severity": "info",
+            "state": "unknown",
+            "complexity": null,
+            "rationale": "No requirement text in spec README to evaluate against. Likely a placeholder or accidentally-deleted requirement; flagging upstream so spec authors can fill it in or remove it.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2PL-payload-communication/README.md",
+                "line": 311,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "### Requirement 3.3.4  (heading only, no body — likely a placeholder)"
+              }
+            ],
+            "notes_for_human": "Filed implicitly: open an sdk-specs PR to either populate or remove the empty `Requirement 3.3.4` heading. This block evaluates to `unknown` until that's resolved."
+          },
+          {
+            "requirement_id": "3.3.5",
+            "section": "3.3 Event Handling",
+            "text": "The SDK MUST log the following message at the `info` level when a `goodbye` event is encountered. The message MUST include the reason. `Goodbye was received from the LaunchDarkly connection with reason: '{reason}'.`",
+            "severity": "must",
+            "state": "not_supported",
+            "complexity": null,
+            "rationale": "The Go SDK currently logs goodbye at `error` level (`Errorf`) with the message format `\"SSE server received error: %s (%v)\"` (Reason, Catastrophe). Both the level and the prescribed message text differ from the spec. Behaviorally, the connection lifecycle is otherwise correct; this is a log-level/format mismatch only. Trivial fix — change the call site from `Errorf` to `Infof` and reformat to spec text.",
+            "findings": [
+              {
+                "file": "go-server-sdk/internal/datasourcev2/streaming_data_source.go",
+                "line": 248,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if !goodbye.Silent { sp.loggers.Errorf(\"SSE server received error: %s (%v)\", goodbye.Reason, goodbye.Catastrophe) } — wrong level (error vs info), wrong text."
+              }
+            ],
+            "notes_for_human": "Trivial fix: change Errorf to Infof and use the exact spec-mandated message text. Worth filing as a one-liner cleanup PR alongside §3.3.6."
+          },
+          {
+            "requirement_id": "3.3.6",
+            "section": "3.3 Event Handling",
+            "text": "The SDK MUST log the following message at the `info` level when an `Error` event is encountered. The message MUST include the payload id and reason. `An issue was encountered receiving updates for payload '{paylod id}' with reason: '{reason}'. Automatic retry will occur.`",
+            "severity": "must",
+            "state": "not_supported",
+            "complexity": null,
+            "rationale": "The Go SDK logs error events at `error` level with the message `\"Error on %s: %s\"` (PayloadID, Reason) — both level and text differ from the spec. Like §3.3.5 this is a log-formatting mismatch; the rest of the error handling (Reset of partial data, no disconnect) is correct.",
+            "findings": [
+              {
+                "file": "go-server-sdk/internal/datasourcev2/streaming_data_source.go",
+                "line": 259,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "sp.loggers.Errorf(\"Error on %s: %s\", errorData.PayloadID, errorData.Reason) — wrong level, wrong text."
+              }
+            ],
+            "notes_for_human": "Trivial fix: pair with §3.3.5 in a single 'align FDv2 log messages to FDV2PL spec' PR."
+          },
+          {
+            "requirement_id": "3.3.7",
+            "section": "3.3 Event Handling",
+            "text": "The SDK MUST discard partially transferred data when an `error` event is encountered.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "`changeSetBuilder.Reset()` is called in the EventError branch — clears any pending changes while preserving the current intent. Per the doc comment: 'Reset clears any existing changes, while preserving the current intent.' This satisfies the spec requirement that partial data be discarded but the previous intent stay in effect (so subsequent put-objects under the same intent are valid).",
+            "findings": [
+              {
+                "file": "go-server-sdk/internal/datasourcev2/streaming_data_source.go",
+                "line": 267,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "On EventError: changeSetBuilder.Reset() — partial changes discarded."
+              },
+              {
+                "file": "go-server-sdk/subsystems/changeset.go",
+                "line": 294,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "func (c *ChangeSetBuilder) Reset() { c.changes = nil } — only clears changes, preserves intent."
+              },
+              {
+                "file": "go-server-sdk/internal/datasourcev2/streaming_data_source.go",
+                "line": 261,
+                "kind": "evidence",
+                "evidence_type": "comment",
+                "severity": "info",
+                "relevance": "Inline comment: 'The protocol should reset any previous change events it has received, but should continue to operate under the assumption the last server intent was in effect.' — matches spec rationale."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "3.3.8",
+            "section": "3.3 Event Handling",
+            "text": "The SDK SHOULD stay connected after receiving an application level `Error` event.",
+            "severity": "should",
+            "state": "full",
+            "complexity": null,
+            "rationale": "EventError handling does not call stream.Close() and does not set shouldRestart=true. Control falls through to the next iteration of the event loop, keeping the SSE connection open and ready for either a new server-intent (recovery via different payload) or replayed put-objects (recovery via same payload).",
+            "findings": [
+              {
+                "file": "go-server-sdk/internal/datasourcev2/streaming_data_source.go",
+                "line": 251,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "EventError branch: log error, Reset builder, fall through. No close/restart/disconnect."
+              },
+              {
+                "file": "go-server-sdk/internal/datasourcev2/streaming_data_source.go",
+                "line": 294,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "shouldRestart only set on malformed-event paths, not on EventError."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "3.3.9",
+            "section": "3.3 Event Handling",
+            "text": "The SDK MUST silently handle/ignore `heartbeat` events.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "`case subsystems.EventHeartbeat: // Swallow the event and move on.` — explicit silent-handling case. No log message, no state change, no signal sent on the result channel.",
+            "findings": [
+              {
+                "file": "go-server-sdk/internal/datasourcev2/streaming_data_source.go",
+                "line": 196,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "case subsystems.EventHeartbeat: // Swallow the event and move on."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "3.3.10",
+            "section": "3.3 Event Handling",
+            "text": "The SDK MUST silently ignore objects of unrecognized `kind`s the SDK does not support.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "`toStorableItems` (changeset.go) iterates the buffered changes and skips any whose `event.Kind.ToFDV1()` returns ok=false: 'If we don't recognize this kind, it's not an error and should be ignored for forwards compatibility.' Unknown actions also skipped silently in the same loop.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/changeset.go",
+                "line": 105,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "kind, ok := event.Kind.ToFDV1(); if !ok { continue }  // forward-compatible skip"
+              },
+              {
+                "file": "go-server-sdk/subsystems/changeset.go",
+                "line": 131,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "default: // An unknown action isn't an error, and should be ignored for forwards compatibility."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "3.4.1",
+            "section": "3.4 Future Proofing",
+            "text": "An SDK MUST NOT make irreversible design decisions or implementation choices that will prohibit the SDK from supporting multiple payloads per environment in the future.",
+            "severity": "must",
+            "state": "partial",
+            "complexity": null,
+            "rationale": "Wire-level forward compat is good: `ServerIntent.UnmarshalJSON` reads `Payloads []Payload` from JSON, so multi-payload arrays parse without error. However, the public `Payload` struct is single-shaped (single `ID`, `Target`, `Code`, `Reason`) and is used directly by downstream code (data system, store). Adding multi-payload support later would either require introducing a new struct + dual-API surface, or breaking the existing one. Doable, not impossible — but it's not a zero-touch evolution. The `subsystems` package types are already marked as 'not stable, not subject to backwards compatibility guarantees' which softens this somewhat.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/events.go",
+                "line": 110,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "ServerIntent struct holds a single Payload field, not a slice — consumers (data system, store) bind to single-payload semantics."
+              },
+              {
+                "file": "go-server-sdk/subsystems/payloads.go",
+                "line": 4,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Type-level doc comment: 'This type is not stable, and not subject to any backwards compatibility guarantees ... Do not use it. You have been warned.' — gives wiggle room for breaking evolution."
+              },
+              {
+                "file": "go-server-sdk/subsystems/events.go",
+                "line": 114,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "UnmarshalJSON correctly reads the Payloads array, so wire format is forward-compatible even if API evolution is needed."
+              }
+            ],
+            "notes_for_human": "If multi-payload becomes a real near-term roadmap item, plan to widen ServerIntent to []Payload or introduce a new ServerIntentV2 type. The 'not stable' caveat on the subsystems package gives latitude for that change."
+          },
+          {
+            "requirement_id": "3.4.2",
+            "section": "3.4 Future Proofing",
+            "text": "The SDK MUST ignore all but the first payload of the `server-intent` event and must not crash/error when receiving messages that contain multiple payloads.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "`ServerIntent.UnmarshalJSON` decodes into `Payloads []Payload` and assigns `s.Payload = intent.Payloads[0]`, silently ignoring any additional entries. Empty arrays are rejected ('server-intent event has no payloads'); single, double, or N-element arrays all yield the first element. Verified with the spec's exact failure mode (multi-payload array): no crash.",
+            "findings": [
+              {
+                "file": "go-server-sdk/subsystems/events.go",
+                "line": 116,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "func (s *ServerIntent) UnmarshalJSON: type serverIntent struct { Payloads []Payload `json:\"payloads\"` }"
+              },
+              {
+                "file": "go-server-sdk/subsystems/events.go",
+                "line": 126,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "if len(intent.Payloads) == 0 { return errors.New(...) }; s.Payload = intent.Payloads[0]  // takes [0], drops rest"
+              }
+            ],
+            "notes_for_human": null
+          }
+        ]
       },
       "FDV2REL": {
         "spec_version": "",
@@ -5387,30 +5992,451 @@
         "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
         "sdk_branch": "v7",
         "evidence_sources_considered": [
-          "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
-          "go-server-sdk/internal/datasourcev2/ (same v2 datasource works against direct LD or v2 relay)",
-          "go-server-sdk/internal/datasystem/fdv2_datasystem.go",
-          "go-server-sdk/ldcomponents/ (ServiceEndpoints / RelayProxyEndpoints — existing pre-FDv2 base URI mechanism, unchanged for FDv2)",
-          "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md (uses 4-level requirement IDs e.g. 1.1.1.1; majority phrased 'the relay proxy MUST...')"
+          "specs/FDV2REL-fdv2-relay-proxy/README.md",
+          "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md (status: DRAFT; every requirement phrased 'the relay proxy MUST...')",
+          "go-server-sdk/internal/datasourcev2/ (SDK's v2 consumer code — covered under FDV2PL spec, not here)",
+          "go-server-sdk/ldcomponents/service_endpoints_builder.go (ServiceEndpoints / RelayProxyEndpoints — pre-existing base URI swap, unchanged for FDv2)",
+          "launchdarkly/ld-relay (separate repo: Relay Proxy implementation — would carry the actual FDV2REL conformance row if tracked)."
         ],
         "rollup": {
-          "applies": true,
-          "veto_reason": null,
-          "state": "partial",
-          "complexity": "moderate",
-          "rationale": "FDV2REL's `applies-to` lists `client-sdk, server-sdk` but the requirements themselves are overwhelmingly written from the relay-proxy's perspective ('the relay proxy MUST...'), specifying how a relay translates between v1 SDK clients and a v2 backend. The SDK-facing surface — being able to speak the v2 protocol against either LaunchDarkly directly or a v2-aware relay — is satisfied by the same FDv2 datasource implementation evaluated under FDV2PL. There is no SDK-specific code path that distinguishes talking-to-direct-LD from talking-to-v2-relay; the ServiceEndpoints mechanism (existing pre-FDv2) handles base URI swaps. Rollup is `partial` because the SDK-relevant subset is implemented (via FDV2PL coverage), but a per-requirement walk to identify which FDV2REL requirements actually bind to the SDK (vs. solely to the relay) is deferred to a future batch.",
+          "applies": false,
+          "veto_reason": "Spec body addresses Relay Proxy implementation; Go server SDK is a consumer of FDv2-capable endpoints, not their implementer. SDK-side conformance is transitive via FDV2PL (v2 protocol) and existing FDv1 streaming/polling. Recommend narrowing applies-to in the spec or splitting any implicit SDK-side requirements into a sibling spec.",
+          "state": "not_applicable",
+          "complexity": null,
+          "rationale": "FDV2REL's `applies-to` table lists `client-sdk, server-sdk`, but every numbered requirement in the spec body is phrased 'the relay proxy MUST...' — the spec describes how a v2-aware Relay Proxy translates between v1 SDK clients and a v2 backend, what HTTP headers it returns, and how it multiplexes internal event sources. None of these requirements bind to SDK behavior.\n\nFrom the Go server SDK's perspective: the SDK is a consumer of these endpoints. The SDK already speaks v2 (FDV2PL) and v1 (existing streaming/polling) and uses the standard ServiceEndpoints / RelayProxyEndpoints mechanism for base URI swaps — there is no SDK-side code path that distinguishes 'talking to direct LaunchDarkly' from 'talking to v2-capable relay'.\n\nCorrection over bulk LLM judgment: the spec_support.json row had this as `partial` (presumably because the LLM saw FDv2 datasource code and the `applies-to: server-sdk` tag and stopped reading). After deep-dive, every requirement is `not_applicable`, so the rollup correctly resolves to `not_applicable`. The compliant relay implementation lives in `launchdarkly/ld-relay`, which would have its own sdk-meta row if Spectre tracked the relay as a 'sdk'.",
           "supported_since": null,
           "supported_since_date": null,
-          "supported_since_evidence": "Same FDv2 datasource that satisfies FDV2PL (commit 67b411e and follow-ups) is what the SDK uses to talk to a v2 relay.",
+          "supported_since_evidence": null,
           "counts": {
             "full": 0,
             "partial": 0,
             "not_supported": 0,
-            "not_applicable": 0,
+            "not_applicable": 21,
             "unknown": 0
           }
         },
-        "requirements": []
+        "requirements": [
+          {
+            "requirement_id": "1.1.1.1",
+            "section": "1.1.1 v1 Compatible endpoints",
+            "text": "The relay proxy MUST continue supporting all existing v1 endpoints in a fully backwards compatible manner, except `/flags` and `/mping`.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.1.2.1",
+            "section": "1.1.2 v2 Endpoints",
+            "text": "The relay proxy MUST support v2 compatible endpoints matching the structure `/sdk/(poll|stream)[/eval/{context}][/(flags|segments[/{key}])?basis={state}&auth={token}&evalx&useTTL`.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.1.2.2",
+            "section": "1.1.2 v2 Endpoints",
+            "text": "When responding to an `/sdk/stream[...]` request, the relay proxy MUST respond with the appropriate stream headers and status codes (Content-Type: text/event-stream, Cache-Control, Connection, optional CORS, optional gzip).",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.1.2.3",
+            "section": "1.1.2 v2 Endpoints",
+            "text": "When responding to an `/sdk/poll[...]` request, the relay proxy MUST respond with the appropriate poll headers and status codes (Content-Type: application/json, Etag, optional Vary/Expires, 200 / 304).",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.1.1",
+            "section": "1.2.1 v1 Server-side Streaming Connection — New Connection",
+            "text": "When a new v1 SDK connection is created, the relay proxy MUST send a full payload as a single putObject event and elevate the connection to synchronized.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.1.2",
+            "section": "1.2.1 v1 Server-side Streaming — Established Connections",
+            "text": "Synchronized v1 connections MUST register to the live v2 event source and translate v2 changesets into equivalent v1 events.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.1.3",
+            "section": "1.2.1 v1 Server-side Streaming — Translation Failure",
+            "text": "If event translation from FDv2 to v1 fails, the relay MUST disconnect the client and let the SDK's retry logic handle reconnection.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.2.1",
+            "section": "1.2.2 v1 Server-side Polling — E-Tag creation",
+            "text": "For every polling request, the relay proxy MUST include an E-tag header value matching the active v2 state.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.2.2",
+            "section": "1.2.2 v1 Server-side Polling — without etag",
+            "text": "When a polling request is received without an etag header, the relay MUST respond with a full response of all known flag and segment information.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.2.3",
+            "section": "1.2.2 v1 Server-side Polling — up-to-date etag",
+            "text": "When a polling request is received with an up-to-date etag header, the relay MUST respond with `304 Not Modified`.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.2.4",
+            "section": "1.2.2 v1 Server-side Polling — outdated etag",
+            "text": "When a polling request is received with an outdated etag header, the relay MUST respond with a full response of all known flag and segment information.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.3.1",
+            "section": "1.2.3 v2 Server-side Streaming — New without state",
+            "text": "When a new v2 SDK connection is created without an existing state, the relay MUST send `xfer-full` server intent and elevate to synchronized.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.3.2",
+            "section": "1.2.3 v2 Server-side Streaming — older state",
+            "text": "When a new v2 SDK connection is created with a state older than the relay's, the relay MUST send `xfer-full` and elevate to synchronized.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.3.3",
+            "section": "1.2.3 v2 Server-side Streaming — newer state",
+            "text": "When a new v2 SDK connection is created with a state newer than the relay's, the relay MUST send `xfer-none` and convert to a pending connection.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.3.4",
+            "section": "1.2.3 v2 Server-side Streaming — Synchronized",
+            "text": "Synchronized v2 connections MUST register to the live v2 event source and forward events without additional inspection.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.3.5",
+            "section": "1.2.3 v2 Server-side Streaming — Pending",
+            "text": "Pending v2 connections MUST register to the live v2 event source, ignore events with payload version <= connection version, and elevate to synchronized once versions align.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.4.1",
+            "section": "1.2.4 v2 Server-side Polling — matching etag",
+            "text": "If a v2 polling request includes an etag matching the active state, the relay MUST respond with `304 Not Modified`.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.4.2",
+            "section": "1.2.4 v2 Server-side Polling — no state",
+            "text": "When a v2 polling request is made without a state, the relay MUST respond with a full v2 payload and set an etag matching that state.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.4.3",
+            "section": "1.2.4 v2 Server-side Polling — outdated state",
+            "text": "When a v2 polling request is made with an outdated state, the relay MUST respond with a full v2 payload and set an etag matching that state.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.4.4",
+            "section": "1.2.4 v2 Server-side Polling — active state",
+            "text": "When a v2 polling request is made with an active state, the relay MUST respond with `xfer-none` and set an etag matching that state.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.4.5",
+            "section": "1.2.4 v2 Server-side Polling — future state",
+            "text": "When a v2 polling request is made with a future state, the relay MUST respond with `xfer-none` and set an etag matching that state.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Requirement is phrased 'the relay proxy MUST...' and binds to the Relay Proxy implementation. The Go server SDK is a CONSUMER of the endpoints the relay proxy exposes — no SDK-side code path satisfies or could satisfy this requirement. Endpoint compatibility from the SDK side is covered transitively by FDV2PL (v2 protocol parsing) and the legacy FDv1 streaming/polling implementations.",
+            "findings": [
+              {
+                "file": "sdk-specs/specs/FDV2REL-fdv2-relay-proxy/README.md",
+                "line": 0,
+                "kind": "evidence",
+                "evidence_type": "spec",
+                "severity": "info",
+                "relevance": "Requirement body is phrased 'the relay proxy MUST...' — addresses the relay implementation, not the SDK."
+              }
+            ],
+            "notes_for_human": null
+          }
+        ]
       },
       "FLGDM": {
         "spec_version": "",
