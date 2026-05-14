@@ -1,0 +1,486 @@
+{
+  "generated_at": "2026-05-14T18:10:00Z",
+  "judge": "human (azeisler + assistant), hackathon manual pass",
+  "prompt_version": "spectre/agents/sdk_worker/prompt.md @ retroactive_check",
+  "sdks": {
+    "go-server-sdk": {
+      "PLUGIN": {
+        "spec_version": "",
+        "spec_path": "specs/PLUGIN-sdk-plugin-support/README.md",
+        "spec_sha": "1b103d7251371af85ac77b23398eeff93ef4db21",
+        "spec_renumber_pr": "https://github.com/launchdarkly/sdk-specs/pull/167",
+        "sdk_repo": "launchdarkly/go-server-sdk",
+        "sdk_repo_commit": "a14fc86e64c8f2e6555e7ece4ad08081d46c2067",
+        "sdk_branch": "v7",
+        "evidence_sources_considered": [
+          "sdk-specs/specs/PLUGIN-sdk-plugin-support/README.md (post-PR-167 numbering: 1.2.10 in place of duplicate 1.2.3)",
+          "go-server-sdk/ldplugins/ (plugins.go, metadata.go, package_info.go)",
+          "go-server-sdk/ldclient.go (plugin integration: GetHooks loop + Register loop, lines 326-356)",
+          "go-server-sdk/config.go (Config.Plugins field, lines 229-232)",
+          "go-server-sdk/CHANGELOG.md (v7.11.0 'add Plugin support', PR #286, 2025-06-24)",
+          "go-server-sdk/ldclient_plugins_test.go (4 unit tests covering EnvironmentMetadata + hook merging)",
+          "go-server-sdk/internal/sharedtest/plugins.go (TestPlugin + TestPluginHook helpers)",
+          "go-server-sdk/testservice/ (contract-test SDK adapter; servicedef/service_params.go capability constants)",
+          "go-server-sdk/Makefile (contract-tests target + sdk-test-harness wiring)",
+          "sdk-test-harness/sdktests/ (full directory grep)",
+          "sdk-meta/products/harness_signals.json (go-server-sdk: participates=false)"
+        ],
+        "rollup": {
+          "applies": true,
+          "veto_reason": null,
+          "state": "partial",
+          "complexity": "moderate",
+          "rationale": "Plugin interface, registration ordering, and getHooks-then-register integration are all in place since v7.11.0 (commit b461415, PR #286). Two MUST-severity gaps drop the rollup from full to partial: (1) the Plugin interface has no onPluginsReady method (1.1.5), and (2) the SDK never invokes any registration-complete callback (1.2.6). Closing those is moderate work — adding an optional method on the Plugin interface (with an Unimplemented default), defining the RegistrationCompleteResult type, and wrapping the Register loop to capture per-plugin failures and dispatch the callback. No plugin contract tests exist in either go-server-sdk/testservice/ or sdk-test-harness/, so all evidence is implementation + unit-test based — there is no end-to-end harness signal that the integration works.",
+          "supported_since": "v7.11.0",
+          "supported_since_date": "2025-06-24",
+          "supported_since_evidence": "CHANGELOG.md: '* add Plugin support (#286) (b461415)' under [7.11.0]",
+          "counts": {
+            "full": 10,
+            "partial": 1,
+            "not_supported": 2,
+            "not_applicable": 4,
+            "unknown": 0
+          }
+        },
+        "requirements": [
+          {
+            "requirement_id": "1.1.1",
+            "section": "1.1 Plugin Implementation",
+            "text": "A plugin SHOULD be implemented using interfaces or base classes for languages with object oriented capabilities.",
+            "severity": "should",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Go uses an interface (Plugin) plus a default-method base struct (Unimplemented) — exactly the pattern the spec recommends.",
+            "findings": [
+              {
+                "file": "ldplugins/plugins.go",
+                "line": 20,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Plugin interface declares Metadata(), Register(), and embeds HooksProvider."
+              },
+              {
+                "file": "ldplugins/plugins.go",
+                "line": 45,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Unimplemented base struct provides default GetHooks so plugin authors can compose-in optional methods."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.1.2",
+            "section": "1.1 Plugin Implementation",
+            "text": "A plugin MUST be forward compatible with SDK versions, while allowing the addition of new methods.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Forward-compat is engineered in via two mechanisms: (a) Unimplemented base struct lets new optional methods land without breaking existing plugins that embed it, and (b) MetadataOption functional-options pattern lets new metadata fields be added without changing NewMetadata's signature.",
+            "findings": [
+              {
+                "file": "ldplugins/plugins.go",
+                "line": 8,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Doc comment explicitly calls out the Unimplemented strategy: 'It should always contain an implementation of all optional interfaces.'"
+              },
+              {
+                "file": "ldplugins/metadata.go",
+                "line": 9,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "MetadataOption functional-options pattern (NewMetadata(name, opts...)) reserves room to add fields without breaking call sites."
+              }
+            ],
+            "notes_for_human": "The Plugin interface itself is not forward-compatible for plugins that don't embed Unimplemented — adding a required method to the interface would break them at compile time. The published guidance is to always embed Unimplemented, which scopes the risk to plugins that ignore it."
+          },
+          {
+            "requirement_id": "1.1.3",
+            "section": "1.1 Plugin Implementation",
+            "text": "A plugin MUST provide a getMetadata method. It has no parameters and returns a PluginMetadata. Metadata MUST include a stable name; version and id are OPTIONAL but SDKs should accept empty or absent values.",
+            "severity": "must",
+            "state": "partial",
+            "complexity": "trivial",
+            "rationale": "The MUST is satisfied: every Plugin must implement Metadata() Metadata, and the Metadata struct exposes a stable name. The optional fields version and id are not represented at all — there is no WithVersion / WithID MetadataOption — so a plugin author who has a version cannot communicate it. Closing the gap is trivial: two functional options + two unexported fields + two accessors.",
+            "findings": [
+              {
+                "file": "ldplugins/plugins.go",
+                "line": 21,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Plugin interface requires Metadata() Metadata."
+              },
+              {
+                "file": "ldplugins/metadata.go",
+                "line": 4,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Metadata struct holds the stable name; Name() accessor returns it."
+              },
+              {
+                "file": "ldplugins/metadata.go",
+                "line": 4,
+                "kind": "missing",
+                "evidence_type": "implementation",
+                "severity": "should",
+                "relevance": "Metadata has no version or id field, and no MetadataOption to set them. The spec marks both OPTIONAL, but the SDK should still expose them so plugins that have the data can pass it."
+              }
+            ],
+            "notes_for_human": "If we land WithVersion / WithID MetadataOptions, this row flips to full without touching the interface."
+          },
+          {
+            "requirement_id": "1.1.4",
+            "section": "1.1 Plugin Implementation",
+            "text": "A plugin MUST provide a register method. It takes an instance of the LDClient and EnvironmentMetadata and has no return value.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Plugin.Register is a required method on the interface and takes exactly the parameters the spec calls for.",
+            "findings": [
+              {
+                "file": "ldplugins/plugins.go",
+                "line": 22,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Register(client interfaces.LDClientInterface, metadata EnvironmentMetadata) on the Plugin interface."
+              },
+              {
+                "file": "internal/sharedtest/plugins.go",
+                "line": 54,
+                "kind": "evidence",
+                "evidence_type": "unit_test",
+                "severity": "info",
+                "relevance": "TestPlugin.Register records its arguments so the test suite can assert the SDK called it with the right client + EnvironmentMetadata."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.1.5",
+            "section": "1.1 Plugin Implementation",
+            "text": "A plugin MUST support an optional onPluginsReady method. It takes a RegistrationCompleteResult and EnvironmentMetadata and has no return value.",
+            "severity": "must",
+            "state": "not_supported",
+            "complexity": "moderate",
+            "rationale": "There is no OnPluginsReady method on the Plugin interface, no default in Unimplemented, and no RegistrationCompleteResult type anywhere in ldplugins/. This is a MUST gap: the spec requires the SDK to support the optional method (i.e., expose it as part of the plugin contract), even though individual plugins may choose not to override it.",
+            "findings": [
+              {
+                "file": "ldplugins/plugins.go",
+                "line": 20,
+                "kind": "missing",
+                "evidence_type": "implementation",
+                "severity": "must",
+                "relevance": "Plugin interface (Metadata + Register + HooksProvider) has no OnPluginsReady method. Absent from the interface and from the Unimplemented base struct."
+              },
+              {
+                "file": "ldplugins/metadata.go",
+                "line": 1,
+                "kind": "missing",
+                "evidence_type": "implementation",
+                "severity": "must",
+                "relevance": "No RegistrationCompleteResult type defined in the ldplugins package."
+              }
+            ],
+            "notes_for_human": "Closing this row also closes 1.2.6. Suggested shape: add RegistrationCompleteResult (success bool + failures []PluginFailure) to ldplugins/, add OnPluginsReady to the Plugin interface as an optional method via an OnPluginsReadyProvider sub-interface (mirroring HooksProvider), and add a default no-op to Unimplemented."
+          },
+          {
+            "requirement_id": "1.1.6",
+            "section": "1.1 Plugin Implementation",
+            "text": "A plugin MUST support an optional getHooks method. It takes EnvironmentMetadata and returns a list of hooks.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "GetHooks lives on the HooksProvider sub-interface, which the Plugin interface embeds. Unimplemented provides a no-op default returning an empty slice, so plugins that don't supply hooks are still valid by composing it. This is Go's idiomatic way to express 'optional method'.",
+            "findings": [
+              {
+                "file": "ldplugins/plugins.go",
+                "line": 27,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "HooksProvider interface declares GetHooks(metadata EnvironmentMetadata) []ldhooks.Hook; Plugin embeds HooksProvider on line 23."
+              },
+              {
+                "file": "ldplugins/plugins.go",
+                "line": 48,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Unimplemented.GetHooks returns []ldhooks.Hook{}, the optional default."
+              }
+            ],
+            "notes_for_human": "Strictly speaking GetHooks is a required method on the Go Plugin interface (Go has no language-level 'optional' for interface methods). The Unimplemented composition pattern is how the SDK exposes it as effectively optional, and the doc comment guides plugin authors to use it."
+          },
+          {
+            "requirement_id": "1.1.7",
+            "section": "1.1 Plugin Implementation",
+            "text": "A plugin MUST support an optional registerDebug method for client-side SDKs. This method takes a LDDebugOverride and has no return value.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Spec text explicitly scopes this requirement to client-side SDKs ('for client-side SDKs') and the LDDebugOverride note marks the interface as 'experimental and intended for use by LaunchDarkly tools at this time'. go-server-sdk is server-side, so the requirement does not apply.",
+            "findings": [
+              {
+                "file": "ldplugins/plugins.go",
+                "line": 20,
+                "kind": "scoping_note",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "go-server-sdk is server-side; the spec scopes registerDebug to client-side SDKs only."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.1",
+            "section": "1.2 SDK Requirements",
+            "text": "The SDK MUST support configuring plugins during initialization.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Config.Plugins is a []ldplugins.Plugin field consumed by MakeCustomClient at construction time.",
+            "findings": [
+              {
+                "file": "config.go",
+                "line": 229,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Config.Plugins []ldplugins.Plugin — the configuration entry point during initialization."
+              },
+              {
+                "file": "ldclient_plugins_test.go",
+                "line": 18,
+                "kind": "evidence",
+                "evidence_type": "unit_test",
+                "severity": "info",
+                "relevance": "TestPluginsAreProvidedEnvironmentMetadata constructs a client with Config{Plugins: []ldplugins.Plugin{plugin}} and asserts the SDK consumed it."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.2",
+            "section": "1.2 SDK Requirements",
+            "text": "The SDK MUST call the register functions as early as possible in the SDK lifetime.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "Register is called inside MakeCustomClient immediately after the client is marked valid (line 351) and before the data system starts (line 358). The code comment literally says 'Call Register on plugins as soon as possible after client is valid'.",
+            "findings": [
+              {
+                "file": "ldclient.go",
+                "line": 353,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Register loop runs at construction time, after clientValid = true on line 351 and before client.dataSystem.Start() on line 358."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.3",
+            "section": "1.2 SDK Requirements",
+            "text": "The SDK MUST call the register functions in the order that plugins were added to the configuration.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "The Register loop iterates config.Plugins in slice order (Go's range guarantees in-order traversal of slices), which matches the user's configuration order.",
+            "findings": [
+              {
+                "file": "ldclient.go",
+                "line": 354,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "for _, plugin := range config.Plugins { plugin.Register(client, environmentMetadata) } — slice order = configuration order."
+              }
+            ],
+            "notes_for_human": "This is the original 1.2.3, retained at this number after PR https://github.com/launchdarkly/sdk-specs/pull/167 renumbered the duplicate to 1.2.10."
+          },
+          {
+            "requirement_id": "1.2.4",
+            "section": "1.2 SDK Requirements",
+            "text": "The SDK MUST call the getHooks functions before calling register.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "ldclient.go calls GetHooks for every plugin (lines 343-347) before the Register loop (lines 353-356). Two distinct loops with the GetHooks loop first.",
+            "findings": [
+              {
+                "file": "ldclient.go",
+                "line": 343,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "GetHooks loop appends each plugin's hooks to allHooks before the hook runner is constructed."
+              },
+              {
+                "file": "ldclient.go",
+                "line": 353,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Register loop runs after GetHooks loop, separated by clientValid = true and the hook runner construction."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.5",
+            "section": "1.2 SDK Requirements",
+            "text": "The hooks returned from the getHooks function MUST be appended to the hooks configuration of the SDK.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "allHooks is seeded from config.Hooks (line 341) and plugin hooks are appended (line 346). The combined slice is handed to hooks.NewRunner on line 349. TestPluginHooksAreRegisteredWithExistingHooks verifies both pre-existing hooks and plugin hooks fire.",
+            "findings": [
+              {
+                "file": "ldclient.go",
+                "line": 341,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "allHooks := config.Hooks — start from the SDK's pre-configured hooks list."
+              },
+              {
+                "file": "ldclient.go",
+                "line": 346,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "allHooks = append(allHooks, hooks...) — plugin hooks appended in iteration order."
+              },
+              {
+                "file": "ldclient_plugins_test.go",
+                "line": 111,
+                "kind": "evidence",
+                "evidence_type": "unit_test",
+                "severity": "info",
+                "relevance": "TestPluginHooksAreRegisteredWithExistingHooks asserts both the existing config hook AND the plugin-supplied hook fire on a single evaluation."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.6",
+            "section": "1.2 SDK Requirements",
+            "text": "After attempting to register all plugins for an environment, the SDK MUST call each plugin's onPluginsReady method with a RegistrationCompleteResult.",
+            "severity": "must",
+            "state": "not_supported",
+            "complexity": "moderate",
+            "rationale": "There is no callback after the Register loop. ldclient.go line 354-356 is just `for _, plugin := range config.Plugins { plugin.Register(client, environmentMetadata) }` — when the loop ends, control passes straight to client.dataSystem.Start() with no per-plugin completion callback. The Register loop also doesn't recover from panics, so a single panicking plugin would prevent any subsequent plugin from being registered (let alone notified).",
+            "findings": [
+              {
+                "file": "ldclient.go",
+                "line": 354,
+                "kind": "missing",
+                "evidence_type": "implementation",
+                "severity": "must",
+                "relevance": "Register loop has no follow-up onPluginsReady dispatch and no panic recovery for failed registrations. Aggregated failure capture is also missing."
+              }
+            ],
+            "notes_for_human": "Same root cause as 1.1.5 — there is no OnPluginsReady method to call. Closing 1.1.5 + 1.2.6 together: define RegistrationCompleteResult and PluginFailure types, wrap Register in a recover, accumulate failures, then dispatch onPluginsReady to every plugin (also under recover so a failing notification doesn't block the rest)."
+          },
+          {
+            "requirement_id": "1.2.7",
+            "section": "1.2 SDK Requirements",
+            "text": "The SDK MUST call registerDebug if the plugin implements it.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "registerDebug is scoped to client-side SDKs (per requirement 1.1.7 and the LDDebugOverride note). go-server-sdk is server-side, so this requirement does not apply.",
+            "findings": [
+              {
+                "file": "ldclient.go",
+                "line": 354,
+                "kind": "scoping_note",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Server SDK; LDDebugOverride is a client-side debug feature."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.8",
+            "section": "1.2 SDK Requirements",
+            "text": "The SDK MUST provide a LDDebugOverride interface if debug override functionality is supported.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Conditional MUST: 'if debug override functionality is supported'. go-server-sdk does not support debug override functionality (it is server-side, the spec scopes the feature to client-side), so the conditional doesn't trigger.",
+            "findings": [
+              {
+                "file": "ldplugins/plugins.go",
+                "line": 1,
+                "kind": "scoping_note",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Server SDK; debug-override is a client-side concern."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.9",
+            "section": "1.2 SDK Requirements",
+            "text": "Flag overrides MUST take precedence over actual flag values from LaunchDarkly.",
+            "severity": "must",
+            "state": "not_applicable",
+            "complexity": null,
+            "rationale": "Flag-override precedence is part of the client-side debug-override mechanism scoped by 1.1.7 / 1.2.7 / 1.2.8. With 1.2.8 not_applicable for a server SDK, this dependent requirement is also not_applicable.",
+            "findings": [
+              {
+                "file": "ldplugins/plugins.go",
+                "line": 1,
+                "kind": "scoping_note",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Server SDK; flag-override precedence is a client-side debug-override behavior."
+              }
+            ],
+            "notes_for_human": null
+          },
+          {
+            "requirement_id": "1.2.10",
+            "section": "1.2 SDK Requirements",
+            "text": "The LDClient MUST be safe to use as soon as register is called.",
+            "severity": "must",
+            "state": "full",
+            "complexity": null,
+            "rationale": "MakeCustomClient marks clientValid = true (line 351) before invoking the Register loop, so the client passed to Plugin.Register is structurally complete: hookRunner is set, the data system is constructed (just not yet Started), and the public methods will return default values rather than throw. The spec acknowledges the data system is not yet finished initializing: 'The SDK will likely not have finished initialization at this time, but a plugin should be able to call SDK methods.' That is what Go does.",
+            "findings": [
+              {
+                "file": "ldclient.go",
+                "line": 351,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "clientValid = true is set immediately before the Register loop, after the hook runner is constructed (line 349) and before dataSystem.Start (line 358)."
+              },
+              {
+                "file": "ldclient.go",
+                "line": 354,
+                "kind": "evidence",
+                "evidence_type": "implementation",
+                "severity": "info",
+                "relevance": "Register receives the in-progress client; subsequent calls to client methods will return defaults during the brief window before the data system has started."
+              }
+            ],
+            "notes_for_human": "This requirement was renumbered from 1.2.3 to 1.2.10 by https://github.com/launchdarkly/sdk-specs/pull/167 to resolve a duplicate `### Requirement 1.2.3` heading. If/when that PR merges, this row's requirement_id is already aligned. If it does not merge, this row should be re-numbered back to 1.2.3 and the original 1.2.3 (register-order) row above merged or relabeled."
+        }
+        ]
+      }
+    }
+  }
+}
