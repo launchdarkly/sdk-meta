@@ -9,11 +9,11 @@ validation:
 ---
 
 ```ts
-  import { initialize, LDClient } from '@launchdarkly/js-client-sdk';
-  import { Observability } from '@launchdarkly/observability';
-  import { SessionReplay } from '@launchdarkly/session-replay';
+  import { createClient, LDClient } from '@launchdarkly/js-client-sdk';
+  import Observability from '@launchdarkly/observability';
+  import SessionReplay from '@launchdarkly/session-replay';
 
-  const client: LDClient = initialize('example-client-side-id', {
+  const client: LDClient = createClient('example-client-side-id', { kind: 'user', key: 'EXAMPLE_CONTEXT_KEY' }, {
     plugins: [
       new Observability(),
       new SessionReplay()

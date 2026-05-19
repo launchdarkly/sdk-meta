@@ -5,6 +5,8 @@ kind: context
 lang: javascript
 file: node-server-sdk/ai-configs/context.txt
 description: Build an evaluation context for node-server-sdk AI Configs.
+validation:
+  scaffold: node-server-sdk/scaffolds/node-syntax-only
 ---
 
 ```javascript

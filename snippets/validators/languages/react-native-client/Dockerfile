@@ -5,6 +5,7 @@ FROM node:22-bookworm
 # snippet's two .tsx files.
 
 ARG LD_RN_SDK_VERSION=10.17.2
+ARG LD_OBSERVABILITY_RN_VERSION=0.9.1
 ARG REACT_NATIVE_VERSION=0.85.2
 ARG REACT_VERSION=19.2.5
 ARG TESTING_LIBRARY_VERSION=13.3.3
@@ -25,6 +26,7 @@ RUN cat > package.json <<EOF
   },
   "dependencies": {
     "@launchdarkly/react-native-client-sdk": "${LD_RN_SDK_VERSION}",
+    "@launchdarkly/observability-react-native": "${LD_OBSERVABILITY_RN_VERSION}",
     "@react-native-async-storage/async-storage": "^1.23.1",
     "react": "${REACT_VERSION}",
     "react-native": "${REACT_NATIVE_VERSION}"

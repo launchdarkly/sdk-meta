@@ -5,6 +5,10 @@ kind: initialize
 lang: javascript
 file: react-client-sdk/observability/initialize.txt
 description: Initialize react-client-sdk via withLDProvider with observability + session replay plugins.
+validation:
+  scaffold: react-client-sdk/scaffolds/init-runner-observability
+  placeholders:
+    SDK_KEY: LAUNCHDARKLY_CLIENT_SIDE_ID
 ---
 
 ```javascript

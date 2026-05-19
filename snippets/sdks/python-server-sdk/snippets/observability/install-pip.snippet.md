@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: python-server-sdk/observability/install-pip.txt
 description: pip install commands for python-server-sdk observability plugin.
+validation:
+  runtime: shell-install
 ---
 
 ```shell

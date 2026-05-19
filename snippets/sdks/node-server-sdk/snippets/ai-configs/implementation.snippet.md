@@ -5,6 +5,8 @@ kind: implementation
 lang: javascript
 file: node-server-sdk/ai-configs/implementation.txt
 description: Resolve an AI Config with a fallback for node-server-sdk.
+validation:
+  scaffold: node-server-sdk/scaffolds/node-syntax-only
 ---
 
 ```javascript

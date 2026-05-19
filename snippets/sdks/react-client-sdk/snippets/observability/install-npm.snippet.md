@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: react-client-sdk/observability/install-npm.txt
 description: npm install commands for react-client-sdk observability + session replay plugins.
+validation:
+  runtime: shell-install
 ---
 
 ```shell

@@ -5,6 +5,8 @@ kind: context
 lang: go
 file: go-server-sdk/ai-configs/context.txt
 description: Build an evaluation context for go-server-sdk AI Configs.
+validation:
+  scaffold: go-server-sdk/scaffolds/go-syntax-only
 ---
 
 ```go

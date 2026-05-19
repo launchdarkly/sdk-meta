@@ -5,6 +5,8 @@ kind: import
 lang: javascript
 file: react-native-client-sdk/observability/import.txt
 description: Import statements for react-native-client-sdk observability plugin.
+validation:
+  scaffold: react-native-client-sdk/scaffolds/react-native-syntax-only
 ---
 
 ```javascript

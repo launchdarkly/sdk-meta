@@ -1,15 +1,17 @@
 # Build context is `validators/`. See validators/languages/python/Dockerfile
 # for the rationale.
 #
-# Multi-toolchain image: each sdk-info install snippet uses one of npm /
-# pnpm / yarn / pip / go-get. The harness sniffs the staged body and runs
-# the appropriate package manager. We base on node:20 (Debian bookworm)
-# and layer Python and Go on top so a single image covers every Linux
-# install command we ship today.
+# Multi-toolchain image: each sdk-info / observability / ai-configs
+# install snippet uses one of npm / pnpm / yarn / pip / go-get / gem.
+# The harness sniffs the staged body and runs the appropriate package
+# manager. We base on node:20 (Debian bookworm) and layer Python, Go,
+# and Ruby on top so a single image covers every Linux install command
+# we ship today.
 FROM node:20-bookworm-slim
 
 # pnpm + yarn come via corepack (node 20 ships it). Python provides the
-# pip path. Go provides `go get`.
+# pip path. Go provides `go get`. Ruby provides the `gem install` path
+# used by ruby-server-sdk install snippets.
 #
 # git is needed because `go get` resolves modules over git, and bower (if
 # we ever re-enable it) clones from git remotes.
@@ -23,6 +25,13 @@ RUN apt-get update \
         python3 \
         python3-venv \
         python3-pip \
+        ruby \
+        ruby-dev \
+        build-essential \
+        zlib1g-dev \
+        libssl-dev \
+        libyaml-dev \
+        libffi-dev \
  && rm -rf /var/lib/apt/lists/*
 
 # Install Go. Pinning here so the image is reproducible; bump when the

@@ -5,6 +5,8 @@ kind: implementation
 lang: python
 file: python-server-sdk/ai-configs/implementation.txt
 description: Resolve an AI Config with a fallback for python-server-sdk.
+validation:
+  scaffold: python-server-sdk/scaffolds/python-syntax-only
 ---
 
 ```python

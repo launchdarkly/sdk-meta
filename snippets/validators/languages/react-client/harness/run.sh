@@ -198,7 +198,8 @@ if grep -qF -- '//IMPORT_LIFT_TARGET' "/opt/hello-react/$SNIPPET_ENTRYPOINT"; th
             }
             if ($0 ~ /^[ \t]*import[ \t]/) {
                 sub(/^[ \t]+/, "", $0);
-                if ($0 ~ /;[ \t]*$/) {
+                # Single-line import: ends in `;` or trailing module-name quote.
+                if ($0 ~ /;[ \t]*$/ || $0 ~ /[\x27"][ \t]*$/) {
                     lift[++nlift] = $0;
                 } else {
                     multi_import_buf = $0;

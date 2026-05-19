@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: node-server-sdk/observability/install-yarn.txt
 description: yarn install commands for node-server-sdk observability plugin.
+validation:
+  runtime: shell-install
 ---
 
 ```shell

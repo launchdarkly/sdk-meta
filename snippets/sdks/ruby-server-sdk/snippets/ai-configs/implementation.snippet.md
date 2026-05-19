@@ -5,6 +5,8 @@ kind: implementation
 lang: ruby
 file: ruby-server-sdk/ai-configs/implementation.txt
 description: Resolve an AI Config with a fallback for ruby-server-sdk.
+validation:
+  scaffold: ruby-server-sdk/scaffolds/ruby-syntax-only
 ---
 
 ```ruby

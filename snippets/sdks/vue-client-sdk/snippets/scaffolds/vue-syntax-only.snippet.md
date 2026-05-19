@@ -36,4 +36,18 @@ validation:
 // element that the body never overwrites.
 
 {{ body }}
+
+// Fallback for bodies that don't themselves mount (e.g. import-only
+// fragments). If `#app` is still empty after the body's top-level
+// statements run, append the EXAM-HELLO sentinel directly so the
+// playwright check still observes it. Bodies that do mount (the
+// canonical main.js shape) overwrite `#app` first; this no-ops in
+// that case.
+queueMicrotask(() => {
+  const app = document.getElementById('app');
+  if (app && !app.textContent.trim()) {
+    document.body.insertAdjacentHTML('beforeend',
+      '<p>feature flag evaluates to true</p>');
+  }
+});
 ```

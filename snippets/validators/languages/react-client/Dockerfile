@@ -5,6 +5,9 @@ FROM mcr.microsoft.com/playwright:v1.59.1-noble
 # (src/index.tsx for legacy, src/main.tsx for createApp) plus its App.tsx
 # companion into src/ and re-run vite build.
 ARG LD_REACT_SDK_VERSION=4.0.0
+ARG LD_REACT_LEGACY_SDK_VERSION=3.9.1
+ARG LD_OBSERVABILITY_VERSION=1.1.8
+ARG LD_SESSION_REPLAY_VERSION=1.1.8
 ARG REACT_VERSION=19.2.5
 ARG VITE_VERSION=8.0.10
 ARG VITE_PLUGIN_REACT_VERSION=6.0.1
@@ -23,6 +26,9 @@ RUN printf '{\n\
   },\n\
   "dependencies": {\n\
     "@launchdarkly/react-sdk": "%s",\n\
+    "launchdarkly-react-client-sdk": "%s",\n\
+    "@launchdarkly/observability": "%s",\n\
+    "@launchdarkly/session-replay": "%s",\n\
     "react": "%s",\n\
     "react-dom": "%s"\n\
   },\n\
@@ -34,7 +40,9 @@ RUN printf '{\n\
     "vite": "%s"\n\
   }\n\
 }\n' \
-    "${LD_REACT_SDK_VERSION}" "${REACT_VERSION}" "${REACT_VERSION}" \
+    "${LD_REACT_SDK_VERSION}" "${LD_REACT_LEGACY_SDK_VERSION}" \
+    "${LD_OBSERVABILITY_VERSION}" "${LD_SESSION_REPLAY_VERSION}" \
+    "${REACT_VERSION}" "${REACT_VERSION}" \
     "${VITE_PLUGIN_REACT_VERSION}" "${VITE_VERSION}" > package.json
 
 RUN printf "import { defineConfig } from 'vite'\n\

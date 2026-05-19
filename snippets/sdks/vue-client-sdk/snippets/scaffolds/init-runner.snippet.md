@@ -32,7 +32,9 @@ validation:
 ```javascript
 {{ body }}
 
-(function pollForBodySentinel() {
+// Leading `;` so ASI doesn't try to call the result of the body's
+// final `app.mount('#app')` if the body lacks a trailing semicolon.
+;(function pollForBodySentinel() {
   const sentinel = 'vue-init-runner-ok';
   const deadline = Date.now() + 25_000;
   const tick = () => {

@@ -5,6 +5,8 @@ kind: import
 lang: javascript
 file: node-server-sdk/ai-configs/import.txt
 description: Import statements for node-server-sdk AI Configs.
+validation:
+  scaffold: node-server-sdk/scaffolds/node-syntax-only
 ---
 
 ```javascript

@@ -17,6 +17,8 @@
 #   go get …           — `go mod init`, then run body, then grep go.mod.
 #   bower install …    — install bower locally, then run body, then assert
 #                        bower_components dir exists.
+#   gem install …      — route gems to a per-run GEM_HOME (so we don't
+#                        need root), then assert by walking that dir.
 #
 # Any unrecognized leading token is a hard error: a new install style means
 # the harness needs to learn it, not silently no-op.
@@ -66,14 +68,21 @@ run_in_log() {
 # (which is where every sdk-info install command puts the package). The
 # extraction is intentionally simple: discard the first two tokens and the
 # pre-existing flag tokens, return the remaining last token.
+#
+# Multi-line bodies (e.g. observability snippets that install the SDK and
+# the o11y plugin in two separate commands) are folded by the END block:
+# `last` accumulates across every non-empty line and only the final value
+# is printed, so the assertion targets the last package the body installs.
 last_pkg() {
-    printf '%s' "$1" | awk '{
-        for (i = 3; i <= NF; i++) {
-            if ($i ~ /^-/) continue;
-            last = $i;
+    printf '%s' "$1" | awk '
+        NF >= 3 {
+            for (i = 3; i <= NF; i++) {
+                if ($i ~ /^-/) continue;
+                last = $i;
+            }
         }
-        print last;
-    }'
+        END { print last }
+    '
 }
 
 assert_node_modules() {
@@ -153,6 +162,27 @@ case "$LEAD" in
             echo "validator: ok — bower_components present"
         else
             fail_with_log "$LOG" "expected bower_components/ to exist after install"
+        fi
+        ;;
+    gem)
+        if [ "$SUB" != "install" ]; then
+            fail_with_log "$LOG" "unrecognized gem subcommand for install snippet: $SUB"
+        fi
+        # Route gems to a clean per-run dir via GEM_HOME so we don't need
+        # root and concurrent runs don't collide. PATH gets the bin dir
+        # too in case any post-install asserts shell out.
+        export GEM_HOME="$WORK/.gems"
+        export GEM_PATH="$GEM_HOME"
+        export PATH="$GEM_HOME/bin:$PATH"
+        run_in_log
+        pkg=$(last_pkg "$COMMAND")
+        # Walk GEM_HOME/gems for a directory named `<pkg>-<version>`. The
+        # `gem list -i` route is finicky with custom GEM_HOME paths; a
+        # filesystem check is unambiguous.
+        if [ -d "$GEM_HOME/gems" ] && ls "$GEM_HOME/gems" | grep -E "^${pkg}-[0-9]" >/dev/null 2>&1; then
+            echo "validator: ok — $pkg installed in $GEM_HOME"
+        else
+            fail_with_log "$LOG" "expected gem $pkg to be installed under $GEM_HOME/gems"
         fi
         ;;
     *)

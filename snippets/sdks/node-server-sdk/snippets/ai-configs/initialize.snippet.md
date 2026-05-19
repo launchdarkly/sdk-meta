@@ -5,6 +5,8 @@ kind: initialize
 lang: javascript
 file: node-server-sdk/ai-configs/initialize.txt
 description: Initialize the LaunchDarkly client and AI Configs client for node-server-sdk.
+validation:
+  scaffold: node-server-sdk/scaffolds/node-syntax-only
 ---
 
 ```javascript

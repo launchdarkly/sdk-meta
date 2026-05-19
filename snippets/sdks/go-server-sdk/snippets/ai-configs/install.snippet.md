@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: go-server-sdk/ai-configs/install.txt
 description: go get commands for go-server-sdk and the AI Configs add-on.
+validation:
+  runtime: shell-install
 ---
 
 ```shell

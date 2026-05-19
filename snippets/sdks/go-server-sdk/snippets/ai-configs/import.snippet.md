@@ -5,6 +5,8 @@ kind: import
 lang: go
 file: go-server-sdk/ai-configs/import.txt
 description: Import block for go-server-sdk AI Configs.
+validation:
+  scaffold: go-server-sdk/scaffolds/go-syntax-only
 ---
 
 ```go

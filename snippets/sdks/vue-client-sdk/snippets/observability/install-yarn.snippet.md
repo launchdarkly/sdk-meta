@@ -5,6 +5,8 @@ kind: install
 lang: shell
 file: vue-client-sdk/observability/install-yarn.txt
 description: yarn install commands for vue-client-sdk observability + session replay plugins.
+validation:
+  runtime: shell-install
 ---
 
 ```shell

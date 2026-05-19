@@ -5,6 +5,8 @@ kind: import
 lang: csharp
 file: dotnet-server-sdk/ai-configs/import.txt
 description: Using statements for dotnet-server-sdk AI Configs.
+validation:
+  scaffold: dotnet-server-sdk/scaffolds/csharp-syntax-only
 ---
 
 ```csharp
