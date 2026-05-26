@@ -27,7 +27,7 @@ def handle_agent_call_langchain(
     config: AIAgentConfig,
     user_input: str,
 ) -> str:
-    model = config.model.get_parameter("name") if config.model else "bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0"
+    model = config.model.name if config.model else "bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0"
 
     agent = create_agent(
         model=model,

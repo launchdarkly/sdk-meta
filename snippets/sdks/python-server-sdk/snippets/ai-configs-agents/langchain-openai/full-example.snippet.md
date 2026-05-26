@@ -27,7 +27,7 @@ def handle_agent_call_langchain(
     config: AIAgentConfig,
     user_input: str,
 ) -> str:
-    model = config.model.get_parameter("name") if config.model else "openai:gpt-5"
+    model = config.model.name if config.model else "openai:gpt-5"
 
     agent = create_agent(
         model=model,

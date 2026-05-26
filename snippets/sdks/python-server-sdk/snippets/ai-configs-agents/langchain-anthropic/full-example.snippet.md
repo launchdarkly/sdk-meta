@@ -27,7 +27,7 @@ def handle_agent_call_langchain(
     config: AIAgentConfig,
     user_input: str,
 ) -> str:
-    model = config.model.get_parameter("name") if config.model else "anthropic:claude-sonnet-4-6"
+    model = config.model.name if config.model else "anthropic:claude-sonnet-4-6"
 
     agent = create_agent(
         model=model,

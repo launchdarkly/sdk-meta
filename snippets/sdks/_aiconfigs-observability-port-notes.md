@@ -54,12 +54,34 @@ principle resolve, but they're intentionally fragments meant to be
 appended to the base `python-server-sdk/ai-configs/install` lines and
 their standalone meaning is awkward.
 
-**Source of truth**: ported verbatim from
+**Source of truth**: ported from
 `static/ld/components/AiConfigs/AgentControlOnboarding/agentIntegrationSnippets.ts`
 in gonfalon (see `getFullPythonAgentExample` and
 `getPythonFrameworkInstallLines`). Jason flagged these as the next
 slice to migrate after gonfalon#62560 (sdk-meta canonical AI Configs
 adoption) lands.
+
+**Deliberate divergences from the gonfalon source** (caught by Cursor
+Bugbot on PR #444; gonfalon-only consumers of this content should
+pull these fixes back when they re-sync):
+
+- Model name lookup in LangChain / OpenAI Agents / Strands
+  full-examples: gonfalon's source uses
+  `config.model.get_parameter("name")`, but `name` is a top-level
+  attribute on `ModelConfig` (see the canonical
+  `python-server-sdk/ai-configs/implementation` snippet, where
+  `ModelConfig(name=..., parameters={"temperature": 0.8})` shows
+  `parameters` is only the temperature-style dict). `get_parameter("name")`
+  returns `None`, making `model = ... if config.model else default`
+  silently resolve to `None` whenever a variation has a model set.
+  Switched to `config.model.name` to match the Claude full-example
+  (which was already correct in the source) and the canonical
+  `ModelConfig` shape.
+- Strands `handle_agent_call_strands` was declared `async` in the
+  source but its body has no `await` / `async for` (Strands `Agent`
+  instances are sync-callable in the common usage). Dropped the
+  `async` keyword; users who want a true async wiring can switch to
+  `agent.invoke_async(...)` themselves.
 
 **Open questions left for Jason / the AI Configs team**:
 

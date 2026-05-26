@@ -23,11 +23,11 @@ config = aiclient.agent_config('{{configKey}}', context, AIAgentConfigDefault())
 tracker = config.create_tracker()
 
 
-async def handle_agent_call_strands(
+def handle_agent_call_strands(
     config: AIAgentConfig,
     user_input: str,
 ) -> str:
-    model = config.model.get_parameter("name") if config.model else "gpt-5"
+    model = config.model.name if config.model else "gpt-5"
     params = config.model.parameters if config.model else {}
 
     openai_connector = OpenAIModel(

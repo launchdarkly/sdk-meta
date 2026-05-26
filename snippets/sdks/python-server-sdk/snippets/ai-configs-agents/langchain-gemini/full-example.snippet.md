@@ -27,7 +27,7 @@ def handle_agent_call_langchain(
     config: AIAgentConfig,
     user_input: str,
 ) -> str:
-    model = config.model.get_parameter("name") if config.model else "google_genai:gemini-2.0-flash"
+    model = config.model.name if config.model else "google_genai:gemini-2.0-flash"
 
     agent = create_agent(
         model=model,
