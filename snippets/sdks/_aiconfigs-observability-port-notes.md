@@ -82,6 +82,13 @@ pull these fixes back when they re-sync):
   instances are sync-callable in the common usage). Dropped the
   `async` keyword; users who want a true async wiring can switch to
   `agent.invoke_async(...)` themselves.
+- Strands `framework-install`: gonfalon's source ran
+  `pip install strands openai`, but the AWS Strands Agents SDK's PyPI
+  distribution is `strands-agents`, not `strands` (the `strands`
+  package on PyPI is an unrelated project). The Python *import*
+  namespace is `strands` — hence `from strands import Agent` in the
+  full-example body — but the pip package name differs. Switched the
+  install line to `pip install strands-agents openai`.
 
 **Open questions left for Jason / the AI Configs team**:
 

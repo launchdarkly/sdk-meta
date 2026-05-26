@@ -8,5 +8,5 @@ description: Extra pip install lines for wiring AWS Strands into an AI Config ag
 ---
 
 ```shell
-pip install strands openai
+pip install strands-agents openai
 ```
