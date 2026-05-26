@@ -35,7 +35,7 @@ def handle_agent_call_strands(
         params=params if params else {},
     )
 
-    agent = Agent(system_prompt=config.instructions, model=openai_connector, callback_handler=None)
+    agent = Agent(system_prompt=config.instructions or "", model=openai_connector, callback_handler=None)
     response = agent(user_input)
     return str(response)
 ```

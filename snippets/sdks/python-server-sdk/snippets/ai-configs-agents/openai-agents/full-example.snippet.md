@@ -31,7 +31,7 @@ async def handle_agent_call_openai(
     model = config.model.name if config.model else "gpt-5"
     root = Agent(
         name=name,
-        instructions=config.instructions,
+        instructions=config.instructions or "",
         handoffs=[],
         tools=[],
         model=model,

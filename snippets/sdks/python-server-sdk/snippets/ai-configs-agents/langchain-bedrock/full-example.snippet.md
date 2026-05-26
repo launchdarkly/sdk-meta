@@ -31,7 +31,7 @@ def handle_agent_call_langchain(
 
     agent = create_agent(
         model=model,
-        system_prompt=config.instructions,
+        system_prompt=config.instructions or "",
     )
 
     response = agent.invoke({"messages": [HumanMessage(user_input)]})

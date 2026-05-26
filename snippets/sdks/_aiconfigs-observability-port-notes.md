@@ -89,6 +89,18 @@ pull these fixes back when they re-sync):
   namespace is `strands` — hence `from strands import Agent` in the
   full-example body — but the pip package name differs. Switched the
   install line to `pip install strands-agents openai`.
+- Null-handling of `config.instructions` in the agent `system_prompt`
+  / `instructions` slot: gonfalon's source only had the defensive
+  `config.instructions or ""` guard on the Claude full-example;
+  the four LangChain variants, OpenAI Agents, and Strands passed
+  `config.instructions` raw. Aligned the other six to match Claude.
+  All four underlying frameworks accept `Optional[str]` here so
+  neither form crashes — `None` means "no system prompt", `""` means
+  "empty system prompt" — but for a canonical copy-paste example the
+  defensive form is friendlier: an unconfigured variation can’t
+  surface a framework-specific complaint about `None` reaching some
+  internal call. In normal use both branches are unreachable because
+  the LD onboarding always seeds an instructions string.
 
 **Open questions left for Jason / the AI Configs team**:
 
