@@ -3,7 +3,7 @@ id: react-native-client-sdk/experimentation/full
 sdk: react-native-client-sdk
 kind: reference
 lang: tsx
-description: Full experimentation onboarding for react-native-client-sdk — initialize, identify on login/eligibility, and track conversions.
+description: Full experimentation onboarding for react-native-client-sdk — initialize, identify on login/eligibility, evaluate, and track conversions.
 # Bucket C: newly proposed experimentation onboarding snippet, not
 # standalone-runnable (renders your own YourComponent). No validation block
 # yet. See _experimentation-port-notes.md.
@@ -52,11 +52,20 @@ export default function App() {
   const identifyUser = useCallback(
     async ({ userKey, attributes }: { userKey: string; attributes: Record<string, unknown> }): Promise<void> => {
       await ldClient.identify({
+        ...attributes, // any attributes that affect targeting or eligibility (spread first so it can't override the fields below)
         kind: 'user',
         key: userKey, // use the logged-in user's ID so experiment assignment stays consistent
         anonymous: false,
-        ...attributes, // any attributes that affect targeting or eligibility
       });
+    },
+    []
+  );
+
+  // Call this ONLY where the user encounters the experience.
+  // Evaluate after identify resolves, using the same context you identified.
+  const evalExperimentFlag = useCallback(
+    (flagKey: string, defaultValue: unknown): unknown => {
+      return ldClient.variation(flagKey, defaultValue);
     },
     []
   );
@@ -82,6 +91,7 @@ export default function App() {
     <LDProvider client={ldClient}>
       <YourComponent
         identifyUser={identifyUser}
+        variant={evalExperimentFlag('YOUR_FLAG_KEY', 'control')}
         onConversion={() => trackMetric('YOUR_METRIC_KEY', /* optional data */)}
       />
     </LDProvider>

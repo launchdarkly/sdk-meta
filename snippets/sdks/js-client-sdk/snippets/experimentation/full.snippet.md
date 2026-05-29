@@ -29,10 +29,10 @@ await ldClient.start();
 // Call this only when the user becomes known after startup (consent/login/mid-funnel).
 export async function identifyUser({ userKey, attributes }) {
   await ldClient.identify({
+    ...attributes, // any attributes that affect targeting or eligibility (spread first so it can't override the fields below)
     kind: 'user',
     key: userKey, // use the logged-in user's ID so experiment assignment stays consistent
     anonymous: false,
-    ...attributes, // any attributes that affect targeting or eligibility
   });
 }
 
