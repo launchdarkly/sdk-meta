@@ -4,9 +4,8 @@ sdk: ios-client-sdk
 kind: reference
 lang: swift
 description: Full experimentation onboarding for ios-client-sdk — start from a setup function, identify on login/eligibility, evaluate, and track conversions.
-# Bucket C: newly proposed experimentation onboarding snippet, not
-# standalone-runnable (references applyVariant and your app lifecycle). No
-# validation block yet. See _experimentation-port-notes.md.
+validation:
+  scaffold: ios-client-sdk/scaffolds/swift-syntax-only
 ---
 
 ```swift

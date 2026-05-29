@@ -4,9 +4,8 @@ sdk: react-client-sdk
 kind: reference
 lang: tsx
 description: Full experimentation onboarding for react-client-sdk — initialize, identify on login/eligibility, evaluate, and track conversions.
-# Bucket C: newly proposed experimentation onboarding snippet, not
-# standalone-runnable (references your own components and applyVariant). No
-# validation block yet. See _experimentation-port-notes.md.
+validation:
+  scaffold: react-client-sdk/scaffolds/react-syntax-only
 ---
 
 ```tsx

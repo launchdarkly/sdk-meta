@@ -13,36 +13,77 @@ below for traceability.
 This file is the analogue of `_aiconfigs-observability-port-notes.md`,
 `_sdk-info-port-notes.md`, and `_sdk-docs-port-notes.md`.
 
-## Bucket C: no validation block
+## Validation
 
-**Severity**: low
+The 8 frontend-web + mobile-RN + iOS experimentation snippets bind
+through the existing per-SDK `*-syntax-only` scaffolds in parse-only
+mode. Each scaffold wraps the wrappee body inside a never-invoked
+function under an `if (false)` (or equivalent) guard, so unresolved
+caller surfaces (`<YourComponent>`, the host app's `Activity`/
+`AppDelegate` lifecycle, etc.) don't have to actually exist — the
+validator only asserts that the body parses (and, where the toolchain
+type-checks too, that the body type-checks).
 
-**Snippets affected**: every `*/experimentation/{track-only,full}` entry.
+Per-SDK summary:
 
-**Why unbindable**: these are experimentation onboarding examples, not
-standalone-runnable programs. Each one defines an app component plus
-helper functions (`trackMetric`, `identifyUser` / `onUserEligible` /
-`onUserBecomesEligible`) that call into the host app's own surfaces
-(`YourComponent`, `applyVariant`, an `Activity`/`AppDelegate`
-lifecycle). The existing per-SDK validator scaffolds
-(`*-syntax-only`, `init-runner`) wrap a single fragment; they can't host
-a multi-function example that references caller-supplied components.
-They are also newly *proposed* snippets — there is no consumer
-(gonfalon) wiring rendering them yet, so there is no marker/hash to
-verify against either. Left as Bucket C: the canonical text lives in
-sdk-meta, byte-checked by review, with no `validation:` block.
+- **js-client-sdk** (`experimentation/full`, `experimentation/track-only`)
+  — bind to `scaffolds/js-syntax-only`. The harness's existing
+  `IMPORT_LIFT_TARGET` / `BODY_BEGIN` / `BODY_END` awk pre-step lifts
+  top-level `import`s and strips `export` keywords so the body's
+  module-scope-only directives are legal inside the scaffold's
+  `async function _wrappee()` wrapper. The full variant's top-level
+  `await ldClient.start()` works because `_wrappee` is async. No
+  scaffold or harness changes needed.
 
-`snippets validate` only runs snippets that declare a `validation:`
-block, and `.github/workflows/snippets-validate.yml` targets specific
-snippets/groups per SDK (never `experimentation`), so these add no CI
-surface.
+- **react-client-sdk** (`experimentation/full`, `experimentation/track-only`)
+  — bind to `scaffolds/react-syntax-only`. `@launchdarkly/react-sdk`
+  is already pre-baked in the validator image. The same IMPORT_LIFT
+  awk pre-step handles the body's `import` directives. The full
+  variant's hook calls (`useLDClient`, `useFlags`) live inside a
+  function component declared in the body; that compiles fine as a
+  dead-code function declaration under `if (false)`.
 
-**Recommended action**: when a consumer adopts the experimentation
-onboarding flow, add an `experimentation-syntax-only` scaffold per
-platform that stubs the caller-supplied components
-(`YourComponent`/`applyVariant`) so the bodies can at least be
-parse/type-checked, mirroring how `react-native-syntax-only` and
-`swift-syntax-only` bind the sdk-docs fragments.
+- **react-native-client-sdk** (`experimentation/full`, `experimentation/track-only`)
+  — bind to `scaffolds/react-native-syntax-only` (Babel-parse pass
+  via `SNIPPET_MODE=syntax-only`). The scaffold previously hard-coded
+  `import React from 'react';` at file scope; both wrappee bodies
+  import React themselves, which would have redeclared it after the
+  IMPORT_LIFT step. The scaffold's React import was dropped (the
+  scaffold's `App` returns `null` and uses no JSX, so the import was
+  unused). `<YourComponent />` in the bodies parses fine — Babel
+  doesn't resolve component references.
+
+- **ios-client-sdk** (`experimentation/full`, `experimentation/track-only`)
+  — bind to `scaffolds/swift-syntax-only`. The bodies declare
+  file-scope `func startLaunchDarkly()`, `func onUserBecomesEligible(_:)`,
+  `func trackMetric(_:_:)`; spliced into the scaffold they become
+  nested local functions inside `AppDelegate._wrappee()`, which
+  Swift permits. The full variant calls `applyVariant(variant)` from
+  inside `onUserBecomesEligible`; the scaffold was extended with a
+  file-scope `func applyVariant(_ variant: String) {}` no-op stub so
+  xcodebuild's type-checker resolves the reference. The harness's
+  existing Python import-lift pre-step moves the body's
+  `import LaunchDarkly` up to file scope.
+
+## Still Bucket C: android-client-sdk
+
+**Snippets affected**: `android-client-sdk/experimentation/{track-only,full}`.
+
+**Why unbindable today**: the existing
+`android-client-sdk/scaffolds/android-syntax-only` scaffold routes
+through the `jvm` validator (Java + Maven against
+`launchdarkly-java-server-sdk`); the experimentation bodies are
+Kotlin and reference `com.launchdarkly.sdk.android.*` types (the
+android client SDK ships as an `aar` to Google's Maven, not a plain
+jar to Maven Central), plus AndroidX types like `AppCompatActivity`,
+`Application`, and `Bundle`. There is no parse-only mode of the
+`android-client` validator (the existing harness drives a
+MainActivity through a Robolectric lifecycle and asserts on a
+TextView), and adding one would require a kotlinc-only /
+`compileDebugKotlin` dispatch path plus a kotlin-aware syntax-only
+scaffold — larger than this slice. Same structural gap as the
+`android-client-sdk/sdk-docs/*` fragments documented in
+`_sdk-docs-port-notes.md`.
 
 ## Reviewer comments applied inline
 

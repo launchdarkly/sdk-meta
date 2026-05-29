@@ -4,9 +4,8 @@ sdk: react-native-client-sdk
 kind: reference
 lang: tsx
 description: Full experimentation onboarding for react-native-client-sdk — initialize, identify on login/eligibility, evaluate, and track conversions.
-# Bucket C: newly proposed experimentation onboarding snippet, not
-# standalone-runnable (renders your own YourComponent). No validation block
-# yet. See _experimentation-port-notes.md.
+validation:
+  scaffold: react-native-client-sdk/scaffolds/react-native-syntax-only
 ---
 
 ```tsx

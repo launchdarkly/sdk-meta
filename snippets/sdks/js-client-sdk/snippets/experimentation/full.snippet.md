@@ -4,9 +4,8 @@ sdk: js-client-sdk
 kind: reference
 lang: javascript
 description: Full experimentation onboarding for js-client-sdk — initialize, identify on login/eligibility, evaluate, and track conversions.
-# Bucket C: newly proposed experimentation onboarding snippet, not
-# standalone-runnable (exports helpers consumed by your app). No validation
-# block yet. See _experimentation-port-notes.md.
+validation:
+  scaffold: js-client-sdk/scaffolds/js-syntax-only
 ---
 
 ```javascript

@@ -4,9 +4,8 @@ sdk: react-native-client-sdk
 kind: reference
 lang: tsx
 description: Experimentation onboarding (track only) for react-native-client-sdk — initialize, identify, and add a trackMetric helper for conversion events.
-# Bucket C: newly proposed experimentation onboarding snippet, not
-# standalone-runnable (renders your own YourComponent). No validation block
-# yet. See _experimentation-port-notes.md.
+validation:
+  scaffold: react-native-client-sdk/scaffolds/react-native-syntax-only
 ---
 
 ```tsx

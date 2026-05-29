@@ -4,9 +4,8 @@ sdk: react-client-sdk
 kind: reference
 lang: tsx
 description: Experimentation onboarding (track only) for react-client-sdk — initialize and add a trackMetric helper for conversion events.
-# Bucket C: newly proposed experimentation onboarding snippet, not
-# standalone-runnable (defines App + a trackMetric helper around your own
-# components). No validation block yet. See _experimentation-port-notes.md.
+validation:
+  scaffold: react-client-sdk/scaffolds/react-syntax-only
 ---
 
 ```tsx

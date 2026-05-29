@@ -27,7 +27,6 @@ validation:
 ---
 
 ```tsx
-import React from 'react';
 //IMPORT_LIFT_TARGET
 
 // @ts-expect-error -- never invoked; references to undefined names are fine

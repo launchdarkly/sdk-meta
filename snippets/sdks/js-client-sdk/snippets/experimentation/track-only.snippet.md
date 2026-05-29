@@ -4,9 +4,8 @@ sdk: js-client-sdk
 kind: reference
 lang: javascript
 description: Experimentation onboarding (track only) for js-client-sdk — initialize and add a trackMetric helper for conversion events.
-# Bucket C: newly proposed experimentation onboarding snippet, not
-# standalone-runnable (defines a trackMetric helper for your app). No
-# validation block yet. See _experimentation-port-notes.md.
+validation:
+  scaffold: js-client-sdk/scaffolds/js-syntax-only
 ---
 
 ```javascript

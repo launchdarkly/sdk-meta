@@ -4,9 +4,8 @@ sdk: ios-client-sdk
 kind: reference
 lang: swift
 description: Experimentation onboarding (track only) for ios-client-sdk — start the client from a setup function and add a trackMetric helper.
-# Bucket C: newly proposed experimentation onboarding snippet, not
-# standalone-runnable (defines setup + helper functions called from your app).
-# No validation block yet. See _experimentation-port-notes.md.
+validation:
+  scaffold: ios-client-sdk/scaffolds/swift-syntax-only
 ---
 
 ```swift
