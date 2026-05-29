@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.6.0...snippets/v0.7.0) (2026-05-26)
+
+
+### Features
+
+* **snippets:** port AI Configs agent integration snippets from gonfalon ([#444](https://github.com/launchdarkly/sdk-meta/issues/444)) ([58cad3e](https://github.com/launchdarkly/sdk-meta/commit/58cad3edaa5b0f049df3c1bdcc3270487d3e644f))
+* Validation for ai-configs and observability slices ([#428](https://github.com/launchdarkly/sdk-meta/issues/428)) ([6a23549](https://github.com/launchdarkly/sdk-meta/commit/6a235497935aa5215302bf6ccacb9de103078dfc))
+
 ## [0.6.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.5.0...snippets/v0.6.0) (2026-05-08)
 
 
