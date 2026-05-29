@@ -2,6 +2,8 @@
 
 Auto-loaded by Claude Code when an agent's cwd is anywhere under `snippets/`. Read this before authoring snippets, scaffolds, validators, or CI rows. This document describes the system **as it is** — not as it might become.
 
+For the "how do I write or change a snippet" reference (frontmatter, `validation.*`, templating DSL, render targets, CLI essentials), see [docs/AUTHORING.md](docs/AUTHORING.md). This file covers everything else: repo map, scaffold internals, validator harnesses, CI matrix, conventions, releases.
+
 ## Don't author snippet content in unrelated repos
 
 This repo (`launchdarkly/sdk-meta`) is the **canonical home** of every snippet body. Consumers (`gonfalon`, `ld-docs-private`, `ld-docs`) only carry **markers** that point back here:
@@ -39,7 +41,7 @@ snippets/
       Dockerfile                      # docker mode only; build context is validators/
       harness/run.sh                  # entrypoint
       scaffold/ or test/              # Optional: pre-built project or driver code
-  docs/AUTHORING.md     # Older authoring doc; partly stale (older kind values), DSL section still accurate
+  docs/AUTHORING.md     # Authoring reference: frontmatter, validation.*, DSL, render targets
 ```
 
 Top-level workflows that touch this tree:
@@ -49,137 +51,7 @@ Top-level workflows that touch this tree:
 
 ## Snippet file format
 
-A snippet lives at `sdks/<sdk>/snippets/<group>/<name>.snippet.md` (or `sdks/_shared/snippets/<group>/<name>.snippet.md` for cross-SDK snippets). The parser expects:
-
-1. YAML frontmatter fenced by `---` lines at the top of the file.
-2. Exactly **one** fenced code block somewhere after the frontmatter; only the FIRST block is captured as the body. Prose between frontmatter and fence is ignored.
-3. `KnownFields(true)` decoding — unknown frontmatter keys are a parse error. Typos (`Description:`, `entrypiont:`) fail loudly.
-4. Globally unique `id` across the whole tree; collisions error at load.
-
-The parsed `Snippet{Path, Frontmatter, CodeLang, CodeBody}` is what every downstream tool consumes.
-
-### Top-level frontmatter fields
-
-Every key the parser models. Adding a new key requires editing `internal/model/model.go`.
-
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| `id` | string | yes | Globally unique. Convention: `<sdk>/<group>/<name>`. `_shared` snippets drop the sdk prefix (e.g. `id: cursor-prompt`). |
-| `sdk` | string | – | Matches a directory under `sdks/`. Omit for `_shared/` snippets. |
-| `kind` | string | yes | Categorical label. Live values: `install`, `init`, `initialize`, `import`, `context`, `implementation`, `flag-eval`, `reference`, `scaffold`. |
-| `lang` | string | yes | Fenced-code language tag. Also the default `validation.runtime` when that field is empty. |
-| `file` | string | – | Relative path consumers see and the validator writes the rendered body to. Omitted on `kind: reference` (the wrapping scaffold owns the path). |
-| `description` | string | recommended | One-liner. Supports YAML `|` block scalars for multi-paragraph rationale (scaffolds). |
-| `inputs` | map | – | Declared templating inputs. Each entry: `type` (e.g. `string`, `flag-key`), `description`, optional `runtime-default`. Use `inputs: {}` for scaffolds that take no parameters. |
-| `validation` | map | – | Absence means "don't run through the validator." See below. |
-
-### `validation.*` fields
-
-| Field | Notes |
-|---|---|
-| `runtime` | Picks a harness under `validators/languages/<runtime>/`. Falls back to `lang:` if empty. Set explicitly when `lang` and runtime differ (e.g. `lang: javascript` + `runtime: node`; `lang: ts` + `runtime: js-client`). |
-| `entrypoint` | File the harness invokes inside the staging dir. Defaults to `file:`. |
-| `requirements` | Runtime-specific dependency descriptor. Python → `requirements.txt` contents (use `|`). Node → top-level dep name. .NET → NuGet package id. Other languages ship deps via a companion manifest scaffold. |
-| `companions` | List of snippet IDs staged alongside; each is rendered with the same inputs and written to its own `file:`. Used for multi-file projects. |
-| `scaffold` | ID of a `kind: scaffold` snippet to wrap this body in. **Mutually exclusive** with `runtime` / `entrypoint` / `requirements` / `companions` — those come from the scaffold. |
-| `scaffold-inputs` | Map of named values passed into the scaffold's template beyond the implicit `body`. Lets one scaffold serve wrappees with slightly different setup. |
-| `env` | Literal `KEY: VALUE` pairs forwarded into the harness process. No substitution. Used as a harness-side discriminator (e.g. `INSTALL_KIND: podfile`, `SNIPPET_MODE: flag-eval`). |
-| `placeholders` | Literal source-text fragments **inside the rendered body** → env-var names. After rendering and scaffold composition, the dispatcher string-replaces each key with the named env var's value. Only the EXAM-HELLO allow-list is honored: `LAUNCHDARKLY_SDK_KEY`, `LAUNCHDARKLY_FLAG_KEY`, `LAUNCHDARKLY_MOBILE_KEY`, `LAUNCHDARKLY_CLIENT_SIDE_ID`. |
-
-Merge order for the harness env: scaffold's `validation.env` first, then wrappee's `validation.env` overrides. `requireEnvForInputs` walks the entrypoint + companions before any Docker build and fails fast if a placeholder's mapped env var is unset.
-
-### Templating DSL
-
-Defined in `internal/render/template.go` and `render.go`. Intentionally tiny:
-
-- `{{ name }}` — substitute the value of a declared input. Names match `[a-zA-Z][a-zA-Z0-9_]*`. Whitespace inside the braces is flexible; the parser captures the exact source form so foreign-template syntax round-trips byte-identically.
-- `{{ name | filter }}` — substitute with a filter. The only filter today is `camelCase` (react-client-sdk uses it so `useFlags()` destructuring works on a kebab-cased flag key). Any other filter is a parse error.
-- `{{ if name }}…{{ end }}` — emit the inner content only if `name` resolves to non-empty. Conditionals do not nest; the inner content may still contain `{{ name }}` substitutions. The conditional's `name` must be a declared input — undeclared names in a conditional are a render error.
-- **Foreign-template passthrough**: any `{{ name }}` whose name is NOT in the declared inputs map is emitted verbatim, preserving surrounding whitespace. This is what lets Vue's mustache syntax and `_shared/cursor-prompt`'s literal `{{SDK_NAME}}` (no inner whitespace — gonfalon's runtime regex requires exactly that form) survive validation untouched.
-- `{{ body }}` slot in scaffolds is just `{{ name }}` where `name == "body"`. The scaffold declares `inputs: { body: { type: string, description: ... } }` and the validator substitutes the wrappee's rendered body at that point.
-
-The same body renders three ways without authors picking a mode:
-
-- `RenderRuntime` — concrete values for the validator.
-- `RenderForLDApplicationTemplate` — JS template-literal with `${name}` interpolations and `${name ? \`…\` : ''}` ternaries (gonfalon).
-- `RenderForJSXText` — same as ld-application for JSX text contexts.
-
-The `verify` pass renders identically to `ld-application` and compares byte-for-byte against the consumer file.
-
-### Common shapes
-
-**Install (shell-install runtime)**:
-
-```markdown
----
-id: react-client-sdk/sdk-info/install-yarn
-sdk: react-client-sdk
-kind: install
-lang: shell
-file: react-client-sdk/install-yarn.txt
-description: Install command for react-client-sdk (yarn).
-validation:
-  runtime: shell-install
----
-
-```shell
-yarn add @launchdarkly/react-sdk
-```
-```
-
-The `ios-install` variant carries an `env:` discriminator because Podfile / Cartfile / Package.swift fragments aren't shell-sniffable:
-
-```yaml
-validation:
-  runtime: ios-install
-  env:
-    INSTALL_KIND: podfile
-```
-
-**Reference (wrapped by a scaffold)**: no `file:`, no runtime/entrypoint/requirements/companions — the scaffold owns those.
-
-```markdown
----
-id: ios-client-sdk/sdk-docs/evaluate-a-flag-swift
-sdk: ios-client-sdk
-kind: reference
-lang: swift
-description: 'Swift in section "Evaluate a flag"'
-validation:
-  scaffold: ios-client-sdk/scaffolds/swift-syntax-only
----
-
-```swift
-let client = LDClient.get()!
-```
-```
-
-**Runnable init (scaffold + placeholders)**: body is unchanged from what consumers see; substitution happens at validate time only.
-
-```markdown
----
-id: ios-client-sdk/sdk-info/init
-sdk: ios-client-sdk
-kind: init
-lang: swift
-file: ios-client-sdk/init.txt
-description: Client initialization snippet for ios-client-sdk.
-validation:
-  scaffold: ios-client-sdk/scaffolds/init-runner
-  placeholders:
-    YOUR_MOBILE_KEY: LAUNCHDARKLY_MOBILE_KEY
----
-
-```swift
-import LaunchDarkly
-
-let config = LDConfig(mobileKey: "YOUR_MOBILE_KEY", autoEnvAttributes: .enabled)
-// ...
-LDClient.start(config: config, context: context, startWaitSeconds: 5) { timedOut in
-    // ...
-}
-```
-```
+Frontmatter schema, `validation.*` fields, the templating DSL, and example shapes for the common kinds live in [docs/AUTHORING.md](docs/AUTHORING.md). Parser invariants worth keeping in mind when extending the system: snippet files are loaded by `internal/model.LoadAll` (see `internal/model/model.go`); decoding uses `KnownFields(true)`, so adding a frontmatter key requires editing the `Frontmatter` struct; `id` is globally unique and collisions error at load; the parsed `Snippet{Path, Frontmatter, CodeLang, CodeBody}` is what every downstream tool consumes.
 
 ## Snippet groups (categories)
 
@@ -248,21 +120,9 @@ Syntax-only scaffolds typically never execute the body — they just want it to 
 
 ### Placeholders contract
 
-gonfalon ships init bodies with literal placeholders like `'YOUR_SDK_KEY'`, `'YOUR_MOBILE_KEY'`, `'YOUR_CLIENT_SIDE_ID'`, `'SDK_KEY'` that the human user is expected to swap. Rewriting the body to use `{{ name }}` markers would corrupt the rendered output the docs consume. Instead the wrappee carries:
+The dispatch order matters for scaffold authors: `validation.placeholders` runs **after** rendering the wrappee and **before** splicing into the scaffold's `{{ body }}` slot. So a placeholder key (e.g. `'YOUR_SDK_KEY'`, `'SDK_KEY'`) only needs to be unique in the wrappee body, not in the composed output — the scaffold's own scaffold-supplied init code can use the same literal text. This is what lets gonfalon keep shipping `'YOUR_SDK_KEY'` placeholders in docs while validation substitutes real keys.
 
-```yaml
-validation:
-  scaffold: react-native-client-sdk/scaffolds/init-runner-observability
-  placeholders:
-    SDK_KEY: LAUNCHDARKLY_MOBILE_KEY
-```
-
-The dispatcher does a literal string replace on the rendered wrappee body **before** splicing into the scaffold. Allow-list is exactly `LAUNCHDARKLY_SDK_KEY`, `LAUNCHDARKLY_FLAG_KEY`, `LAUNCHDARKLY_MOBILE_KEY`, `LAUNCHDARKLY_CLIENT_SIDE_ID`; any other name is rejected.
-
-`validation.env:` is unrelated — it carries literal KEY=VALUE pairs to the harness process. No env lookup, no template substitution. Used to switch harness behavior per wrappee:
-
-- `ios-install`: each install snippet sets `INSTALL_KIND: swift-package | podfile | cartfile`.
-- `react-client/flag-eval-runner` and `react-native-client/syntax-only`: set `SNIPPET_MODE: flag-eval` or `syntax-only` so the same harness either Babel-parses or runs a full LD-backed render.
+For `env`-keyed harness dispatch (e.g. `INSTALL_KIND` on `ios-install`, `SNIPPET_MODE: flag-eval | syntax-only` on the react harnesses), see [docs/AUTHORING.md#validation-fields](docs/AUTHORING.md#validation-fields) — `validation.env` carries literal KEY=VALUE pairs to the harness with no substitution, and harness scripts switch on the key.
 
 ### init-runner-observability scaffolds
 
@@ -559,34 +419,17 @@ go run ./cmd/snippets validate --sdk=python-server-sdk --sdks=./sdks
 
 The file must export `LAUNCHDARKLY_SDK_KEY`, `LAUNCHDARKLY_FLAG_KEY`, and (where the SDK requires them) `LAUNCHDARKLY_MOBILE_KEY` / `LAUNCHDARKLY_CLIENT_SIDE_ID`. Missing keys produce a clear `snippet X input Y (type=...) requires LAUNCHDARKLY_... to be set` error before any Docker build kicks off.
 
-### Common operations
+### Go-tooling commands
 
 ```bash
 # Build the binary
 go build -o snippets ./cmd/snippets
 
-# Unit tests (model parser, render DSL, adapters)
+# Unit tests (model parser, render DSL, adapters; NOT language harnesses)
 go test ./...
-
-# Validate a single snippet end-to-end
-go run ./cmd/snippets validate \
-  --sdk=python-server-sdk \
-  --snippet=python-server-sdk/sdk-info/init \
-  --sdks=./sdks --validators=./validators
-
-# Validate one SDK's sdk-info group
-go run ./cmd/snippets validate --sdk=node-server-sdk --group=sdk-info \
-  --sdks=./sdks --validators=./validators
-
-# Dry-run check that a consumer checkout is in sync
-go run ./cmd/snippets verify --target=ld-docs --entrypoint=../ld-docs/src/content/sdk
-
-# Re-render a consumer checkout from working-tree snippets
-go run ./cmd/snippets render --target=ld-docs \
-  --entrypoint=../ld-docs/src/content/sdk --sdks=./sdks
 ```
 
-`go test ./...` covers the model parser (`internal/model`), the templating DSL (`internal/render`), and adapter render/verify behavior — not the language harnesses (those run only under `snippets validate`).
+`go test ./...` covers `internal/model` (parser), `internal/render` (DSL), and adapter render/verify behavior. Language harnesses run only under `snippets validate`. For the day-to-day `validate` / `render` / `verify` invocations, see [docs/AUTHORING.md#cli-essentials](docs/AUTHORING.md#cli-essentials).
 
 ### Docker prerequisites
 
@@ -597,10 +440,6 @@ go run ./cmd/snippets render --target=ld-docs \
 ### Commit messages
 
 Conventional Commits with `snippets` scope: `feat(snippets): …`, `fix(snippets): …`, `chore(snippets): …`, `docs(snippets): …`. The release-please config drives `snippets/CHANGELOG.md` and the `snippets/vX.Y.Z` release from these.
-
-### Branch + PR layout
-
-Branch: `rlamb/sdk-NNNN/desc` (or `rlamb/<short-desc>` for non-ticketed). Ticket goes in branch + PR body, **not** in the PR title. Sequential PRs preferred over stacked when each is independently mergeable; base a new PR on `main` once its predecessor has merged.
 
 ### Port-notes files
 
@@ -646,4 +485,4 @@ When in doubt, the code is authoritative; this guide paraphrases it. Frequent lo
 - Shared harness helpers: `validators/shared/lib.sh`.
 - CI matrix and key-type wiring: `.github/workflows/snippets-validate.yml`.
 - Release tag + artifact contract: `.github/workflows/release-please.yml`.
-- Older but still partially useful authoring doc: `docs/AUTHORING.md` (DSL section accurate; older `kind` values).
+- Snippet author reference (frontmatter, `validation.*`, DSL, render targets, CLI essentials): `docs/AUTHORING.md`.

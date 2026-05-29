@@ -26,4 +26,3 @@ This repo is a monorepo. For most work the first thing to read is the per-subtre
 
 - Conventional Commits with a scope: `feat(snippets): …`, `fix(metadata): …`, `chore: …`. release-please drives changelogs and version bumps from these.
 - Two release-please packages: `api-js` and `snippets`. Each ships its own tag (`api-js/vX.Y.Z`, `snippets/vX.Y.Z`) and changelog.
-- For snippet PRs: branch `rlamb/sdk-NNNN/desc`, ticket in branch + PR body (not PR title), sequential PRs, base on `main` once predecessor has merged.
