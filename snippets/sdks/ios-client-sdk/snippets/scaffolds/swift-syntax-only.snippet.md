@@ -35,6 +35,11 @@ import UIKit
 import Foundation
 import LaunchDarkly
 
+// File-scope stubs so wrappee bodies that reference caller-supplied
+// helpers (e.g. the experimentation onboarding `applyVariant(_:)`)
+// type-check. Never invoked.
+func applyVariant(_ variant: String) {}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
