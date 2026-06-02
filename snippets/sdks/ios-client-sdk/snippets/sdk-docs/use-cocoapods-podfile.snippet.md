@@ -4,14 +4,12 @@ sdk: ios-client-sdk
 kind: reference
 lang: ruby
 description: "Podfile in section \"Use CocoaPods\""
+# Top-level `file:` — the Go validator stages every runtime-based
+# snippet to `frontmatter.file`. The ios-install harness's `podfile`
+# branch then copies it to `Podfile` and runs `pod install`.
+file: ios-client-sdk/sdk-docs/use-cocoapods-podfile.Podfile
 validation:
   runtime: ios-install
-  # Filename the ios-install harness's `podfile` branch reads from
-  # via `$BODY_FILE` (it copies the staged file to Podfile in a
-  # workdir, then runs `pod install`). The Go validator stages every
-  # runtime-based snippet to `frontmatter.file`, so the field is
-  # required even though the harness picks up the body content too.
-  file: Podfile
   env:
     INSTALL_KIND: podfile
 ---
