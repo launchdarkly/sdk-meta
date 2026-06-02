@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.7.0...snippets/v0.8.0) (2026-06-02)
+
+
+### Features
+
+* **snippets:** REL-13762 - add experimentation onboarding snippets for frontend SDKs ([#445](https://github.com/launchdarkly/sdk-meta/issues/445)) ([cea267e](https://github.com/launchdarkly/sdk-meta/commit/cea267e6bdc829b0f4c9c0f4f21fb2839aee0562))
+
 ## [0.7.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.6.0...snippets/v0.7.0) (2026-05-26)
 
 
