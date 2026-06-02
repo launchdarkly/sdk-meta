@@ -282,16 +282,16 @@ func TestIsValidatable_SkipsScaffolds(t *testing.T) {
 	}
 }
 
-// effectiveValidationSnippet errors loudly when the scaffold ID can't be
-// resolved or when the target isn't actually a scaffold.
-func TestEffectiveValidationSnippet_RejectsBadScaffold(t *testing.T) {
+// effectiveScaffold errors loudly when the scaffold ID can't be resolved
+// or when the target isn't actually a scaffold.
+func TestEffectiveScaffold_RejectsBadScaffold(t *testing.T) {
 	s := &model.Snippet{
 		Frontmatter: model.Frontmatter{
 			ID:         "test/wrappee",
 			Validation: model.Validation{Scaffold: "nonexistent"},
 		},
 	}
-	if _, err := effectiveValidationSnippet(s, map[string]*model.Snippet{}); err == nil ||
+	if _, err := effectiveScaffold(s, "nonexistent", map[string]*model.Snippet{}); err == nil ||
 		!strings.Contains(err.Error(), "scaffold") {
 		t.Errorf("missing scaffold: want error mentioning scaffold, got %v", err)
 	}
@@ -299,9 +299,8 @@ func TestEffectiveValidationSnippet_RejectsBadScaffold(t *testing.T) {
 	notScaffold := &model.Snippet{
 		Frontmatter: model.Frontmatter{ID: "test/init", Kind: "hello-world"},
 	}
-	s.Frontmatter.Validation.Scaffold = notScaffold.Frontmatter.ID
 	all := map[string]*model.Snippet{notScaffold.Frontmatter.ID: notScaffold}
-	if _, err := effectiveValidationSnippet(s, all); err == nil ||
+	if _, err := effectiveScaffold(s, notScaffold.Frontmatter.ID, all); err == nil ||
 		!strings.Contains(err.Error(), "kind=") {
 		t.Errorf("non-scaffold target: want kind error, got %v", err)
 	}
