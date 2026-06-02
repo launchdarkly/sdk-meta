@@ -4,11 +4,13 @@ sdk: php-server-sdk
 kind: reference
 lang: php
 description: "PHP in section \"Using Guzzle\""
-# Bucket C: body is shell composer commands mistagged as `php` in the
-# source MDX. The php-syntax-only scaffold can't parse shell. See
-# _sdk-docs-port-notes.md.
-validation:
-  scaffold: php-server-sdk/scaffolds/php-syntax-only
+# Bucket C: body is shell composer commands mistagged as `lang: php`
+# in the source MDX. The php-syntax-only scaffold parses PHP, so this
+# binding can't validate this body until either (a) the source MDX
+# fence is retagged as shell (and the body adjusted to drop the
+# leading `php` prefix so shell-install can sniff `composer`), or
+# (b) a php-or-shell-composer scaffold is added. Tracked for the
+# follow-up snippet-bugs PR — see _sdk-docs-port-notes.md.
 ---
 
 ```php

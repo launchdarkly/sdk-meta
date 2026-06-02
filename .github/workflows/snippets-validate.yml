@@ -133,11 +133,17 @@ jobs:
           # Android sdk-docs: Kotlin reference fragments wrapped by
           # kotlin-syntax-only run `./gradlew compileDebugKotlin`
           # against the real launchdarkly-android-client-sdk aar +
-          # AndroidX classpath (SNIPPET_CHECK=parse). No LD key
-          # needed — compileDebugKotlin is offline.
+          # AndroidX classpath (SNIPPET_CHECK=parse). The compile
+          # itself is offline, but the android-client harness
+          # `require_env`s LAUNCHDARKLY_FLAG_KEY as a process
+          # invariant (it's wired to look it up early); use
+          # `key-type: mobile` so verify-hello-app injects the key
+          # the harness expects, matching the pattern the
+          # cpp-client / flutter / haskell rows use for syntax-only
+          # validation.
           - sdk: android-client-sdk
             runs-on: ubuntu-latest
-            key-type: none
+            key-type: mobile
             label: android-client-sdk (sdk-docs)
             group: sdk-docs
 
@@ -164,13 +170,17 @@ jobs:
           # parity with the existing server-side rows.
           - { sdk: erlang-server-sdk,   runs-on: ubuntu-latest, key-type: server, label: erlang-server-sdk (sdk-docs), group: sdk-docs }
 
-          # Apex sdk-docs: pure parse-only via apex-syntax-only;
-          # no LD key needed (Apex requires a Salesforce environment
-          # to run anyway, so we never go past parsing).
-          - { sdk: apex-server-sdk,     runs-on: ubuntu-latest, key-type: none, label: apex-server-sdk (sdk-docs), group: sdk-docs }
+          # Apex sdk-docs: pure parse-only via apex-syntax-only,
+          # which routes through the jvm validator. The harness
+          # `require_env`s LAUNCHDARKLY_SDK_KEY as a process
+          # invariant even though the wrappee body never executes —
+          # match the pattern used by every other jvm-routed
+          # syntax-only row (java-server-sdk).
+          - { sdk: apex-server-sdk,     runs-on: ubuntu-latest, key-type: server, label: apex-server-sdk (sdk-docs), group: sdk-docs }
 
-          # Roku sdk-docs: roku-syntax-only parses BrightScript via
-          # the validator. No LD key needed.
+          # Roku sdk-docs: roku-client validator runs the RokuCommunity
+          # brighterscript Lexer + Parser on each staged .brs file.
+          # No Roku device, no LD env — pure parse check.
           - { sdk: roku-client-sdk,     runs-on: ubuntu-latest, key-type: none, label: roku-client-sdk (sdk-docs), group: sdk-docs }
     steps:
       - uses: actions/checkout@v4
