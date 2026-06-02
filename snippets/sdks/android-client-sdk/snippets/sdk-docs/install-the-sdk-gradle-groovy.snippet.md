@@ -4,8 +4,13 @@ sdk: android-client-sdk
 kind: reference
 lang: java
 description: "Gradle Groovy in section \"Install the SDK\""
-validation:
-  scaffold: android-client-sdk/scaffolds/java-syntax-only
+# TODO(snippet-bug): body is Gradle Groovy DSL
+# (`implementation '…' ` calls into a Gradle Project's dependencies
+# block), not Java. javac rejects at parse — no statements outside
+# methods or classes. Mistagged as `java` in the source MDX. Fix in
+# the snippet-bugs PR: re-tag as `groovy` (or a custom
+# `gradle.groovy`) and route through a Gradle/Groovy parse path,
+# or skip syntax validation.
 ---
 
 ```java
