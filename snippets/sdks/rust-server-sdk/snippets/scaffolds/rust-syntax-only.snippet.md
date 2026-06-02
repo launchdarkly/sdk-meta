@@ -28,6 +28,23 @@ use launchdarkly_server_sdk::{
 #[allow(unused_imports)]
 use std::collections::HashMap;
 
+// Stub for the pre-1.0 (beta) `User` API surface — removed at 1.0
+// in favor of Context. Doc fragments under
+// `implementation-v1-understanding-*-beta-syntax-*` reference the
+// old API for side-by-side comparison with the 1.0 equivalents, so
+// the syntax-only validator needs a parseable stub to compile them.
+#[allow(dead_code, non_camel_case_types)]
+struct User;
+#[allow(dead_code)]
+impl User {
+    fn with_key(_key: &str) -> Self { Self }
+    fn first_name(self, _v: &str) -> Self { self }
+    fn last_name(self, _v: &str) -> Self { self }
+    fn email(self, _v: &str) -> Self { self }
+    fn custom(self, _k: &str, _v: &str) -> Self { self }
+    fn build(self) -> Self { self }
+}
+
 #[allow(dead_code, unused, unused_variables, unused_must_use)]
 async fn _wrappee() -> Result<(), Box<dyn std::error::Error>> {
     let client: Client = unimplemented!();

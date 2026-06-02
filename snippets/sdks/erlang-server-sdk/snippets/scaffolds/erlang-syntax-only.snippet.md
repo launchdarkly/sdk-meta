@@ -3,20 +3,32 @@ id: erlang-server-sdk/scaffolds/erlang-syntax-only
 sdk: erlang-server-sdk
 kind: scaffold
 lang: erlang
-file: snippet.erl
+file: hello_erlang_server.erl
 description: |
   Parse-only validator for Erlang server SDK doc fragments.
+
+  Stages as `hello_erlang_server.erl` to match the filename the
+  erlang-server harness hard-codes when copying snippets into the
+  pre-baked rebar3 project (Erlang requires `-module(Name)` to
+  match the source file's basename, so scaffold and harness must
+  agree on the name).
+
+  The harness dispatches on `SNIPPET_CHECK=parse` to skip the
+  runtime `erl` invocation that the init-runner variant uses, and
+  just confirms the staged file compiles cleanly.
 inputs:
   body:
     type: string
     description: The wrappee snippet's rendered body, inserted into the parse-only harness.
 validation:
   runtime: erlang-server
-  entrypoint: snippet.erl
+  entrypoint: hello_erlang_server.erl
+  env:
+    SNIPPET_CHECK: parse
 ---
 
 ```erlang
--module(snippet).
+-module(hello_erlang_server).
 -export([main/0]).
 
 main() ->

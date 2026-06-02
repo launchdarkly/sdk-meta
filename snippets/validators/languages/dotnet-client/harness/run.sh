@@ -51,9 +51,23 @@ cat > HelloDotNetClient.csproj <<'EOF'
 EOF
 
 if [ -f requirements.txt ]; then
+    # Each line is either `Package` (floats to the latest release) or
+    # `Package==Version` (pinned, version-specific). Pinning is how
+    # the version-pinned scaffolds (e.g. csharp-client-syntax-only-v3)
+    # validate against an older SDK API surface that the floating
+    # latest no longer exposes.
     while IFS= read -r line; do
         [ -z "$line" ] && continue
-        dotnet add package "$line" --no-restore >/dev/null
+        case "$line" in
+            *==*)
+                pkg="${line%%==*}"
+                ver="${line#*==}"
+                dotnet add package "$pkg" --version "$ver" --no-restore >/dev/null
+                ;;
+            *)
+                dotnet add package "$line" --no-restore >/dev/null
+                ;;
+        esac
     done < requirements.txt
 fi
 

@@ -4,14 +4,8 @@ sdk: dotnet-client-sdk
 kind: reference
 lang: csharp
 description: ".NET SDK v3.x (C#) in section \"Initialize the client\""
-# TODO(validate): pinned to a deprecated dotnet-client SDK API surface
-# (LdClient.Init(string, …) overload removed in v4.0; v3.x async
-# variant; v3.x relay-proxy via ConfigurationBuilder shape that
-# changed in v4). The csharp-client-syntax-only scaffold compiles
-# against the latest LaunchDarkly.ClientSdk, so these v3-shape calls
-# fail overload resolution. See _sdk-docs-port-notes.md.
 validation:
-  scaffold: dotnet-client-sdk/scaffolds/csharp-client-syntax-only
+  scaffold: dotnet-client-sdk/scaffolds/csharp-client-syntax-only-v3
 ---
 
 ```csharp

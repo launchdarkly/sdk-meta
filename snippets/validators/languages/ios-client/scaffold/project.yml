@@ -14,7 +14,7 @@ packages:
     from: "11.0.0"
   LaunchDarklyObservability:
     url: https://github.com/launchdarkly/swift-launchdarkly-observability
-    from: "1.0.0"
+    from: "0.37.0"
 
 targets:
   HelloIOS:

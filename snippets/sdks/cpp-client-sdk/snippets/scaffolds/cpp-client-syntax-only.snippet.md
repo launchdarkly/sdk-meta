@@ -67,6 +67,19 @@ struct _AnyClient {
     template <typename... Args> void TrackEvent(Args&&...) const {}
     template <typename... Args> void Identify(Args&&...) const {}
     template <typename... Args> auto StartAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
+    // Lowercase-first aliases — the v2.x C++ client SDK exposed
+    // camelCased methods (e.g. `client->boolVariation(...)`); v3.x
+    // renamed to PascalCase. Doc fragments still cover both eras, so
+    // expose both surfaces.
+    template <typename... Args> bool boolVariation(Args&&...) const { return false; }
+    template <typename... Args> int intVariation(Args&&...) const { return 0; }
+    template <typename... Args> double doubleVariation(Args&&...) const { return 0; }
+    template <typename... Args> std::string stringVariation(Args&&...) const { return {}; }
+    template <typename... Args> auto jsonVariation(Args&&...) const { return launchdarkly::Value{}; }
+    template <typename... Args> auto allFlags(Args&&...) const { return launchdarkly::Value{}; }
+    template <typename... Args> void trackEvent(Args&&...) const {}
+    template <typename... Args> void identify(Args&&...) const {}
+    template <typename... Args> auto startAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
 };
 
 template <int = 0>

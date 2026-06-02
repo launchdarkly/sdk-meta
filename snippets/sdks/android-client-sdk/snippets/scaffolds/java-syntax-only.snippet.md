@@ -50,6 +50,7 @@ package com.launchdarkly.hello_android;
 import android.app.Application;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import com.launchdarkly.sdk.android.LDClient;
 
 // No `public` modifier: Java requires public top-level classes to
 // live in a file matching the class name. We need this scaffold's
@@ -60,6 +61,15 @@ import androidx.appcompat.app.AppCompatActivity;
 // the class is never instantiated.
 @SuppressWarnings({"unused", "ConstantConditions"})
 class BaseApplication extends Application {
+    // Instance-field stubs so bodies like
+    // `client.boolVariation(flagKey, true)` resolve at javac time.
+    // Kotlin bodies pick these up via top-level decls in the
+    // pre-baked MainApplication.kt; Java has no equivalent file-scope
+    // mechanism, so we declare them as instance fields and rely on
+    // `onCreate()` being an instance method.
+    LDClient client;
+    String flagKey;
+
     @Override
     public void onCreate() {
         super.onCreate();
