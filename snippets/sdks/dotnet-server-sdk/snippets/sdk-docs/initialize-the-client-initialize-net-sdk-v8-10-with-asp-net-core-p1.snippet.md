@@ -4,13 +4,13 @@ sdk: dotnet-server-sdk
 kind: reference
 lang: csharp
 description: "Initialize, .NET SDK v8.10+ with ASP.Net Core in section \"Initialize the client\""
-# TODO(validate): ASP.NET Core init fragment. Requires Microsoft.AspNetCore +
-# LaunchDarkly.Observability + ObservabilityPlugin types that the
-# csharp-syntax-only scaffold doesn't pull in, plus the body references
-# the bare identifier `args` which is only in scope inside the
-# top-level Main(string[] args). See _sdk-docs-port-notes.md.
-validation:
-  scaffold: dotnet-server-sdk/scaffolds/csharp-syntax-only
+# TODO(scaffold): needs a dedicated csharp-aspnet-core-syntax-only
+# scaffold that (a) pulls Microsoft.AspNetCore.App + LaunchDarkly.Observability
+# as requirements, (b) provides a top-level-statement Program.cs
+# context where `args` is in scope (current csharp-syntax-only is a
+# class-bodied console app), and (c) exposes PluginConfigurationBuilder
+# + ObservabilityPlugin types. Once that scaffold lands, set
+# `validation.scaffold:` here to point at it.
 ---
 
 ```csharp

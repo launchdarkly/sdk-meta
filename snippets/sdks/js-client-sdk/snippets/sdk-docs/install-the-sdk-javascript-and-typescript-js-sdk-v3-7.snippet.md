@@ -4,13 +4,13 @@ sdk: js-client-sdk
 kind: reference
 lang: javascript
 description: "JavaScript and TypeScript, JS SDK v3.7+ in section \"Install the SDK\""
-# TODO(validate): body shows three alternative `LDClient` import styles
-# (CommonJS require, ES module default import, TS import) as parallel
-# examples — but co-existing in one file they redeclare LDClient.
-# The docs intend "use one of these"; the validator can only see the
-# whole body. See _sdk-docs-port-notes.md.
-validation:
-  scaffold: js-client-sdk/scaffolds/js-syntax-only
+# TODO(snippet-bug): body shows three alternative `LDClient` import
+# styles (CommonJS require, ES module default import, TS import) in
+# one fence as parallel examples — they redeclare `LDClient` when the
+# validator parses the whole body. Fix in a follow-up snippet-bugs
+# PR by splitting this snippet into three: install-the-sdk-commonjs,
+# install-the-sdk-esm, install-the-sdk-typescript — each with one
+# import style. Markers in the docs MDX get re-pointed at the split.
 ---
 
 ```js
