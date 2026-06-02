@@ -198,10 +198,22 @@ jobs:
       # ~7 min, etc.) into a layer-cache hit on warm runs.
       - name: Set up Docker buildx
         if: matrix.runs-on != 'macos-latest'
+        # Buildx initialization pulls moby/buildkit from Docker Hub —
+        # an intermittent source of context-deadline-exceeded failures
+        # on CI. Buildx is an optimization (caches validator-image
+        # layers across runs); the validate step still builds from
+        # source if buildx never starts. continue-on-error keeps a
+        # Docker Hub blip from failing an otherwise-correct row.
+        continue-on-error: true
         uses: docker/setup-buildx-action@v3
 
       - name: Pre-build cached validator images
         if: matrix.runs-on != 'macos-latest'
+        # Same rationale as the buildx setup step above — image
+        # pre-build is purely an optimization; if it fails (Docker
+        # Hub flake, GHA cache miss, etc.) the validator falls back
+        # to a from-scratch `docker build` and the row still passes.
+        continue-on-error: true
         env:
           MATRIX_SDK: ${{ matrix.sdk }}
           MATRIX_GROUP: ${{ matrix.group }}
