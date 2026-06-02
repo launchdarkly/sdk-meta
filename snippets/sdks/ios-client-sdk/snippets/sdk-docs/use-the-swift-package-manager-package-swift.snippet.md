@@ -4,7 +4,10 @@ sdk: ios-client-sdk
 kind: reference
 lang: swift
 description: "Package.swift in section \"Use the Swift Package Manager\""
-# Bucket C: . See _sdk-docs-port-notes.md.
+validation:
+  runtime: ios-install
+  env:
+    INSTALL_KIND: swift-package
 ---
 
 ```swift

@@ -6,6 +6,8 @@ lang: cpp
 description: "C SDK v2.x (C++ binding) in section \"Evaluate a flag\""
 # Bucket C: cpp v2.x API surface no longer available in cpp-sdks v3 (the
 # Dockerfile-pinned validator). See _sdk-docs-port-notes.md.
+validation:
+  scaffold: cpp-client-sdk/scaffolds/cpp-client-syntax-only
 ---
 
 ```cpp

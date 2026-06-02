@@ -9,6 +9,8 @@ description: "C# in section \"Install the SDK\""
 # mistagged as `csharp` in the source MDX. The
 # csharp-client-syntax-only scaffold can't compile PowerShell.
 # See _sdk-docs-port-notes.md.
+validation:
+  scaffold: dotnet-client-sdk/scaffolds/csharp-client-syntax-only
 ---
 
 ```csharp

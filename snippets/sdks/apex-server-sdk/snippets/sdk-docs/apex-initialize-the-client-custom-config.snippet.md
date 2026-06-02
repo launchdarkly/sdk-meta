@@ -5,6 +5,8 @@ kind: reference
 lang: java
 description: "Custom Config in section \"Initialize the client\""
 # Bucket C: no Apex/Salesforce validator. See _sdk-docs-port-notes.md.
+validation:
+  scaffold: apex-server-sdk/scaffolds/apex-syntax-only
 ---
 
 ```java

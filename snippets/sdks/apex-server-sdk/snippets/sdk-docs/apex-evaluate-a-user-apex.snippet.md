@@ -5,6 +5,8 @@ kind: reference
 lang: java
 description: "Apex in section \"Evaluate a user\""
 # Bucket C: no Apex/Salesforce validator. See _sdk-docs-port-notes.md.
+validation:
+  scaffold: apex-server-sdk/scaffolds/apex-syntax-only
 ---
 
 ```java

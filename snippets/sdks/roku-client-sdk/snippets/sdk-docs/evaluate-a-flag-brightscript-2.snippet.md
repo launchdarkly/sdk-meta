@@ -5,6 +5,8 @@ kind: reference
 lang: brightscript
 description: "BrightScript in section \"Evaluate a flag\""
 # Bucket C: no Roku BrightScript validator. See _sdk-docs-port-notes.md.
+validation:
+  scaffold: roku-client-sdk/scaffolds/roku-syntax-only
 ---
 
 ```brightscript

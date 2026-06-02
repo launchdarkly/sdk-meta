@@ -3,10 +3,31 @@
 # Dockerfile pre-bakes a hello-android scaffold + Robolectric test;
 # per-validate we just swap the snippet's two Kotlin files in and run
 # the JUnit test.
+#
+# Two checks flow through this same harness, dispatched on the
+# optional `SNIPPET_CHECK` env var (set by the snippet's
+# `validation.env` or by the validate dispatcher):
+#
+#   - SNIPPET_CHECK unset OR "runtime" (default): full Robolectric run
+#     end-to-end against the LD streaming endpoint. Asserts the
+#     canonical EXAM-HELLO line lands in the activity TextView.
+#
+#   - SNIPPET_CHECK=parse: parse-and-type-check the staged Kotlin
+#     file against the pre-baked `launchdarkly-android-client-sdk`
+#     aar + AndroidX classpath via `./gradlew compileDebugKotlin`,
+#     then bail out. Used for doc fragments (e.g. the
+#     `sdk-docs/*-kotlin.snippet.md` reference snippets) that
+#     aren't standalone-runnable but should still be checked for
+#     syntactic correctness and type resolution against the real
+#     android-client SDK surface.
 set -eu
 
 . /harness-shared/lib.sh
-require_env LAUNCHDARKLY_MOBILE_KEY LAUNCHDARKLY_FLAG_KEY SNIPPET_ENTRYPOINT
+require_env LAUNCHDARKLY_FLAG_KEY SNIPPET_ENTRYPOINT
+CHECK="${SNIPPET_CHECK:-runtime}"
+if [ "$CHECK" = "runtime" ]; then
+    require_env LAUNCHDARKLY_MOBILE_KEY
+fi
 
 # The snippet declares main-application + main-activity as separate
 # files. Both come through as part of the staging dir — copy whichever
@@ -19,23 +40,29 @@ for f in /snippet/app/src/main/java/com/launchdarkly/hello_android/*.kt; do
     cp "$f" "${PKG_DIR}/$(basename "$f")"
 done
 
-# The init scaffold's MainApplication.kt splices the snippet body
-# inside `onCreate()`. Two transforms are needed before kotlinc will
-# accept it:
+# Two transforms are needed before kotlinc will accept the staged
+# Kotlin file:
 #   1. Lift any `import` statements out of the function body to file
 #      scope (Kotlin only allows imports between `package` and the
 #      first top-level declaration).
-#   2. Rewrite the body's `this@BaseApplication` reference (the
-#      gonfalon snippet's literal Application name) to
-#      `this@MainApplication`, which is the class name this scaffold
-#      produces and the existing HelloAppTest expects via
-#      `@Config(application = MainApplication::class)`.
+#   2. In runtime mode only: rewrite the body's `this@BaseApplication`
+#      reference (the gonfalon snippet's literal Application name)
+#      to `this@MainApplication`, which is the class name the init
+#      scaffold produces and the existing HelloAppTest expects via
+#      `@Config(application = MainApplication::class)`. The
+#      kotlin-syntax-only scaffold declares its class as
+#      `BaseApplication` directly so the body's labeled-this
+#      resolves without substitution; skip the rewrite there.
 # Idempotent on files that don't have a misplaced import or the
 # `BaseApplication` token.
-APP_KT="${PKG_DIR}/MainApplication.kt"
-if [ -f "$APP_KT" ]; then
-    python3 - "$APP_KT" <<'PYEOF'
-import re, sys
+ENTRY_KT="${PKG_DIR}/$(basename "$SNIPPET_ENTRYPOINT")"
+if [ -f "$ENTRY_KT" ]; then
+    SUBSTITUTE_BASE_APP=1
+    if [ "$CHECK" != "runtime" ]; then
+        SUBSTITUTE_BASE_APP=0
+    fi
+    SUBSTITUTE_BASE_APP="$SUBSTITUTE_BASE_APP" python3 - "$ENTRY_KT" <<'PYEOF'
+import os, re, sys
 path = sys.argv[1]
 with open(path) as f:
     text = f.read()
@@ -79,10 +106,9 @@ if new_top:
             break
     out[insert_at:insert_at] = new_top
 
-# Substitute BaseApplication for MainApplication so the body's
-# `this@BaseApplication` resolves to the class this scaffold defines.
 new_text = "\n".join(out) + ("\n" if text.endswith("\n") else "")
-new_text = re.sub(r"\bBaseApplication\b", "MainApplication", new_text)
+if os.environ.get("SUBSTITUTE_BASE_APP") == "1":
+    new_text = re.sub(r"\bBaseApplication\b", "MainApplication", new_text)
 
 with open(path, "w") as f:
     f.write(new_text)
@@ -90,6 +116,22 @@ PYEOF
 fi
 
 cd "${SCAFFOLD}"
+
+if [ "$CHECK" = "parse" ]; then
+    # Compile-only path: kotlinc against the real android-client SDK
+    # aar + AndroidX runtime, no Robolectric run. compileDebugKotlin
+    # builds main-source Kotlin only — it doesn't run lint, doesn't
+    # try to assemble an APK, and doesn't pull in test sources, so it
+    # finishes orders of magnitude faster than testDebugUnitTest.
+    LOG=$(mktemp)
+    if timeout --signal=TERM 600s ./gradlew --no-daemon \
+            compileDebugKotlin --console=plain >"$LOG" 2>&1; then
+        echo "feature flag evaluates to true"
+        echo "validator: ok (compileDebugKotlin succeeded)"
+        exit 0
+    fi
+    fail_with_log "$LOG" "compileDebugKotlin failed"
+fi
 
 LOG=$(mktemp)
 timeout --signal=TERM 600s ./gradlew --no-daemon \

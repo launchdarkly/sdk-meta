@@ -4,6 +4,8 @@ sdk: react-client-sdk
 kind: reference
 lang: javascript
 description: "JavaScript: Create a server session in section \"`createLDServerSession` and `useLDServerSession`\""
+validation:
+  scaffold: react-client-sdk/scaffolds/react-syntax-only
 ---
 
 ```js

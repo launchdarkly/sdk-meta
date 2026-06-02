@@ -9,6 +9,8 @@ description: "JavaScript and TypeScript, JS SDK v3.7+ in section \"Install the S
 # examples — but co-existing in one file they redeclare LDClient.
 # The docs intend "use one of these"; the validator can only see the
 # whole body. See _sdk-docs-port-notes.md.
+validation:
+  scaffold: js-client-sdk/scaffolds/js-syntax-only
 ---
 
 ```js

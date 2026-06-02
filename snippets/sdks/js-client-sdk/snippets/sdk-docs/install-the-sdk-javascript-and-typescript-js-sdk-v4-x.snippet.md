@@ -7,6 +7,8 @@ description: "JavaScript and TypeScript, JS SDK v4.x in section \"Install the SD
 # Bucket C: same shape as the v3.7 install snippet — three parallel
 # import styles in one body that redeclare LDClient. See
 # _sdk-docs-port-notes.md.
+validation:
+  scaffold: js-client-sdk/scaffolds/js-syntax-only
 ---
 
 ```js

@@ -4,6 +4,8 @@ sdk: react-client-sdk
 kind: reference
 lang: tsx
 description: "React Web SDK v4.0 in section \"Create a wrapped server-side SDK client\""
+validation:
+  scaffold: react-client-sdk/scaffolds/react-syntax-only
 ---
 
 ```tsx

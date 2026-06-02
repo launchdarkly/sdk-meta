@@ -9,6 +9,8 @@ description: "Initialize, .NET SDK v8.10+ with ASP.Net Core in section \"Initial
 # csharp-syntax-only scaffold doesn't pull in, plus the body references
 # the bare identifier `args` which is only in scope inside the
 # top-level Main(string[] args). See _sdk-docs-port-notes.md.
+validation:
+  scaffold: dotnet-server-sdk/scaffolds/csharp-syntax-only
 ---
 
 ```csharp

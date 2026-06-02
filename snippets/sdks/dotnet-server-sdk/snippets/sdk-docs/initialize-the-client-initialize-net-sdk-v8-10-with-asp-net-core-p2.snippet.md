@@ -10,6 +10,8 @@ description: "Initialize, .NET SDK v8.10+ with ASP.Net Core in section \"Initial
 # `protected` modifiers aren't valid inside another method, so the
 # csharp-syntax-only scaffold's wrapper makes this uncompilable.
 # See _sdk-docs-port-notes.md.
+validation:
+  scaffold: dotnet-server-sdk/scaffolds/csharp-syntax-only
 ---
 
 ```csharp

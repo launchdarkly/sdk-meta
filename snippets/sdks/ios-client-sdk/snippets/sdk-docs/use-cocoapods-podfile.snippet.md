@@ -4,7 +4,10 @@ sdk: ios-client-sdk
 kind: reference
 lang: ruby
 description: "Podfile in section \"Use CocoaPods\""
-# Bucket C: . See _sdk-docs-port-notes.md.
+validation:
+  runtime: ios-install
+  env:
+    INSTALL_KIND: podfile
 ---
 
 ```ruby

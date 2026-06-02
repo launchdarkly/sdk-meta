@@ -10,6 +10,8 @@ description: "React Native SDK v10.x in section \"Initialize the client and iden
 # The harness needs a separate parse-only mode (or the scaffold needs
 # to output the App.tsx + src/welcome.tsx pair) before sdk-docs
 # fragments can validate. See _sdk-docs-port-notes.md.
+validation:
+  scaffold: react-native-client-sdk/scaffolds/react-native-syntax-only
 ---
 
 ```ts

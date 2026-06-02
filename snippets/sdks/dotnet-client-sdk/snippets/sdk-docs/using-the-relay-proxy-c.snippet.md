@@ -10,6 +10,8 @@ description: "C# in section \"Using the Relay Proxy\""
 # changed in v4). The csharp-client-syntax-only scaffold compiles
 # against the latest LaunchDarkly.ClientSdk, so these v3-shape calls
 # fail overload resolution. See _sdk-docs-port-notes.md.
+validation:
+  scaffold: dotnet-client-sdk/scaffolds/csharp-client-syntax-only
 ---
 
 ```csharp
