@@ -72,25 +72,6 @@ usage:
       to one snippet group (the middle segment of the snippet id), which is
       how CI splits one SDK across multiple matrix rows.
 
-  snippets image-tag --runtime=<runtime> [--validators=./validators]
-      Print the deterministic Docker image tag the validate subcommand
-      will build for the given validator runtime (e.g. python,
-      cpp-server). The tag is <image-prefix>:<content-hash-16-hex>,
-      computed over validators/shared/ plus validators/languages/<runtime>/.
-      Empty output (no error) for runtimes whose mode is native. Used by
-      CI to pre-build images with shared layer caches (docker buildx
-      --cache-from type=gha) under the same tag the validator will later
-      look up — keeps cold-cache CI builds out of the validate step.
-
-  snippets list-runners --sdk=<sdk-id> [--group=<group>] [--sdks=./sdks]
-                        [--validators=./validators]
-      Print one runtime name per line — every distinct validator runtime
-      that this SDK's bound snippets will exercise under the given group
-      filter. Resolves scaffold-bound snippets the same way validate
-      does (scaffold's runtime, falling back to the wrappee's lang). CI's
-      per-row pre-build step uses this to enumerate the Dockerfiles it
-      needs to warm before validate runs.
-
   snippets version
       Print the snippets generator version.
 `
@@ -107,10 +88,6 @@ func main() {
 		runVerify(os.Args[2:])
 	case "validate":
 		runValidate(os.Args[2:])
-	case "image-tag":
-		runImageTag(os.Args[2:])
-	case "list-runners":
-		runListRunners(os.Args[2:])
 	case "version":
 		fmt.Println(version.Version)
 	case "-h", "--help", "help":
@@ -242,57 +219,4 @@ func runValidate(args []string) {
 		os.Exit(1)
 	}
 	fmt.Println("ok")
-}
-
-// runImageTag prints the deterministic Docker tag for a given validator
-// runtime. CI uses this to pre-build images with `docker buildx build
-// --cache-from type=gha --load -t $(snippets image-tag ...)`, and the
-// validator's subsequent `docker build -t <same-tag>` finds the layers in
-// the local Docker daemon's cache — cold-cache cost moves out of the
-// validate step.
-func runImageTag(args []string) {
-	fset := flag.NewFlagSet("image-tag", flag.ExitOnError)
-	runtime := fset.String("runtime", "", "validator runtime name (required; matches a directory under validators/languages/)")
-	validators := fset.String("validators", "./validators", "path to the validators/ directory")
-	_ = fset.Parse(args)
-	if *runtime == "" {
-		fmt.Fprintf(os.Stderr, "image-tag: --runtime is required\n")
-		os.Exit(2)
-	}
-	tag, err := validate.ImageTag(*validators, *runtime)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "image-tag failed: %v\n", err)
-		os.Exit(1)
-	}
-	// Native validators have no Docker image. Print nothing (no newline)
-	// so CI's shell can branch on an empty result.
-	if tag == "" {
-		return
-	}
-	fmt.Println(tag)
-}
-
-// runListRunners prints, one per line, every distinct validator runtime
-// the SDK's bound snippets will exercise under the given group filter.
-// CI's per-row pre-build step loops over the output to warm caches before
-// `validate` runs.
-func runListRunners(args []string) {
-	fset := flag.NewFlagSet("list-runners", flag.ExitOnError)
-	sdk := fset.String("sdk", "", "sdk id (required)")
-	group := fset.String("group", "", "snippet group (optional; e.g. sdk-info or sdk-docs)")
-	sdks := fset.String("sdks", "", "path to a sdks/ directory (default: embedded)")
-	validators := fset.String("validators", "./validators", "path to the validators/ directory")
-	_ = fset.Parse(args)
-	if *sdk == "" {
-		fmt.Fprintf(os.Stderr, "list-runners: --sdk is required\n")
-		os.Exit(2)
-	}
-	runners, err := validate.ListRunners(resolveSDKsFS(*sdks), *validators, *sdk, *group)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "list-runners failed: %v\n", err)
-		os.Exit(1)
-	}
-	for _, r := range runners {
-		fmt.Println(r)
-	}
 }
