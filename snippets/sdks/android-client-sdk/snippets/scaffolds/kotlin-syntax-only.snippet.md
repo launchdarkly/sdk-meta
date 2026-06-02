@@ -53,12 +53,18 @@ import android.app.Application
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 // Wildcard imports cover the doc fragments' references to `LDConfig`,
-// `LDContext`, `AutoEnvAttributes`, `Components`, `Plugin`,
-// `Observability`, etc. without per-snippet placeholder boilerplate.
+// `LDContext`, `Components`, `Plugin`, `Observability`, etc. without
+// per-snippet placeholder boilerplate.
 import com.launchdarkly.sdk.*
 import com.launchdarkly.sdk.android.*
 import com.launchdarkly.sdk.android.integrations.*
 import com.launchdarkly.observability.plugin.*
+// `AutoEnvAttributes` is a nested enum at
+// `LDConfig.Builder.AutoEnvAttributes` (Java class name
+// `LDConfig$Builder$AutoEnvAttributes`). Package wildcard imports
+// don't reach nested types, so it needs an explicit import for the
+// v5-x init body's `AutoEnvAttributes.Enabled` reference.
+import com.launchdarkly.sdk.android.LDConfig.Builder.AutoEnvAttributes
 
 // File-scope stubs so wrappee bodies that reference caller-supplied
 // helpers (e.g. `applyVariant(variant)`) type-check. Never invoked.
