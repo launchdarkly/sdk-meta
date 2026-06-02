@@ -130,6 +130,17 @@ jobs:
             label: android-client-sdk (init)
             snippet: android-client-sdk/sdk-info/init
 
+          # Android sdk-docs: Kotlin reference fragments wrapped by
+          # kotlin-syntax-only run `./gradlew compileDebugKotlin`
+          # against the real launchdarkly-android-client-sdk aar +
+          # AndroidX classpath (SNIPPET_CHECK=parse). No LD key
+          # needed — compileDebugKotlin is offline.
+          - sdk: android-client-sdk
+            runs-on: ubuntu-latest
+            key-type: none
+            label: android-client-sdk (sdk-docs)
+            group: sdk-docs
+
           # SDKs whose sdk-docs slice picked up bound syntax-only
           # validators in the docs-validation pass (PR
           # rlamb/sdk-docs-validation). Each matrix row builds the
@@ -146,6 +157,21 @@ jobs:
           - { sdk: flutter-client-sdk,  runs-on: ubuntu-latest, key-type: client }
           - { sdk: haskell-server-sdk,  runs-on: ubuntu-latest, key-type: server }
           - { sdk: rust-server-sdk,     runs-on: ubuntu-latest, key-type: server }
+
+          # Erlang sdk-docs gained bindings via erlang-syntax-only in
+          # the multi-check rollout. No LD key needed for the
+          # syntax-only scaffold; passing `server` for harness env
+          # parity with the existing server-side rows.
+          - { sdk: erlang-server-sdk,   runs-on: ubuntu-latest, key-type: server, label: erlang-server-sdk (sdk-docs), group: sdk-docs }
+
+          # Apex sdk-docs: pure parse-only via apex-syntax-only;
+          # no LD key needed (Apex requires a Salesforce environment
+          # to run anyway, so we never go past parsing).
+          - { sdk: apex-server-sdk,     runs-on: ubuntu-latest, key-type: none, label: apex-server-sdk (sdk-docs), group: sdk-docs }
+
+          # Roku sdk-docs: roku-syntax-only parses BrightScript via
+          # the validator. No LD key needed.
+          - { sdk: roku-client-sdk,     runs-on: ubuntu-latest, key-type: none, label: roku-client-sdk (sdk-docs), group: sdk-docs }
     steps:
       - uses: actions/checkout@v4
 
