@@ -4,9 +4,12 @@ sdk: erlang-server-sdk
 kind: reference
 lang: erlang
 description: "Erlang in section \"Transport Layer Security (TLS)\""
-# TODO(validate): erlang-server validator's gen_server harness is incompatible with the erlang-syntax-only scaffold's module shape. See _sdk-docs-port-notes.md.
-validation:
-  scaffold: erlang-server-sdk/scaffolds/erlang-syntax-only
+# TODO(snippet-bug): body ends with a trailing `,` — it's a fragment
+# meant to be spliced inside a larger function body. The
+# erlang-syntax-only scaffold wraps `{{ body }}` with `wrappee_() ->`
+# / `.`, which yields `..., .` (illegal). Fix in the snippet-bugs
+# PR: end with `.` or wrap as a complete expression statement so
+# the scaffold's terminator is valid.
 ---
 
 ```erlang

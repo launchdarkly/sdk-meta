@@ -4,8 +4,11 @@ sdk: android-client-sdk
 kind: reference
 lang: kotlin
 description: "Android SDK v4.x (Kotlin) in section \"Initialize the client\""
-validation:
-  scaffold: android-client-sdk/scaffolds/kotlin-syntax-only
+# TODO(validator): same version-pinned issue as the v4-x-java
+# sibling — `LDConfig.Builder()` is 0-arg in v4 but requires
+# `AutoEnvAttributes` in v5+. The kotlin-syntax-only scaffold
+# compiles against the v5.x AAR. Needs the same android-client-v4
+# version-pinned validator.
 ---
 
 ```kotlin
