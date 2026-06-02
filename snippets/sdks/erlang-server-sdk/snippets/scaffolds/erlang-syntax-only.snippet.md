@@ -22,6 +22,10 @@ validation:
 main() ->
     io:format("feature flag evaluates to true~n").
 
-_wrappee() ->
+%% wrappee/0 hosts the snippet body. Erlang requires function names
+%% to start with a lowercase letter (atoms), so the conventional
+%% leading-underscore name from other scaffolds doesn't translate
+%% here — `wrappee_` is the closest lexical match.
+wrappee_() ->
 {{ body }}.
 ```
