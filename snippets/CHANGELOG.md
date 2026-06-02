@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.8.0...snippets/v0.9.0) (2026-06-02)
+
+
+### Features
+
+* **snippets:** add sdk-docs install canonicals for 9 SDKs ([#439](https://github.com/launchdarkly/sdk-meta/issues/439)) ([74d530e](https://github.com/launchdarkly/sdk-meta/commit/74d530e86dc4b26a95ca731881af4bfcc822724d))
+
 ## [0.8.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.7.0...snippets/v0.8.0) (2026-06-02)
 
 
