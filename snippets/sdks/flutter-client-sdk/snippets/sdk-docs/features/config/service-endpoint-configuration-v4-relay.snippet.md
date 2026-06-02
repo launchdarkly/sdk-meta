@@ -9,7 +9,7 @@ description: Service endpoint configuration example for Flutter.
 ```dart
 final config = LDConfig(
   CredentialSource.fromEnvironment(),
-  autoEnvAttributes.enabled,
+  AutoEnvAttributes.enabled,
   serviceEndpoints: ServiceEndpoints.relayProxy('https://your-relay-proxy.com:8030')
 );
 ```

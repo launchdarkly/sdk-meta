@@ -22,7 +22,7 @@ const options: LDMigrationOptions = {
     return LDMigrationSuccess(true);
   },
   readOld: async(key?: string) => {
-    console.log("Reading from new: ", key);
+    console.log("Reading from old: ", key);
     return LDMigrationSuccess(true);
   },
   writeNew: async(params?: {key: string, value: string}) => {
@@ -36,7 +36,7 @@ const options: LDMigrationOptions = {
     return LDMigrationError(new Error('example error'));
   },
 
-  check: (old, new) => {
+  check: (old, newVal) => {
     // Define your consistency check for read operations
     // and return a boolean. Depending on your migration,
     // this may be as simple as 'return a === b;'

@@ -2,11 +2,11 @@
 id: react-native-client-sdk/sdk-docs/features/config/app-config
 sdk: react-native-client-sdk
 kind: reference
-lang: javascript
+lang: typescript
 description: Application metadata configuration example for React Native.
 ---
 
-```js
+```ts
 const options: LDOptions = {
   applicationInfo: {
     id: 'authentication-service',

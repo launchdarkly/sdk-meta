@@ -2,11 +2,11 @@
 id: cpp-server-sdk/sdk-docs/features/config/service-endpoint-configuration-cpp-c-v3-0-relay
 sdk: cpp-server-sdk
 kind: reference
-lang: cpp
+lang: c
 description: Service endpoint configuration example for C++ (server-side).
 ---
 
-```cpp
+```c
 LDServerConfigBuilder builder = LDServerConfigBuilder_New("YOUR_SDK_KEY");
 
 LDServerConfigBuilder_ServiceEndpoints_RelayProxyBaseURL(builder, "https://your-relay-proxy.com:8030")
