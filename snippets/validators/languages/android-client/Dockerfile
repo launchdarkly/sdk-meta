@@ -39,15 +39,21 @@ RUN yes | sdkmanager --licenses >/dev/null \
 ARG HELLO_ANDROID_REF=main
 ARG LD_ANDROID_SDK_VERSION=5.11.1
 ARG ROBOLECTRIC_VERSION=4.12.2
+# Optional observability plugin AAR. Doc fragments under
+# initialize-the-client-android-sdk-v5-x-* show the v5.9+ pattern
+# `Components.plugins().setPlugins(listOf(Observability(this@…)))`,
+# which references the launchdarkly-observability-android package.
+ARG LD_ANDROID_OBSERVABILITY_VERSION=0.49.0
 
 RUN git clone --depth 1 --branch "${HELLO_ANDROID_REF}" \
         https://github.com/launchdarkly/hello-android.git /opt/hello-android
 
 WORKDIR /opt/hello-android
 
-# Patch the LD SDK version + add Robolectric to testImplementation.
+# Patch the LD SDK version, add the observability AAR to
+# `implementation`, and add Robolectric to `testImplementation`.
 RUN sed -i "s|com.launchdarkly:launchdarkly-android-client-sdk:[0-9.]*|com.launchdarkly:launchdarkly-android-client-sdk:${LD_ANDROID_SDK_VERSION}|" app/build.gradle \
-    && sed -i "/^dependencies {$/a\\    testImplementation 'org.robolectric:robolectric:${ROBOLECTRIC_VERSION}'\\n    testImplementation 'junit:junit:4.13.2'\\n    testImplementation 'androidx.test:core:1.5.0'\\n    testImplementation 'androidx.test.ext:junit:1.1.5'" app/build.gradle
+    && sed -i "/^dependencies {$/a\\    implementation 'com.launchdarkly:launchdarkly-observability-android:${LD_ANDROID_OBSERVABILITY_VERSION}'\\n    testImplementation 'org.robolectric:robolectric:${ROBOLECTRIC_VERSION}'\\n    testImplementation 'junit:junit:4.13.2'\\n    testImplementation 'androidx.test:core:1.5.0'\\n    testImplementation 'androidx.test.ext:junit:1.1.5'" app/build.gradle
 
 # Robolectric needs testOptions { unitTests.includeAndroidResources } to
 # resolve R.string / R.id at test time. Forward stdout/stderr so the
