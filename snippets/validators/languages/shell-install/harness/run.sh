@@ -19,6 +19,22 @@
 #                        bower_components dir exists.
 #   gem install …      — route gems to a per-run GEM_HOME (so we don't
 #                        need root), then assert by walking that dir.
+#   cargo add …        — `cargo init`, then run body, then grep Cargo.toml.
+#   php composer.phar
+#     require …        — symlink /opt/composer.phar into $WORK, init a
+#                        minimal composer project, run body, check vendor/.
+#   dotnet add
+#     package …        — `dotnet new console`, then run body, then grep
+#                        the generated .csproj for <PackageReference>.
+#   Install-Package …  — legacy NuGet PowerShell. Stripped from multi-line
+#                        bodies (we keep validating the dotnet CLI variant
+#                        in the same body); causes a hard error if it's
+#                        the only line.
+#   implementation
+#     group: …         — Gradle DSL fragment. Wrapped in a minimal
+#                        build.gradle's dependencies block; `gradle
+#                        dependencies` resolves and we grep the output
+#                        for the artifact name.
 #
 # Any unrecognized leading token is a hard error: a new install style means
 # the harness needs to learn it, not silently no-op.
@@ -52,6 +68,18 @@ fi
 # Body is one (sometimes few) shell command lines. Read them all so a
 # multi-line install (e.g. `cd … && npm i …`) still works.
 COMMAND=$(cat "$BODY")
+
+# Drop legacy NuGet PowerShell `Install-Package` lines. The cmdlet only
+# exists in PowerShell with the NuGet PackageManagement module — not in
+# our toolchain. Snippets that show both the legacy `Install-Package`
+# and the modern `dotnet add package` forms (for backward-compat
+# documentation) get the dotnet variant validated; the Install-Package
+# variant is structurally unrunnable on Linux. Bodies whose only line is
+# Install-Package fall through to the `*` case below and fail loudly.
+if printf '%s' "$COMMAND" | grep -q '^[[:space:]]*Install-Package'; then
+    COMMAND=$(printf '%s' "$COMMAND" | sed '/^[[:space:]]*Install-Package/d')
+fi
+
 # Sniff the leading non-whitespace token to pick a strategy.
 LEAD=$(printf '%s' "$COMMAND" | awk 'NF{print $1; exit}')
 SUB=$(printf '%s' "$COMMAND" | awk 'NF{print $2; exit}')
@@ -75,6 +103,12 @@ run_in_log() {
 # is printed, so the assertion targets the last package the body installs.
 last_pkg() {
     printf '%s' "$1" | awk '
+        {
+            # Strip inline shell comments so trailing `# foo bar` annotations
+            # in multi-line install bodies do not get picked up as package names.
+            sub(/[ \t]*#.*$/, "", $0);
+            $0 = $0;  # force re-split into $1..$NF after the substitution
+        }
         NF >= 3 {
             for (i = 3; i <= NF; i++) {
                 if ($i ~ /^-/) continue;
@@ -183,6 +217,75 @@ case "$LEAD" in
             echo "validator: ok — $pkg installed in $GEM_HOME"
         else
             fail_with_log "$LOG" "expected gem $pkg to be installed under $GEM_HOME/gems"
+        fi
+        ;;
+    cargo)
+        if [ "$SUB" != "add" ]; then
+            fail_with_log "$LOG" "unrecognized cargo subcommand for install snippet: $SUB"
+        fi
+        cargo init --quiet --name install-sanity --vcs none . >/dev/null 2>&1
+        run_in_log
+        pkg=$(last_pkg "$COMMAND")
+        if grep -q "$pkg" Cargo.toml; then
+            echo "validator: ok — $pkg present in Cargo.toml"
+        else
+            fail_with_log "$LOG" "expected $pkg in Cargo.toml after cargo add"
+        fi
+        ;;
+    php)
+        # Body shape: `php composer.phar require …`. Stage composer.phar
+        # alongside the body so the literal reference resolves, then
+        # initialize a minimal composer project so `require` has somewhere
+        # to write.
+        if [ "$SUB" != "composer.phar" ]; then
+            fail_with_log "$LOG" "unrecognized php install shape: php $SUB"
+        fi
+        cp /opt/composer.phar ./composer.phar
+        php composer.phar init --quiet --name=example/sanity --no-interaction >/dev/null 2>&1
+        run_in_log
+        pkg=$(last_pkg "$COMMAND")
+        if [ -d "vendor/$pkg" ]; then
+            echo "validator: ok — $pkg present under vendor/"
+        else
+            fail_with_log "$LOG" "expected vendor/$pkg to exist after composer require"
+        fi
+        ;;
+    dotnet)
+        if [ "$SUB" != "add" ]; then
+            fail_with_log "$LOG" "unrecognized dotnet subcommand for install snippet: $SUB"
+        fi
+        dotnet new console -n InstallSanity --force >/dev/null 2>&1
+        cd InstallSanity
+        run_in_log
+        pkg=$(last_pkg "$COMMAND")
+        if grep -q "<PackageReference Include=\"$pkg\"" InstallSanity.csproj; then
+            echo "validator: ok — $pkg in InstallSanity.csproj"
+        else
+            fail_with_log "$LOG" "expected <PackageReference Include=\"$pkg\"…> in InstallSanity.csproj"
+        fi
+        ;;
+    implementation)
+        # Gradle DSL fragment — wrap in a minimal build.gradle's
+        # dependencies block and run `gradle dependencies` to confirm
+        # the artifact resolves from mavenCentral. We grep the
+        # dependency-tree output for the artifact name (the snippet's
+        # `name: '…'` field).
+        cat > build.gradle <<'EOF'
+plugins { id 'java' }
+repositories { mavenCentral() }
+dependencies {
+EOF
+        printf '%s\n' "$COMMAND" >> build.gradle
+        echo '}' >> build.gradle
+        cat > settings.gradle <<'EOF'
+rootProject.name = 'install-sanity'
+EOF
+        gradle --no-daemon --quiet dependencies >"$LOG" 2>&1
+        artifact=$(printf '%s' "$COMMAND" | sed -n "s/.*name:[[:space:]]*'\([^']*\)'.*/\1/p")
+        if [ -n "$artifact" ] && grep -q "$artifact" "$LOG"; then
+            echo "validator: ok — $artifact resolved by gradle"
+        else
+            fail_with_log "$LOG" "expected gradle dependencies output to mention artifact"
         fi
         ;;
     *)
