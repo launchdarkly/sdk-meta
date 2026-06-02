@@ -30,7 +30,7 @@ RUN mkdir -p ${ANDROID_HOME}/cmdline-tools \
     && rm /tmp/tools.zip
 
 RUN yes | sdkmanager --licenses >/dev/null \
-    && sdkmanager --install "platforms;android-34" "platform-tools" "build-tools;34.0.0"
+    && sdkmanager --install "platforms;android-35" "platform-tools" "build-tools;35.0.0"
 
 # Pre-bake a hello-android gradle scaffold. We clone the upstream
 # hello-android repo (LD's official getting-started reference) at a
@@ -52,7 +52,11 @@ WORKDIR /opt/hello-android
 
 # Patch the LD SDK version, add the observability AAR to
 # `implementation`, and add Robolectric to `testImplementation`.
+# Also bump compileSdk/targetSdk to 35 because the v0.49.0
+# observability AAR transitively depends on androidx.core 1.16+,
+# which requires API 35.
 RUN sed -i "s|com.launchdarkly:launchdarkly-android-client-sdk:[0-9.]*|com.launchdarkly:launchdarkly-android-client-sdk:${LD_ANDROID_SDK_VERSION}|" app/build.gradle \
+    && sed -i "s|compileSdk 34|compileSdk 35|; s|targetSdkVersion(34)|targetSdkVersion(35)|" app/build.gradle \
     && sed -i "/^dependencies {$/a\\    implementation 'com.launchdarkly:launchdarkly-observability-android:${LD_ANDROID_OBSERVABILITY_VERSION}'\\n    testImplementation 'org.robolectric:robolectric:${ROBOLECTRIC_VERSION}'\\n    testImplementation 'junit:junit:4.13.2'\\n    testImplementation 'androidx.test:core:1.5.0'\\n    testImplementation 'androidx.test.ext:junit:1.1.5'" app/build.gradle
 
 # Robolectric needs testOptions { unitTests.includeAndroidResources } to
