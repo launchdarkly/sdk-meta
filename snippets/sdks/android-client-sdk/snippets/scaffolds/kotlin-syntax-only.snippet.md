@@ -52,7 +52,13 @@ package com.launchdarkly.hello_android
 import android.app.Application
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.launchdarkly.sdk.android.LDClient
+// Wildcard imports cover the doc fragments' references to `LDConfig`,
+// `LDContext`, `AutoEnvAttributes`, `Components`, `Plugin`,
+// `Observability`, etc. without per-snippet placeholder boilerplate.
+import com.launchdarkly.sdk.*
+import com.launchdarkly.sdk.android.*
+import com.launchdarkly.sdk.android.integrations.*
+import com.launchdarkly.observability.plugin.*
 
 // File-scope stubs so wrappee bodies that reference caller-supplied
 // helpers (e.g. `applyVariant(variant)`) type-check. Never invoked.
