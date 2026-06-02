@@ -12,6 +12,9 @@ packages:
   LaunchDarkly:
     url: https://github.com/launchdarkly/ios-client-sdk
     from: "11.0.0"
+  LaunchDarklyObservability:
+    url: https://github.com/launchdarkly/swift-launchdarkly-observability
+    from: "1.0.0"
 
 targets:
   HelloIOS:
@@ -29,6 +32,7 @@ targets:
         CFBundleShortVersionString: "1.0"
     dependencies:
       - package: LaunchDarkly
+      - package: LaunchDarklyObservability
     settings:
       base:
         SWIFT_VERSION: "5.9"

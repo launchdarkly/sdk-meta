@@ -37,13 +37,6 @@ module Main where
 import LaunchDarkly.Server
 import qualified Data.Function as LDStub
 
--- File-scope stubs so wrappee bodies that reference `client` (the
--- SDK client value the consumer constructs in their own application
--- code) resolve at parse time. The wrappee body never executes;
--- `undefined` is sufficient for the type-checker.
-client :: Client
-client = undefined
-
 --TOP_LIFT_TARGET--
 
 main :: IO ()
@@ -54,6 +47,10 @@ main = putStrLn "feature flag evaluates to true"
 -- found there to the target marker above.
 _wrappee :: IO ()
 _wrappee = do
+  -- Local stub for bodies that reference bare `client` without
+  -- declaring it themselves. Scoped to the do-block so it doesn't
+  -- collide with bodies that declare their own top-level `client`.
+  let client = undefined :: Client
 --BODY_BEGIN--
 {{ body }}
 --BODY_END--

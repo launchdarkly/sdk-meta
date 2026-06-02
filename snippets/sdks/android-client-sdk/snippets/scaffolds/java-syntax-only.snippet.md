@@ -51,8 +51,15 @@ import android.app.Application;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
+// No `public` modifier: Java requires public top-level classes to
+// live in a file matching the class name. We need this scaffold's
+// staged file to be Snippet.java (not BaseApplication.java) so the
+// android-client harness's *.java staging glob picks it up, and so
+// it doesn't collide with the pre-baked MainApplication.kt's
+// declared application name. Package-private visibility is fine —
+// the class is never instantiated.
 @SuppressWarnings({"unused", "ConstantConditions"})
-public class BaseApplication extends Application {
+class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();

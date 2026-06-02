@@ -23,7 +23,7 @@ validation:
 #[allow(unused_imports)]
 use launchdarkly_server_sdk::{
     AttributeValue, Client, ConfigBuilder, Context, ContextBuilder,
-    EventProcessorBuilder, MultiContextBuilder, Reference,
+    MultiContextBuilder, Reference,
 };
 #[allow(unused_imports)]
 use std::collections::HashMap;
