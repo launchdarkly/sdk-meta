@@ -189,6 +189,62 @@ jobs:
         with:
           go-version: '1.24'
 
+      # Buildx with the GHA cache backend lets us amortize the
+      # validator's Dockerfile-build cost across CI runs. The
+      # `Pre-build cached validator images` step below tags each
+      # image with the same hash the Go validator's subsequent
+      # `docker build -t <hash>` will look up — turning the cold
+      # validator build (haskell-server: ~10 min, cpp-server:
+      # ~7 min, etc.) into a layer-cache hit on warm runs.
+      - name: Set up Docker buildx
+        if: matrix.runs-on != 'macos-latest'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Pre-build cached validator images
+        if: matrix.runs-on != 'macos-latest'
+        env:
+          MATRIX_SDK: ${{ matrix.sdk }}
+          MATRIX_GROUP: ${{ matrix.group }}
+        run: |
+          set -e
+          cd snippets
+          # Build the CLI once so the per-runner loop reuses one
+          # compiled binary instead of re-invoking `go run` (which
+          # rebuilds the whole tree each time on a cold cache).
+          go build -o /tmp/snippets ./cmd/snippets
+          runners=$(/tmp/snippets list-runners \
+            --sdk="$MATRIX_SDK" \
+            ${MATRIX_GROUP:+--group="$MATRIX_GROUP"} \
+            --sdks=./sdks --validators=./validators)
+          if [ -z "$runners" ]; then
+            echo "no validatable runners for sdk=$MATRIX_SDK group=$MATRIX_GROUP"
+            exit 0
+          fi
+          for runner in $runners; do
+            tag=$(/tmp/snippets image-tag --runtime="$runner" --validators=./validators)
+            if [ -z "$tag" ]; then
+              # native-mode validator (no Dockerfile to build).
+              echo "skipping native validator: $runner"
+              continue
+            fi
+            echo "::group::pre-build $runner -> $tag"
+            # `--load` exports the built image into the Docker
+            # daemon's image store so the Go validator's
+            # `docker build -t <same-tag>` finds every layer
+            # already cached. `--cache-from`/`--cache-to type=gha`
+            # ride GHA's actions/cache backend; scope is per-runner
+            # so concurrent matrix rows don't trample each other's
+            # cache entries.
+            docker buildx build \
+              --cache-from "type=gha,scope=validator-${runner}" \
+              --cache-to "type=gha,scope=validator-${runner},mode=max" \
+              --load \
+              -t "$tag" \
+              -f "validators/languages/${runner}/Dockerfile" \
+              validators/
+            echo "::endgroup::"
+          done
+
       - name: Install iOS toolchain (macos only)
         if: matrix.runs-on == 'macos-latest'
         run: |
