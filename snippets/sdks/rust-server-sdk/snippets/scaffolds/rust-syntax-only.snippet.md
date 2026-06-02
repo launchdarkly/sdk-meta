@@ -30,19 +30,40 @@ use std::collections::HashMap;
 
 // Stub for the pre-1.0 (beta) `User` API surface — removed at 1.0
 // in favor of Context. Doc fragments under
-// `implementation-v1-understanding-*-beta-syntax-*` reference the
-// old API for side-by-side comparison with the 1.0 equivalents, so
-// the syntax-only validator needs a parseable stub to compile them.
+// `implementation-v1-understanding-*-beta-syntax-*` and
+// `implementation-v1-working-with-*-beta-syntax-*` reference the old
+// API for side-by-side comparison with the 1.0 equivalents, so the
+// syntax-only validator needs a parseable stub to compile them.
+//
+// Builder methods take `&mut self -> &mut Self` so the docs' multi-line
+// shape (`let mut b = User::with_key(...); b.first_name("Sandy");
+// b.last_name("Smith"); ... let user = b.build();`) compiles without
+// move-after-use errors that would come from a `self -> Self` shape.
+// `build(&self) -> Self` lets the final `.build()` produce a User
+// without consuming the builder.
 #[allow(dead_code, non_camel_case_types)]
 struct User;
 #[allow(dead_code)]
 impl User {
     fn with_key(_key: &str) -> Self { Self }
-    fn first_name(self, _v: &str) -> Self { self }
-    fn last_name(self, _v: &str) -> Self { self }
-    fn email(self, _v: &str) -> Self { self }
-    fn custom(self, _k: &str, _v: &str) -> Self { self }
-    fn build(self) -> Self { self }
+    fn first_name(&mut self, _v: &str) -> &mut Self { self }
+    fn last_name(&mut self, _v: &str) -> &mut Self { self }
+    fn email(&mut self, _v: &str) -> &mut Self { self }
+    fn custom<T>(&mut self, _v: T) -> &mut Self { self }
+    fn build(&self) -> Self { Self }
+}
+
+// Stub `hashmap!` macro covering the doc fragments that build a
+// `HashMap` for the beta `User::custom(...)` call. Real code reaches
+// for `maplit::hashmap!`; declaring the macro inline keeps the
+// scaffold free of an extra crate dependency.
+#[allow(unused_macros)]
+macro_rules! hashmap {
+    ($($k:expr => $v:expr),* $(,)?) => {{
+        let mut m = ::std::collections::HashMap::new();
+        $( m.insert($k, $v); )*
+        m
+    }};
 }
 
 #[allow(dead_code, unused, unused_variables, unused_must_use)]

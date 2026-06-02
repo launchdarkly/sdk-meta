@@ -4,8 +4,11 @@ sdk: ios-client-sdk
 kind: reference
 lang: swift
 description: "iOS SDK v9.x (Swift) in section \"Initialize the client\""
-validation:
-  scaffold: ios-client-sdk/scaffolds/swift-syntax-only
+# TODO(snippet-bug): body declares `let config = LDConfig(...)` then
+# mutates `config.plugins = [...]`. LDConfig is a Swift struct
+# (value type), so `let` makes it immutable and the assignment
+# fails to compile. Fix in the snippet-bugs PR: change `let config`
+# to `var config`.
 ---
 
 ```swift

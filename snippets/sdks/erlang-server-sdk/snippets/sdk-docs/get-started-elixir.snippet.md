@@ -4,9 +4,12 @@ sdk: erlang-server-sdk
 kind: reference
 lang: erlang
 description: "Elixir in section \"Get started\""
-# TODO(validate): erlang-server validator's gen_server harness is incompatible with the erlang-syntax-only scaffold's module shape. See _sdk-docs-port-notes.md.
-validation:
-  scaffold: erlang-server-sdk/scaffolds/erlang-syntax-only
+# TODO(snippet-bug): body is Elixir (`defp deps do ... end`), not
+# Erlang — the source MDX tags this in an `erlang` code block but
+# the actual content is Mix dependency-list syntax. erlc rejects it
+# at parse. Fix in the snippet-bugs PR: re-tag as `elixir` and route
+# through an elixir-specific scaffold (none exists yet), or rewrite
+# the body in Erlang's `rebar.config` syntax.
 ---
 
 ```erlang

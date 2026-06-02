@@ -34,6 +34,11 @@ validation:
 import UIKit
 import Foundation
 import LaunchDarkly
+// The validator's project.yml depends on LaunchDarklyObservability;
+// importing it here brings `Observability`, `LDOptions`, the
+// `.enabled`/`.disabled` log/trace/metric enums into scope so doc
+// fragments that show the optional plugin compile.
+import LaunchDarklyObservability
 
 // File-scope stubs so wrappee bodies that reference caller-supplied
 // helpers (e.g. the experimentation onboarding `applyVariant(_:)`)

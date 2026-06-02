@@ -52,10 +52,22 @@ package com.launchdarkly.hello_android
 import android.app.Application
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.launchdarkly.sdk.android.LDClient
 
 // File-scope stubs so wrappee bodies that reference caller-supplied
 // helpers (e.g. `applyVariant(variant)`) type-check. Never invoked.
 fun applyVariant(variant: String) {}
+
+// File-scope stubs for the bare `client` and `flagKey` references
+// the evaluate-a-flag-kotlin body assumes are already in scope. The
+// scaffold's `if (false)` block guarantees these are never read at
+// runtime, so initializing `client` via TODO() (which returns
+// Nothing) is safe — top-level vals are evaluated lazily-on-read in
+// most cases but to be safe the body is unreachable anyway.
+@Suppress("UNUSED")
+val client: LDClient get() = TODO()
+@Suppress("UNUSED")
+val flagKey: String = ""
 
 @Suppress("UNUSED_VARIABLE", "UNREACHABLE_CODE")
 class BaseApplication : Application() {

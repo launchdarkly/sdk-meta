@@ -5,7 +5,7 @@ kind: reference
 lang: dart
 description: "Flutter SDK v3.x in section \"Initialize the client\""
 validation:
-  scaffold: flutter-client-sdk/scaffolds/flutter-syntax-only
+  scaffold: flutter-client-sdk/scaffolds/flutter-syntax-only-v3
 ---
 
 ```dart
