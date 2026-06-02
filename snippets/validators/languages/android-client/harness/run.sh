@@ -39,6 +39,13 @@ for f in /snippet/app/src/main/java/com/launchdarkly/hello_android/*.kt; do
     [ -f "$f" ] || continue
     cp "$f" "${PKG_DIR}/$(basename "$f")"
 done
+# Java sources flow through the same path. The gradle project's
+# `src/main/java/` source set accepts both, and `compileDebug*`
+# invocations below cover Kotlin and Java separately.
+for f in /snippet/app/src/main/java/com/launchdarkly/hello_android/*.java; do
+    [ -f "$f" ] || continue
+    cp "$f" "${PKG_DIR}/$(basename "$f")"
+done
 
 # Two transforms are needed before kotlinc will accept the staged
 # Kotlin file:
@@ -118,19 +125,21 @@ fi
 cd "${SCAFFOLD}"
 
 if [ "$CHECK" = "parse" ]; then
-    # Compile-only path: kotlinc against the real android-client SDK
-    # aar + AndroidX runtime, no Robolectric run. compileDebugKotlin
-    # builds main-source Kotlin only — it doesn't run lint, doesn't
-    # try to assemble an APK, and doesn't pull in test sources, so it
-    # finishes orders of magnitude faster than testDebugUnitTest.
+    # Compile-only path: kotlinc + javac against the real
+    # android-client SDK aar + AndroidX runtime, no Robolectric run.
+    # We invoke both `compileDebugKotlin` and `compileDebugJavaWithJavac`
+    # so Kotlin-only and Java-only fragments are both covered. Each
+    # task is cheap (no APK assembly, no lint), and gradle skips any
+    # task whose inputs (the source set) didn't change.
     LOG=$(mktemp)
     if timeout --signal=TERM 600s ./gradlew --no-daemon \
-            compileDebugKotlin --console=plain >"$LOG" 2>&1; then
+            compileDebugKotlin compileDebugJavaWithJavac \
+            --console=plain >"$LOG" 2>&1; then
         echo "feature flag evaluates to true"
-        echo "validator: ok (compileDebugKotlin succeeded)"
+        echo "validator: ok (compileDebug{Kotlin,JavaWithJavac} succeeded)"
         exit 0
     fi
-    fail_with_log "$LOG" "compileDebugKotlin failed"
+    fail_with_log "$LOG" "android compile failed"
 fi
 
 LOG=$(mktemp)
