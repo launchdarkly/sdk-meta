@@ -4,7 +4,7 @@ sdk: android-client-sdk
 kind: reference
 lang: kotlin
 description: "Android SDK v5.x (Kotlin) in section \"Initialize the client\""
-# Bucket C: jvm validator pulls launchdarkly-java-server-sdk, not the android-client SDK (which lives in Google Maven as an aar). See _sdk-docs-port-notes.md.
+# TODO(validate): jvm validator pulls launchdarkly-java-server-sdk, not the android-client SDK (which lives in Google Maven as an aar). See _sdk-docs-port-notes.md.
 validation:
   scaffold: android-client-sdk/scaffolds/kotlin-syntax-only
 ---

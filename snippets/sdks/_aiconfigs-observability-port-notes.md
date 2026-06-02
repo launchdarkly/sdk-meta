@@ -6,7 +6,7 @@ agent-integration follow-up port.
 
 This file is the analogue of `_sdk-info-port-notes.md` and
 `_sdk-docs-port-notes.md`. Each entry below is a snippet (or family of
-snippets) that ended up Bucket C — present in the tree, byte-checked
+snippets) that ended up without runtime validation — present in the tree, byte-checked
 through the marker-hash machinery, but with no `validation:` block
 because the scaffold or harness work needed to bind it cleanly is out
 of scope for this PR.
@@ -119,7 +119,7 @@ pull these fixes back when they re-sync):
   fallback ids are only used when the AI Config variation doesn't set
   a model, but they should still track whatever the docs recommend.
 
-**Recommended action**: leave Bucket C for the first port so the
+**Recommended action**: leave without runtime validation for the first port so the
 canonical text lives in sdk-meta. A later slice can add an
 `agent-syntax-only` Python scaffold per integration that installs the
 framework's package but stubs the network call (similar to how the

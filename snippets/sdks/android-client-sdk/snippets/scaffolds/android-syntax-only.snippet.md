@@ -9,13 +9,14 @@ description: |
   the JVM validator since Android is a JVM language.
 
   NOTE: the JVM validator fetches `launchdarkly-java-server-sdk` from
-  Maven Central, not the android client SDK (which lives in Google's
-  Maven and ships as an `aar`). Fragments that reference
-  `com.launchdarkly.sdk.android.*` types won't resolve here. See
-  `_sdk-docs-port-notes.md` for the structural gap; the sdk-docs
-  android fragments are documented as Bucket C until a real
-  `android-client-validator` Docker image (mirroring the sdk-info
-  init validator) lands.
+  Maven Central, not the android client SDK. For fragments that
+  reference `com.launchdarkly.sdk.android.*` types, use
+  `android-client-sdk/scaffolds/kotlin-syntax-only` instead — it
+  routes through the `android-client` Docker validator
+  (`./gradlew compileDebugKotlin`) which has the real
+  `launchdarkly-android-client-sdk` aar + AndroidX on the classpath.
+  This `android-syntax-only` (java/JVM-routed) scaffold remains for
+  fragments that don't touch android-client-specific types.
 inputs:
   body:
     type: string

@@ -17,8 +17,9 @@ description: |
   Doc fragments that don't declare a `client` or `context` and
   reference them as if pre-existing won't compile through this
   scaffold; in practice the v3 fragments either declare those
-  themselves or the build catches the issue. v2.x fragments are
-  Bucket C — see `_sdk-docs-port-notes.md`.
+  themselves or the build catches the issue. v2.x fragments may
+  need additional stubs on `_AnyClient` — see
+  `_sdk-docs-port-notes.md`.
 inputs:
   body:
     type: string
@@ -51,6 +52,12 @@ validation:
 // system level but are never invoked.
 struct _AnyClient {
     operator LDClientSDK() const { return nullptr; }
+    // operator-> makes `client->Method(...)` resolve when the body
+    // uses pointer syntax (typical of the C-binding API where
+    // `LDClientSDK` is an opaque pointer alias). The arrow returns
+    // a self-pointer so the chained call dispatches to the same
+    // variadic stubs below.
+    const _AnyClient* operator->() const { return this; }
     template <typename... Args> bool BoolVariation(Args&&...) const { return false; }
     template <typename... Args> int IntVariation(Args&&...) const { return 0; }
     template <typename... Args> double DoubleVariation(Args&&...) const { return 0; }

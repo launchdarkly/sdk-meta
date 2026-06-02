@@ -4,7 +4,7 @@ sdk: erlang-server-sdk
 kind: reference
 lang: erlang
 description: "Erlang SDK v2.0+ in section \"Evaluate a context\""
-# Bucket C: erlang-server validator's gen_server harness is incompatible with the erlang-syntax-only scaffold's module shape. See _sdk-docs-port-notes.md.
+# TODO(validate): erlang-server validator's gen_server harness is incompatible with the erlang-syntax-only scaffold's module shape. See _sdk-docs-port-notes.md.
 validation:
   scaffold: erlang-server-sdk/scaffolds/erlang-syntax-only
 ---

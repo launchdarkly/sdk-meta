@@ -207,7 +207,7 @@ sdk-info init validator) would be needed, plus a kotlin-aware
 syntax-only scaffold. That's larger than this PR's scope.
 
 The two `install-the-sdk-gradle-*` snippets are Gradle
-`implementation '…'` declarations and would be Bucket C even with
+`implementation '…'` declarations and would lack runnable validation even with
 the validator above (declarative dependency strings, see XML/Maven
 section).
 

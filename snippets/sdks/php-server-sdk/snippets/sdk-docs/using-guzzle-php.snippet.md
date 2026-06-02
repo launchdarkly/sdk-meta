@@ -4,7 +4,7 @@ sdk: php-server-sdk
 kind: reference
 lang: php
 description: "PHP in section \"Using Guzzle\""
-# Bucket C: body is shell composer commands mistagged as `lang: php`
+# TODO(validate): body is shell composer commands mistagged as `lang: php`
 # in the source MDX. The php-syntax-only scaffold parses PHP, so this
 # binding can't validate this body until either (a) the source MDX
 # fence is retagged as shell (and the body adjusted to drop the

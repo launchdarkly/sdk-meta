@@ -65,7 +65,7 @@ Per-SDK summary:
   existing Python import-lift pre-step moves the body's
   `import LaunchDarkly` up to file scope.
 
-## Still Bucket C: android-client-sdk
+## Still unvalidated: android-client-sdk
 
 **Snippets affected**: `android-client-sdk/experimentation/{track-only,full}`.
 

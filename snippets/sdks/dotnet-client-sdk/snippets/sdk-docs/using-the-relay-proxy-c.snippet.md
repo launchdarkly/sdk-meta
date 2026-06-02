@@ -4,7 +4,7 @@ sdk: dotnet-client-sdk
 kind: reference
 lang: csharp
 description: "C# in section \"Using the Relay Proxy\""
-# Bucket C: pinned to a deprecated dotnet-client SDK API surface
+# TODO(validate): pinned to a deprecated dotnet-client SDK API surface
 # (LdClient.Init(string, …) overload removed in v4.0; v3.x async
 # variant; v3.x relay-proxy via ConfigurationBuilder shape that
 # changed in v4). The csharp-client-syntax-only scaffold compiles

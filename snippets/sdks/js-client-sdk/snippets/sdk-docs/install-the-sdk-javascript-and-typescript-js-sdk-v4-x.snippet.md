@@ -4,7 +4,7 @@ sdk: js-client-sdk
 kind: reference
 lang: javascript
 description: "JavaScript and TypeScript, JS SDK v4.x in section \"Install the SDK\""
-# Bucket C: same shape as the v3.7 install snippet — three parallel
+# TODO(validate): same shape as the v3.7 install snippet — three parallel
 # import styles in one body that redeclare LDClient. See
 # _sdk-docs-port-notes.md.
 validation:

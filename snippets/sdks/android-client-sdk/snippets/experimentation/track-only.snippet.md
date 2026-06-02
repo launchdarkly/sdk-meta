@@ -4,7 +4,7 @@ sdk: android-client-sdk
 kind: reference
 lang: kotlin
 description: Experimentation onboarding (track only) for android-client-sdk — initialize and add a trackMetric helper for conversion events.
-# Bucket C: newly proposed experimentation onboarding snippet, not
+# TODO(validate): newly proposed experimentation onboarding snippet, not
 # standalone-runnable (assumes a BaseApplication host + your app). No
 # validation block yet. See _experimentation-port-notes.md.
 ---

@@ -4,7 +4,7 @@ sdk: ios-client-sdk
 kind: reference
 lang: swift
 description: "Cartfile in section \"Use Carthage\""
-# Bucket C: . See _sdk-docs-port-notes.md.
+# TODO(validate): . See _sdk-docs-port-notes.md.
 validation:
   scaffold: ios-client-sdk/scaffolds/swift-syntax-only
 ---
