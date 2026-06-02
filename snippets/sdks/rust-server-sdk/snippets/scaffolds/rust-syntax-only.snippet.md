@@ -28,6 +28,17 @@ use launchdarkly_server_sdk::{
 #[allow(unused_imports)]
 use std::collections::HashMap;
 
+// Placeholder constants the docs reference directly (`YOUR_SDK_KEY`)
+// rather than substituting at render time. Declaring them here lets
+// fragments like `ConfigBuilder::new(&YOUR_SDK_KEY)` resolve at
+// parse time without per-snippet `placeholders:` plumbing.
+#[allow(non_upper_case_globals, dead_code)]
+const YOUR_SDK_KEY: &str = "";
+#[allow(non_upper_case_globals, dead_code)]
+const YOUR_MOBILE_KEY: &str = "";
+#[allow(non_upper_case_globals, dead_code)]
+const YOUR_CLIENT_SIDE_ID: &str = "";
+
 // Stub for the pre-1.0 (beta) `User` API surface — removed at 1.0
 // in favor of Context. Doc fragments under
 // `implementation-v1-understanding-*-beta-syntax-*` and
