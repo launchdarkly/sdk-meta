@@ -48,19 +48,27 @@ validation:
 package com.launchdarkly.hello_android;
 
 import android.app.Application;
+import android.app.Activity;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import com.launchdarkly.sdk.android.LDClient;
+import com.launchdarkly.sdk.*;
+import com.launchdarkly.sdk.android.*;
 
 // No `public` modifier: Java requires public top-level classes to
 // live in a file matching the class name. We need this scaffold's
-// staged file to be Snippet.java (not BaseApplication.java) so the
-// android-client harness's *.java staging glob picks it up, and so
-// it doesn't collide with the pre-baked MainApplication.kt's
-// declared application name. Package-private visibility is fine —
-// the class is never instantiated.
+// staged file to be Snippet.java (not SnippetActivity.java) so the
+// android-client harness's *.java staging glob picks it up.
+// Package-private visibility is fine — the class is never
+// instantiated.
+//
+// Subclass Activity (not Application) so `this.getApplication()`
+// resolves — the v4.x / v5.x Java init fragments take the
+// application context that way. Kotlin bodies use
+// `this@BaseApplication` against the kotlin scaffold's
+// Application-typed `BaseApplication`; Java's
+// `this.getApplication()` only exists on `android.app.Activity`.
 @SuppressWarnings({"unused", "ConstantConditions"})
-class BaseApplication extends Application {
+class SnippetActivity extends Activity {
     // Instance-field stubs so bodies like
     // `client.boolVariation(flagKey, true)` resolve at javac time.
     // Kotlin bodies pick these up via top-level decls in the
@@ -71,8 +79,8 @@ class BaseApplication extends Application {
     String flagKey;
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         if (false) {
 {{ body }}
         }

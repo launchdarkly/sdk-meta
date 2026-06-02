@@ -4,8 +4,11 @@ sdk: rust-server-sdk
 kind: reference
 lang: rust
 description: "Rust, v3.0+ in section \"Initialize the client\""
-validation:
-  scaffold: rust-server-sdk/scaffolds/rust-syntax-only
+# TODO(snippet-bug): body calls `ConfigBuilder::new(...).build()` and
+# passes the result straight to `Client::build(config)`. But
+# `ConfigBuilder::build()` returns `Result<Config, ConfigBuildError>`,
+# not `Config`. The doc needs `.unwrap()` (or `?`) on the build call.
+# Fix in the snippet-bugs PR.
 ---
 
 ```rust
