@@ -3,24 +3,26 @@ id: apex-server-sdk/scaffolds/apex-syntax-only
 sdk: apex-server-sdk
 kind: scaffold
 lang: java
-file: src/main/java/com/launchdarkly/Snippet.java
+file: snippet.apex
 description: |
-  Placeholder syntax check for Apex doc fragments — no Apex Docker harness yet, so we use the JVM validator on a wrapped Java file. Apex-specific syntax may not parse cleanly under javac; consider this scaffold a stub until a real Apex validator lands.
+  Parse-only validator for Apex server SDK doc fragments. Routes
+  through the `apex` Docker validator, which runs
+  `prettier-plugin-apex`'s `apex-anonymous` parser over the staged
+  fragment — the same parser the apex-server-sdk repo's CI uses for
+  its `prettier --check "**/*.cls"` step. No Salesforce scratch org,
+  no LD env: a clean parse means the fragment is syntactically valid
+  Apex (Execute Anonymous form). Doc fragments are bare statement
+  blocks, so the scaffold emits the body verbatim — the anonymous
+  parser accepts a sequence of statements with no surrounding class.
 inputs:
   body:
     type: string
-    description: The wrappee snippet's rendered body, inserted into the parse-only harness.
+    description: The wrappee snippet's rendered body, parsed as anonymous Apex.
 validation:
-  runtime: jvm
-  entrypoint: src/main/java/com/launchdarkly/Snippet.java
+  runtime: apex
+  entrypoint: snippet.apex
 ---
 
 ```java
-package com.launchdarkly;
-
-public class Snippet {
-    public static void main(String[] args) {
-        System.out.println("feature flag evaluates to true");
-    }
-}
+{{ body }}
 ```

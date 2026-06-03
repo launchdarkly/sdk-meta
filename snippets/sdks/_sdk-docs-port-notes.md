@@ -84,16 +84,26 @@ fully bound to the cpp-syntax-only scaffold.
 
 ## Apex SDK fragments
 
-**Severity**: low (no validator infrastructure)
+**Status**: parse-validated via the `apex` validator.
 
-**Snippets affected**: every snippet under `apex-server-sdk/sdk-docs/`.
+**Snippets affected**: every `kind: reference` fragment under
+`apex-server-sdk/sdk-docs/`, each bound to
+`apex-server-sdk/scaffolds/apex-syntax-only`.
 
-**Why unbindable**: there is no Apex/Salesforce validator container —
-PR #414's port notes (sdk-info) already documented this gap for the
-install/init path. Apex requires the Salesforce CLI and a scratch org
-to compile, neither of which fits the existing Docker-based validator
-mold. The same applies to the sdk-docs slice; there is no parse-only
-fallback because no container ships an Apex parser.
+**How they're validated**: the `apex` Docker validator runs
+prettier-plugin-apex's `apex-anonymous` parser over each staged
+fragment — the same parser the apex-server-sdk repo's CI uses for its
+`prettier --check "**/*.cls"` step. A clean parse confirms the
+fragment is syntactically valid Apex in Execute Anonymous form, with
+no Salesforce scratch org and no LD credentials.
+
+**Out of scope**: a full compile-and-run still needs the Salesforce CLI
+and a scratch org (which the apex-server-sdk repo's own CI provisions
+via JWT auth) — neither fits the Docker validator mold, so these
+fragments are syntax-checked, not executed. The earlier note that "no
+container ships an Apex parser" was wrong: prettier-plugin-apex bundles
+one (a JVM tool, apex-ast-serializer), which is why the validator image
+carries both Node and a JRE.
 
 ## Roku SDK fragments
 
