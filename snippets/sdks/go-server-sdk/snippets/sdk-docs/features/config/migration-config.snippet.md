@@ -4,6 +4,9 @@ sdk: go-server-sdk
 kind: reference
 lang: go
 description: Migration configuration example for the Go SDK v7 — read/write methods, execution order, latency/error tracking.
+validation:
+  scaffold: go-server-sdk/scaffolds/go-syntax-only
+
 ---
 
 ```go

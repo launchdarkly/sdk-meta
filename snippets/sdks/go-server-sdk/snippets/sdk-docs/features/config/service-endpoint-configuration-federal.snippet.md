@@ -4,6 +4,9 @@ sdk: go-server-sdk
 kind: reference
 lang: go
 description: Service endpoint configuration example for Go.
+validation:
+  scaffold: go-server-sdk/scaffolds/go-syntax-only
+
 ---
 
 ```go
