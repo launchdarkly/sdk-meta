@@ -4,6 +4,9 @@ sdk: ruby-server-sdk
 kind: reference
 lang: ruby
 description: Migration configuration example for the Ruby SDK v8 — read/write methods, execution order, latency/error tracking.
+validation:
+  scaffold: ruby-server-sdk/scaffolds/ruby-syntax-only
+
 ---
 
 ```ruby

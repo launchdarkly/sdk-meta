@@ -4,6 +4,9 @@ sdk: python-server-sdk
 kind: reference
 lang: python
 description: Service endpoint configuration example for Python.
+validation:
+  scaffold: python-server-sdk/scaffolds/python-syntax-only
+
 ---
 
 ```python

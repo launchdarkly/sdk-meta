@@ -4,6 +4,9 @@ sdk: python-server-sdk
 kind: reference
 lang: python
 description: Migration configuration example for the Python SDK v9 — read/write methods, execution order, latency/error tracking.
+validation:
+  scaffold: python-server-sdk/scaffolds/python-syntax-only
+
 ---
 
 ```python

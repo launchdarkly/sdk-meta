@@ -4,6 +4,9 @@ sdk: lua-server-sdk
 kind: reference
 lang: lua
 description: Application metadata configuration example for Lua.
+validation:
+  scaffold: lua-server-sdk/scaffolds/lua-syntax-only
+
 ---
 
 ```lua
