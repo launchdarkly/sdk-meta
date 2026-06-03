@@ -74,11 +74,11 @@ func TestRuntimeInputs(t *testing.T) {
 	s := &model.Snippet{
 		Frontmatter: model.Frontmatter{
 			Inputs: map[string]model.Input{
-				"apiKey":         {Type: "sdk-key"},
-				"featureKey":     {Type: "flag-key"},
-				"mobileKey":      {Type: "mobile-key"},
-				"clientSideId":   {Type: "client-side-id"},
-				"version":        {Type: "string", RuntimeDefault: "1.2.3"},
+				"apiKey":       {Type: "sdk-key"},
+				"featureKey":   {Type: "flag-key"},
+				"mobileKey":    {Type: "mobile-key"},
+				"clientSideId": {Type: "client-side-id"},
+				"version":      {Type: "string", RuntimeDefault: "1.2.3"},
 			},
 		},
 	}
@@ -235,6 +235,90 @@ func TestStageSnippet_ScaffoldInputsOverride(t *testing.T) {
 	got := string(out)
 	if !strings.Contains(got, `FLAG = "your.feature.key"`) {
 		t.Errorf("scaffold-inputs override did not apply:\n%s", got)
+	}
+}
+
+// A Check that overrides requirements and companions must have those
+// overrides reach staging — not be silently dropped in favor of the
+// scaffold's defaults. EffectiveChecks resolves these onto the check;
+// stageSnippetForCheck carries them onto the synthesized snippet, and
+// stageSnippet prefers the entry's values over the scaffold's when set.
+func TestStageSnippetForCheck_RequirementsAndCompanionsOverride(t *testing.T) {
+	wrappee := &model.Snippet{
+		Frontmatter: model.Frontmatter{
+			ID:   "test-sdk/docs/eval",
+			SDK:  "test-sdk",
+			Kind: "reference",
+			Lang: "python",
+			Validation: model.Validation{
+				Scaffold: "test-sdk/scaffolds/base",
+			},
+		},
+		CodeBody: `# wrappee body`,
+	}
+	scaffold := &model.Snippet{
+		Frontmatter: model.Frontmatter{
+			ID:   "test-sdk/scaffolds/base",
+			SDK:  "test-sdk",
+			Kind: "scaffold",
+			Lang: "python",
+			File: "main.py",
+			Inputs: map[string]model.Input{
+				"body": {Type: "string"},
+			},
+			Validation: model.Validation{
+				Runtime:      "python",
+				Entrypoint:   "main.py",
+				Requirements: "scaffold-dep",
+			},
+		},
+		CodeBody: "{{ body }}",
+	}
+	companion := &model.Snippet{
+		Frontmatter: model.Frontmatter{
+			ID:   "test-sdk/scaffolds/check-companion",
+			SDK:  "test-sdk",
+			Kind: "scaffold",
+			Lang: "python",
+			File: "helper.py",
+		},
+		CodeBody: "# helper from check companion",
+	}
+	all := map[string]*model.Snippet{
+		wrappee.Frontmatter.ID:   wrappee,
+		scaffold.Frontmatter.ID:  scaffold,
+		companion.Frontmatter.ID: companion,
+	}
+
+	// A check carrying its own requirements + companions, as EffectiveChecks
+	// would have resolved them (Scaffold is set unconditionally there).
+	check := model.Check{
+		Kind:         "runtime",
+		Scaffold:     "test-sdk/scaffolds/base",
+		Requirements: "check-dep",
+		Companions:   []string{"test-sdk/scaffolds/check-companion"},
+	}
+
+	stageDir, err := stageSnippetForCheck(wrappee, all, envInputs{}, check, scaffold)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(stageDir)
+
+	// requirements.txt reflects the check's override, not the scaffold's dep.
+	req, err := os.ReadFile(filepath.Join(stageDir, "requirements.txt"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := string(req); !strings.Contains(got, "check-dep") {
+		t.Errorf("requirements.txt missing check override: %q", got)
+	} else if strings.Contains(got, "scaffold-dep") {
+		t.Errorf("requirements.txt used scaffold default instead of check override: %q", got)
+	}
+
+	// The check's companion was staged at its own file path.
+	if _, err := os.Stat(filepath.Join(stageDir, "helper.py")); err != nil {
+		t.Errorf("check companion not staged: %v", err)
 	}
 }
 

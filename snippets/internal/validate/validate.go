@@ -303,6 +303,14 @@ func stageSnippetForCheck(entry *model.Snippet, all map[string]*model.Snippet, e
 		}
 		v.ScaffoldInputs = merged
 	}
+	// Requirements and Companions are already resolved on the check by
+	// EffectiveChecks (the check's own value, or the parent default).
+	// Carry them onto the synthesized snippet so a per-check override
+	// reaches staging; stageSnippet prefers the entry's values over the
+	// scaffold's when set. Without this the override would be silently
+	// dropped in favor of the scaffold's defaults.
+	v.Requirements = check.Requirements
+	v.Companions = check.Companions
 	// Clear the multi-check list on the synthesized snippet so
 	// stageSnippet's legacy code path doesn't recurse.
 	v.Checks = nil
@@ -320,7 +328,9 @@ func stageSnippetForCheck(entry *model.Snippet, all map[string]*model.Snippet, e
 // Scaffold case: entry's body is rendered first; that string becomes the
 // `body` input for the scaffold's render, and the scaffold's rendered
 // output is staged at the scaffold's `file:` path. Companions and
-// requirements come from the scaffold.
+// requirements come from the scaffold, unless the entry carries its own
+// (a per-check override resolved onto the synthesized snippet) — entry
+// values win when present.
 func stageSnippet(entry *model.Snippet, all map[string]*model.Snippet, env envInputs) (string, error) {
 	stageDir, err := os.MkdirTemp("", "snippets-validate-")
 	if err != nil {
@@ -399,9 +409,16 @@ func stageSnippet(entry *model.Snippet, all map[string]*model.Snippet, env envIn
 		}
 	}
 
-	// Companions, requirements, and file paths all come from the
-	// effective snippet (the scaffold when one is in use).
-	for _, cid := range eff.Frontmatter.Validation.Companions {
+	// Companions and requirements come from the effective snippet (the
+	// scaffold when one is in use), unless the entry carries its own. A
+	// per-check override (resolved onto the synthesized snippet in
+	// stageSnippetForCheck) takes precedence over the scaffold's defaults;
+	// in the legacy/no-scaffold case eff == entry, so this is a no-op.
+	companions := entry.Frontmatter.Validation.Companions
+	if len(companions) == 0 {
+		companions = eff.Frontmatter.Validation.Companions
+	}
+	for _, cid := range companions {
 		comp, ok := all[cid]
 		if !ok {
 			os.RemoveAll(stageDir)
@@ -416,7 +433,11 @@ func stageSnippet(entry *model.Snippet, all map[string]*model.Snippet, env envIn
 	// Python convention: validation.requirements becomes requirements.txt.
 	// Other runtimes carry their dependency manifest as a companion snippet
 	// (pom.xml, Cargo.toml, etc.).
-	if req := eff.Frontmatter.Validation.Requirements; req != "" {
+	req := entry.Frontmatter.Validation.Requirements
+	if req == "" {
+		req = eff.Frontmatter.Validation.Requirements
+	}
+	if req != "" {
 		if err := checkRequirements(req); err != nil {
 			os.RemoveAll(stageDir)
 			return "", err
