@@ -4,6 +4,7 @@ sdk: java-server-sdk
 kind: reference
 lang: java
 description: SDK configuration example for Java.
+
 ---
 
 ```java

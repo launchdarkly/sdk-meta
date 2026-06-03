@@ -4,6 +4,9 @@ sdk: node-server-sdk
 kind: reference
 lang: javascript
 description: Application metadata configuration example for Node.js (server-side).
+validation:
+  scaffold: node-server-sdk/scaffolds/node-syntax-only
+
 ---
 
 ```js

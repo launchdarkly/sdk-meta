@@ -4,6 +4,7 @@ sdk: php-server-sdk
 kind: reference
 lang: php
 description: Migration configuration example for the PHP SDK v6 — read/write methods, execution order, latency/error tracking.
+
 ---
 
 ```php

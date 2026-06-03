@@ -4,6 +4,7 @@ sdk: java-server-sdk
 kind: reference
 lang: java
 description: Migration configuration example for the Java SDK v7 — read/write methods, execution order, latency/error tracking.
+
 ---
 
 ```java

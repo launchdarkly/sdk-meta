@@ -4,6 +4,9 @@ sdk: php-server-sdk
 kind: reference
 lang: php
 description: Service endpoint configuration example for PHP.
+validation:
+  scaffold: php-server-sdk/scaffolds/php-syntax-only
+
 ---
 
 ```php

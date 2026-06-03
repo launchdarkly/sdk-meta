@@ -4,6 +4,9 @@ sdk: php-server-sdk
 kind: reference
 lang: php
 description: Application metadata configuration example for PHP.
+validation:
+  scaffold: php-server-sdk/scaffolds/php-syntax-only
+
 ---
 
 ```php

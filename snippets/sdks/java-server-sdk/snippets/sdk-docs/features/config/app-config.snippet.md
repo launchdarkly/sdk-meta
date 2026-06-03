@@ -4,6 +4,9 @@ sdk: java-server-sdk
 kind: reference
 lang: java
 description: Application metadata configuration example for Java.
+validation:
+  scaffold: java-server-sdk/scaffolds/java-syntax-only
+
 ---
 
 ```java

@@ -4,6 +4,7 @@ sdk: node-server-sdk
 kind: reference
 lang: typescript
 description: Migration configuration example for the Node.js (server-side) SDK v9 — read/write functions, execution mode, latency/error tracking.
+
 ---
 
 ```ts

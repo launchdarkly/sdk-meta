@@ -4,6 +4,7 @@ sdk: dotnet-server-sdk
 kind: reference
 lang: csharp
 description: Migration configuration example for the .NET (server-side) SDK v8 — read/write methods, execution order, latency/error tracking.
+
 ---
 
 ```csharp
