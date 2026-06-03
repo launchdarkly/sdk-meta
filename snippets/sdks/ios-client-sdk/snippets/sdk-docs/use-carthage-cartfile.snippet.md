@@ -4,7 +4,13 @@ sdk: ios-client-sdk
 kind: reference
 lang: swift
 description: "Cartfile in section \"Use Carthage\""
-# Bucket C: . See _sdk-docs-port-notes.md.
+# TODO(snippet-bug): body is Cartfile syntax
+# (`github "owner/repo" ~> version`), not Swift — `~>` isn't a
+# Swift operator and `github` isn't a Swift identifier. The source
+# MDX tags this as `swift` but it's Carthage dependency-spec DSL.
+# Fix in the snippet-bugs PR: re-tag (e.g. `text` or a custom
+# `cartfile` lang) and skip syntax validation, or add a Cartfile
+# parser path.
 ---
 
 ```swift

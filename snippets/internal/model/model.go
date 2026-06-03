@@ -35,6 +35,45 @@ type Input struct {
 }
 
 type Validation struct {
+	// Checks is the list of checks to run against this snippet. Each check
+	// is a Validator invocation with its own kind, scaffold, runtime, and
+	// env. The dispatcher runs them sequentially; a single failure stops
+	// the snippet (failed checks short-circuit later ones).
+	//
+	// When Checks is non-empty it is authoritative — the top-level
+	// `runtime/scaffold/entrypoint/...` fields are taken as defaults that
+	// each check inherits unless it overrides. When Checks is empty BUT
+	// any of the top-level legacy fields is set, the loader synthesizes
+	// a single legacy Check `[{Kind: "runtime", ...top-level fields}]`.
+	// This keeps every existing snippet's behavior identical without
+	// requiring schema migration.
+	//
+	// Recognized Check.Kind values:
+	//   - "parse"     — fast syntactic check, ideally just the language's
+	//                   built-in parser (node --check, php -l, ruby -wc,
+	//                   etc.). Doesn't need LD env. Catches reserved-word
+	//                   parameter names, missing semicolons, broken
+	//                   fences. Default for `kind: reference` snippets
+	//                   that declare a scaffold but no explicit checks.
+	//   - "typecheck" — language-level type / compile check that catches
+	//                   undefined identifiers and type errors but does
+	//                   not run the program (tsc --noEmit, dart analyze,
+	//                   xcodebuild build, ./gradlew compileDebugKotlin,
+	//                   clang -fsyntax-only). Per-language opt-in:
+	//                   harnesses that don't ship a typechecker treat
+	//                   the kind as `parse`. Doesn't need LD env.
+	//   - "runtime"   — full end-to-end execution against a real
+	//                   LaunchDarkly environment, asserting on the
+	//                   EXAM-HELLO success line. Existing single-check
+	//                   snippets are all `runtime` for back-compat.
+	//
+	// The dispatcher forwards `SNIPPET_CHECK=<kind>` to the harness so
+	// `validators/languages/<runtime>/harness/run.sh` can switch on it.
+	// A harness that doesn't recognize the kind should exit non-zero
+	// with a clear "unsupported check" message rather than silently
+	// running its default path.
+	Checks []Check `yaml:"checks,omitempty"`
+
 	// Runtime selects the validator harness under
 	// validators/languages/<runtime>/. If empty, the snippet's `lang:`
 	// field is used as the fallback (e.g. lang=python implies the python
@@ -114,6 +153,105 @@ type Validation struct {
 	// LAUNCHDARKLY_SDK_KEY, LAUNCHDARKLY_FLAG_KEY, LAUNCHDARKLY_MOBILE_KEY,
 	// LAUNCHDARKLY_CLIENT_SIDE_ID. The dispatcher rejects any other name.
 	Placeholders map[string]string `yaml:"placeholders"`
+}
+
+// Check describes one validator invocation. A snippet's `validation.checks:`
+// is a list of these; the dispatcher runs them in order. Every field except
+// Kind is optional — unset fields inherit from the parent Validation, which
+// is how a snippet with multiple checks sharing a scaffold avoids
+// duplicating the scaffold name across entries.
+type Check struct {
+	// Kind picks the harness dispatch branch. One of "parse", "typecheck",
+	// "runtime". The dispatcher forwards this verbatim as the
+	// `SNIPPET_CHECK` env var. See the `Validation.Checks` doc comment
+	// for the full enum description.
+	Kind string `yaml:"kind"`
+
+	// Scaffold, Runtime, Entrypoint, Companions, Requirements,
+	// ScaffoldInputs, Env, and Placeholders mirror the parent Validation
+	// fields and, when set on a Check, override the parent for this
+	// check only. Common case is one shared scaffold for parse + runtime
+	// checks; declare it on the parent Validation and leave it unset on
+	// each Check.
+	Scaffold       string            `yaml:"scaffold,omitempty"`
+	Runtime        string            `yaml:"runtime,omitempty"`
+	Entrypoint     string            `yaml:"entrypoint,omitempty"`
+	Companions     []string          `yaml:"companions,omitempty"`
+	Requirements   string            `yaml:"requirements,omitempty"`
+	ScaffoldInputs map[string]string `yaml:"scaffold-inputs,omitempty"`
+	Env            map[string]string `yaml:"env,omitempty"`
+	Placeholders   map[string]string `yaml:"placeholders,omitempty"`
+}
+
+// EffectiveChecks returns the list of checks to run against this snippet's
+// validation block, with each check's fields fully resolved (Check overrides
+// followed by Validation defaults). When the snippet declares no explicit
+// Checks but has legacy top-level fields, it synthesizes a single
+// `kind: runtime` check from those fields — preserving every existing
+// snippet's behavior under the multi-check dispatcher.
+//
+// Returns an empty slice when neither Checks nor any legacy field is set —
+// the dispatcher treats that as "not validatable" (same as the legacy
+// `isValidatable` predicate).
+func (v Validation) EffectiveChecks() []Check {
+	merge := func(c Check) Check {
+		if c.Scaffold == "" {
+			c.Scaffold = v.Scaffold
+		}
+		if c.Runtime == "" {
+			c.Runtime = v.Runtime
+		}
+		if c.Entrypoint == "" {
+			c.Entrypoint = v.Entrypoint
+		}
+		if len(c.Companions) == 0 {
+			c.Companions = v.Companions
+		}
+		if c.Requirements == "" {
+			c.Requirements = v.Requirements
+		}
+		if len(c.ScaffoldInputs) == 0 {
+			c.ScaffoldInputs = v.ScaffoldInputs
+		}
+		// Env and Placeholders merge (check overrides win key-by-key) so a
+		// check can add or override one env var without losing the parent's
+		// others.
+		if len(v.Env) > 0 {
+			merged := map[string]string{}
+			for k, val := range v.Env {
+				merged[k] = val
+			}
+			for k, val := range c.Env {
+				merged[k] = val
+			}
+			c.Env = merged
+		}
+		if len(v.Placeholders) > 0 {
+			merged := map[string]string{}
+			for k, val := range v.Placeholders {
+				merged[k] = val
+			}
+			for k, val := range c.Placeholders {
+				merged[k] = val
+			}
+			c.Placeholders = merged
+		}
+		return c
+	}
+
+	if len(v.Checks) > 0 {
+		out := make([]Check, 0, len(v.Checks))
+		for _, c := range v.Checks {
+			out = append(out, merge(c))
+		}
+		return out
+	}
+	// Legacy fall-through: synthesize a single runtime check from the
+	// top-level fields if any of them is set.
+	if v.Runtime != "" || v.Entrypoint != "" || v.Scaffold != "" {
+		return []Check{merge(Check{Kind: "runtime"})}
+	}
+	return nil
 }
 
 // Snippet pairs the frontmatter with the body of the first fenced code block

@@ -4,7 +4,11 @@ sdk: erlang-server-sdk
 kind: reference
 lang: erlang
 description: "Erlang in section \"Initialize the client\""
-# Bucket C: erlang-server validator's gen_server harness is incompatible with the erlang-syntax-only scaffold's module shape. See _sdk-docs-port-notes.md.
+# TODO(snippet-bug): body has two `ldclient:start_instance(...)`
+# expression statements without a `,` separator. Erlang requires
+# `,` between statements inside a function body — without one, the
+# parser bails at "syntax error before: ldclient". Fix in the
+# snippet-bugs PR: add the `,` (or render as two separate snippets).
 ---
 
 ```erlang

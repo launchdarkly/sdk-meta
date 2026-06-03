@@ -4,7 +4,14 @@ sdk: android-client-sdk
 kind: reference
 lang: kotlin
 description: "Gradle Kotlin in section \"Install the SDK\""
-# Bucket C: jvm validator pulls launchdarkly-java-server-sdk, not the android-client SDK (which lives in Google Maven as an aar). See _sdk-docs-port-notes.md.
+# TODO(snippet-bug): body is Gradle Kotlin DSL (`implementation("…")`
+# calls into a build.gradle.kts dependencies block), not standalone
+# Kotlin. The wrappee scope (`if (false) { ... }` inside
+# `onCreate`) doesn't expose an `implementation()` method, so
+# kotlinc reports unresolved reference. Mistagged as standalone
+# `kotlin` in the source MDX. Fix in the snippet-bugs PR: re-tag
+# (e.g. `gradle.kotlin`) and route through a build-script parse
+# path, or skip syntax validation.
 ---
 
 ```kotlin

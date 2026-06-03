@@ -99,25 +99,29 @@ func Run(cfg Config) error {
 // given snippet. Scaffolds (snippets that exist only to wrap other
 // snippets' bodies) are explicitly excluded: their `{{ body }}` slot is
 // unbound when run standalone, so they would always fail.
+//
+// Everything else with at least one effective check is in scope. The
+// effective-check expansion handles the legacy single-validator shape by
+// synthesizing one `kind: runtime` check from the top-level fields, so
+// existing snippets keep validating without schema changes.
 func isValidatable(s *model.Snippet) bool {
 	if s.Frontmatter.Kind == "scaffold" {
 		return false
 	}
-	v := s.Frontmatter.Validation
-	return v.Runtime != "" || v.Entrypoint != "" || v.Scaffold != ""
+	return len(s.Frontmatter.Validation.EffectiveChecks()) > 0
 }
 
-// effectiveValidationSnippet returns the snippet whose validation
-// frontmatter (runtime, entrypoint, requirements, companions, file) drives
-// the harness invocation. For scaffold-bound snippets that's the scaffold;
-// otherwise it's the snippet itself.
-func effectiveValidationSnippet(s *model.Snippet, all map[string]*model.Snippet) (*model.Snippet, error) {
-	if s.Frontmatter.Validation.Scaffold == "" {
-		return s, nil
+// effectiveScaffold resolves a scaffold reference into the actual scaffold
+// snippet. Returns (nil, nil) when scaffoldID is empty (plain snippet, no
+// wrapping scaffold). Errors when the ID is non-empty but doesn't resolve
+// to a snippet of kind=scaffold.
+func effectiveScaffold(s *model.Snippet, scaffoldID string, all map[string]*model.Snippet) (*model.Snippet, error) {
+	if scaffoldID == "" {
+		return nil, nil
 	}
-	sc, ok := all[s.Frontmatter.Validation.Scaffold]
+	sc, ok := all[scaffoldID]
 	if !ok {
-		return nil, fmt.Errorf("snippet %s: scaffold %q not found", s.Frontmatter.ID, s.Frontmatter.Validation.Scaffold)
+		return nil, fmt.Errorf("snippet %s: scaffold %q not found", s.Frontmatter.ID, scaffoldID)
 	}
 	if sc.Frontmatter.Kind != "scaffold" {
 		return nil, fmt.Errorf("snippet %s: validation.scaffold target %q has kind=%q (must be `scaffold`)",
@@ -127,12 +131,37 @@ func effectiveValidationSnippet(s *model.Snippet, all map[string]*model.Snippet)
 }
 
 func runOne(cfg Config, s *model.Snippet, all map[string]*model.Snippet, env envInputs) error {
-	eff, err := effectiveValidationSnippet(s, all)
+	checks := s.Frontmatter.Validation.EffectiveChecks()
+	for i, check := range checks {
+		if err := runOneCheck(cfg, s, all, env, check, i, len(checks)); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// runOneCheck executes one Check against the snippet. Each Check carries
+// its own (possibly inherited from parent Validation) scaffold, runtime,
+// env, and placeholders, so a snippet with multiple checks can route each
+// through a different harness branch.
+func runOneCheck(cfg Config, s *model.Snippet, all map[string]*model.Snippet, env envInputs, check model.Check, checkIdx, checkTotal int) error {
+	scaffold, err := effectiveScaffold(s, check.Scaffold, all)
 	if err != nil {
 		return err
 	}
 
-	runtime := eff.Frontmatter.Validation.Runtime
+	// `eff` is the snippet whose frontmatter contributes file/inputs/
+	// companions/requirements — scaffold when one is bound, the entry
+	// snippet otherwise.
+	eff := s
+	if scaffold != nil {
+		eff = scaffold
+	}
+
+	runtime := check.Runtime
+	if runtime == "" {
+		runtime = eff.Frontmatter.Validation.Runtime
+	}
 	if runtime == "" {
 		// Fall back to the effective snippet's `lang:` field, matching
 		// the documented contract on Validation.Runtime. (CodeLang — the
@@ -142,7 +171,7 @@ func runOne(cfg Config, s *model.Snippet, all map[string]*model.Snippet, env env
 		runtime = eff.Frontmatter.Lang
 	}
 	if runtime == "" {
-		return fmt.Errorf("snippet %q: cannot determine validator runtime (set validation.runtime or lang on the snippet or its scaffold)", s.Frontmatter.ID)
+		return fmt.Errorf("snippet %q (check %s): cannot determine validator runtime", s.Frontmatter.ID, check.Kind)
 	}
 
 	runner, runnerDir, err := loadRunner(cfg.ValidatorsDir, runtime)
@@ -150,43 +179,73 @@ func runOne(cfg Config, s *model.Snippet, all map[string]*model.Snippet, env env
 		return err
 	}
 
-	// Both the wrappee and the scaffold (when distinct) contribute to the
-	// final body, so each one's typed inputs need their env values
-	// satisfied. Companions are checked inside requireEnvForInputs.
-	if err := requireEnvForInputs(s, all, env); err != nil {
-		return err
-	}
-	if eff != s {
-		if err := requireEnvForInputs(eff, all, env); err != nil {
+	// Parse and typecheck modes don't need real LD credentials — the
+	// scaffold's wrappee body is never executed and the harness's parser
+	// invocation runs offline. Skip the env-input check for those kinds
+	// so a CI row can validate parse/typecheck without provisioning a key.
+	if check.Kind == "" || check.Kind == "runtime" {
+		// Both the wrappee and the scaffold (when distinct) contribute to
+		// the final body, so each one's typed inputs need their env values
+		// satisfied. Companions are checked inside requireEnvForInputs.
+		if err := requireEnvForInputs(s, all, env); err != nil {
 			return err
+		}
+		if eff != s {
+			if err := requireEnvForInputs(eff, all, env); err != nil {
+				return err
+			}
 		}
 	}
 
-	stageDir, err := stageSnippet(s, all, env)
+	stageDir, err := stageSnippetForCheck(s, all, env, check, scaffold)
 	if err != nil {
 		return err
 	}
 	defer os.RemoveAll(stageDir)
 
-	entrypoint := entrypointPath(eff)
-	if eff == s {
-		fmt.Printf("--- validate %s (runtime=%s, entrypoint=%s) ---\n", s.Frontmatter.ID, runtime, entrypoint)
-	} else {
-		fmt.Printf("--- validate %s (scaffold=%s, runtime=%s, entrypoint=%s) ---\n",
-			s.Frontmatter.ID, eff.Frontmatter.ID, runtime, entrypoint)
+	entrypoint := check.Entrypoint
+	if entrypoint == "" {
+		entrypoint = entrypointPath(eff)
 	}
 
-	// Forward any per-snippet validation.env entries (the entry's
-	// declarations win; scaffold-supplied entries fill in gaps so a
-	// scaffold can publish defaults that a wrappee can override).
+	kindLabel := check.Kind
+	if kindLabel == "" {
+		kindLabel = "runtime"
+	}
+	checkSuffix := ""
+	if checkTotal > 1 {
+		checkSuffix = fmt.Sprintf(" check=%s [%d/%d]", kindLabel, checkIdx+1, checkTotal)
+	} else if check.Kind != "" && check.Kind != "runtime" {
+		checkSuffix = fmt.Sprintf(" check=%s", kindLabel)
+	}
+	if scaffold == nil {
+		fmt.Printf("--- validate %s (runtime=%s, entrypoint=%s)%s ---\n", s.Frontmatter.ID, runtime, entrypoint, checkSuffix)
+	} else {
+		fmt.Printf("--- validate %s (scaffold=%s, runtime=%s, entrypoint=%s)%s ---\n",
+			s.Frontmatter.ID, scaffold.Frontmatter.ID, runtime, entrypoint, checkSuffix)
+	}
+
+	// Forward per-snippet env, scaffold-supplied env, and the Check's own
+	// env. Last writer wins (check overrides scaffold overrides wrappee
+	// stays the rule that a scaffold can publish defaults a wrappee
+	// (and individual check) can override).
 	extraEnv := map[string]string{}
-	if eff != s {
-		for k, v := range eff.Frontmatter.Validation.Env {
+	if scaffold != nil {
+		for k, v := range scaffold.Frontmatter.Validation.Env {
 			extraEnv[k] = v
 		}
 	}
 	for k, v := range s.Frontmatter.Validation.Env {
 		extraEnv[k] = v
+	}
+	for k, v := range check.Env {
+		extraEnv[k] = v
+	}
+	// Always announce the check kind to the harness so it can dispatch
+	// even when the snippet didn't set any other env (default "runtime"
+	// to preserve historical harness behavior).
+	if _, ok := extraEnv["SNIPPET_CHECK"]; !ok {
+		extraEnv["SNIPPET_CHECK"] = kindLabel
 	}
 
 	switch runner.Mode {
@@ -209,6 +268,56 @@ func entrypointPath(s *model.Snippet) string {
 	return s.Frontmatter.File
 }
 
+// stageSnippetForCheck wraps stageSnippet with the Check's overrides
+// applied. When a Check declares its own scaffold/placeholders/
+// scaffold-inputs, those override (or merge into) the snippet's
+// validation-block defaults for THIS check's staging only.
+//
+// The wrapper synthesizes a temporary snippet with the merged Validation
+// block and delegates to stageSnippet, which keeps the staging logic
+// unchanged for the legacy single-check path.
+func stageSnippetForCheck(entry *model.Snippet, all map[string]*model.Snippet, env envInputs, check model.Check, scaffold *model.Snippet) (string, error) {
+	synth := *entry
+	v := entry.Frontmatter.Validation
+	// Always set the resolved scaffold from the check (which already
+	// merged the parent default in EffectiveChecks).
+	v.Scaffold = check.Scaffold
+	// Placeholders: merge parent + check (check wins on conflicts).
+	if len(check.Placeholders) > 0 || len(entry.Frontmatter.Validation.Placeholders) > 0 {
+		merged := map[string]string{}
+		for k, val := range entry.Frontmatter.Validation.Placeholders {
+			merged[k] = val
+		}
+		for k, val := range check.Placeholders {
+			merged[k] = val
+		}
+		v.Placeholders = merged
+	}
+	if len(check.ScaffoldInputs) > 0 {
+		merged := map[string]string{}
+		for k, val := range entry.Frontmatter.Validation.ScaffoldInputs {
+			merged[k] = val
+		}
+		for k, val := range check.ScaffoldInputs {
+			merged[k] = val
+		}
+		v.ScaffoldInputs = merged
+	}
+	// Requirements and Companions are already resolved on the check by
+	// EffectiveChecks (the check's own value, or the parent default).
+	// Carry them onto the synthesized snippet so a per-check override
+	// reaches staging; stageSnippet prefers the entry's values over the
+	// scaffold's when set. Without this the override would be silently
+	// dropped in favor of the scaffold's defaults.
+	v.Requirements = check.Requirements
+	v.Companions = check.Companions
+	// Clear the multi-check list on the synthesized snippet so
+	// stageSnippet's legacy code path doesn't recurse.
+	v.Checks = nil
+	synth.Frontmatter.Validation = v
+	return stageSnippet(&synth, all, env)
+}
+
 // stageSnippet writes the entry snippet's body (or its scaffold-composed
 // body) plus any companion bodies into a temp directory shaped exactly
 // like the project the harness expects.
@@ -219,17 +328,23 @@ func entrypointPath(s *model.Snippet) string {
 // Scaffold case: entry's body is rendered first; that string becomes the
 // `body` input for the scaffold's render, and the scaffold's rendered
 // output is staged at the scaffold's `file:` path. Companions and
-// requirements come from the scaffold.
+// requirements come from the scaffold, unless the entry carries its own
+// (a per-check override resolved onto the synthesized snippet) — entry
+// values win when present.
 func stageSnippet(entry *model.Snippet, all map[string]*model.Snippet, env envInputs) (string, error) {
 	stageDir, err := os.MkdirTemp("", "snippets-validate-")
 	if err != nil {
 		return "", err
 	}
 
-	eff, err := effectiveValidationSnippet(entry, all)
+	scaffold, err := effectiveScaffold(entry, entry.Frontmatter.Validation.Scaffold, all)
 	if err != nil {
 		os.RemoveAll(stageDir)
 		return "", err
+	}
+	eff := entry
+	if scaffold != nil {
+		eff = scaffold
 	}
 
 	if eff == entry {
@@ -294,9 +409,16 @@ func stageSnippet(entry *model.Snippet, all map[string]*model.Snippet, env envIn
 		}
 	}
 
-	// Companions, requirements, and file paths all come from the
-	// effective snippet (the scaffold when one is in use).
-	for _, cid := range eff.Frontmatter.Validation.Companions {
+	// Companions and requirements come from the effective snippet (the
+	// scaffold when one is in use), unless the entry carries its own. A
+	// per-check override (resolved onto the synthesized snippet in
+	// stageSnippetForCheck) takes precedence over the scaffold's defaults;
+	// in the legacy/no-scaffold case eff == entry, so this is a no-op.
+	companions := entry.Frontmatter.Validation.Companions
+	if len(companions) == 0 {
+		companions = eff.Frontmatter.Validation.Companions
+	}
+	for _, cid := range companions {
 		comp, ok := all[cid]
 		if !ok {
 			os.RemoveAll(stageDir)
@@ -311,7 +433,11 @@ func stageSnippet(entry *model.Snippet, all map[string]*model.Snippet, env envIn
 	// Python convention: validation.requirements becomes requirements.txt.
 	// Other runtimes carry their dependency manifest as a companion snippet
 	// (pom.xml, Cargo.toml, etc.).
-	if req := eff.Frontmatter.Validation.Requirements; req != "" {
+	req := entry.Frontmatter.Validation.Requirements
+	if req == "" {
+		req = eff.Frontmatter.Validation.Requirements
+	}
+	if req != "" {
 		if err := checkRequirements(req); err != nil {
 			os.RemoveAll(stageDir)
 			return "", err

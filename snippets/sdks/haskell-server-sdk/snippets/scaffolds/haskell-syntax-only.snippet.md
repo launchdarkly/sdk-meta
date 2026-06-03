@@ -43,6 +43,13 @@ main = putStrLn "feature flag evaluates to true"
 -- found there to the target marker above.
 _wrappee :: IO ()
 _wrappee = do
+  -- Local stub for bodies that reference bare `client` without
+  -- declaring it themselves (e.g. evaluate-a-context fragments).
+  -- Scoped to the do-block so it does NOT collide with bodies that
+  -- declare their own top-level `client :: IO Client` (e.g.
+  -- initialize-the-client). Such top-level declarations land via
+  -- TOP_LIFT_TARGET outside the do-block.
+  let client = undefined :: Client
 --BODY_BEGIN--
 {{ body }}
 --BODY_END--

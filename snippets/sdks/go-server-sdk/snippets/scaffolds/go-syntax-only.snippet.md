@@ -55,23 +55,39 @@ func splitTopLevel(body string) (top, fnBody string) {
 	var topBuf, restBuf []string
 	i, n := 0, len(lines)
 	consumeBraced := func() {
-		// collect lines until brace depth returns to 0 (or end-of-input).
-		// Lines without any braces still count as one statement.
-		depth := 0
-		seenBrace := false
+		// Read until a top-level declaration is complete.
+		// A decl ends when whichever delimiter style it uses closes:
+		//   - `var foo struct { ... }`  — brace-delimited; ends when
+		//     brace depth returns to 0 after at least one brace seen.
+		//   - `var ( foo Type\n )`      — paren-delimited; ends when
+		//     paren depth returns to 0 after at least one paren seen.
+		//   - `var foo SomeType`        — neither braces nor parens; the
+		//     decl is the single first line.
+		// Tracking braces alone leaks subsequent statements into the
+		// top-level bucket when the decl has no braces but the body
+		// continues with statements (e.g. `var x T` followed by
+		// `x.field = …`).
+		bdepth, pdepth := 0, 0
+		seenBrace, seenParen := false, false
 		for i < n {
 			line := lines[i]
 			topBuf = append(topBuf, line)
-			depth += strings.Count(line, "{") - strings.Count(line, "}")
+			bdepth += strings.Count(line, "{") - strings.Count(line, "}")
+			pdepth += strings.Count(line, "(") - strings.Count(line, ")")
 			if strings.ContainsAny(line, "{}") {
 				seenBrace = true
 			}
+			if strings.ContainsAny(line, "()") {
+				seenParen = true
+			}
 			i++
-			if seenBrace && depth == 0 {
+			if seenBrace && bdepth == 0 {
 				return
 			}
-			if !seenBrace && strings.HasSuffix(strings.TrimRight(line, " \t"), ")") {
-				// `var X = foo()` or single-line decl — stop on first `)`-terminated line.
+			if !seenBrace && seenParen && pdepth == 0 {
+				return
+			}
+			if !seenBrace && !seenParen {
 				return
 			}
 		}

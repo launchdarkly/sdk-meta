@@ -4,7 +4,7 @@ sdk: java-server-sdk
 kind: reference
 lang: xml
 description: "XML in section \"Using the Java SDK in OSGi\""
-# Bucket C: declarative XML <dependency> block; not executable Java. See _sdk-docs-port-notes.md.
+# TODO(validate): declarative XML <dependency> block; not executable Java. See _sdk-docs-port-notes.md.
 ---
 
 ```xml

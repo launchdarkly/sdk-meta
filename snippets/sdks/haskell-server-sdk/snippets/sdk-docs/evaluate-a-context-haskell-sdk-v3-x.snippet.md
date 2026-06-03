@@ -4,6 +4,8 @@ sdk: haskell-server-sdk
 kind: reference
 lang: haskell
 description: "Haskell SDK v3.x in section \"Evaluate a context\""
+validation:
+  scaffold: haskell-server-sdk/scaffolds/haskell-syntax-only-v3
 ---
 
 ```haskell

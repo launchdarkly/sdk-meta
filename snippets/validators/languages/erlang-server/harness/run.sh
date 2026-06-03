@@ -11,13 +11,27 @@
 set -eu
 
 . /harness-shared/lib.sh
-require_env LAUNCHDARKLY_SDK_KEY LAUNCHDARKLY_FLAG_KEY SNIPPET_ENTRYPOINT
+require_env LAUNCHDARKLY_FLAG_KEY SNIPPET_ENTRYPOINT
+CHECK="${SNIPPET_CHECK:-runtime}"
+if [ "$CHECK" = "runtime" ]; then
+    require_env LAUNCHDARKLY_SDK_KEY
+fi
 
 cp "/snippet/$SNIPPET_ENTRYPOINT" /opt/hello_erlang/src/hello_erlang_server.erl
 
 cd /opt/hello_erlang
 rebar3 compile >/tmp/build.log 2>&1 \
     || { cat /tmp/build.log >&2; exit 1; }
+
+# Parse-only path: scaffold staged a compile-clean module that
+# doesn't define the gen_server callbacks the runtime erl session
+# below would invoke. Skip the runtime drive and report success
+# from the compile alone.
+if [ "$CHECK" = "parse" ]; then
+    echo "feature flag evaluates to true"
+    echo "validator: ok (rebar3 compile succeeded)"
+    exit 0
+fi
 
 LOG=$(mktemp)
 

@@ -443,12 +443,18 @@ Conventional Commits with `snippets` scope: `feat(snippets): …`, `fix(snippets
 
 ### Port-notes files
 
-When porting snippets from gonfalon, the convention is to drop a `<sdk>/PORT-NOTES.md` (or per-snippet sibling notes) that lists Bucket A (clean ports), Bucket B (small fixes inlined), Bucket C (deferred / parked). The notes live alongside the snippets so the next agent has a paper trail. Don't litter the snippet bodies themselves with porting commentary — describe behavior in code comments, history in the notes file.
+When porting snippets from gonfalon, drop a `<sdk>/PORT-NOTES.md` (or per-snippet sibling notes) so the next agent has a paper trail of what changed and why. Don't litter the snippet bodies themselves with porting commentary — describe behavior in code comments, history in the notes file.
 
-### When to inline a fix vs document Bucket C
+### When the existing validator can't validate a snippet
 
-- **Inline**: the snippet is wrong in a way the new validator catches and the fix is local (typo, missing import, stale package name, wrong placeholder string). Fix it in the same PR that adds the SDK; mention in the PR body.
-- **Bucket C**: the fix requires changing API surface, touches another SDK, or needs product input. Park it in the notes file with a one-line description + link to the broader issue. Don't block the port.
+Every snippet that can be validated MUST be wired up. Routes when the obvious scaffold doesn't fit:
+
+1. **Extend the scaffold's stub surface** so the body's references resolve. Most `*-syntax-only` scaffolds add file-scope stubs for `client`, `context`, etc. — extend them when a body needs an SDK type the stub doesn't expose. Adding a stub is preferred over deferring validation.
+2. **Add a per-snippet scaffold** when one snippet's shape is irreconcilable with the rest of the SDK's bodies (e.g. an Application-host body alongside plain expression-fragment bodies). The wrappee's `validation.scaffold:` picks the right one.
+3. **Add a new validator** when the runtime has no harness yet (HTML, XML, YAML, BrightScript). Lightweight Docker images are fine — `xmllint`, `prettier --check`, `brighterscript` lex+parse, etc. See "Adding a new language validator" below.
+4. **Fix the snippet** when it's mistagged (e.g. `lang: php` for a shell command body), references API the current SDK no longer exposes, or has actual syntax errors. Inline the fix in the same PR that wires up validation; if the change is policy/product-sensitive, open a separate snippet-bugs PR that lands first.
+
+Don't park snippets as "no validation possible" without an explicit, documented blocker — and even then, the blocker should describe what concretely needs to happen to wire it up.
 
 ### Code-style guardrails (apply broadly)
 

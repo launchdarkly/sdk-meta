@@ -55,6 +55,7 @@ Adding a new top-level key requires editing `internal/model/model.go`.
 
 | Field | Notes |
 |---|---|
+| `checks` | Optional list of `Check` entries (multi-check shape, see below). When set it's authoritative — top-level fields below act as defaults each entry inherits. When unset and any of the top-level fields below is set, the loader synthesizes a single `[{kind: runtime, …}]` check from them — every existing snippet's behavior is unchanged. |
 | `runtime` | Picks a harness under `validators/languages/<runtime>/` (e.g. `python`, `node`, `shell-install`, `ios-install`, `js-client`, `react-native-client`, `android-client`). Falls back to `lang:` if empty. Set explicitly when `lang` and runtime differ (e.g. `lang: javascript` + `runtime: node`; `lang: ts` + `runtime: js-client`). |
 | `entrypoint` | File the harness invokes inside the staging dir. Defaults to `file:`. |
 | `requirements` | Runtime-specific dependency descriptor. Python → `requirements.txt` contents (use `|`). Node → top-level dep name. .NET → NuGet package id. Other languages ship deps via a companion manifest scaffold. |
@@ -65,6 +66,31 @@ Adding a new top-level key requires editing `internal/model/model.go`.
 | `placeholders` | Literal source-text fragments **inside the rendered body** → env-var names. After rendering and scaffold composition, the dispatcher string-replaces each key with the named env var's value. Only the allow-list is honored: `LAUNCHDARKLY_SDK_KEY`, `LAUNCHDARKLY_FLAG_KEY`, `LAUNCHDARKLY_MOBILE_KEY`, `LAUNCHDARKLY_CLIENT_SIDE_ID`. |
 
 Merge order for the harness env: scaffold's `validation.env` first, then wrappee's `validation.env` overrides. Inputs of type `flag-key`/`sdk-key`/`mobile-key`/`client-side-id` are walked before any Docker build and fail fast if the mapped env var is unset — real keys never live in the repo.
+
+### `validation.checks` — multiple checks per snippet
+
+The legacy shape (one runtime check derived from the top-level fields) covers most snippets. When a snippet needs more than one validator pass — say a parse-only check today and a runtime check after we wire it up — declare an explicit list:
+
+```yaml
+validation:
+  scaffold: my-sdk/scaffolds/my-syntax-only   # parent default; both checks inherit
+  checks:
+    - kind: parse        # uses parent's scaffold + runtime
+    - kind: runtime
+      scaffold: my-sdk/scaffolds/init-runner  # overrides parent for this check only
+      placeholders:
+        YOUR_SDK_KEY: LAUNCHDARKLY_SDK_KEY
+```
+
+Each `Check` has a required `kind` plus the same optional fields as the top-level `validation` block (`scaffold`, `runtime`, `entrypoint`, `companions`, `requirements`, `scaffold-inputs`, `env`, `placeholders`). Fields not set on a Check inherit from the parent `validation`. `env` and `placeholders` merge key-by-key (Check overrides win on conflicts).
+
+Recognized `kind` values today:
+
+- **`parse`** — language's built-in syntax check (`node --check`, `php -l`, `./gradlew compileDebugKotlin`, etc.). No LD env credentials required — the dispatcher skips the `requireEnvForInputs` gate so a CI cell can run parse-checks without provisioning a key.
+- **`typecheck`** — stronger compile-or-type-check pass (`tsc --noEmit`, `dart analyze --fatal-warnings`, `xcodebuild build`, `cargo check`). Languages whose `parse` already runs a typed compiler may treat this as a no-op alias.
+- **`runtime`** — full end-to-end execution against a real LaunchDarkly environment, asserting on the EXAM-HELLO `feature flag evaluates to true` line. This is what every legacy snippet has been doing.
+
+The dispatcher forwards `SNIPPET_CHECK=<kind>` to the harness via env, so `validators/languages/<runtime>/harness/run.sh` can switch on it. Harnesses that don't recognize a kind should exit non-zero with `unsupported check kind: <kind>` rather than silently falling back.
 
 ### `placeholders` vs `env`
 

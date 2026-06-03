@@ -4,6 +4,13 @@ sdk: react-client-sdk
 kind: reference
 lang: tsx
 description: "React Web SDK v4.0 in section \"Create a wrapped server-side SDK client\""
+# TODO(scaffold): React Server Component snippet — imports
+# @launchdarkly/node-server-sdk + @launchdarkly/react-sdk/server,
+# neither of which the react-client validator container pre-bakes.
+# Needs a dedicated react-server-syntax-only scaffold paired with a
+# react-server validator (or react-client deps extended with
+# node-server-sdk + react-sdk/server subpath). Once that scaffold
+# lands, set validation.scaffold here.
 ---
 
 ```tsx

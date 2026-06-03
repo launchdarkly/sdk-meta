@@ -4,7 +4,13 @@ sdk: android-client-sdk
 kind: reference
 lang: java
 description: "Android SDK v5.x (Java) in section \"Initialize the client\""
-# Bucket C: jvm validator pulls launchdarkly-java-server-sdk, not the android-client SDK (which lives in Google Maven as an aar). See _sdk-docs-port-notes.md.
+# TODO(snippet-bug): body has Kotlin syntax in a `java` code block:
+# (1) `Observability(this.getApplication())` — Java requires `new`
+# before a constructor call; (2)
+# `Collections.singletonList<Plugin>(...)` — Java type arguments
+# on a method call must precede the method name
+# (`Collections.<Plugin>singletonList(...)`), not follow it. Fix in
+# the snippet-bugs PR.
 ---
 
 ```java

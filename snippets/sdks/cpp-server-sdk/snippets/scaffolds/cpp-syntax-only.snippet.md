@@ -39,6 +39,11 @@ validation:
 // system level but are never invoked.
 struct _AnyClient {
     operator LDServerSDK() const { return nullptr; }
+    // operator-> makes `client->Method(...)` resolve when the body
+    // uses pointer syntax (typical of the C-binding API where
+    // `LDServerSDK` is an opaque pointer alias). Self-pointer so
+    // the chained call dispatches to the same variadic stubs below.
+    const _AnyClient* operator->() const { return this; }
     template <typename... Args> bool BoolVariation(Args&&...) const { return false; }
     template <typename... Args> int IntVariation(Args&&...) const { return 0; }
     template <typename... Args> double DoubleVariation(Args&&...) const { return 0; }

@@ -5,13 +5,18 @@ kind: scaffold
 lang: brightscript
 file: main.brs
 description: |
-  Parse-only validator for Roku BrightScript client SDK doc fragments. No Docker harness yet — scaffold present for future runtime wiring.
+  Parse-only validator for Roku BrightScript client SDK doc
+  fragments. Routes through the `roku-client` Docker validator
+  which runs the RokuCommunity `brighterscript` Lexer + Parser
+  over the staged `.brs` file. No Roku device, no real LD env —
+  the wrappee body sits inside `sub _Wrappee()` (never invoked)
+  and `sub Main()` prints the EXAM-HELLO sentinel unconditionally.
 inputs:
   body:
     type: string
     description: The wrappee snippet's rendered body, inserted into the parse-only harness.
 validation:
-  runtime: brightscript
+  runtime: roku-client
   entrypoint: main.brs
 ---
 

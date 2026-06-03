@@ -4,7 +4,7 @@ sdk: android-client-sdk
 kind: reference
 lang: kotlin
 description: Full experimentation onboarding for android-client-sdk — initialize, identify off the main thread on login/eligibility, evaluate, and track conversions.
-# Bucket C: newly proposed experimentation onboarding snippet, not
+# TODO(validate): newly proposed experimentation onboarding snippet, not
 # standalone-runnable (references applyVariant and an Activity host). No
 # validation block yet. See _experimentation-port-notes.md.
 ---
