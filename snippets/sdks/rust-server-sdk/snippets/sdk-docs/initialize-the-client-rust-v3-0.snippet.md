@@ -11,7 +11,7 @@ use std::time::Duration;
 
 #[tokio::main]
 async fn main() {
-    let config = ConfigBuilder::new(&YOUR_SDK_KEY).build();
+    let config = ConfigBuilder::new(&YOUR_SDK_KEY).build().unwrap();
     let client = Client::build(config).unwrap();
 
     client.start_with_default_executor();
