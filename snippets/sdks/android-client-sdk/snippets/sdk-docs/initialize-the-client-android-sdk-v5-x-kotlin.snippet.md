@@ -4,17 +4,8 @@ sdk: android-client-sdk
 kind: reference
 lang: kotlin
 description: "Android SDK v5.x (Kotlin) in section \"Initialize the client\""
-# TODO(snippet-bug): body calls `Observability(this@BaseApplication)`
-# with just the Application context, but the v0.49.0
-# `com.launchdarkly:launchdarkly-observability-android` constructor
-# is `Observability(Application application, String mobileKey,
-# ObservabilityOptions options)` — three required args. Confirmed by
-# inspecting the AAR's
-# `com/launchdarkly/observability/plugin/Observability.class`. The
-# doc shape appears aspirational toward a future 1.x release where
-# the constructor may be simplified. Fix in the snippet-bugs PR
-# once the API stabilizes, or update the snippet to pass all three
-# args for the current 0.x constructor.
+validation:
+  scaffold: android-client-sdk/scaffolds/kotlin-syntax-only
 ---
 
 ```kotlin
