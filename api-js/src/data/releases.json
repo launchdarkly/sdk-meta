@@ -340,9 +340,15 @@
   "browser": [
     {
       "major": 4,
+      "minor": 8,
+      "date": "2026-06-02T14:02:21Z",
+      "eol": null
+    },
+    {
+      "major": 4,
       "minor": 7,
       "date": "2026-05-19T05:25:28Z",
-      "eol": null
+      "eol": "2027-06-02T00:00:00Z"
     },
     {
       "major": 4,
@@ -3274,9 +3280,15 @@
   "react-client-sdk": [
     {
       "major": 4,
+      "minor": 1,
+      "date": "2026-06-02T14:02:26Z",
+      "eol": null
+    },
+    {
+      "major": 4,
       "minor": 0,
       "date": "2026-04-30T22:20:29Z",
-      "eol": null
+      "eol": "2027-06-02T00:00:00Z"
     },
     {
       "major": 3,
