@@ -12,7 +12,7 @@ val ldConfig = LDConfig.Builder(AutoEnvAttributes.Enabled)
     .mobileKey("example-mobile-key")
     // optional observability plugin, requires LaunchDarkly Android Client SDK v5.9+
     .plugins(Components.plugins().setPlugins(
-      listOf(Observability(this@BaseApplication))
+      listOf(Observability(this@BaseApplication, "example-mobile-key"))
     ))
     // other options
     .build()
