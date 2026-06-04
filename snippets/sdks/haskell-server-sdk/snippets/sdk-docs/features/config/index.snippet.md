@@ -4,6 +4,9 @@ sdk: haskell-server-sdk
 kind: reference
 lang: haskell
 description: SDK configuration example for Haskell.
+validation:
+  scaffold: haskell-server-sdk/scaffolds/haskell-config-syntax-only
+
 ---
 
 ```haskell
