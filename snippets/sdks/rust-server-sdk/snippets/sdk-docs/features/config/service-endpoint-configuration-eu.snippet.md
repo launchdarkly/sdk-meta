@@ -13,5 +13,7 @@ validation:
 let config = ConfigBuilder::new("YOUR_SDK_KEY").service_endpoints(ServiceEndpointsBuilder::new()
   .streaming_base_url("https://stream.eu.launchdarkly.com")
   .polling_base_url("https://sdk.eu.launchdarkly.com")
-  .events_base_url("https://events.eu.launchdarkly.com"));
+  .events_base_url("https://events.eu.launchdarkly.com"))
+  .build()
+  .unwrap();
 ```
