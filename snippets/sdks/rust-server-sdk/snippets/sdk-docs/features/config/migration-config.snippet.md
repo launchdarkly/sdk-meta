@@ -4,6 +4,8 @@ sdk: rust-server-sdk
 kind: reference
 lang: rust
 description: Migration configuration example for the Rust SDK v2.2 — read/write methods, execution order, latency/error tracking.
+validation:
+  scaffold: rust-server-sdk/scaffolds/rust-syntax-only
 
 ---
 
