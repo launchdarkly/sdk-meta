@@ -4,6 +4,7 @@ sdk: ios-client-sdk
 kind: reference
 lang: objectivec
 description: Application metadata configuration example for iOS.
+
 ---
 
 ```objc

@@ -4,6 +4,7 @@ sdk: ios-client-sdk
 kind: reference
 lang: objectivec
 description: SDK configuration example for iOS.
+
 ---
 
 ```objectivec
