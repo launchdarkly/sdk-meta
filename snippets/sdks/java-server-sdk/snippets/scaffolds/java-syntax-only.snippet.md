@@ -30,6 +30,9 @@ package com.launchdarkly;
 
 import com.launchdarkly.sdk.*;
 import com.launchdarkly.sdk.server.*;
+// Common JDK types config/timeout fragments reference without their own
+// import line (the docs assume it); provide it so they resolve.
+import java.time.Duration;
 // IMPORT_LIFT_MARKER
 
 public class Snippet {

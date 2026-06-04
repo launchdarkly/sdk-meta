@@ -4,6 +4,8 @@ sdk: java-server-sdk
 kind: reference
 lang: java
 description: SDK configuration example for Java.
+validation:
+  scaffold: java-server-sdk/scaffolds/java-syntax-only
 
 ---
 
