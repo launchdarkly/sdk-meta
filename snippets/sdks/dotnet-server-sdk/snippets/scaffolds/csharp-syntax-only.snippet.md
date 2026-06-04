@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Server;
+using LaunchDarkly.Sdk.Server.Migrations;
 using LaunchDarkly.Sdk.Server.Ai;
 using LaunchDarkly.Sdk.Server.Ai.Adapters;
 using LaunchDarkly.Sdk.Server.Ai.Config;
@@ -51,6 +52,9 @@ namespace LaunchDarklySnippet
         // LdAiClient surface in the stub field type.
 #pragma warning disable CS0414, CS0649
         private static dynamic client = null;
+        // Docs use a `_client` field-naming convention in some fragments
+        // (e.g. migration config); provide it alongside `client`.
+        private static dynamic _client = null;
         private static dynamic aiClient = null;
         private static User user = null;
         private static Context context = default;
