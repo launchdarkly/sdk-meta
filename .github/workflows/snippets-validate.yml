@@ -181,6 +181,15 @@ jobs:
           # brighterscript Lexer + Parser on each staged .brs file.
           # No Roku device, no LD env — pure parse check.
           - { sdk: roku-client-sdk,     runs-on: ubuntu-latest, key-type: none, label: roku-client-sdk (sdk-docs), group: sdk-docs }
+
+          # Edge SDKs (config feature-docs): the edge-ts validator runs
+          # the TypeScript compiler's transpileModule over each staged
+          # fragment — syntax-only, no module resolution or type-check.
+          # No edge runtime, no LD env — pure parse check.
+          - { sdk: cloudflare-server-sdk,     runs-on: ubuntu-latest, key-type: none, label: cloudflare-server-sdk (sdk-docs), group: sdk-docs }
+          - { sdk: vercel-server-sdk,         runs-on: ubuntu-latest, key-type: none, label: vercel-server-sdk (sdk-docs), group: sdk-docs }
+          - { sdk: akamai-server-edgekv-sdk,  runs-on: ubuntu-latest, key-type: none, label: akamai-server-edgekv-sdk (sdk-docs), group: sdk-docs }
+          - { sdk: fastly-server-sdk,         runs-on: ubuntu-latest, key-type: none, label: fastly-server-sdk (sdk-docs), group: sdk-docs }
     steps:
       - uses: actions/checkout@v4
 
