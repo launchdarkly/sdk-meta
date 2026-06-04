@@ -4,6 +4,8 @@ sdk: java-server-sdk
 kind: reference
 lang: java
 description: Migration configuration example for the Java SDK v7 — read/write methods, execution order, latency/error tracking.
+validation:
+  scaffold: java-server-sdk/scaffolds/java-syntax-only
 
 ---
 
@@ -11,7 +13,7 @@ description: Migration configuration example for the Java SDK v7 — read/write 
 
 LDClient client = new LDClient("YOUR_SDK_KEY");
 
-MigrationBuilder<String, String, String, String> migrationBuilder = new MigrationBuilder<>(client)
+MigrationBuilder<String, String, String, String> migrationBuilder = new MigrationBuilder<String, String, String, String>(client)
   .read(
     (payload) -> MigrationMethodResult.Success("read old"),
     (payload) -> MigrationMethodResult.Success("read new"),
@@ -25,6 +27,6 @@ MigrationBuilder<String, String, String, String> migrationBuilder = new Migratio
   .trackLatency(true)
   .trackErrors(true);
 
-Migration<String, String, String, String> migration = migrationBuilder.build();
+Migration<String, String, String, String> migration = migrationBuilder.build().orElseThrow();
 
 ```
