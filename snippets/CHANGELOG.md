@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.10.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.9.0...snippets/v0.10.0) (2026-06-04)
+
+
+### Features
+
+* **snippets:** multi-check validation framework + parse coverage for sdk-docs fragments ([#450](https://github.com/launchdarkly/sdk-meta/issues/450)) ([6e83805](https://github.com/launchdarkly/sdk-meta/commit/6e838058a5dd413de779ae30f34c739693cfc285))
+
+
+### Bug Fixes
+
+* **snippets:** correct rust v3 init and android v5 kotlin observability bodies ([#453](https://github.com/launchdarkly/sdk-meta/issues/453)) ([d3add94](https://github.com/launchdarkly/sdk-meta/commit/d3add94a3da872f055c71c291b3be2f310526ca1))
+
 ## [0.9.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.8.0...snippets/v0.9.0) (2026-06-02)
 
 
