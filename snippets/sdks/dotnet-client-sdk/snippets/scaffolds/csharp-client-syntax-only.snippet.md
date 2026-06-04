@@ -38,6 +38,9 @@ namespace LaunchDarklySnippet
         // invoked at runtime — Main below short-circuits.
         #pragma warning disable CS8625, CS0414, CS0649
         private static dynamic client = null;
+        // Some config fragments reference a `context` binding (e.g.
+        // LdClient.Init(config, context)); provide it as a stub.
+        private static dynamic context = null;
         #pragma warning restore CS8625, CS0414, CS0649
 
         public static void Main(string[] args)
