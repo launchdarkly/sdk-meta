@@ -4,6 +4,8 @@ sdk: android-client-sdk
 kind: reference
 lang: java
 description: Application metadata configuration example for Android.
+validation:
+  scaffold: android-client-sdk/scaffolds/java-syntax-only
 
 ---
 
