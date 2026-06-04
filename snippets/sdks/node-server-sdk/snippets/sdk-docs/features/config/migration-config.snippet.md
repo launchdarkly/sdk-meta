@@ -8,7 +8,16 @@ description: Migration configuration example for the Node.js (server-side) SDK v
 ---
 
 ```ts
-import { LDMigrationOptions, init, createMigration } from '@launchdarkly/node-server-sdk';
+import {
+  LDMigrationOptions,
+  init,
+  createMigration,
+  LDMigrationSuccess,
+  LDMigrationError,
+  LDConcurrentExecution,
+  LDSerialExecution,
+  LDExecutionOrdering,
+} from '@launchdarkly/node-server-sdk';
 const options: LDMigrationOptions = {
   readNew: async(key?: string) => {
     console.log("Reading from new: ", key);
