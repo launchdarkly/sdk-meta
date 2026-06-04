@@ -4,6 +4,9 @@ sdk: erlang-server-sdk
 kind: reference
 lang: erlang
 description: Service endpoint configuration example for Erlang.
+validation:
+  scaffold: erlang-server-sdk/scaffolds/erlang-syntax-only
+
 ---
 
 ```erlang

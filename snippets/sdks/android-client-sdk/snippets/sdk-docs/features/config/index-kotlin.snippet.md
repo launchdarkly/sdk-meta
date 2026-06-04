@@ -4,6 +4,9 @@ sdk: android-client-sdk
 kind: reference
 lang: kotlin
 description: SDK configuration example for Android.
+validation:
+  scaffold: android-client-sdk/scaffolds/kotlin-syntax-only
+
 ---
 
 ```kotlin

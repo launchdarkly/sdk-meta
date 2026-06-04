@@ -4,6 +4,7 @@ sdk: erlang-server-sdk
 kind: reference
 lang: erlang
 description: SDK configuration example for Erlang.
+
 ---
 
 ```erlang

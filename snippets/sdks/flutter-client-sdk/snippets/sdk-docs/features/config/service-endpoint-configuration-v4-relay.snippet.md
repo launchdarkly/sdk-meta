@@ -4,6 +4,7 @@ sdk: flutter-client-sdk
 kind: reference
 lang: dart
 description: Service endpoint configuration example for Flutter.
+
 ---
 
 ```dart

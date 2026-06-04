@@ -4,6 +4,7 @@ sdk: android-client-sdk
 kind: reference
 lang: java
 description: Application metadata configuration example for Android.
+
 ---
 
 ```java

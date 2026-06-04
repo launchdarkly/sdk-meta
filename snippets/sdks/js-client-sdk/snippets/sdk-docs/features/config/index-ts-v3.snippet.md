@@ -4,6 +4,9 @@ sdk: js-client-sdk
 kind: reference
 lang: typescript
 description: SDK configuration example for JavaScript.
+validation:
+  scaffold: js-client-sdk/scaffolds/js-syntax-only
+
 ---
 
 ```ts

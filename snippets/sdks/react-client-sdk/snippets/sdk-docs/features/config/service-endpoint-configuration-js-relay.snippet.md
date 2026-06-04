@@ -4,6 +4,9 @@ sdk: react-client-sdk
 kind: reference
 lang: javascript
 description: Service endpoint configuration example for React Web.
+validation:
+  scaffold: react-client-sdk/scaffolds/react-syntax-only
+
 ---
 
 ```js

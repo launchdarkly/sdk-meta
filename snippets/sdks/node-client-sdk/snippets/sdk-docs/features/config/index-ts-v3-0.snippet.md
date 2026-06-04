@@ -4,6 +4,9 @@ sdk: node-client-sdk
 kind: reference
 lang: typescript
 description: SDK configuration example for Node.js (client-side).
+validation:
+  scaffold: node-client-sdk/scaffolds/node-client-syntax-only
+
 ---
 
 ```ts

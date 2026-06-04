@@ -4,6 +4,9 @@ sdk: roku-client-sdk
 kind: reference
 lang: brightscript
 description: SDK configuration example for Roku.
+validation:
+  scaffold: roku-client-sdk/scaffolds/roku-syntax-only
+
 ---
 
 ```brightscript

@@ -4,6 +4,7 @@ sdk: android-client-sdk
 kind: reference
 lang: java
 description: SDK configuration example for Android.
+
 ---
 
 ```java

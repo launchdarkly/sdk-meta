@@ -4,6 +4,9 @@ sdk: js-client-sdk
 kind: reference
 lang: javascript
 description: Service endpoint configuration example for JavaScript.
+validation:
+  scaffold: js-client-sdk/scaffolds/js-syntax-only
+
 ---
 
 ```js
