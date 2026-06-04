@@ -4,6 +4,9 @@ sdk: fastly-server-sdk
 kind: reference
 lang: typescript
 description: SDK configuration example for Fastly.
+validation:
+  scaffold: fastly-server-sdk/scaffolds/fastly-syntax-only
+
 ---
 
 ```ts
@@ -21,6 +24,6 @@ async function handleRequest(event: FetchEvent) {
 
   await ldClient.waitForInitialization();
 
-  ...
+  // ...
 }
 ```

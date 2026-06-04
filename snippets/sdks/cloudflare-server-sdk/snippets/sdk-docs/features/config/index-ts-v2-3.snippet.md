@@ -4,6 +4,9 @@ sdk: cloudflare-server-sdk
 kind: reference
 lang: typescript
 description: SDK configuration example for Cloudflare.
+validation:
+  scaffold: cloudflare-server-sdk/scaffolds/cloudflare-syntax-only
+
 ---
 
 ```typescript

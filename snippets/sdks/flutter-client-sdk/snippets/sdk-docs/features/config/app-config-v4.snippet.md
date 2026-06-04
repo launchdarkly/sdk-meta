@@ -4,6 +4,8 @@ sdk: flutter-client-sdk
 kind: reference
 lang: dart
 description: Application metadata configuration example for Flutter.
+validation:
+  scaffold: flutter-client-sdk/scaffolds/flutter-syntax-only
 
 ---
 
@@ -17,6 +19,6 @@ final config = LDConfig(
     applicationVersion: '1.0.0',
     applicationVersionName: 'v1',
   ),
-)
+);
 
 ```

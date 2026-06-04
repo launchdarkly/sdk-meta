@@ -4,6 +4,9 @@ sdk: vercel-server-sdk
 kind: reference
 lang: typescript
 description: SDK configuration example for Vercel.
+validation:
+  scaffold: vercel-server-sdk/scaffolds/vercel-syntax-only
+
 ---
 
 ```typescript

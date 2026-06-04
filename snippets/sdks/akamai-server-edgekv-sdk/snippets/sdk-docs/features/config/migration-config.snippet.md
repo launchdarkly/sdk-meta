@@ -4,6 +4,9 @@ sdk: akamai-server-edgekv-sdk
 kind: reference
 lang: typescript
 description: Migration configuration example for the Akamai SDK for EdgeKV — read/write functions and execution mode. Akamai does not send events, so metrics tracking options are inert.
+validation:
+  scaffold: akamai-server-edgekv-sdk/scaffolds/akamai-syntax-only
+
 ---
 
 ```ts

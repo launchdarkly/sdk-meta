@@ -4,6 +4,9 @@ sdk: akamai-server-edgekv-sdk
 kind: reference
 lang: typescript
 description: SDK configuration example for Akamai.
+validation:
+  scaffold: akamai-server-edgekv-sdk/scaffolds/akamai-syntax-only
+
 ---
 
 ```ts

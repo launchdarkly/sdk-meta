@@ -4,6 +4,9 @@ sdk: cpp-server-sdk
 kind: reference
 lang: c
 description: Service endpoint configuration example for C++ (server-side).
+validation:
+  scaffold: cpp-server-sdk/scaffolds/cpp-syntax-only-v2-c
+
 ---
 
 ```c

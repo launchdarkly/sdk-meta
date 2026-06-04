@@ -4,6 +4,9 @@ sdk: cloudflare-server-sdk
 kind: reference
 lang: typescript
 description: Migration configuration example for the Cloudflare SDK v2.2.2+ — read/write functions, execution mode, latency/error tracking.
+validation:
+  scaffold: cloudflare-server-sdk/scaffolds/cloudflare-syntax-only
+
 ---
 
 ```ts

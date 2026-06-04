@@ -4,6 +4,8 @@ sdk: flutter-client-sdk
 kind: reference
 lang: dart
 description: Service endpoint configuration example for Flutter.
+validation:
+  scaffold: flutter-client-sdk/scaffolds/flutter-syntax-only
 
 ---
 

@@ -4,6 +4,9 @@ sdk: vercel-server-sdk
 kind: reference
 lang: typescript
 description: Migration configuration example for the Vercel Edge SDK v1.1.6+ — read/write functions, execution mode, latency/error tracking.
+validation:
+  scaffold: vercel-server-sdk/scaffolds/vercel-syntax-only
+
 ---
 
 ```ts
