@@ -33,21 +33,17 @@ const body = String.raw`
 {{ body }}
 `;
 
-// Write the body as a TypeScript module (.mts) and let Node strip the
-// types natively (`--experimental-strip-types`, Node 22.6+) before the
-// `--check` syntax pass. This handles the full TS surface the doc
-// fragments use — typed function parameters (`async(key?: string)`),
-// inline object types, `as` assertions, `: Type` declarations — which
-// a regex strip can't do reliably. `--check` is purely syntactic, so
-// imported package names still don't have to resolve.
-fs.writeFileSync('fragment.mts', body);
+// Strip simple TS bits (`as Type` assertions, `: Type =`
+// declarations) before the parser sees them. Same approach as the
+// node-client scaffold; see comment there for regex shape rationale.
+const erased = body
+  .replace(/(\bconst|\blet|\bvar)\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*:\s*[^=;]+=/g, '$1 $2 =')
+  .replace(/([A-Za-z0-9_$\)])\s+as\s+[A-Za-z_$][A-Za-z0-9_$.<>\[\]\s|&,()]*/g, '$1');
+
+fs.writeFileSync('fragment.mjs', erased);
 
 try {
-  execFileSync(
-    process.execPath,
-    ['--experimental-strip-types', '--check', 'fragment.mts'],
-    { stdio: 'pipe' },
-  );
+  execFileSync(process.execPath, ['--check', 'fragment.mjs'], { stdio: 'pipe' });
 } catch (err) {
   process.stderr.write(err.stderr || err.message);
   process.exit(1);
