@@ -4,8 +4,6 @@ sdk: ios-client-sdk
 kind: reference
 lang: swift
 description: SDK configuration example for iOS.
-validation:
-  scaffold: ios-client-sdk/scaffolds/swift-syntax-only
 
 ---
 

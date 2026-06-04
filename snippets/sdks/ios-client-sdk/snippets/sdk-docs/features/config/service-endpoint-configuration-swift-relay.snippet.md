@@ -4,8 +4,6 @@ sdk: ios-client-sdk
 kind: reference
 lang: swift
 description: Service endpoint configuration example for iOS.
-validation:
-  scaffold: ios-client-sdk/scaffolds/swift-syntax-only
 
 ---
 
