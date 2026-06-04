@@ -4,11 +4,15 @@ sdk: rust-server-sdk
 kind: reference
 lang: rust
 description: SDK configuration example for Rust.
+validation:
+  scaffold: rust-server-sdk/scaffolds/rust-syntax-only
+
 ---
 
 ```rust
 let config = ConfigBuilder::new("YOUR_SDK_KEY")
   .offline(true)
-  .build();
+  .build()
+  .unwrap();
 let client = Client::build(config).unwrap();
 ```

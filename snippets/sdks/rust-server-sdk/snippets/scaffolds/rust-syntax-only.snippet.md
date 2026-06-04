@@ -22,8 +22,8 @@ validation:
 // the imports.
 #[allow(unused_imports)]
 use launchdarkly_server_sdk::{
-    AttributeValue, Client, ConfigBuilder, Context, ContextBuilder,
-    MultiContextBuilder, Reference,
+    ApplicationInfo, AttributeValue, Client, ConfigBuilder, Context, ContextBuilder,
+    MultiContextBuilder, Reference, ServiceEndpointsBuilder,
 };
 #[allow(unused_imports)]
 use std::collections::HashMap;
@@ -38,6 +38,10 @@ const YOUR_SDK_KEY: &str = "";
 const YOUR_MOBILE_KEY: &str = "";
 #[allow(non_upper_case_globals, dead_code)]
 const YOUR_CLIENT_SIDE_ID: &str = "";
+// Some config fragments reference a lowercase `sdk_key` binding rather
+// than the YOUR_SDK_KEY placeholder; provide it so they resolve.
+#[allow(non_upper_case_globals, dead_code)]
+const sdk_key: &str = "";
 
 // Stub for the pre-1.0 (beta) `User` API surface — removed at 1.0
 // in favor of Context. Doc fragments under

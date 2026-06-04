@@ -4,6 +4,9 @@ sdk: rust-server-sdk
 kind: reference
 lang: rust
 description: Application metadata configuration example for Rust.
+validation:
+  scaffold: rust-server-sdk/scaffolds/rust-syntax-only
+
 ---
 
 ```rust
