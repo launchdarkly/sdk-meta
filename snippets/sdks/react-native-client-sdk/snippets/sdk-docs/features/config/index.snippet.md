@@ -4,6 +4,9 @@ sdk: react-native-client-sdk
 kind: reference
 lang: typescript
 description: SDK configuration example for React Native.
+validation:
+  scaffold: react-native-client-sdk/scaffolds/react-native-syntax-only
+
 ---
 
 ```ts
