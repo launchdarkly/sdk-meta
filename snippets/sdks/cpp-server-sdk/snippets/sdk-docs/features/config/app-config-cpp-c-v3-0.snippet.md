@@ -4,6 +4,9 @@ sdk: cpp-server-sdk
 kind: reference
 lang: c
 description: Application metadata configuration example for C++ (server-side).
+validation:
+  scaffold: cpp-server-sdk/scaffolds/cpp-syntax-only
+
 ---
 
 ```c

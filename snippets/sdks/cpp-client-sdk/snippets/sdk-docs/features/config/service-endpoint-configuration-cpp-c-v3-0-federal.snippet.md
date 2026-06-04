@@ -4,13 +4,16 @@ sdk: cpp-client-sdk
 kind: reference
 lang: c
 description: Service endpoint configuration example for C++ (client-side).
+validation:
+  scaffold: cpp-client-sdk/scaffolds/cpp-client-syntax-only
+
 ---
 
 ```c
 LDClientConfigBuilder builder = LDClientConfigBuilder_New("example-mobile-key");
-LDClientConfigBuilder_ServiceEndpoints_StreamingBaseURL(builder, "https://clientstream.launchdarkly.us")
-LDClientConfigBuilder_ServiceEndpoints_PollingBaseURL(builder, "https://clientsdk.launchdarkly.us")
-LDClientConfigBuilder_ServiceEndpoints_EventsBaseURL(builder, "https://events.launchdarkly.us")
+LDClientConfigBuilder_ServiceEndpoints_StreamingBaseURL(builder, "https://clientstream.launchdarkly.us");
+LDClientConfigBuilder_ServiceEndpoints_PollingBaseURL(builder, "https://clientsdk.launchdarkly.us");
+LDClientConfigBuilder_ServiceEndpoints_EventsBaseURL(builder, "https://events.launchdarkly.us");
 LDClientConfig config;
 
 LDStatus status = LDClientConfigBuilder_Build(builder, &config);

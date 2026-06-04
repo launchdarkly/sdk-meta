@@ -4,6 +4,9 @@ sdk: cpp-client-sdk
 kind: reference
 lang: c
 description: SDK configuration example for C++ (client-side).
+validation:
+  scaffold: cpp-client-sdk/scaffolds/cpp-client-syntax-only
+
 ---
 
 ```c

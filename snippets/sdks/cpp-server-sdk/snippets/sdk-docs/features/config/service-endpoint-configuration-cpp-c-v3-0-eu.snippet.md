@@ -4,13 +4,16 @@ sdk: cpp-server-sdk
 kind: reference
 lang: c
 description: Service endpoint configuration example for C++ (server-side).
+validation:
+  scaffold: cpp-server-sdk/scaffolds/cpp-syntax-only
+
 ---
 
 ```c
 LDServerConfigBuilder builder = LDServerConfigBuilder_New("YOUR_SDK_KEY");
-LDServerConfigBuilder_ServiceEndpoints_StreamingBaseURL(builder, "https://stream.eu.launchdarkly.com")
-LDServerConfigBuilder_ServiceEndpoints_PollingBaseURL(builder, "https://sdk.eu.launchdarkly.com")
-LDServerConfigBuilder_ServiceEndpoints_EventsBaseURL(builder, "https://events.eu.launchdarkly.com")
+LDServerConfigBuilder_ServiceEndpoints_StreamingBaseURL(builder, "https://stream.eu.launchdarkly.com");
+LDServerConfigBuilder_ServiceEndpoints_PollingBaseURL(builder, "https://sdk.eu.launchdarkly.com");
+LDServerConfigBuilder_ServiceEndpoints_EventsBaseURL(builder, "https://events.eu.launchdarkly.com");
 LDServerConfig config;
 
 LDStatus status = LDServerConfigBuilder_Build(builder, &config);

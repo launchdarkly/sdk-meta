@@ -4,6 +4,9 @@ sdk: cpp-server-sdk
 kind: reference
 lang: cpp
 description: SDK configuration example for C++ (server-side).
+validation:
+  scaffold: cpp-server-sdk/scaffolds/cpp-syntax-only
+
 ---
 
 ```cpp
