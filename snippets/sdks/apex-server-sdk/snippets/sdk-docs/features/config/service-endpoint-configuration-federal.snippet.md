@@ -4,6 +4,7 @@ sdk: apex-server-sdk
 kind: reference
 lang: bash
 description: Service endpoint configuration example for Apex.
+
 ---
 
 ```bash

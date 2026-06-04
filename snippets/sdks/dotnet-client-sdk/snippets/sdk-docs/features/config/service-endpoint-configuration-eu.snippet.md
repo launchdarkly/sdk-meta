@@ -4,6 +4,9 @@ sdk: dotnet-client-sdk
 kind: reference
 lang: csharp
 description: Service endpoint configuration example for .NET (client-side).
+validation:
+  scaffold: dotnet-client-sdk/scaffolds/csharp-client-syntax-only
+
 ---
 
 ```csharp

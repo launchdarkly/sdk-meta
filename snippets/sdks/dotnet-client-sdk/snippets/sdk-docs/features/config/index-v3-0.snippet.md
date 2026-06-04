@@ -4,6 +4,7 @@ sdk: dotnet-client-sdk
 kind: reference
 lang: csharp
 description: SDK configuration example for .NET (client-side).
+
 ---
 
 ```csharp
