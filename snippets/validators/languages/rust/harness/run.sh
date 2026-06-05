@@ -21,6 +21,7 @@ cp "/snippet/$SNIPPET_ENTRYPOINT" "$SNIPPET_ENTRYPOINT"
 
 cargo add --quiet launchdarkly-server-sdk
 cargo add --quiet tokio@1 -F rt,macros
+cargo add --quiet futures
 
 LOG=$(mktemp)
 

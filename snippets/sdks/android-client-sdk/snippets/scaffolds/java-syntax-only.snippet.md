@@ -53,6 +53,11 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import com.launchdarkly.sdk.*;
 import com.launchdarkly.sdk.android.*;
+// `AutoEnvAttributes` is a nested enum at
+// `LDConfig.Builder.AutoEnvAttributes`; package wildcard imports don't
+// reach nested types, so config/init bodies referencing
+// `AutoEnvAttributes.Enabled` need this explicit import.
+import com.launchdarkly.sdk.android.LDConfig.Builder.AutoEnvAttributes;
 
 // No `public` modifier: Java requires public top-level classes to
 // live in a file matching the class name. We need this scaffold's
