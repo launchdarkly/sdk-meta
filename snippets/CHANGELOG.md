@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.10.0...snippets/v0.11.0) (2026-06-05)
+
+
+### Features
+
+* **snippets:** port /sdk/features/config feature docs to canonical snippets ([#448](https://github.com/launchdarkly/sdk-meta/issues/448)) ([d3069da](https://github.com/launchdarkly/sdk-meta/commit/d3069da105af893dbf995f8dba517cd07ea7e33a))
+* **snippets:** validation plumbing for config feature-docs (edge-ts validator, scaffolds, harness lifts) ([#456](https://github.com/launchdarkly/sdk-meta/issues/456)) ([ba6f545](https://github.com/launchdarkly/sdk-meta/commit/ba6f545bdb88c0219dd9f90ba077ff43b0b74585))
+
 ## [0.10.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.9.0...snippets/v0.10.0) (2026-06-04)
 
 
