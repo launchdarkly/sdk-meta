@@ -10,10 +10,10 @@ validation:
 ---
 
 ```csharp
-var fallbackConfig = LdAiConfig.New()
+var fallbackConfig = LdAiCompletionConfigDefault.New()
   .SetModelName("my-default-model")
   .SetModelParam("temperature", LdValue.Of(0.8))
-  .AddMessage("", Role.System)
+  .AddMessage("", LdAiConfigTypes.Role.System)
   .SetModelProviderName("my-default-provider")
   .SetEnabled(true)
   .Build();
