@@ -50,6 +50,10 @@ _wrappee = do
   -- initialize-the-client). Such top-level declarations land via
   -- TOP_LIFT_TARGET outside the do-block.
   let client = undefined :: Client
+  -- Evaluation fragments pass a bare `context` to the variation
+  -- functions; the docs assume it exists. Annotated so it stays
+  -- unambiguous for sibling bodies that never reference it.
+  let context = undefined :: Context
 --BODY_BEGIN--
 {{ body }}
 --BODY_END--

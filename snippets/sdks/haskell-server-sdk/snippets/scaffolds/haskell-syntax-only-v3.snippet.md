@@ -51,6 +51,10 @@ _wrappee = do
   -- declaring it themselves. Scoped to the do-block so it doesn't
   -- collide with bodies that declare their own top-level `client`.
   let client = undefined :: Client
+  -- v3.x evaluation fragments pass a bare `user` to the variation
+  -- functions; the docs assume it exists. Annotated so it stays
+  -- unambiguous for sibling bodies that never reference it.
+  let user = undefined :: User
 --BODY_BEGIN--
 {{ body }}
 --BODY_END--

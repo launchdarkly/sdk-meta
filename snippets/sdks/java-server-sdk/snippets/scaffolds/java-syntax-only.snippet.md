@@ -42,6 +42,10 @@ public class Snippet {
     // symbol during compilation.
     @SuppressWarnings("unused")
     private static final LDClient client = null;
+    // Evaluation fragments pass a context to the variation methods; the
+    // docs assume it already exists, so provide it as a stub symbol.
+    @SuppressWarnings("unused")
+    private static final LDContext context = null;
 
     public static void main(String[] args) {
         System.out.println("feature flag evaluates to true");
