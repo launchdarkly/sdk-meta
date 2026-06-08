@@ -3456,9 +3456,15 @@
   "react-native": [
     {
       "major": 10,
+      "minor": 18,
+      "date": "2026-06-05T13:44:54Z",
+      "eol": null
+    },
+    {
+      "major": 10,
       "minor": 17,
       "date": "2026-04-23T20:27:28Z",
-      "eol": null
+      "eol": "2027-06-05T00:00:00Z"
     },
     {
       "major": 10,
@@ -4462,9 +4468,15 @@
   "server-ai": [
     {
       "major": 1,
+      "minor": 1,
+      "date": "2026-06-05T21:04:20Z",
+      "eol": null
+    },
+    {
+      "major": 1,
       "minor": 0,
       "date": "2026-05-19T05:25:29Z",
-      "eol": null
+      "eol": "2027-06-05T00:00:00Z"
     }
   ],
   "swift-client-sdk": [
