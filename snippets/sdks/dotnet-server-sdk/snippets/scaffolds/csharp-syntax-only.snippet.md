@@ -35,7 +35,6 @@ using LaunchDarkly.Sdk.Server.Migrations;
 using LaunchDarkly.Sdk.Server.Ai;
 using LaunchDarkly.Sdk.Server.Ai.Adapters;
 using LaunchDarkly.Sdk.Server.Ai.Config;
-using LaunchDarkly.Sdk.Server.Ai.DataModel;
 
 namespace LaunchDarklySnippet
 {
