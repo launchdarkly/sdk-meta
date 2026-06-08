@@ -12,6 +12,7 @@ validation:
 ```typescript
 import { useLDClient } from '@launchdarkly/react-native-client-sdk'
 
+const client = useLDClient();
 let boolResult = client.boolVariation('example-bool-flag-key', false);
 let numResult = client.numberVariation('example-numeric-flag-key', 2);
 let stringResult = client.stringVariation('example-string-flag-key', '');
