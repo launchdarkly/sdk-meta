@@ -43,7 +43,7 @@ ARG ROBOLECTRIC_VERSION=4.12.2
 # initialize-the-client-android-sdk-v5-x-* show the v5.9+ pattern
 # `Components.plugins().setPlugins(listOf(Observability(this@…)))`,
 # which references the launchdarkly-observability-android package.
-ARG LD_ANDROID_OBSERVABILITY_VERSION=0.49.0
+ARG LD_ANDROID_OBSERVABILITY_VERSION=0.54.0
 
 RUN git clone --depth 1 --branch "${HELLO_ANDROID_REF}" \
         https://github.com/launchdarkly/hello-android.git /opt/hello-android

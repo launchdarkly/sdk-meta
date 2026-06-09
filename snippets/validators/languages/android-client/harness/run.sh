@@ -85,7 +85,16 @@ saw_func = False
 out = []
 for line in lines:
     s = line.strip()
-    if re.match(r"^\s*(override\s+)?fun\s+", line):
+    # Mark the end of the file-scope import region. Kotlin bodies open
+    # with `fun`/`override fun`; Java bodies have no `fun`, so also
+    # trip on the first type declaration (`class`/`object`/`interface`/
+    # `enum`). In both languages every legal file-scope import precedes
+    # the first such line, so any `import` after it is a misplaced body
+    # import to hoist.
+    if re.match(r"^\s*(override\s+)?fun\s+", line) or re.match(
+        r"^\s*((public|private|protected|final|abstract|open|internal|sealed|data|static)\s+)*(class|object|interface|enum)\s+",
+        line,
+    ):
         saw_func = True
     if saw_func:
         m = re.match(r"^\s*(import\s+[A-Za-z_][A-Za-z0-9_.]*\*?\s*;?\s*)$", line)
@@ -98,10 +107,14 @@ for line in lines:
             file_imports.add(m.group(1).rstrip(';').strip())
     out.append(line)
 
+# Imports are collected with their trailing `;` stripped (so Kotlin and
+# Java forms dedup against each other). Java requires the semicolon when
+# re-inserted at file scope; Kotlin must not have one.
+is_java = path.endswith(".java")
 new_top = []
 for imp in in_func_imports:
     if imp not in file_imports:
-        new_top.append(imp)
+        new_top.append(imp + ";" if is_java else imp)
         file_imports.add(imp)
 
 if new_top:

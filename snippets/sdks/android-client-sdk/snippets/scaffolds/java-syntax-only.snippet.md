@@ -58,6 +58,15 @@ import com.launchdarkly.sdk.android.*;
 // reach nested types, so config/init bodies referencing
 // `AutoEnvAttributes.Enabled` need this explicit import.
 import com.launchdarkly.sdk.android.LDConfig.Builder.AutoEnvAttributes;
+// Observability plugin surfaces for the v5.x init / import fragments:
+// `Plugin` (integrations), the `Observability` plugin, and its
+// `ObservabilityOptions` (with the Java-friendly builder added in
+// launchdarkly-observability-android 0.54.0). `java.util.Collections`
+// covers the `Collections.<Plugin>singletonList(...)` plugin list.
+import com.launchdarkly.sdk.android.integrations.*;
+import com.launchdarkly.observability.plugin.*;
+import com.launchdarkly.observability.api.*;
+import java.util.Collections;
 
 // No `public` modifier: Java requires public top-level classes to
 // live in a file matching the class name. We need this scaffold's
