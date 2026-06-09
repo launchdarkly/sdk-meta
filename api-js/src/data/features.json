@@ -94,6 +94,11 @@
       "introduced": "2.9",
       "removed": null
     },
+    "fdv2": {
+      "deprecated": null,
+      "introduced": "5.13",
+      "removed": null
+    },
     "flagChanges": {
       "deprecated": null,
       "introduced": "1.0",
