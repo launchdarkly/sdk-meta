@@ -1322,9 +1322,15 @@
   "flutter-client-sdk": [
     {
       "major": 4,
+      "minor": 18,
+      "date": "2026-06-09T18:17:15Z",
+      "eol": null
+    },
+    {
+      "major": 4,
       "minor": 17,
       "date": "2026-06-04T15:58:57Z",
-      "eol": null
+      "eol": "2027-06-09T00:00:00Z"
     },
     {
       "major": 4,
