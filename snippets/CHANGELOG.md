@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.12.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.11.0...snippets/v0.12.0) (2026-06-10)
+
+
+### Features
+
+* **snippets:** port /sdk/features/evaluating to canonical snippets ([#459](https://github.com/launchdarkly/sdk-meta/issues/459)) ([b145a51](https://github.com/launchdarkly/sdk-meta/commit/b145a51e4613f29dc52a07f65874e4041f32e88a))
+
+
+### Bug Fixes
+
+* **snippets:** bind Android Java observability snippets (obs-android 0.54.0) ([#464](https://github.com/launchdarkly/sdk-meta/issues/464)) ([4d05d7a](https://github.com/launchdarkly/sdk-meta/commit/4d05d7a75106e3b2e45f119b11a75059dac15b83))
+* **snippets:** update dotnet AI Configs snippets for ServerSdk.Ai v0.10.0 ([#460](https://github.com/launchdarkly/sdk-meta/issues/460)) ([c547ad0](https://github.com/launchdarkly/sdk-meta/commit/c547ad05c6c0bca717eccb1a4613cfdea8479871))
+
 ## [0.11.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.10.0...snippets/v0.11.0) (2026-06-05)
 
 
