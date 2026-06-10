@@ -91,6 +91,10 @@ class SnippetActivity extends Activity {
     // `onCreate()` being an instance method.
     LDClient client;
     String flagKey;
+    // Evaluation fragments pass a context and an init-blocking
+    // timeout the docs assume already exist.
+    LDContext context;
+    int secondsToBlock;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -44,6 +44,9 @@ namespace LaunchDarklySnippet
         // different shapes, and the scaffold is parse-only.
         #pragma warning disable CS8625, CS0414, CS0649
         private static dynamic client = null;
+        // Evaluation/init fragments pass an ambient `context`; the
+        // docs assume it already exists.
+        private static dynamic context = null;
         #pragma warning restore CS8625, CS0414, CS0649
 
         public static void Main(string[] args)

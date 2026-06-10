@@ -12,6 +12,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <string.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -90,6 +91,67 @@ static inline char *LDStringVariation(struct LDClient *client,
     (void)client;
     (void)flagKey;
     return (char *)fallback;
+}
+
+static inline void LDConfigSetUseEvaluationReasons(struct LDConfig *config,
+                                                   LDBoolean reasons) {
+    (void)config;
+    (void)reasons;
+}
+
+/* Detail-variation surface. `LDVariationDetails` is filled by the
+ * evaluation call; `reason` is a JSON object inspected through
+ * LDObjectLookup / LDGetText. LDFreeDetailContents takes the struct
+ * by value, matching the real v2 header. */
+typedef struct {
+    int            variationIndex;
+    struct LDJSON *reason;
+} LDVariationDetails;
+
+static inline LDBoolean LDBoolVariationDetail(struct LDClient *client,
+                                              const char *flagKey,
+                                              LDBoolean fallback,
+                                              LDVariationDetails *details) {
+    (void)client;
+    (void)flagKey;
+    (void)details;
+    return fallback;
+}
+
+static inline int LDIntVariationDetail(struct LDClient *client,
+                                       const char *flagKey,
+                                       int fallback,
+                                       LDVariationDetails *details) {
+    (void)client;
+    (void)flagKey;
+    (void)details;
+    return fallback;
+}
+
+static inline double LDDoubleVariationDetail(struct LDClient *client,
+                                             const char *flagKey,
+                                             double fallback,
+                                             LDVariationDetails *details) {
+    (void)client;
+    (void)flagKey;
+    (void)details;
+    return fallback;
+}
+
+static inline struct LDJSON *LDObjectLookup(const struct LDJSON *object,
+                                            const char *key) {
+    (void)object;
+    (void)key;
+    return (struct LDJSON *)0;
+}
+
+static inline const char *LDGetText(const struct LDJSON *json) {
+    (void)json;
+    return "";
+}
+
+static inline void LDFreeDetailContents(LDVariationDetails details) {
+    (void)details;
 }
 
 #ifdef __cplusplus
