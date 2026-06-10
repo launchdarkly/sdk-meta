@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.19](https://github.com/launchdarkly/sdk-meta/compare/api-js/v0.3.18...api-js/v0.3.19) (2026-06-10)
+
+
+### Bug Fixes
+
+* **metadata:** ingest new data and regenerate products ([#461](https://github.com/launchdarkly/sdk-meta/issues/461)) ([4abf891](https://github.com/launchdarkly/sdk-meta/commit/4abf891206d8105d04fa45d9cd012db1e050d43c))
+* **metadata:** ingest new data and regenerate products ([#463](https://github.com/launchdarkly/sdk-meta/issues/463)) ([0fd4898](https://github.com/launchdarkly/sdk-meta/commit/0fd48985a6dda2a98afa676a3c7989ef969f3d36))
+* **metadata:** ingest new data and regenerate products ([#465](https://github.com/launchdarkly/sdk-meta/issues/465)) ([6662379](https://github.com/launchdarkly/sdk-meta/commit/6662379169b609a0c29d77d397d8433cbf7a79c4))
+
 ## [0.3.18](https://github.com/launchdarkly/sdk-meta/compare/api-js/v0.3.17...api-js/v0.3.18) (2026-06-05)
 
 
