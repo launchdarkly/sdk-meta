@@ -9,12 +9,11 @@ validation:
 ---
 
 ```tsx
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import { Pressable, Text } from 'react-native';
-import { ReactNativeLDClient } from '@launchdarkly/react-native-client-sdk';
+import { useLDClient, useStringVariation } from '@launchdarkly/react-native-client-sdk';
 
 interface ExperimentButtonProps {
-  client: ReactNativeLDClient;
   onPress?: () => void;
 }
 
@@ -28,20 +27,14 @@ interface ExperimentButtonProps {
 //      "Start for free"). The flag value is used as the button label directly.
 //   3. Create a press metric in LaunchDarkly whose key matches YOUR_METRIC_KEY
 //      and attach it to your experiment.
-export function ExperimentButton({ client, onPress }: ExperimentButtonProps) {
-  // Initialise from the current flag value and re-render whenever it changes,
-  // so live targeting updates reach the button without remounting.
-  const [label, setLabel] = useState<string>(
-    () => client.variation('YOUR_FLAG_KEY', 'Get started') as string,
-  );
-
-  useEffect(() => {
-    const updateLabel = () => {
-      setLabel(client.variation('YOUR_FLAG_KEY', 'Get started') as string);
-    };
-    client.on('change:YOUR_FLAG_KEY', updateLabel);
-    return () => { client.off('change:YOUR_FLAG_KEY', updateLabel); };
-  }, [client]);
+export function ExperimentButton({ onPress }: ExperimentButtonProps) {
+  // useStringVariation subscribes to the flag, so the label updates as soon as
+  // initialization completes or targeting changes — no manual change listener
+  // or parent re-render needed. The default is shown when the flag is off or
+  // the SDK hasn't finished initializing yet.
+  // Don't cache the result — LaunchDarkly deduplicates exposure events automatically.
+  const label = useStringVariation('YOUR_FLAG_KEY', 'Get started');
+  const client = useLDClient();
 
   const handlePress = useCallback(() => {
     // Track the press so LaunchDarkly can attribute it to the right variation.

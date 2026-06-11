@@ -10,7 +10,7 @@ validation:
 
 ```tsx
 import { useCallback } from "react";
-import { useFlags, useLDClient } from "@launchdarkly/react-sdk";
+import { useLDClient, useStringVariation } from "@launchdarkly/react-sdk";
 
 interface ExperimentButtonProps {
   onClick?: () => void;
@@ -27,20 +27,18 @@ interface ExperimentButtonProps {
 //   3. Create a click metric in LaunchDarkly whose key matches YOUR_METRIC_KEY
 //      and attach it to your experiment.
 export function ExperimentButton({ onClick, className }: ExperimentButtonProps) {
-  // useFlags() re-renders the component whenever the flag value changes,
-  // so live targeting rule updates reach the button without a page reload.
-  const flags = useFlags();
+  // useStringVariation looks the flag up by its key, subscribes to it, and
+  // re-renders the component whenever its value changes, so live targeting
+  // rule updates reach the button without a page reload. The default is shown
+  // when the flag is off or the SDK hasn't finished initializing yet.
+  const label = useStringVariation("YOUR_FLAG_KEY", "Get started");
   const ldClient = useLDClient();
-
-  // The flag value is the button label. Fall back to a default when the flag is
-  // off or the SDK hasn't finished initializing yet.
-  const label: string = flags["YOUR_FLAG_KEY"] ?? "Get started";
 
   const handleClick = useCallback(() => {
     // Track the click so LaunchDarkly can attribute conversions to the right variation.
     // Use the same user context that was active when the flag was evaluated —
     // mismatched contexts break conversion attribution.
-    ldClient?.track("YOUR_METRIC_KEY");
+    ldClient.track("YOUR_METRIC_KEY");
     onClick?.();
   }, [ldClient, onClick]);
 
