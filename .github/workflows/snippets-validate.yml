@@ -130,6 +130,17 @@ jobs:
             label: android-client-sdk (init)
             snippet: android-client-sdk/sdk-info/init
 
+          # Android experimentation fragments are Kotlin and validate
+          # through kotlin-syntax-only (gradle compile in parse mode).
+          # The android rows are all snippet-/group-filtered, so the
+          # group needs its own row — unlike js/react/react-native,
+          # whose unfiltered rows pick experimentation up implicitly.
+          - sdk: android-client-sdk
+            runs-on: ubuntu-latest
+            key-type: mobile
+            label: android-client-sdk (experimentation)
+            group: experimentation
+
           # Android sdk-docs: Kotlin reference fragments wrapped by
           # kotlin-syntax-only run `./gradlew compileDebugKotlin`
           # against the real launchdarkly-android-client-sdk aar +
