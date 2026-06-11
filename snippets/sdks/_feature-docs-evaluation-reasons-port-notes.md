@@ -90,3 +90,29 @@ column 0).
   (same blocker as the evaluating port's objc snippet). Wiring it up
   requires either an Objective-C target in the xcodegen scaffold or a
   clang -fsyntax-only stub harness.
+
+## Latest-version verification (evaluating + evaluation-reasons)
+
+Every sample on both pages was checked against the latest major version
+of its SDK; all are valid, so no additional snippets were needed. The
+consumer-side fix is retitling stale version labels to the "vX+" style
+in the MDX (CodeBlock titles live outside the marker hash regions).
+
+Evidence by validator class:
+
+- Compiled against floating-latest packages: dotnet-server (8.x),
+  dotnet-client (5.x), rust (cargo resolves 3.x).
+- Compiled against latest-major pins: java (7.13.4), ios (Swift SDK
+  11.0), android (5.11.1), cpp client/server (3.11.1 / 3.10.1),
+  haskell (4.5.1), js-client (4.6.3), flutter (4.x),
+  react-native (10.x).
+- Parse-only runtimes verified against SDK sources: python 9.x,
+  ruby 8.x, php 6.x, node-server 9.x, node-client 3.x, electron 1.x,
+  roku 2.4, apex 1.x, erlang 3.9 (`variation_detail/3` with a context
+  map is unchanged from 2.x), lua 2.1, go 7.x, and the four edge SDKs.
+
+Stale titles to update in the docs (label major < latest major, code
+verified working): .NET server "v7.0" (both pages), .NET client "v4.0"
+(evaluation-reasons), Java "v6.0" (both), PHP "v5.0" (both; the
+reason-inspection block's "v5.0 and earlier" is also wrong — it works
+on 6.x), Python "v8.0" (both), Ruby "v7.0" (both), Rust "v1" (both).
