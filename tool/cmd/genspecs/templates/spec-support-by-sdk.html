@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LaunchDarkly SDK Spec Support — by SDK</title>
+  <style>
+    :root {
+      --bg-primary: #f5f5f5;
+      --bg-secondary: #ffffff;
+      --text-primary: #282828;
+      --text-secondary: #6c757d;
+      --border-color: #dee2e6;
+      --row-hover: #f8f9fa;
+      --supported: #28a745;
+      --partial: #ffc107;
+      --not-supported: #dc3545;
+      --not-applicable: #adb5bd;
+      --unknown: #ffffff;
+      --unknown-border: #dee2e6;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-primary: #1a1a1a;
+        --bg-secondary: #2d2d2d;
+        --text-primary: #e0e0e0;
+        --text-secondary: #a0a0a0;
+        --border-color: #404040;
+        --row-hover: #363636;
+        --not-applicable: #555;
+        --unknown: #2d2d2d;
+        --unknown-border: #555;
+      }
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    h1 { margin: 0 0 4px; }
+    .subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 16px; }
+
+    .nav-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .nav-tab {
+      padding: 12px 24px;
+      text-decoration: none;
+      color: var(--text-primary);
+      opacity: 0.7;
+      border-bottom: 3px solid transparent;
+    }
+    .nav-tab:hover { opacity: 1; }
+    .nav-tab.active { opacity: 1; border-bottom-color: var(--text-primary); font-weight: 600; }
+
+    .controls { margin-bottom: 16px; }
+    .controls select {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 1rem;
+    }
+
+    .summary {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .summary .stat {
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      min-width: 90px;
+    }
+    .summary .stat strong { display: block; font-size: 1.4rem; }
+    .stat.supported { background: var(--supported); color: #fff; }
+    .stat.partial { background: var(--partial); color: #000; }
+    .stat.not-supported { background: var(--not-supported); color: #fff; }
+    .stat.not-applicable { background: var(--not-applicable); color: #fff; }
+    .stat.unknown { background: var(--bg-secondary); border: 1px solid var(--border-color); }
+
+    .group-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+    .group-section header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 600;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .group-section .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+    }
+    .pill.supported { background: var(--supported); color: #fff; }
+    .pill.partial { background: var(--partial); color: #000; }
+    .pill.not-supported { background: var(--not-supported); color: #fff; }
+    .pill.not-applicable { background: var(--not-applicable); color: #fff; }
+    .pill.unknown { background: var(--bg-primary); border: 1px solid var(--border-color); }
+
+    .group-section ul { list-style: none; padding: 0; margin: 0; }
+    .group-section li {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .group-section li:last-child { border-bottom: none; }
+    .spec-line {
+      display: flex;
+      gap: 8px;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+    .spec-id { font-weight: 600; min-width: 80px; }
+    .spec-title { color: var(--text-secondary); }
+    .rationale { font-size: 0.9rem; line-height: 1.4; margin-top: 4px; }
+    .meta {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    .notes {
+      margin-top: 4px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+    .spec-link { font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+  <div class="nav-tabs">
+    <a class="nav-tab" href="spec-support.html">Matrix</a>
+    <a class="nav-tab active" href="spec-support-by-sdk.html">By SDK</a>
+    <a class="nav-tab" href="by-sdk.html">Features (by SDK)</a>
+    <a class="nav-tab" href="by-feature.html">Features (by feature)</a>
+  </div>
+
+  <h1>Spec support — by SDK</h1>
+  <p class="subtitle">Generated {{.GeneratedAt}} · specs commit <code>{{shortCommit .SpecsCommit}}</code> · harness commit <code>{{shortCommit .HarnessCommit}}</code> · model <code>{{.Model}}</code></p>
+
+  <div class="controls">
+    <label>SDK:
+      <select id="sdkPicker"></select>
+    </label>
+  </div>
+
+  <div class="summary" id="summary"></div>
+  <div id="groups"></div>
+
+  <script>
+    const data = {{.PayloadJSON}};
+    const specs = data.specs;
+    const sdkOrder = data.sdkOrder;
+    const types = data.types;
+    const names = data.names;
+    const cells = data.cells;
+
+    const picker = document.getElementById('sdkPicker');
+    sdkOrder.forEach(id => {
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = `${names[id] || id} (${types[id] || '?'})`;
+      picker.appendChild(opt);
+    });
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[c]);
+    }
+
+    function render() {
+      const sdkId = picker.value;
+      const row = cells[sdkId] || {};
+      const buckets = { supported: [], partial: [], 'not-supported': [], unknown: [], 'not-applicable': [] };
+      Object.keys(specs).sort().forEach(specId => {
+        const cell = row[specId] || { state: 'unknown' };
+        buckets[cell.state] = buckets[cell.state] || [];
+        buckets[cell.state].push({ specId, cell });
+      });
+
+      const sumEl = document.getElementById('summary');
+      sumEl.innerHTML = '';
+      ['supported','partial','not-supported','unknown','not-applicable'].forEach(state => {
+        const div = document.createElement('div');
+        div.className = `stat ${state}`;
+        div.innerHTML = `<strong>${(buckets[state] || []).length}</strong> ${state}`;
+        sumEl.appendChild(div);
+      });
+
+      const groups = document.getElementById('groups');
+      groups.innerHTML = '';
+      ['supported','partial','not-supported','unknown','not-applicable'].forEach(state => {
+        const list = buckets[state] || [];
+        if (!list.length) return;
+        const section = document.createElement('section');
+        section.className = 'group-section';
+        section.innerHTML = `
+          <header>
+            <span class="pill ${state}">${state}</span>
+            <span>${list.length} spec${list.length === 1 ? '' : 's'}</span>
+          </header>
+          <ul></ul>`;
+        const ul = section.querySelector('ul');
+        list.forEach(({ specId, cell }) => {
+          const spec = specs[specId];
+          const li = document.createElement('li');
+          const link = spec.path
+            ? `<a class="spec-link" href="https://github.com/launchdarkly/sdk-specs/blob/main/${spec.path}/README.md" target="_blank">README ↗</a>`
+            : '';
+          const notesHtml = cell.notes_for_human
+            ? `<div class="notes">${escapeHtml(cell.notes_for_human)}</div>`
+            : '';
+          li.innerHTML = `
+            <div class="spec-line">
+              <span class="spec-id">${escapeHtml(specId)}</span>
+              <span class="spec-title">${escapeHtml(spec.title || '')}</span>
+              <span style="margin-left:auto">${link}</span>
+            </div>
+            <div class="rationale">${cell.rationale ? escapeHtml(cell.rationale) : '<em>(no rationale)</em>'}</div>
+            <div class="meta">${escapeHtml(cell.confidence || '?')} confidence${spec.status ? ' · spec status: ' + escapeHtml(spec.status) : ''}</div>
+            ${notesHtml}
+          `;
+          ul.appendChild(li);
+        });
+        groups.appendChild(section);
+      });
+    }
+
+    picker.addEventListener('change', render);
+    render();
+  </script>
+</body>
+</html>

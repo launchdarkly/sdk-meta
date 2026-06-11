@@ -1,0 +1,515 @@
+{
+  "generated_at": "2026-05-11T22:15:39Z",
+  "source_commit": "1b103d7251371af85ac77b23398eeff93ef4db21",
+  "specs": {
+    "AISDK": {
+      "id": "AISDK",
+      "title": "AI SDK Overview",
+      "status": "ACCEPTED",
+      "description": "Comprehensive AI capabilities for LaunchDarkly SDKs",
+      "applies_to": [
+        "server-sdk"
+      ],
+      "path": "specs/AISDK-ai-sdk",
+      "readme_path": "specs/AISDK-ai-sdk/README.md",
+      "latest_version": null,
+      "sub_specs": [
+        "AICONF",
+        "AIEVALS",
+        "AIGRAPH",
+        "AIGRAPHTRACK",
+        "AIRUNNER",
+        "AITRACK"
+      ],
+      "requirement_count": 271
+    },
+    "ARCO": {
+      "id": "ARCO",
+      "title": "SDK Architecture Overview",
+      "status": "CURRENT",
+      "description": "Explanation of basic SDK building blocks",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/ARCO-architecture-overview",
+      "readme_path": "specs/ARCO-architecture-overview/README.md",
+      "latest_version": null,
+      "requirement_count": 0
+    },
+    "ATREF": {
+      "id": "ATREF",
+      "title": "Attribute References",
+      "status": "ACCEPTED",
+      "description": "Defines a syntax for referencing attributes associated with a given Context.",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/ATREF-attribute-references",
+      "readme_path": "specs/ATREF-attribute-references/README.md",
+      "latest_version": null,
+      "requirement_count": 4
+    },
+    "AUTOCONFIG": {
+      "id": "AUTOCONFIG",
+      "title": "Relay Proxy Auto-Configuration",
+      "status": "DRAFT",
+      "description": "Defines a data format for realtime configuration of Relay Proxy Enterprise.",
+      "applies_to": [
+        "relay-proxy"
+      ],
+      "path": "specs/AUTOCONFIG-relay-proxy-autoconfiguration",
+      "readme_path": "specs/AUTOCONFIG-relay-proxy-autoconfiguration/README.md",
+      "latest_version": null,
+      "requirement_count": 0
+    },
+    "AUTOENVATTR": {
+      "id": "AUTOENVATTR",
+      "title": "Automatic Environment Attributes in Contexts",
+      "status": "DRAFT",
+      "description": "Defines SDK behavior and recommendations for automatically adding environment attributes to Contexts",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/AUTOENVATTR-automatic-environment-attributes",
+      "readme_path": "specs/AUTOENVATTR-automatic-environment-attributes/README.md",
+      "latest_version": "v1.0",
+      "versions": [
+        "v0.1",
+        "v0.2",
+        "v1.0"
+      ],
+      "requirement_count": 16
+    },
+    "BIGSEG": {
+      "id": "BIGSEG",
+      "title": "Big Segments",
+      "status": "DRAFT",
+      "description": "SDK infrastructure for big segments: store interface, caching, staleness, and status.",
+      "applies_to": [
+        "server-sdk"
+      ],
+      "path": "specs/BIGSEG-big-segments",
+      "readme_path": "specs/BIGSEG-big-segments/README.md",
+      "latest_version": null,
+      "requirement_count": 68
+    },
+    "CLM": {
+      "id": "CLM",
+      "title": "Common Log Messages",
+      "status": "APPROVED",
+      "description": "Common log message text and applicable situations",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/CLM-common-log-messages",
+      "readme_path": "specs/CLM-common-log-messages/README.md",
+      "latest_version": null,
+      "requirement_count": 11
+    },
+    "CODES": {
+      "id": "CODES",
+      "title": "Log Codes",
+      "status": "APPROVED",
+      "description": "Standardized code format for logs.",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/CODES-log-codes",
+      "readme_path": "specs/CODES-log-codes/README.md",
+      "latest_version": "v1.0",
+      "versions": [
+        "v1.0"
+      ],
+      "requirement_count": 27
+    },
+    "CONTEXT": {
+      "id": "CONTEXT",
+      "title": "SDK Context Model",
+      "status": "CURRENT",
+      "description": "Explanation of the Context Data Model",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/CONTEXT-context-model",
+      "readme_path": "specs/CONTEXT-context-model/v1.0/README.md",
+      "latest_version": "v1.0",
+      "versions": [
+        "v1.0"
+      ],
+      "requirement_count": 0
+    },
+    "CSI": {
+      "id": "CSI",
+      "title": "Specification standard",
+      "status": "ACCEPTED",
+      "description": "Defines the format for specs in this repository.",
+      "applies_to": [
+        "client-sdk"
+      ],
+      "path": "specs/CSI-client-side-identify",
+      "readme_path": "specs/CSI-client-side-identify/README.md",
+      "latest_version": null,
+      "requirement_count": 24
+    },
+    "CSPE": {
+      "id": "CSPE",
+      "title": "Client-Side Prerequisite Events",
+      "status": "DRAFT",
+      "description": "Support sending prerequisite events from client-side SDKs.",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/CSPE-client-side-prerequisite-events",
+      "readme_path": "specs/CSPE-client-side-prerequisite-events/README.md",
+      "latest_version": null,
+      "requirement_count": 7
+    },
+    "CSSE": {
+      "id": "CSSE",
+      "title": "Client-Side Summary Events",
+      "status": "APPROVE",
+      "description": "Add contexts to client-side summary events",
+      "applies_to": [
+        "client-sdk"
+      ],
+      "path": "specs/CSSE-client-side-summary-events",
+      "readme_path": "specs/CSSE-client-side-summary-events/README.md",
+      "latest_version": null,
+      "requirement_count": 12
+    },
+    "DATASYSTEM": {
+      "id": "DATASYSTEM",
+      "title": "Data System: Interactions & Configuration",
+      "status": "DRAFT",
+      "description": "How an SDK's data sources are configured and interact in the face of errors.",
+      "applies_to": [
+        "server-sdk"
+      ],
+      "path": "specs/DATASYSTEM-data-system",
+      "readme_path": "specs/DATASYSTEM-data-system/v2/README.md",
+      "latest_version": "v2",
+      "versions": [
+        "v1",
+        "v2"
+      ],
+      "requirement_count": 88
+    },
+    "DIAG": {
+      "id": "DIAG",
+      "title": "Diagnostic Events",
+      "status": "DRAFT",
+      "description": "Periodic SDK self-reporting events for configuration and runtime health.",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/DIAG-diagnostic-events",
+      "readme_path": "specs/DIAG-diagnostic-events/v1.0/README.md",
+      "latest_version": "v1.0",
+      "versions": [
+        "v1.0"
+      ],
+      "requirement_count": 82
+    },
+    "EM": {
+      "id": "EM",
+      "title": "LaunchDarkly SDK Error Monitoring",
+      "status": "DRAFT",
+      "description": "Specification for error monitoring and associated events",
+      "applies_to": [
+        "client-sdk"
+      ],
+      "path": "specs/EM-launchdarkly-sdk-error-monitoring",
+      "readme_path": "specs/EM-launchdarkly-sdk-error-monitoring/README.md",
+      "latest_version": null,
+      "sub_specs": [
+        "BREAD",
+        "EEVENT",
+        "SINIT"
+      ],
+      "requirement_count": 30
+    },
+    "ENVFILTER": {
+      "id": "ENVFILTER",
+      "title": "Filtered environments",
+      "status": "ACCEPTED",
+      "description": "Defines URL query parameter used to obtain a filtered environment.",
+      "applies_to": [
+        "server-sdk"
+      ],
+      "path": "specs/ENVFILTER-filtered-environments",
+      "readme_path": "specs/ENVFILTER-filtered-environments/README.md",
+      "latest_version": null,
+      "requirement_count": 8
+    },
+    "EVENTS": {
+      "id": "EVENTS",
+      "title": "Event JSON Schema",
+      "status": "DRAFT",
+      "description": "Defines the JSON schema and rules surrounding the generation of events.",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/EVENTS-event-payloads",
+      "readme_path": "specs/EVENTS-event-payloads/v4.0/README.md",
+      "latest_version": "v4.0",
+      "versions": [
+        "v4.0"
+      ],
+      "requirement_count": 16
+    },
+    "EXAM": {
+      "id": "EXAM",
+      "title": "SDK Examples",
+      "status": "DRAFT",
+      "description": "Defines requirements and guidelines for LaunchDarkly SDK examples",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/EXAM-SDK-example",
+      "readme_path": "specs/EXAM-SDK-example/README.md",
+      "latest_version": null,
+      "sub_specs": [
+        "HELLO"
+      ],
+      "requirement_count": 38
+    },
+    "FLGDM": {
+      "id": "FLGDM",
+      "title": "SDK Feature Flag Data Model",
+      "status": "CURRENT",
+      "description": "Explanation of the Feature Flag Data Model",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/FLGDM-feature-flag-data-model",
+      "readme_path": "specs/FLGDM-feature-flag-data-model/README.md",
+      "latest_version": null,
+      "requirement_count": 0
+    },
+    "FLGEA": {
+      "id": "FLGEA",
+      "title": "SDK Feature Flag Evaluation Algorithm",
+      "status": "CURRENT",
+      "description": "Explanation of the Feature Flag Evaluation Algorithm",
+      "applies_to": [
+        "server-sdk"
+      ],
+      "path": "specs/FLGEA-feature-flag-evaluation-algorithm",
+      "readme_path": "specs/FLGEA-feature-flag-evaluation-algorithm/README.md",
+      "latest_version": null,
+      "requirement_count": 0
+    },
+    "FLGERM": {
+      "id": "FLGERM",
+      "title": "SDK Feature Flag Evaluation Result Model",
+      "status": "CURRENT",
+      "description": "Explanation of the Feature Flag Evaluation Result Model",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/FLGERM-feature-flag-evaluation-result-model",
+      "readme_path": "specs/FLGERM-feature-flag-evaluation-result-model/README.md",
+      "latest_version": null,
+      "requirement_count": 0
+    },
+    "FLGMES": {
+      "id": "FLGMES",
+      "title": "SDK Multiple Feature Flag Evaluation Specification",
+      "status": "CURRENT",
+      "description": "Explanation of the Multiple Feature Flag Evaluation Specification",
+      "applies_to": [
+        "server-sdk"
+      ],
+      "path": "specs/FLGMES-multiple-feature-flag-evaluation-specification",
+      "readme_path": "specs/FLGMES-multiple-feature-flag-evaluation-specification/README.md",
+      "latest_version": null,
+      "requirement_count": 0
+    },
+    "HOOK": {
+      "id": "HOOK",
+      "title": "Hooks",
+      "status": "ACCEPTED",
+      "description": "Specification of hooks and their lifecycle.",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/HOOK-hooks",
+      "readme_path": "specs/HOOK-hooks/README.md",
+      "latest_version": null,
+      "requirement_count": 25
+    },
+    "MIGRATIONS": {
+      "id": "MIGRATIONS",
+      "title": "Technology Migrations",
+      "status": "ACCEPTED",
+      "description": "Defines required methods and behavior for SDK support of Technology Migrations",
+      "applies_to": [
+        "server-sdk"
+      ],
+      "path": "specs/MIGRATIONS-technology-migrations",
+      "readme_path": "specs/MIGRATIONS-technology-migrations/README.md",
+      "latest_version": null,
+      "requirement_count": 34
+    },
+    "OTEL": {
+      "id": "OTEL",
+      "title": "OpenTelemetry Integration",
+      "status": "ACCEPTED",
+      "description": "Specification for OpenTelemetry Integration",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/OTEL-openteletry-integration",
+      "readme_path": "specs/OTEL-openteletry-integration/README.md",
+      "latest_version": null,
+      "requirement_count": 32
+    },
+    "PLUGIN": {
+      "id": "PLUGIN",
+      "title": "SDK Plugin Support",
+      "status": "DRAFT",
+      "description": "Support for SDK plugins.",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/PLUGIN-sdk-plugin-support",
+      "readme_path": "specs/PLUGIN-sdk-plugin-support/README.md",
+      "latest_version": null,
+      "requirement_count": 17
+    },
+    "PS": {
+      "id": "PS",
+      "title": "Persistent Store",
+      "status": "DEPRECATED",
+      "description": "How does persistent store work",
+      "applies_to": [
+        "server-sdk"
+      ],
+      "path": "specs/PS-persistent-store",
+      "readme_path": "specs/PS-persistent-store/README.md",
+      "latest_version": null,
+      "requirement_count": 17
+    },
+    "RELEASE": {
+      "id": "RELEASE",
+      "title": "SDK Release Standards",
+      "status": "DRAFT",
+      "description": "Standardized stages and requirements for SDK development from experimental through GA",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/RELEASE-sdk-release-standards",
+      "readme_path": "specs/RELEASE-sdk-release-standards/README.md",
+      "latest_version": null,
+      "requirement_count": 13
+    },
+    "RKSTM": {
+      "id": "RKSTM",
+      "title": "Roku Streaming",
+      "status": "DRAFT",
+      "description": "Specification of alternative mobile streaming endpoint.",
+      "applies_to": [
+        "client-sdk"
+      ],
+      "path": "specs/RKSTM-roku-streaming-connection",
+      "readme_path": "specs/RKSTM-roku-streaming-connection/README.md",
+      "latest_version": null,
+      "requirement_count": 21
+    },
+    "RPENDPOINTS": {
+      "id": "RPENDPOINTS",
+      "title": "Relay Proxy Endpoints",
+      "status": "",
+      "description": "Defines endpoints used exclusively by Relay Proxy.",
+      "applies_to": [],
+      "path": "specs/RPENDPOINTS-relay-proxy-endpoints",
+      "readme_path": "specs/RPENDPOINTS-relay-proxy-endpoints/README.md",
+      "latest_version": null,
+      "requirement_count": 5
+    },
+    "SCMP": {
+      "id": "SCMP",
+      "title": "Server-Connection Minutes for Polling",
+      "status": "DRAFT",
+      "description": "Defines a method for supporting estimation of the \"Server Connection Minutes\" metric for server SDKs in polling mode.",
+      "applies_to": [
+        "server-sdk"
+      ],
+      "path": "specs/SCMP-server-connection-minutes-polling",
+      "readme_path": "specs/SCMP-server-connection-minutes-polling/README.md",
+      "latest_version": null,
+      "requirement_count": 5
+    },
+    "SPEC": {
+      "id": "SPEC",
+      "title": "Specification standard",
+      "status": "DRAFT",
+      "description": "Defines the format for specs in this repository.",
+      "applies_to": [],
+      "path": "specs/SPEC-specification-for-specs",
+      "readme_path": "specs/SPEC-specification-for-specs/README.md",
+      "latest_version": null,
+      "requirement_count": 27
+    },
+    "STACK": {
+      "id": "STACK",
+      "title": "LaunchDarkly Stack Trace Format",
+      "status": "DRAFT",
+      "description": "Stack trace event for use in LaunchDarkly events",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/STACK-launchdarkly-stack-trace-format",
+      "readme_path": "specs/STACK-launchdarkly-stack-trace-format/README.md",
+      "latest_version": null,
+      "requirement_count": 14
+    },
+    "TDS": {
+      "id": "TDS",
+      "title": "Test Data Source",
+      "status": "DRAFT",
+      "description": "Defines the test data source component for SDK testing and development",
+      "applies_to": [
+        "server-sdk"
+      ],
+      "path": "specs/TDS-test-data-source",
+      "readme_path": "specs/TDS-test-data-source/v1/README.md",
+      "latest_version": "v1",
+      "versions": [
+        "v1"
+      ],
+      "requirement_count": 178
+    },
+    "TXNS": {
+      "id": "TXNS",
+      "title": "Transactional Store",
+      "status": "DRAFT",
+      "description": "Transactional store",
+      "applies_to": [
+        "client-sdk",
+        "server-sdk"
+      ],
+      "path": "specs/TXNS-transactional-store",
+      "readme_path": "specs/TXNS-transactional-store/README.md",
+      "latest_version": null,
+      "requirement_count": 4
+    }
+  }
+}

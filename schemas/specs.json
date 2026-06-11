@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://launchdarkly.com/sdk-meta/specs.json",
+  "title": "SDK Specs",
+  "description": "Catalog of top-level specs from launchdarkly/sdk-specs.",
+  "type": "object",
+  "required": ["source_commit", "specs"],
+  "properties": {
+    "source_commit": {
+      "type": "string",
+      "description": "git rev-parse HEAD of the sdk-specs repo at generation time.",
+      "pattern": "^[0-9a-f]{7,40}$"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "specs": {
+      "type": "object",
+      "description": "Map of top-level spec id to spec metadata.",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[A-Z]+$": {
+          "$ref": "#/$defs/Spec"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "Spec": {
+      "type": "object",
+      "required": ["id", "title", "status", "description", "applies_to", "path"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z]+$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "description": "Spec status. Common values are DRAFT, ACCEPTED, DEPRECATED, SUPERSEDED, APPROVED, CURRENT — but specs in the wild use additional tokens (and version-prefixed tokens are normalized to the highest version) so this is intentionally a free string.",
+          "minLength": 0
+        },
+        "description": {
+          "type": "string"
+        },
+        "applies_to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["client-sdk", "server-sdk", "relay-proxy"]
+          },
+          "uniqueItems": true
+        },
+        "path": {
+          "type": "string",
+          "description": "Path to the top-level spec directory, relative to the sdk-specs repo root."
+        },
+        "readme_path": {
+          "type": "string",
+          "description": "Path to the README that was parsed for this spec."
+        },
+        "latest_version": {
+          "type": ["string", "null"],
+          "description": "Highest versioned subdirectory (e.g. 'v1.0', 'v4.0'), or null if the spec is not versioned."
+        },
+        "versions": {
+          "type": "array",
+          "description": "All versioned subdirectories of the spec, sorted lexicographically.",
+          "items": { "type": "string" }
+        },
+        "sub_specs": {
+          "type": "array",
+          "description": "Nested sub-spec ids that live underneath this top-level spec.",
+          "items": { "type": "string" }
+        },
+        "requirement_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total count of '### Requirement' and '#### Conditional Requirement' headings across this spec, its versions, and its sub-specs."
+        }
+      }
+    }
+  }
+}
