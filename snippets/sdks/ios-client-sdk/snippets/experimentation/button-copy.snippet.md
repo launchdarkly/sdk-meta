@@ -33,7 +33,12 @@ func configureExperimentButton(_ button: UIButton, onTap: (() -> Void)? = nil) {
     let label = client.stringVariation(forKey: "YOUR_FLAG_KEY", defaultValue: "Get started")
     button.setTitle(label, for: .normal)
 
-    let action = UIAction { _ in
+    // Use a stable identifier so re-calling this function (e.g. after identify())
+    // replaces the existing handler rather than stacking a second one.
+    let actionID = UIAction.Identifier("com.example.experimentButton")
+    button.removeAction(identifiedBy: actionID, for: .touchUpInside)
+
+    let action = UIAction(identifier: actionID) { _ in
         // Track the tap so LaunchDarkly can attribute it to the right variation.
         // Use the same context that was active during the flag evaluation above —
         // mismatched contexts break conversion attribution.
