@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.12.0...snippets/v0.13.0) (2026-06-11)
+
+
+### Features
+
+* **snippets:** port /sdk/features/evaluation-reasons to canonical snippets ([#466](https://github.com/launchdarkly/sdk-meta/issues/466)) ([3e1b645](https://github.com/launchdarkly/sdk-meta/commit/3e1b6459eb16d5ebb7cfa8a834f6a8a92999b21b))
+
 ## [0.12.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.11.0...snippets/v0.12.0) (2026-06-10)
 
 
