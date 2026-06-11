@@ -4,9 +4,8 @@ sdk: android-client-sdk
 kind: reference
 lang: kotlin
 description: Configures a Button to display the assigned variation's label and track clicks. Pass your existing button instance to wire it up in place.
-# Bucket C: newly proposed experimentation onboarding snippet, not
-# standalone-runnable (references LDClient singleton and an Activity host). No
-# validation block yet. See _experimentation-port-notes.md.
+validation:
+  scaffold: android-client-sdk/scaffolds/kotlin-syntax-only
 ---
 
 ```kotlin
