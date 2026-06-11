@@ -61,6 +61,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // resolve at compile time. Never invoked.
     var client: LDClient! = nil
 
+    // Stubs for fragments that mutate an ambient config or pass an
+    // ambient context to `LDClient.start` — the docs assume earlier
+    // init snippets created them.
+    var ldConfig = LDConfig(mobileKey: "stub-mobile-key", autoEnvAttributes: .disabled)
+    var context = try! LDContextBuilder(key: "stub-context-key").build().get()
+
     // Wrappee body — references to client/context here resolve
     // through the stubs above; xcodebuild type-checks but doesn't
     // run.

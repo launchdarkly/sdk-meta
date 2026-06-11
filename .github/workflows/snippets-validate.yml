@@ -146,6 +146,18 @@ jobs:
             key-type: mobile
             label: android-client-sdk (sdk-docs)
             group: sdk-docs
+            snippet_skip: android-client-sdk/sdk-docs/features/evaluation-reasons/evaluation-reasons-v4-java
+
+          # The v4-era Android fragment routes through the jvm
+          # validator (java-syntax-only-v4 stub scaffold — the v5 aar
+          # can't compile v4 API surfaces), and the jvm harness
+          # `require_env`s LAUNCHDARKLY_SDK_KEY. Split it onto its own
+          # row with a server key; the row above skips it.
+          - sdk: android-client-sdk
+            runs-on: ubuntu-latest
+            key-type: server
+            label: android-client-sdk (sdk-docs v4 jvm)
+            snippet: android-client-sdk/sdk-docs/features/evaluation-reasons/evaluation-reasons-v4-java
 
           # SDKs whose sdk-docs slice picked up bound syntax-only
           # validators in the docs-validation pass (PR

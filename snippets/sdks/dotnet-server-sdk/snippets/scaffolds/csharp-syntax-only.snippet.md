@@ -57,6 +57,9 @@ namespace LaunchDarklySnippet
         private static dynamic aiClient = null;
         private static User user = null;
         private static Context context = default;
+        // Evaluation fragments pass `myContext` to the variation
+        // methods; the docs assume it already exists.
+        private static Context myContext = default;
 #pragma warning restore CS0414, CS0649
 
         public static void Main(string[] args)

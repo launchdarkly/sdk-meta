@@ -31,8 +31,10 @@ validation:
 
 ```cpp
 #include <chrono>
+#include <cstdio>
 #include <future>
 #include <iostream>
+#include <optional>
 #include <string>
 // Native C++ headers.
 #include <launchdarkly/client_side/client.hpp>
@@ -59,6 +61,11 @@ struct _AnyClient {
     // variadic stubs below.
     const _AnyClient* operator->() const { return this; }
     template <typename... Args> bool BoolVariation(Args&&...) const { return false; }
+    // Detail-variation stub returning a real EvaluationDetail so the
+    // body's `detail.Value()` / `detail.Reason()` chains type-check.
+    template <typename... Args> auto BoolVariationDetail(Args&&...) const {
+        return launchdarkly::EvaluationDetail<bool>(false, std::nullopt, std::nullopt);
+    }
     template <typename... Args> int IntVariation(Args&&...) const { return 0; }
     template <typename... Args> double DoubleVariation(Args&&...) const { return 0; }
     template <typename... Args> std::string StringVariation(Args&&...) const { return {}; }

@@ -35,6 +35,7 @@ static LDClientCPP *client;
 static LDUser *user;
 static LDConfig *config;
 static unsigned int maxwait;
+static unsigned int maxwaitmilliseconds;
 
 static void _wrappee() {
 {{ body }}

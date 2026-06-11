@@ -24,6 +24,34 @@ struct LDClient;
 struct LDUser;
 struct LDJSON;
 
+/* Evaluation-reason surface. Mirrors the real v2 header's enum order
+ * and the LDDetails fields the doc fragments touch (the real struct
+ * carries an additional per-kind `extra` union the fragments never
+ * reference). */
+enum LDEvalReason {
+    LD_UNKNOWN = 0,
+    LD_ERROR,
+    LD_OFF,
+    LD_PREREQUISITE_FAILED,
+    LD_TARGET_MATCH,
+    LD_RULE_MATCH,
+    LD_FALLTHROUGH
+};
+
+struct LDDetails {
+    unsigned int variationIndex;
+    LDBoolean hasVariation;
+    enum LDEvalReason reason;
+};
+
+static inline void LDDetailsInit(struct LDDetails *details) {
+    (void)details;
+}
+
+static inline void LDDetailsClear(struct LDDetails *details) {
+    (void)details;
+}
+
 static inline struct LDConfig *LDConfigNew(const char *key) {
     (void)key;
     return (struct LDConfig *)0;
@@ -78,7 +106,7 @@ static inline LDBoolean LDBoolVariation(struct LDClient *client,
                                         struct LDUser *user,
                                         const char *flagKey,
                                         LDBoolean fallback,
-                                        struct LDJSON **details) {
+                                        struct LDDetails *details) {
     (void)client;
     (void)user;
     (void)flagKey;
@@ -90,7 +118,7 @@ static inline int LDIntVariation(struct LDClient *client,
                                  struct LDUser *user,
                                  const char *flagKey,
                                  int fallback,
-                                 struct LDJSON **details) {
+                                 struct LDDetails *details) {
     (void)client;
     (void)user;
     (void)flagKey;
@@ -102,7 +130,7 @@ static inline double LDDoubleVariation(struct LDClient *client,
                                        struct LDUser *user,
                                        const char *flagKey,
                                        double fallback,
-                                       struct LDJSON **details) {
+                                       struct LDDetails *details) {
     (void)client;
     (void)user;
     (void)flagKey;
@@ -114,7 +142,7 @@ static inline char *LDStringVariation(struct LDClient *client,
                                       struct LDUser *user,
                                       const char *flagKey,
                                       const char *fallback,
-                                      struct LDJSON **details) {
+                                      struct LDDetails *details) {
     (void)client;
     (void)user;
     (void)flagKey;
