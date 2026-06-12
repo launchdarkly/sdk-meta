@@ -1,4 +1,6 @@
-FROM rust:1.85
+# The latest launchdarkly-server-sdk crate (3.x) declares rust-version
+# 1.93.0 as its MSRV; keep the toolchain ahead of it.
+FROM rust:1.94
 
 WORKDIR /work
 
