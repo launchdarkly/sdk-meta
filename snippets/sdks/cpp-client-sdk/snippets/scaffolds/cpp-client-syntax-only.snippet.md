@@ -71,6 +71,7 @@ struct _AnyClient {
     template <typename... Args> std::string StringVariation(Args&&...) const { return {}; }
     template <typename... Args> auto JsonVariation(Args&&...) const { return launchdarkly::Value{}; }
     template <typename... Args> auto AllFlags(Args&&...) const { return launchdarkly::Value{}; }
+    template <typename... Args> void Track(Args&&...) const {}
     template <typename... Args> void TrackEvent(Args&&...) const {}
     template <typename... Args> void Identify(Args&&...) const {}
     template <typename... Args> auto StartAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
