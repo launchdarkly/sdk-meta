@@ -23,6 +23,9 @@ validation:
     LaunchDarkly.ServerSdk
     LaunchDarkly.Observability
     LaunchDarkly.ServerSdk.Ai
+    LaunchDarkly.ServerSdk.Redis
+    LaunchDarkly.ServerSdk.DynamoDB
+    LaunchDarkly.ServerSdk.Consul
 ---
 
 ```csharp
@@ -32,6 +35,7 @@ using System.Collections.Generic;
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Server;
 using LaunchDarkly.Sdk.Server.Migrations;
+using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Ai;
 using LaunchDarkly.Sdk.Server.Ai.Adapters;
 using LaunchDarkly.Sdk.Server.Ai.Config;
@@ -60,7 +64,17 @@ namespace LaunchDarklySnippet
         // Evaluation fragments pass `myContext` to the variation
         // methods; the docs assume it already exists.
         private static Context myContext = default;
+        // Init fragments pass an `sdkKey` the docs assume already exists.
+        private static string sdkKey = "";
 #pragma warning restore CS0414, CS0649
+
+        // Generic database-integration placeholder the storing-data docs
+        // use (`SomeDatabaseName.DataStore()`); stands in for a real
+        // integration package such as Redis or DynamoDB.
+        private static class SomeDatabaseName
+        {
+            public static LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer<LaunchDarkly.Sdk.Server.Subsystems.IPersistentDataStore> DataStore() => null;
+        }
 
         public static void Main(string[] args)
         {

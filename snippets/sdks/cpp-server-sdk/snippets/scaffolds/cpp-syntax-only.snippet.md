@@ -62,6 +62,15 @@ struct _AnyClient {
     template <typename... Args> auto StartAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
 };
 
+// Generic database-integration placeholder the storing-data docs use
+// (`YourDatabaseIntegration()`); stands in for a real source such as
+// the Redis integration. Returns the pointer type that
+// LazyLoadBuilder::Source accepts.
+inline std::shared_ptr<launchdarkly::server_side::integrations::ISerializedDataReader>
+YourDatabaseIntegration() {
+    return nullptr;
+}
+
 // Wrappee is a never-instantiated template — body is parsed but
 // most type-checks are deferred to instantiation (which never
 // happens). The body lives in a nested block so it can re-declare
@@ -94,6 +103,10 @@ void _wrappee() {
         operator std::chrono::milliseconds() const { return std::chrono::milliseconds{10000}; }
         operator std::chrono::seconds() const { return std::chrono::seconds{10}; }
     } maxwait;
+    // Init-shaped fragments pass an `sdk_key` the docs assume already
+    // exists.
+    char const* sdk_key = "";
+    (void)sdk_key;
     {
 {{ body }}
     }

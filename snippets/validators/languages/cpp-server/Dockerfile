@@ -30,8 +30,9 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)\n\
 find_package(Threads REQUIRED)\n\
 add_subdirectory(cpp-sdks)\n' > CMakeLists.txt \
     && mkdir build && cd build \
-    && cmake -G Ninja -DBUILD_TESTING=OFF .. \
+    && cmake -G Ninja -DBUILD_TESTING=OFF -DLD_BUILD_REDIS_SUPPORT=ON .. \
     && cmake --build . --target launchdarkly-cpp-server \
+    && cmake --build . --target launchdarkly-cpp-server-redis-source \
     && cd / && rm -rf /tmp/prewarm
 
 WORKDIR /work

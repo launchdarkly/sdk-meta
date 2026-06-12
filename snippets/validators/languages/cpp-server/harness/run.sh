@@ -17,7 +17,17 @@ cd "$WORK"
 cp "/snippet/$SNIPPET_ENTRYPOINT" main.cpp
 ln -s /opt/cpp-sdks cpp-sdks
 
-cat > CMakeLists.txt <<'EOF'
+# Snippets that reference the Redis integration (CPP_REDIS=1, set via
+# the wrapping scaffold's validation.env) need cpp-sdks configured with
+# redis support and the redis source library linked in.
+EXTRA_CMAKE_ARGS=""
+EXTRA_LINK_LIBS=""
+if [ "${CPP_REDIS:-}" = "1" ]; then
+    EXTRA_CMAKE_ARGS="-DLD_BUILD_REDIS_SUPPORT=ON"
+    EXTRA_LINK_LIBS="launchdarkly::server_redis_source"
+fi
+
+cat > CMakeLists.txt <<EOF
 cmake_minimum_required(VERSION 3.19)
 project(hello-cpp-server LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
@@ -26,12 +36,12 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 add_subdirectory(cpp-sdks)
 add_executable(hello main.cpp)
-target_link_libraries(hello PRIVATE launchdarkly::server Threads::Threads)
+target_link_libraries(hello PRIVATE launchdarkly::server ${EXTRA_LINK_LIBS} Threads::Threads)
 EOF
 
 mkdir build
 cd build
-cmake -G Ninja -DBUILD_TESTING=OFF .. >/tmp/cmake.log 2>&1 \
+cmake -G Ninja -DBUILD_TESTING=OFF $EXTRA_CMAKE_ARGS .. >/tmp/cmake.log 2>&1 \
     || { cat /tmp/cmake.log >&2; exit 1; }
 cmake --build . --target hello >/tmp/build.log 2>&1 \
     || { cat /tmp/build.log >&2; exit 1; }
