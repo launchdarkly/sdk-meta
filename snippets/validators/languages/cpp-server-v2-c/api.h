@@ -23,6 +23,7 @@ struct LDConfig;
 struct LDClient;
 struct LDUser;
 struct LDJSON;
+struct LDDataSource;
 
 /* Evaluation-reason surface. Mirrors the real v2 header's enum order
  * and the LDDetails fields the doc fragments touch (the real struct
@@ -55,6 +56,21 @@ static inline void LDDetailsClear(struct LDDetails *details) {
 static inline struct LDConfig *LDConfigNew(const char *key) {
     (void)key;
     return (struct LDConfig *)0;
+}
+
+/* Mirrors the real v2 header's data-source setter: replaces the default
+ * streaming/polling-update mechanism with the supplied source (e.g. the
+ * file data source from <launchdarkly/integrations/file_data.h>). */
+static inline void LDConfigSetDataSource(struct LDConfig *config, struct LDDataSource *dataSource) {
+    (void)config;
+    (void)dataSource;
+}
+
+/* Mirrors the real v2 header's analytics-events toggle: when sendEvents
+ * is false the SDK sends no analytics events to LaunchDarkly. */
+static inline void LDConfigSetSendEvents(struct LDConfig *config, LDBoolean sendEvents) {
+    (void)config;
+    (void)sendEvents;
 }
 
 static inline struct LDClient *LDClientInit(struct LDConfig *config, unsigned int maxwait) {

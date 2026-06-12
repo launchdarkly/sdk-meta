@@ -32,6 +32,10 @@ module Main where
 
 import LaunchDarkly.Server
 import qualified Data.Function as LDStub
+-- Qualified aliases some doc fragments use without showing their own
+-- import lines (the docs assume the reader's module already has them).
+import qualified LaunchDarkly.Server as LD
+import qualified LaunchDarkly.Server.Integrations.FileData as FileData
 
 --TOP_LIFT_TARGET--
 
