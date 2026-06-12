@@ -158,6 +158,11 @@ jobs:
             key-type: server
             label: android-client-sdk (sdk-docs v4 jvm)
             snippet: android-client-sdk/sdk-docs/features/evaluation-reasons/evaluation-reasons-v4-java
+          - sdk: android-client-sdk
+            runs-on: ubuntu-latest
+            key-type: server
+            label: android-client-sdk (sdk-docs v4 jvm offline-mode)
+            snippet: android-client-sdk/sdk-docs/features/offlinemode/offline-mode-v4-java
 
           # SDKs whose sdk-docs slice picked up bound syntax-only
           # validators in the docs-validation pass (PR
