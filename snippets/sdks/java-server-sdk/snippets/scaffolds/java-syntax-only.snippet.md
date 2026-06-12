@@ -46,6 +46,9 @@ public class Snippet {
     // docs assume it already exists, so provide it as a stub symbol.
     @SuppressWarnings("unused")
     private static final LDContext context = null;
+    // Init fragments pass an `sdkKey` the docs assume already exists.
+    @SuppressWarnings("unused")
+    private static final String sdkKey = "";
 
     public static void main(String[] args) {
         System.out.println("feature flag evaluates to true");
