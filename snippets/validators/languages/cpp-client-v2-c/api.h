@@ -32,6 +32,12 @@ static inline struct LDConfig *LDConfigNew(const char *key) {
     return (struct LDConfig *)0;
 }
 
+static inline void LDConfigSetAllAttributesPrivate(struct LDConfig *config,
+                                                   LDBoolean allPrivate) {
+    (void)config;
+    (void)allPrivate;
+}
+
 static inline struct LDUser *LDUserNew(const char *key) {
     (void)key;
     return (struct LDUser *)0;
