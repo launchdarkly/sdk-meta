@@ -23,7 +23,7 @@ validation:
 #[allow(unused_imports)]
 use launchdarkly_server_sdk::{
     ApplicationInfo, AttributeValue, Client, ConfigBuilder, Context, ContextBuilder,
-    MultiContextBuilder, Reason, Reference, ServiceEndpointsBuilder,
+    EventProcessorBuilder, MultiContextBuilder, Reason, Reference, ServiceEndpointsBuilder,
     MigratorBuilder, ExecutionOrder,
 };
 #[allow(unused_imports)]
