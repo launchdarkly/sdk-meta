@@ -67,6 +67,9 @@ import com.launchdarkly.sdk.android.integrations.*;
 import com.launchdarkly.observability.plugin.*;
 import com.launchdarkly.observability.api.*;
 import java.util.Collections;
+// Timber is in the validator project's dependencies; the logging doc
+// fragments call `Timber.plant(...)` without showing the import.
+import timber.log.Timber;
 
 // No `public` modifier: Java requires public top-level classes to
 // live in a file matching the class name. We need this scaffold's
