@@ -68,6 +68,13 @@ static inline LDBoolean LDClientClose(struct LDClient *client) {
     return LDBooleanTrue;
 }
 
+/* Manual event flush: fire-and-forget; delivery happens on the
+ * SDK's background thread. Matches the real v2 header's
+ * `void LDClientFlush(struct LDClient *const client)`. */
+static inline void LDClientFlush(struct LDClient *client) {
+    (void)client;
+}
+
 static inline struct LDUser *LDUserNew(const char *key) {
     (void)key;
     return (struct LDUser *)0;
