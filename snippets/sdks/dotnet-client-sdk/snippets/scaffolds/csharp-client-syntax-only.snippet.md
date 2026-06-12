@@ -23,6 +23,10 @@ validation:
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Client;
 using System;
+// Web-proxy fragments construct `NetworkCredential` unqualified while
+// fully qualifying the other System.Net types; the docs assume the
+// using directive is ambient, so provide it here.
+using System.Net;
 using LaunchDarkly.Sdk.Client.Integrations;
 // USING_LIFT_MARKER
 
