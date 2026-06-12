@@ -31,6 +31,7 @@ package com.launchdarkly;
 import com.launchdarkly.sdk.*;
 import com.launchdarkly.sdk.server.*;
 import com.launchdarkly.sdk.server.migrations.*;
+import com.launchdarkly.sdk.server.integrations.*;
 // Common JDK types config/timeout fragments reference without their own
 // import line (the docs assume it); provide it so they resolve.
 import java.time.Duration;
@@ -46,6 +47,13 @@ public class Snippet {
     // docs assume it already exists, so provide it as a stub symbol.
     @SuppressWarnings("unused")
     private static final LDContext context = null;
+    // Test-data fragments reference a `td` the docs assume an earlier
+    // `TestData.dataSource()` call created.
+    @SuppressWarnings("unused")
+    private static final TestData td = null;
+    // Init fragments pass an `sdkKey` the docs assume already exists.
+    @SuppressWarnings("unused")
+    private static final String sdkKey = "";
 
     public static void main(String[] args) {
         System.out.println("feature flag evaluates to true");

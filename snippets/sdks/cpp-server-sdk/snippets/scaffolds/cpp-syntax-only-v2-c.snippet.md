@@ -28,6 +28,11 @@ validation:
 
 ```c
 #include <launchdarkly/api.h>
+/* Included at file scope so fragments that reference the test-data
+ * surface without their own include resolve, and so fragments that
+ * repeat this include inside the function body hit the include guard
+ * instead of declaring block-scope prototypes. */
+#include <launchdarkly/integrations/test_data.h>
 
 /* File-scope stubs so fragments that read like statement bodies
  * (`user = LDUserNew(...);` — assignment to a pre-declared `user`)
@@ -37,6 +42,9 @@ static struct LDClient *client;
 static struct LDUser *user;
 static struct LDConfig *config;
 static unsigned int maxwaitmilliseconds;
+/* Test-data fragments reference a `td` the docs assume an earlier
+ * LDTestDataInit() call created. */
+static struct LDTestData *td;
 
 static void _wrappee(void) {
 {{ body }}

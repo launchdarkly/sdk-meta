@@ -95,6 +95,9 @@ class SnippetActivity extends Activity {
     // timeout the docs assume already exist.
     LDContext context;
     int secondsToBlock;
+    // Test-data fragments reference a `td` the docs assume an earlier
+    // `TestData.dataSource()` call created.
+    TestData td;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
