@@ -68,6 +68,16 @@ static inline LDBoolean LDClientClose(struct LDClient *client) {
     return LDBooleanTrue;
 }
 
+/* Associates two users for analytics purposes (legacy alias event;
+ * the v2 SDKs were the last majors to carry it). */
+static inline void LDClientAlias(struct LDClient *client,
+                                 struct LDUser *currentUser,
+                                 struct LDUser *previousUser) {
+    (void)client;
+    (void)currentUser;
+    (void)previousUser;
+}
+
 static inline struct LDUser *LDUserNew(const char *key) {
     (void)key;
     return (struct LDUser *)0;

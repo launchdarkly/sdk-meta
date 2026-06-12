@@ -81,6 +81,17 @@ val client: LDClient get() = TODO()
 @Suppress("UNUSED")
 val flagKey: String = ""
 
+// Stub of the legacy alias API (removed at 4.0) so the v3-era
+// aliasing fragment type-checks against the v5 aar. The ambient
+// `newUser` / `previousUser` names are typed LDContext because the
+// stub only needs self-consistent opaque arguments. Never invoked.
+@Suppress("UNUSED_PARAMETER", "UNUSED")
+fun LDClient.alias(newUser: LDContext, previousUser: LDContext) {}
+@Suppress("UNUSED")
+val newUser: LDContext get() = TODO()
+@Suppress("UNUSED")
+val previousUser: LDContext get() = TODO()
+
 @Suppress("UNUSED_VARIABLE", "UNREACHABLE_CODE")
 class BaseApplication : Application() {
     override fun onCreate() {

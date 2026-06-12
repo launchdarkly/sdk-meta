@@ -35,6 +35,8 @@ static struct LDUser *user;
 static struct LDConfig *config;
 static unsigned int maxwait;
 static unsigned int maxwaitmilliseconds;
+static struct LDUser *newUser;
+static struct LDUser *previousUser;
 
 static void _wrappee(void) {
 {{ body }}
