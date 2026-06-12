@@ -29,12 +29,14 @@ validation:
 // USING_LIFT_MARKER
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Server;
 using LaunchDarkly.Sdk.Server.Migrations;
 using LaunchDarkly.Sdk.Server.Ai;
 using LaunchDarkly.Sdk.Server.Ai.Adapters;
 using LaunchDarkly.Sdk.Server.Ai.Config;
+using LaunchDarkly.Sdk.Server.Ai.Tracking;
 
 namespace LaunchDarklySnippet
 {
@@ -60,6 +62,14 @@ namespace LaunchDarklySnippet
         // Evaluation fragments pass `myContext` to the variation
         // methods; the docs assume it already exists.
         private static Context myContext = default;
+        // AI metrics fragments call methods on the config's `tracker`
+        // and read fields from a provider `response`; both come from
+        // surrounding application code in the docs.
+        private static dynamic tracker = null;
+        private static dynamic response = null;
+        // AI metrics flush fragments call Flush() on the underlying
+        // LaunchDarkly client, which the docs name `baseClient`.
+        private static dynamic baseClient = null;
 #pragma warning restore CS0414, CS0649
 
         public static void Main(string[] args)
