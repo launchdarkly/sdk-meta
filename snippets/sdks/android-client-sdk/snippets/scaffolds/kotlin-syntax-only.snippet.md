@@ -80,6 +80,10 @@ fun applyVariant(variant: String) {}
 val client: LDClient get() = TODO()
 @Suppress("UNUSED")
 val flagKey: String = ""
+// Unregistration fragments reference a listener the docs assume was
+// created by an earlier registration fragment.
+@Suppress("UNUSED")
+val listener: FeatureFlagChangeListener get() = TODO()
 
 @Suppress("UNUSED_VARIABLE", "UNREACHABLE_CODE")
 class BaseApplication : Application() {
