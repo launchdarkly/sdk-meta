@@ -77,6 +77,14 @@ static inline void LDUserFree(struct LDUser *user) {
     (void)user;
 }
 
+/* Generates an identify event for the user, adding it to the Contexts
+ * list without requiring a flag evaluation. */
+static inline void LDClientIdentify(struct LDClient *client,
+                                    const struct LDUser *user) {
+    (void)client;
+    (void)user;
+}
+
 static inline void LDUserSetName(struct LDUser *user, const char *name) {
     (void)user;
     (void)name;
