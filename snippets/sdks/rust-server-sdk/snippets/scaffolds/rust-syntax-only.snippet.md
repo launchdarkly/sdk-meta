@@ -24,10 +24,10 @@ validation:
 use launchdarkly_server_sdk::{
     ApplicationInfo, AttributeValue, Client, ConfigBuilder, Context, ContextBuilder,
     MultiContextBuilder, Reason, Reference, ServiceEndpointsBuilder,
-    MigratorBuilder, ExecutionOrder,
+    MigratorBuilder, ExecutionOrder, MigrationOpTracker, Stage,
 };
 #[allow(unused_imports)]
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 #[allow(unused_imports)]
 use futures::future::FutureExt;
 #[allow(unused_imports)]
@@ -86,10 +86,31 @@ macro_rules! hashmap {
     }};
 }
 
-#[allow(dead_code, unused, unused_variables, unused_must_use)]
+// Stub migrator for migration doc fragments. The real `Migrator` type
+// is generic over its read/write closures, which a parse-only stub
+// binding cannot name; a minimal inherent-method stub with concrete
+// flag-key and payload parameter types lets `migrator.read(...)` /
+// `migrator.write(...)` fragments resolve, including the `.into()`
+// calls on the flag key and payload (which need a concrete target
+// type to infer).
+#[allow(dead_code)]
+struct _StubMigrator;
+#[allow(dead_code)]
+impl _StubMigrator {
+    async fn read(&mut self, _context: &Context, _flag_key: String, _default_stage: Stage, _payload: String) {}
+    async fn write(&mut self, _context: &Context, _flag_key: String, _default_stage: Stage, _payload: String) {}
+}
+
+#[allow(dead_code, unused, unused_variables, unused_must_use, unreachable_code)]
 async fn _wrappee() -> Result<(), Box<dyn std::error::Error>> {
     let client: Client = unimplemented!();
     let context = ContextBuilder::new("stub").build()?;
+    // Migration fragments reference an ambient migrator, a stage from
+    // a previous migration_variation call, and its tracker; the docs
+    // assume they already exist.
+    let mut migrator = _StubMigrator;
+    let stage: Stage = unimplemented!();
+    let tracker: Arc<Mutex<MigrationOpTracker>> = unimplemented!();
 {{ body }}
     Ok(())
 }
