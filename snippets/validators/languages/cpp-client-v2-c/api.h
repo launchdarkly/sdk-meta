@@ -99,6 +99,16 @@ static inline void LDConfigSetUseEvaluationReasons(struct LDConfig *config,
     (void)reasons;
 }
 
+/* Web-proxy configuration. The real v2 header declares
+ * `LDConfigSetProxyURI(struct LDConfig *const, const char *const)`
+ * returning LDBoolean. */
+static inline LDBoolean LDConfigSetProxyURI(struct LDConfig *config,
+                                            const char *uri) {
+    (void)config;
+    (void)uri;
+    return LDBooleanTrue;
+}
+
 /* Detail-variation surface. `LDVariationDetails` is filled by the
  * evaluation call; `reason` is a JSON object inspected through
  * LDObjectLookup / LDGetText. LDFreeDetailContents takes the struct
