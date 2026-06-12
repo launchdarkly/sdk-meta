@@ -34,12 +34,18 @@ validation:
 #include <cstdio>
 #include <future>
 #include <iostream>
+#include <memory>
 #include <optional>
 #include <string>
 // Native C++ headers.
 #include <launchdarkly/client_side/client.hpp>
 #include <launchdarkly/context_builder.hpp>
 #include <launchdarkly/value.hpp>
+// Logging interface headers -- the logging doc fragments re-include
+// these inside the body (a no-op thanks to pragma once / guards) and
+// the custom-logger stubs below need them at file scope.
+#include <launchdarkly/logging/log_backend.hpp>
+#include <launchdarkly/logging/log_level.hpp>
 // C-binding headers — doc fragments mix C-binding and native styles.
 #include <launchdarkly/client_side/bindings/c/sdk.h>
 #include <launchdarkly/client_side/bindings/c/config/builder.h>
@@ -88,6 +94,29 @@ struct _AnyClient {
     template <typename... Args> void identify(Args&&...) const {}
     template <typename... Args> auto startAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
 };
+
+// Stubs for the install-a-custom-logger fragments, which reference a
+// CustomLogger backend (native) or enabled/write callbacks (C
+// binding) defined in a preceding fragment on the same docs page.
+// Never invoked.
+class CustomLogger : public launchdarkly::ILogBackend {
+   public:
+    bool Enabled(launchdarkly::LogLevel level) noexcept override {
+        return true;
+    }
+    void Write(launchdarkly::LogLevel level,
+               std::string message) noexcept override {}
+};
+
+static bool enabled(enum LDLogLevel level, void* user_data) {
+    return true;
+}
+
+static void write(enum LDLogLevel level, char const* msg, void* user_data) {
+    (void)level;
+    (void)msg;
+    (void)user_data;
+}
 
 template <int = 0>
 void _wrappee() {

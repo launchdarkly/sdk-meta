@@ -65,6 +65,9 @@ import com.launchdarkly.observability.plugin.*
 // don't reach nested types, so it needs an explicit import for the
 // v5-x init body's `AutoEnvAttributes.Enabled` reference.
 import com.launchdarkly.sdk.android.LDConfig.Builder.AutoEnvAttributes
+// Timber is in the validator project's dependencies; the logging doc
+// fragments call `Timber.plant(...)` without showing the import.
+import timber.log.Timber
 
 // File-scope stubs so wrappee bodies that reference caller-supplied
 // helpers (e.g. `applyVariant(variant)`) type-check. Never invoked.

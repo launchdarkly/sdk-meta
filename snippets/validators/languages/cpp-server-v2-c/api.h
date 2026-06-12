@@ -24,6 +24,38 @@ struct LDClient;
 struct LDUser;
 struct LDJSON;
 
+/* Logging surface. Mirrors the real v2 header's
+ * <launchdarkly/logging.h> (vendored from c-sdk-common): the level
+ * enum order, the convenience LDBasicLogger, the global logger
+ * registration hook, and the level-to-string helper. */
+typedef enum
+{
+    LD_LOG_FATAL = 0,
+    LD_LOG_CRITICAL,
+    LD_LOG_ERROR,
+    LD_LOG_WARNING,
+    LD_LOG_INFO,
+    LD_LOG_DEBUG,
+    LD_LOG_TRACE
+} LDLogLevel;
+
+static inline void LDBasicLogger(const LDLogLevel level, const char *const text) {
+    (void)level;
+    (void)text;
+}
+
+static inline void LDConfigureGlobalLogger(
+    const LDLogLevel level,
+    void (*logger)(const LDLogLevel level, const char *const text)) {
+    (void)level;
+    (void)logger;
+}
+
+static inline const char *LDLogLevelToString(const LDLogLevel level) {
+    (void)level;
+    return "";
+}
+
 /* Evaluation-reason surface. Mirrors the real v2 header's enum order
  * and the LDDetails fields the doc fragments touch (the real struct
  * carries an additional per-kind `extra` union the fragments never
