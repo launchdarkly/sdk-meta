@@ -60,6 +60,11 @@ namespace LaunchDarklySnippet
         // Evaluation fragments pass `myContext` to the variation
         // methods; the docs assume it already exists.
         private static Context myContext = default;
+        // The legacy aliasing fragment passes `newUser` /
+        // `previousUser`; the docs assume earlier snippets created
+        // them.
+        private static User newUser = null;
+        private static User previousUser = null;
 #pragma warning restore CS0414, CS0649
 
         public static void Main(string[] args)

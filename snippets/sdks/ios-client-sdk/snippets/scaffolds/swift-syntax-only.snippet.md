@@ -45,6 +45,15 @@ import LaunchDarklyObservability
 // type-check. Never invoked.
 func applyVariant(_ variant: String) {}
 
+// Stub of the legacy alias API (removed at v8) so the v7-era
+// aliasing fragment type-checks against the current SDK. The
+// ambient `newUser` / `previousUser` names are typed LDContext
+// because the stub only needs self-consistent opaque arguments.
+// Never invoked.
+extension LDClient {
+    func alias(context: LDContext, previousContext: LDContext) {}
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
@@ -66,6 +75,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // init snippets created them.
     var ldConfig = LDConfig(mobileKey: "stub-mobile-key", autoEnvAttributes: .disabled)
     var context = try! LDContextBuilder(key: "stub-context-key").build().get()
+
+    // Ambient names the legacy aliasing fragment assumes earlier
+    // snippets created.
+    var newUser = try! LDContextBuilder(key: "stub-new-user-key").build().get()
+    var previousUser = try! LDContextBuilder(key: "stub-previous-user-key").build().get()
 
     // Wrappee body — references to client/context here resolve
     // through the stubs above; xcodebuild type-checks but doesn't
