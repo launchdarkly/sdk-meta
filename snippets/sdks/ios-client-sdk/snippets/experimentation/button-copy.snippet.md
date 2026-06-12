@@ -31,7 +31,12 @@ func configureExperimentButton(_ button: UIButton, onTap: (() -> Void)? = nil) {
     // or the SDK hasn't finished initializing yet.
     // Don't cache the result — LaunchDarkly deduplicates exposure events automatically.
     let label = client.stringVariation(forKey: "YOUR_FLAG_KEY", defaultValue: "Get started")
-    button.setTitle(label, for: .normal)
+    // UIButton.Configuration (iOS 15+) ignores setTitle(_:for:). Detect and handle both.
+    if #available(iOS 15, *), button.configuration != nil {
+        button.configuration?.title = label
+    } else {
+        button.setTitle(label, for: .normal)
+    }
 
     // Use a stable identifier so re-calling this function (e.g. after identify())
     // replaces the existing handler rather than stacking a second one.

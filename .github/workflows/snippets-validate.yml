@@ -117,6 +117,11 @@ jobs:
             key-type: mobile
             label: ios-client-sdk (sdk-docs)
             group: sdk-docs
+          - sdk: ios-client-sdk
+            runs-on: macos-latest
+            key-type: mobile
+            label: ios-client-sdk (experimentation)
+            group: experimentation
 
           # Android init: scaffolded with a MainApplication that
           # exercises LDClient.init(this@MainApplication, ...) under

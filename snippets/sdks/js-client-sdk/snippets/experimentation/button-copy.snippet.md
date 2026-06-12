@@ -9,17 +9,6 @@ validation:
 ---
 
 ```javascript
-import { createClient } from '@launchdarkly/js-client-sdk';
-
-// Initialize once — see the experimentation/full snippet for the full setup.
-// If ldClient is already initialized elsewhere in your app, import it and remove this block.
-export const ldClient = createClient('YOUR_CLIENT_SIDE_ID', {
-  kind: 'user',
-  key: 'EXAMPLE_CONTEXT_KEY', // use a consistent key so the same user gets the same experience
-  anonymous: true,
-});
-await ldClient.start();
-
 // Creates a <button> element whose label reflects the assigned variation.
 // Call this after the client is ready and attach the returned element to the DOM
 // wherever your original button lives.
