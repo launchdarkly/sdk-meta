@@ -31,6 +31,7 @@ package com.launchdarkly;
 import com.launchdarkly.sdk.*;
 import com.launchdarkly.sdk.server.*;
 import com.launchdarkly.sdk.server.migrations.*;
+import com.launchdarkly.sdk.server.integrations.*;
 // Common JDK types config/timeout fragments reference without their own
 // import line (the docs assume it); provide it so they resolve.
 import java.time.Duration;
@@ -46,6 +47,18 @@ public class Snippet {
     // docs assume it already exists, so provide it as a stub symbol.
     @SuppressWarnings("unused")
     private static final LDContext context = null;
+    // Persistent-store fragments reference a placeholder
+    // `SomeDatabaseName` integration (standing in for whichever
+    // database package the reader installs) plus an ambient
+    // `storeOptions` value the docs assume already exist.
+    @SuppressWarnings("unused")
+    private static final class SomeDatabaseName {
+        static com.launchdarkly.sdk.server.subsystems.ComponentConfigurer<com.launchdarkly.sdk.server.subsystems.PersistentDataStore> DataStore(Object options) {
+            return null;
+        }
+    }
+    @SuppressWarnings("unused")
+    private static final Object storeOptions = null;
 
     public static void main(String[] args) {
         System.out.println("feature flag evaluates to true");

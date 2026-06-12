@@ -23,6 +23,7 @@ validation:
     LaunchDarkly.ServerSdk
     LaunchDarkly.Observability
     LaunchDarkly.ServerSdk.Ai
+    LaunchDarkly.ServerSdk.Redis
 ---
 
 ```csharp
@@ -32,6 +33,7 @@ using System.Collections.Generic;
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Server;
 using LaunchDarkly.Sdk.Server.Migrations;
+using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Ai;
 using LaunchDarkly.Sdk.Server.Ai.Adapters;
 using LaunchDarkly.Sdk.Server.Ai.Config;
@@ -60,6 +62,11 @@ namespace LaunchDarklySnippet
         // Evaluation fragments pass `myContext` to the variation
         // methods; the docs assume it already exists.
         private static Context myContext = default;
+        // Persistent-store fragments reference a placeholder
+        // `SomeDatabaseName` integration standing in for whichever
+        // database package the reader installs; dynamic so its
+        // `.DataStore()` call resolves without pinning a package.
+        private static dynamic SomeDatabaseName = null;
 #pragma warning restore CS0414, CS0649
 
         public static void Main(string[] args)

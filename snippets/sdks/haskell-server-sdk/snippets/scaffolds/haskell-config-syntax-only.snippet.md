@@ -29,4 +29,9 @@ validation:
 
 main :: IO ()
 main = putStrLn "feature flag evaluates to true"
+
+-- Persistent-store fragments reference a `backend` the docs assume a
+-- database integration created earlier. `Nothing` generalizes to the
+-- `Maybe PersistentDataStore` that configSetStoreBackend expects.
+backend = Nothing
 ```
