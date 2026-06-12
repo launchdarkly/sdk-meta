@@ -80,6 +80,18 @@ fun applyVariant(variant: String) {}
 val client: LDClient get() = TODO()
 @Suppress("UNUSED")
 val flagKey: String = ""
+// Identify fragments build an updated context from an ambient
+// `context` the docs assume already exists.
+@Suppress("UNUSED")
+val context: LDContext get() = TODO()
+// Multi-environment init fragments pass an ambient `application`
+// the docs assume an Activity host provides.
+@Suppress("UNUSED")
+val application: Application get() = TODO()
+// Event fragments pass an ambient `data` payload to
+// `client.trackData(eventName, data)`.
+@Suppress("UNUSED")
+val data: LDValue get() = TODO()
 
 @Suppress("UNUSED_VARIABLE", "UNREACHABLE_CODE")
 class BaseApplication : Application() {
