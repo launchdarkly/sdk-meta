@@ -69,8 +69,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // Wrappee body — references to client/context here resolve
     // through the stubs above; xcodebuild type-checks but doesn't
-    // run.
-    @objc func _wrappee() {
+    // run. Declared `throws` so bodies that use bare `try` (e.g.
+    // multi-context builder fragments) compile without their own
+    // do/catch wrapper.
+    @objc func _wrappee() throws {
 {{ body }}
     }
 }
