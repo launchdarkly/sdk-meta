@@ -67,6 +67,9 @@ import com.launchdarkly.sdk.android.integrations.*;
 import com.launchdarkly.observability.plugin.*;
 import com.launchdarkly.observability.api.*;
 import java.util.Collections;
+// The monitoring fragments log through Timber (the validator's gradle
+// project carries the dependency).
+import timber.log.Timber;
 
 // No `public` modifier: Java requires public top-level classes to
 // live in a file matching the class name. We need this scaffold's
@@ -99,8 +102,14 @@ class SnippetActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // The try/catch gives statement-shaped bodies that call
+        // checked-throwing APIs (e.g. `LDClient.get()` throws
+        // LaunchDarklyException) a legal home — the docs assume an
+        // enclosing method that may handle or declare the exception.
         if (false) {
+            try {
 {{ body }}
+            } catch (Throwable ignored) { }
         }
     }
 }
