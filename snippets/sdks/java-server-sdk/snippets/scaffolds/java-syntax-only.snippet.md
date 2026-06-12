@@ -31,9 +31,12 @@ package com.launchdarkly;
 import com.launchdarkly.sdk.*;
 import com.launchdarkly.sdk.server.*;
 import com.launchdarkly.sdk.server.migrations.*;
+import com.launchdarkly.sdk.server.integrations.*;
 // Common JDK types config/timeout fragments reference without their own
 // import line (the docs assume it); provide it so they resolve.
 import java.time.Duration;
+import java.net.URI;
+import java.net.URL;
 // IMPORT_LIFT_MARKER
 
 public class Snippet {
@@ -46,6 +49,22 @@ public class Snippet {
     // docs assume it already exists, so provide it as a stub symbol.
     @SuppressWarnings("unused")
     private static final LDContext context = null;
+    // Init fragments pass an `sdkKey` the docs assume already exists.
+    @SuppressWarnings("unused")
+    private static final String sdkKey = "";
+    // Store-configuration fragments pass a `storeOptions` the docs
+    // assume already exists.
+    @SuppressWarnings("unused")
+    private static final Object storeOptions = null;
+
+    // Generic database-integration placeholder the storing-data docs
+    // use (`SomeDatabaseName.dataStore(...)`); stands in for a real
+    // integration package such as Redis or DynamoDB.
+    private static class SomeDatabaseName {
+        static com.launchdarkly.sdk.server.subsystems.ComponentConfigurer<com.launchdarkly.sdk.server.subsystems.PersistentDataStore> dataStore(Object options) {
+            return null;
+        }
+    }
 
     public static void main(String[] args) {
         System.out.println("feature flag evaluates to true");
