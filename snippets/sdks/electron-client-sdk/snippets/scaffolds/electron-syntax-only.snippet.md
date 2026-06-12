@@ -22,12 +22,22 @@ validation:
 ---
 
 ```javascript
+//IMPORT_LIFT_TARGET
+
 // Wrap in an async IIFE so the wrappee body can use top-level `await`
 // (e.g. `await client.waitForInitialization(...)`); the IIFE's
 // `if (false)` guard means the body is never executed at runtime.
+//
+// Bodies with top-level `import ...;` directives are handled via the
+// `//IMPORT_LIFT_TARGET` / `//BODY_BEGIN` / `//BODY_END` marker pair:
+// the js-client harness's awk pre-step lifts any `import` lines from
+// inside the body block up to module scope (ESM forbids imports
+// inside a function body).
 (async function _wrappee() {
   if (false) {
+//BODY_BEGIN
 {{ body }}
+//BODY_END
   }
 })();
 
