@@ -80,6 +80,17 @@ fun applyVariant(variant: String) {}
 val client: LDClient get() = TODO()
 @Suppress("UNUSED")
 val flagKey: String = ""
+// Init fragments reference the Application instance as a bare
+// `application` name — the docs assume an Activity host, where that
+// property exists. This scaffold splices bodies into an Application
+// subclass (which has no such property), so provide a file-scope
+// stub. Never read at runtime (the body is unreachable).
+@Suppress("UNUSED")
+val application: Application get() = TODO()
+// Evaluation/init fragments pass an ambient `context` (LDContext)
+// the docs assume an earlier fragment created.
+@Suppress("UNUSED")
+val context: LDContext get() = TODO()
 
 @Suppress("UNUSED_VARIABLE", "UNREACHABLE_CODE")
 class BaseApplication : Application() {

@@ -48,6 +48,7 @@ public class Snippet {
             Builder() {}
             Builder mobileKey(String key) { return this; }
             Builder evaluationReasons(boolean enabled) { return this; }
+            Builder offline(boolean offline) { return this; }
             LDConfig build() { return new LDConfig(); }
         }
     }
@@ -65,6 +66,7 @@ public class Snippet {
         EvaluationDetail<String> stringVariationDetail(String key, String defaultValue) {
             return null;
         }
+        void setOffline() {}
     }
 
     // Ambient names the doc fragments assume an Activity host

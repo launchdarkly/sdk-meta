@@ -36,6 +36,10 @@ Future<void> _wrappee() async {
   dynamic client = Object();
   // ignore: unused_local_variable
   dynamic context = Object();
+  // v1.x-era fragments pass an ambient `user` to LDClient.start; the
+  // docs assume an earlier init fragment declared it.
+  // ignore: unused_local_variable
+  dynamic user = Object();
   // ignore: unused_local_variable
   String flagKey = '';
   {

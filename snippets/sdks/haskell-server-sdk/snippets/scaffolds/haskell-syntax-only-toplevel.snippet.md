@@ -37,6 +37,11 @@ client = undefined
 context :: Context
 context = undefined
 
+-- Config fragments derive a new config from an ambient `config`
+-- binding the docs assume an earlier init snippet created.
+config :: Config
+config = undefined
+
 {{ body }}
 
 main :: IO ()
