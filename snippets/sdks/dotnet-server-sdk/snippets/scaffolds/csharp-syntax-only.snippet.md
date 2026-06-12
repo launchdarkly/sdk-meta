@@ -23,6 +23,7 @@ validation:
     LaunchDarkly.ServerSdk
     LaunchDarkly.Observability
     LaunchDarkly.ServerSdk.Ai
+    LaunchDarkly.ServerSdk.Telemetry
 ---
 
 ```csharp

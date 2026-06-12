@@ -34,6 +34,14 @@ import com.launchdarkly.sdk.server.migrations.*;
 // Common JDK types config/timeout fragments reference without their own
 // import line (the docs assume it); provide it so they resolve.
 import java.time.Duration;
+// OpenTelemetry tracing-hook fragments build singleton hook lists and
+// reference OpenTelemetry SDK types without their own import lines (the
+// docs assume them); provide them so they resolve.
+import java.util.Collections;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.resources.Resource;
+import io.opentelemetry.sdk.trace.SdkTracerProvider;
 // IMPORT_LIFT_MARKER
 
 public class Snippet {

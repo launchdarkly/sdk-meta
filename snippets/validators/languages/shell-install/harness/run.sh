@@ -23,6 +23,9 @@
 #   php composer.phar
 #     require …        — symlink /opt/composer.phar into $WORK, init a
 #                        minimal composer project, run body, check vendor/.
+#   composer require … — same flow as `php composer.phar require`, with a
+#                        thin `composer` wrapper staged on PATH so the
+#                        bare invocation resolves.
 #   dotnet add
 #     package …        — `dotnet new console`, then run body, then grep
 #                        the generated .csproj for <PackageReference>.
@@ -243,6 +246,27 @@ case "$LEAD" in
         cp /opt/composer.phar ./composer.phar
         php composer.phar init --quiet --name=example/sanity --no-interaction >/dev/null 2>&1
         run_in_log
+        pkg=$(last_pkg "$COMMAND")
+        if [ -d "vendor/$pkg" ]; then
+            echo "validator: ok — $pkg present under vendor/"
+        else
+            fail_with_log "$LOG" "expected vendor/$pkg to exist after composer require"
+        fi
+        ;;
+    composer)
+        # Body shape: `composer require <vendor>/<pkg>`. The image ships
+        # composer only as /opt/composer.phar (no global `composer`
+        # binary), so stage a thin wrapper on PATH that the body's bare
+        # `composer` invocation resolves to, then initialize a minimal
+        # composer project so `require` has somewhere to write.
+        if [ "$SUB" != "require" ]; then
+            fail_with_log "$LOG" "unrecognized composer subcommand for install snippet: $SUB"
+        fi
+        mkdir -p bin
+        printf '#!/bin/sh\nexec php /opt/composer.phar "$@"\n' > bin/composer
+        chmod +x bin/composer
+        php /opt/composer.phar init --quiet --name=example/sanity --no-interaction >/dev/null 2>&1
+        PATH="$WORK/bin:$PATH" run_in_log
         pkg=$(last_pkg "$COMMAND")
         if [ -d "vendor/$pkg" ]; then
             echo "validator: ok — $pkg present under vendor/"

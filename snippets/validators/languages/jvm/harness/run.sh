@@ -94,6 +94,20 @@ cat > pom.xml <<EOF
            we don't reach out from inside the harness. -->
       <version>7.13.4</version>
     </dependency>
+    <!-- The OpenTelemetry tracing-hook fragments reference the LaunchDarkly
+         otel hook (com.launchdarkly.integrations) and OpenTelemetry SDK
+         types; the java-syntax-only scaffold pre-imports the latter, so
+         both artifacts must be on every compile's classpath. -->
+    <dependency>
+      <groupId>com.launchdarkly</groupId>
+      <artifactId>launchdarkly-java-server-sdk-otel</artifactId>
+      <version>0.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-sdk</artifactId>
+      <version>1.40.0</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
