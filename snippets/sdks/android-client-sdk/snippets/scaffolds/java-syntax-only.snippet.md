@@ -26,6 +26,17 @@ description: |
   `this.getApplication()`, or reference Android Application context
   resolve through the enclosing BaseApplication instance.
 
+  Java has no local classes with access modifiers, so doc fragments
+  that define a `public class` alongside statements (e.g. a hook
+  implementation followed by the configuration that registers it)
+  cannot compile inside `onCreate()`. The `// TYPE_LIFT_TARGET`
+  comment cues a harness pre-stage rewrite: brace-balanced type
+  declarations found between the `// BODY_BEGIN` / `// BODY_END`
+  markers are moved up to the target at SnippetActivity member scope,
+  where they compile as nested classes (shadowing same-named
+  file-scope stubs for the statement residue that follows). Bodies
+  without type declarations are untouched.
+
   Bodies with `import …` lines from inside the body block are
   handled by the harness's existing Python import-lift pre-step:
   Java only allows imports between `package` and the first
@@ -67,6 +78,8 @@ import com.launchdarkly.sdk.android.integrations.*;
 import com.launchdarkly.observability.plugin.*;
 import com.launchdarkly.observability.api.*;
 import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
 
 // No `public` modifier: Java requires public top-level classes to
 // live in a file matching the class name. We need this scaffold's
@@ -81,6 +94,17 @@ import java.util.Collections;
 // `this@BaseApplication` against the kotlin scaffold's
 // Application-typed `BaseApplication`; Java's
 // `this.getApplication()` only exists on `android.app.Activity`.
+// Ambient stub for fragments that register a hook on an existing
+// client: the docs define `ExampleHook` in a preceding example, so
+// provide a minimal implementation at file scope. Fragments that
+// define their own `ExampleHook` get it type-lifted to
+// SnippetActivity member scope, which shadows this stub.
+class ExampleHook extends Hook {
+    ExampleHook(String name) {
+        super(name);
+    }
+}
+
 @SuppressWarnings({"unused", "ConstantConditions"})
 class SnippetActivity extends Activity {
     // Instance-field stubs so bodies like
@@ -95,12 +119,19 @@ class SnippetActivity extends Activity {
     // timeout the docs assume already exist.
     LDContext context;
     int secondsToBlock;
+    // Init fragments pass an ambient config the docs assume an earlier
+    // example created.
+    LDConfig ldConfig;
+
+    // TYPE_LIFT_TARGET
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (false) {
+// BODY_BEGIN
 {{ body }}
+// BODY_END
         }
     }
 }
