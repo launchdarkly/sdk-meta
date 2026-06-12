@@ -41,6 +41,11 @@ static inline void LDUserFree(struct LDUser *user) {
     (void)user;
 }
 
+static inline void LDUserSetAnonymous(struct LDUser *user, LDBoolean anon) {
+    (void)user;
+    (void)anon;
+}
+
 /* cpp-client v2 C SDK's `LDClientInit` takes (config, user, maxwait) —
  * the user is bound at init time (mobile/client SDK pattern), unlike
  * the server SDK where the user is passed per-variation call. */
