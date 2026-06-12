@@ -138,6 +138,39 @@ static inline double LDDoubleVariation(struct LDClient *client,
     return fallback;
 }
 
+/* Data-source plumbing used by the test-data-source fragments. The real
+ * v2 header returns a heap-allocated LDDataSource; the stub only needs
+ * the types to line up. */
+struct LDDataSource;
+
+static inline void LDConfigSetDataSource(struct LDConfig *config,
+                                         struct LDDataSource *dataSource) {
+    (void)config;
+    (void)dataSource;
+}
+
+/* Minimal LDJSON construction surface. Fragments build variation arrays
+ * with these before handing them to the flag builder. */
+static inline struct LDJSON *LDNewArray(void) {
+    return (struct LDJSON *)0;
+}
+
+static inline struct LDJSON *LDNewText(const char *text) {
+    (void)text;
+    return (struct LDJSON *)0;
+}
+
+static inline struct LDJSON *LDNewBool(LDBoolean value) {
+    (void)value;
+    return (struct LDJSON *)0;
+}
+
+static inline LDBoolean LDArrayPush(struct LDJSON *array, struct LDJSON *item) {
+    (void)array;
+    (void)item;
+    return LDBooleanTrue;
+}
+
 static inline char *LDStringVariation(struct LDClient *client,
                                       struct LDUser *user,
                                       const char *flagKey,

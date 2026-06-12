@@ -24,7 +24,7 @@ validation:
 use launchdarkly_server_sdk::{
     ApplicationInfo, AttributeValue, Client, ConfigBuilder, Context, ContextBuilder,
     MultiContextBuilder, Reason, Reference, ServiceEndpointsBuilder,
-    MigratorBuilder, ExecutionOrder,
+    MigratorBuilder, ExecutionOrder, TestData, FlagBuilder,
 };
 #[allow(unused_imports)]
 use std::sync::Arc;
@@ -90,6 +90,9 @@ macro_rules! hashmap {
 async fn _wrappee() -> Result<(), Box<dyn std::error::Error>> {
     let client: Client = unimplemented!();
     let context = ContextBuilder::new("stub").build()?;
+    // Test-data fragments reference a `td` the docs assume an earlier
+    // `TestData::new()` binding created.
+    let td = TestData::new();
 {{ body }}
     Ok(())
 }
