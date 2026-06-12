@@ -80,6 +80,10 @@ fun applyVariant(variant: String) {}
 val client: LDClient get() = TODO()
 @Suppress("UNUSED")
 val flagKey: String = ""
+// Init fragments pass the ambient `application` instance the docs
+// assume an Activity host provides.
+@Suppress("UNUSED")
+val application: Application get() = TODO()
 
 @Suppress("UNUSED_VARIABLE", "UNREACHABLE_CODE")
 class BaseApplication : Application() {
