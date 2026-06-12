@@ -67,6 +67,10 @@ import com.launchdarkly.sdk.android.integrations.*;
 import com.launchdarkly.observability.plugin.*;
 import com.launchdarkly.observability.api.*;
 import java.util.Collections;
+// Multi-environment config fragments build a `Map<String, String>` of
+// secondary mobile keys with `new HashMap<>()`.
+import java.util.Map;
+import java.util.HashMap;
 
 // No `public` modifier: Java requires public top-level classes to
 // live in a file matching the class name. We need this scaffold's
@@ -95,12 +99,26 @@ class SnippetActivity extends Activity {
     // timeout the docs assume already exist.
     LDContext context;
     int secondsToBlock;
+    // Event fragments pass an ambient `data` payload to
+    // `client.trackData(eventName, data)`.
+    LDValue data;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // The unreachable body is additionally wrapped in try/catch
+        // (mirroring the csharp-syntax-only scaffold) so fragments that
+        // call checked-exception APIs -- e.g. client.close(), declared
+        // `throws IOException` via java.io.Closeable -- compile without
+        // each fragment carrying its own handler. onCreate overrides
+        // Activity.onCreate, so a `throws` clause can't be added here.
+        // catch (Exception) is legal even when the body throws nothing.
         if (false) {
+            try {
 {{ body }}
+            } catch (Exception e) {
+                // never reached
+            }
         }
     }
 }
