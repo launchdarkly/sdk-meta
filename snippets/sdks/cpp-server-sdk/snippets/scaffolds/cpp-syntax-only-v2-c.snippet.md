@@ -38,6 +38,13 @@ static struct LDUser *user;
 static struct LDConfig *config;
 static unsigned int maxwaitmilliseconds;
 
+/* Daemon-mode fragments construct their store backend via a
+ * placeholder `ConstructYourFeatureStoreInterface()` standing in for
+ * whichever database integration the reader uses. */
+static struct LDStoreInterface *ConstructYourFeatureStoreInterface(void) {
+    return (struct LDStoreInterface *)0;
+}
+
 static void _wrappee(void) {
 {{ body }}
 }

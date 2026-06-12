@@ -62,6 +62,15 @@ struct _AnyClient {
     template <typename... Args> auto StartAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
 };
 
+// Lazy-load fragments construct their store source via a placeholder
+// `YourDatabaseIntegration()` standing in for whichever database
+// integration the reader uses. Returns the ISerializedDataReader
+// pointer shape LazyLoadBuilder::Source() expects.
+inline std::shared_ptr<launchdarkly::server_side::integrations::ISerializedDataReader>
+YourDatabaseIntegration() {
+    return nullptr;
+}
+
 // Wrappee is a never-instantiated template — body is parsed but
 // most type-checks are deferred to instantiation (which never
 // happens). The body lives in a nested block so it can re-declare
@@ -83,6 +92,9 @@ void _wrappee() {
     _AnyClient client;
     LDContext context = nullptr;
     LDServerConfig config = nullptr;
+    // Config fragments construct the builder from an ambient `sdk_key`
+    // the docs assume an earlier snippet defined.
+    std::string sdk_key = "";
     // `maxwait` is referenced by both native-style fragments
     // (`wait_for(maxwait)` — needs a chrono duration) and C-binding
     // fragments (`LDServerSDK_Start(client, maxwait, ...)` — needs an

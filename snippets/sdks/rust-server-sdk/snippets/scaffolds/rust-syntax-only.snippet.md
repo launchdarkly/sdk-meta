@@ -25,6 +25,7 @@ use launchdarkly_server_sdk::{
     ApplicationInfo, AttributeValue, Client, ConfigBuilder, Context, ContextBuilder,
     MultiContextBuilder, Reason, Reference, ServiceEndpointsBuilder,
     MigratorBuilder, ExecutionOrder,
+    PersistentDataStore, PersistentDataStoreFactory,
 };
 #[allow(unused_imports)]
 use std::sync::Arc;
@@ -86,10 +87,34 @@ macro_rules! hashmap {
     }};
 }
 
+// Persistent-store fragments construct a placeholder
+// `SomeKindOfFeatureStore` integration standing in for whichever
+// database package the reader uses. The stub implements
+// PersistentDataStoreFactory so PersistentDataStoreBuilder::new
+// accepts it.
+#[allow(dead_code)]
+struct SomeKindOfFeatureStore;
+#[allow(dead_code)]
+impl SomeKindOfFeatureStore {
+    fn new<T>(_options: T) -> Self {
+        Self
+    }
+}
+impl PersistentDataStoreFactory for SomeKindOfFeatureStore {
+    fn create_persistent_data_store(
+        &self,
+    ) -> Result<Box<dyn PersistentDataStore>, std::io::Error> {
+        unimplemented!()
+    }
+}
+
 #[allow(dead_code, unused, unused_variables, unused_must_use)]
 async fn _wrappee() -> Result<(), Box<dyn std::error::Error>> {
     let client: Client = unimplemented!();
     let context = ContextBuilder::new("stub").build()?;
+    // Persistent-store fragments pass ambient `store_options` the docs
+    // assume an earlier snippet created.
+    let store_options = ();
 {{ body }}
     Ok(())
 }
