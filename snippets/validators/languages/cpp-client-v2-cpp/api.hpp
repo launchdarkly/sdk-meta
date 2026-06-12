@@ -39,6 +39,11 @@ inline void LDUserFree(LDUser *user) {
     (void)user;
 }
 
+inline void LDUserSetAnonymous(LDUser *user, LDBoolean anon) {
+    (void)user;
+    (void)anon;
+}
+
 inline void LDConfigSetUseEvaluationReasons(LDConfig *config,
                                             LDBoolean reasons) {
     (void)config;
