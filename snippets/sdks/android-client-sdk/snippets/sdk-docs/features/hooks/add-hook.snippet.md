@@ -15,4 +15,5 @@ hookList.add(exampleHook);
 
 LDClient client = LDClient.init(this.getApplication(), ldConfig, context, 0);
 client.addHook(exampleHook);
+
 ```

@@ -12,4 +12,5 @@ validation:
 
 const client = LDClient.initialize('example-client-side-id', options);
 client.addHook(new ExampleHook());
+
 ```

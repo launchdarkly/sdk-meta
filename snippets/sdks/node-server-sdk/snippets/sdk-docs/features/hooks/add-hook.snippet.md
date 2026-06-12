@@ -12,4 +12,5 @@ validation:
 
 const client = ld.init('YOUR_SDK_KEY', options);
 client.addHook(new ExampleHook());
+
 ```

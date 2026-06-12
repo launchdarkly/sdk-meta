@@ -49,4 +49,5 @@ LDConfig ldConfig = new LDConfig.Builder(AutoEnvAttributes.Enabled)
 LDContext context = LDContext.create("example-context-key");
 
 LDClient client = LDClient.init(this.getApplication(), ldConfig, context, 0);
+
 ```

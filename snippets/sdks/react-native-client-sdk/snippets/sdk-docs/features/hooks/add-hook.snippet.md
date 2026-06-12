@@ -12,4 +12,5 @@ validation:
 
 const client = new ReactNativeLDClient('example-mobile-key', AutoEnvAttributes.Enabled, options);
 client.addHook(new ExampleHook());
+
 ```

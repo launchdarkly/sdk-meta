@@ -12,4 +12,5 @@ validation:
 client = LaunchDarkly::LDClient.new("YOUR_SDK_KEY", config)
 
 client.add_hook(example_hook)
+
 ```

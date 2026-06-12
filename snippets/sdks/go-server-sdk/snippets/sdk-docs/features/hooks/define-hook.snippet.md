@@ -39,4 +39,5 @@ client, _ = ld.MakeCustomClient("YOUR_SDK_KEY",
   ld.Config{
     Hooks: []ldhooks.Hook{newExampleHook()},
   }, 5*time.Second)
+
 ```
