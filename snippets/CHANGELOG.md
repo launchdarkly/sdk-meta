@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.13.0...snippets/v0.14.0) (2026-06-12)
+
+
+### Features
+
+* **snippets:** add experimentation button-copy snippets for five SDKs ([#469](https://github.com/launchdarkly/sdk-meta/issues/469)) ([534d715](https://github.com/launchdarkly/sdk-meta/commit/534d7154ffa4a9683e3ac3b1d134923897227ed3))
+
 ## [0.13.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.12.0...snippets/v0.13.0) (2026-06-11)
 
 
