@@ -23,7 +23,8 @@ validation:
 #[allow(unused_imports)]
 use launchdarkly_server_sdk::{
     ApplicationInfo, AttributeValue, Client, ConfigBuilder, Context, ContextBuilder,
-    EventProcessorBuilder, MultiContextBuilder, Reason, Reference, ServiceEndpointsBuilder,
+    EventProcessorBuilder, FlagDetailConfig, MultiContextBuilder, Reason, Reference,
+    ServiceEndpointsBuilder,
     MigratorBuilder, ExecutionOrder,
 };
 #[allow(unused_imports)]
@@ -89,6 +90,9 @@ macro_rules! hashmap {
 #[allow(dead_code, unused, unused_variables, unused_must_use)]
 async fn _wrappee() -> Result<(), Box<dyn std::error::Error>> {
     let client: Client = unimplemented!();
+    // Some doc fragments name the ambient client `ldclient` instead of
+    // `client`; stub both so either spelling resolves.
+    let ldclient: Client = unimplemented!();
     let context = ContextBuilder::new("stub").build()?;
 {{ body }}
     Ok(())
