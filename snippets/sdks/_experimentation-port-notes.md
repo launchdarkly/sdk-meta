@@ -65,25 +65,26 @@ Per-SDK summary:
   existing Python import-lift pre-step moves the body's
   `import LaunchDarkly` up to file scope.
 
-## Still unvalidated: android-client-sdk
+## android-client-sdk
 
-**Snippets affected**: `android-client-sdk/experimentation/{track-only,full}`.
+**Snippets affected**: `android-client-sdk/experimentation/{track-only,full,button-copy}`.
 
-**Why unbindable today**: the existing
-`android-client-sdk/scaffolds/android-syntax-only` scaffold routes
-through the `jvm` validator (Java + Maven against
-`launchdarkly-java-server-sdk`); the experimentation bodies are
-Kotlin and reference `com.launchdarkly.sdk.android.*` types (the
-android client SDK ships as an `aar` to Google's Maven, not a plain
-jar to Maven Central), plus AndroidX types like `AppCompatActivity`,
-`Application`, and `Bundle`. There is no parse-only mode of the
-`android-client` validator (the existing harness drives a
-MainActivity through a Robolectric lifecycle and asserts on a
-TextView), and adding one would require a kotlinc-only /
-`compileDebugKotlin` dispatch path plus a kotlin-aware syntax-only
-scaffold — larger than this slice. Same structural gap as the
-`android-client-sdk/sdk-docs/*` fragments documented in
-`_sdk-docs-port-notes.md`.
+All three bind to `android-client-sdk/scaffolds/kotlin-syntax-only`,
+which routes through the `android-client` validator's parse mode
+(`./gradlew compileDebugJavaWithJavac` / `compileDebugKotlin` against
+the real `launchdarkly-android-client-sdk` aar and AndroidX
+classpath). The bodies splice into the scaffold's unreachable
+`onCreate` block; Kotlin permits local `fun`/`val`/`class`
+declarations, the harness's import-lift pre-step hoists the bodies'
+`import` lines to file scope, and `this@BaseApplication` resolves
+against the scaffold's own class name.
+
+Binding surfaced one content bug in the track-only and full variants:
+both imported `com.launchdarkly.sdk.android.AutoEnvAttributes`, which
+does not exist — the enum is nested at
+`com.launchdarkly.sdk.android.LDConfig.Builder.AutoEnvAttributes` —
+so the published samples would not have compiled as written. The
+import paths are corrected.
 
 ## Reviewer comments applied inline
 
