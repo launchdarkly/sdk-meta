@@ -117,6 +117,11 @@ jobs:
             key-type: mobile
             label: ios-client-sdk (sdk-docs)
             group: sdk-docs
+          - sdk: ios-client-sdk
+            runs-on: macos-latest
+            key-type: mobile
+            label: ios-client-sdk (experimentation)
+            group: experimentation
 
           # Android init: scaffolded with a MainApplication that
           # exercises LDClient.init(this@MainApplication, ...) under
@@ -129,6 +134,17 @@ jobs:
             key-type: mobile
             label: android-client-sdk (init)
             snippet: android-client-sdk/sdk-info/init
+
+          # Android experimentation fragments are Kotlin and validate
+          # through kotlin-syntax-only (gradle compile in parse mode).
+          # The android rows are all snippet-/group-filtered, so the
+          # group needs its own row — unlike js/react/react-native,
+          # whose unfiltered rows pick experimentation up implicitly.
+          - sdk: android-client-sdk
+            runs-on: ubuntu-latest
+            key-type: mobile
+            label: android-client-sdk (experimentation)
+            group: experimentation
 
           # Android sdk-docs: Kotlin reference fragments wrapped by
           # kotlin-syntax-only run `./gradlew compileDebugKotlin`
