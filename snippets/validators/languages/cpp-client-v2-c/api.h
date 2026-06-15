@@ -12,6 +12,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <string.h>
 
 #ifdef __cplusplus
@@ -160,6 +161,42 @@ static inline void LDFreeDetailContents(LDVariationDetails details) {
 static inline void LDClientTrack(struct LDClient *client, const char *key) {
     (void)client;
     (void)key;
+}
+
+/* All-flags surface. The real v2 header returns an object-type LDJSON
+ * map of flag keys to values; iteration goes through the shared LDJSON
+ * collection helpers below. */
+static inline struct LDJSON *LDAllFlags(struct LDClient *client) {
+    (void)client;
+    return (struct LDJSON *)0;
+}
+
+static inline struct LDJSON *LDGetIter(const struct LDJSON *collection) {
+    (void)collection;
+    return (struct LDJSON *)0;
+}
+
+static inline struct LDJSON *LDIterNext(const struct LDJSON *iter) {
+    (void)iter;
+    return (struct LDJSON *)0;
+}
+
+static inline const char *LDIterKey(const struct LDJSON *iter) {
+    (void)iter;
+    return "";
+}
+
+static inline char *LDJSONSerialize(const struct LDJSON *json) {
+    (void)json;
+    return (char *)0;
+}
+
+static inline void LDFree(void *buffer) {
+    (void)buffer;
+}
+
+static inline void LDJSONFree(struct LDJSON *json) {
+    (void)json;
 }
 
 #ifdef __cplusplus

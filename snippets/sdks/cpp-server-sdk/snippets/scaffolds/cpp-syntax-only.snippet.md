@@ -56,7 +56,12 @@ struct _AnyClient {
     template <typename... Args> double DoubleVariation(Args&&...) const { return 0; }
     template <typename... Args> std::string StringVariation(Args&&...) const { return {}; }
     template <typename... Args> auto JsonVariation(Args&&...) const { return launchdarkly::Value{}; }
-    template <typename... Args> auto AllFlagsState(Args&&...) const { return false; }
+    // The real client's AllFlagsState returns the AllFlagsState class;
+    // the stub returns a default-constructed (invalid) instance so the
+    // body's `.Valid()` / `.Values()` chains compile.
+    template <typename... Args> auto AllFlagsState(Args&&...) const {
+        return launchdarkly::server_side::AllFlagsState{};
+    }
     template <typename... Args> void Track(Args&&...) const {}
     template <typename... Args> void TrackEvent(Args&&...) const {}
     template <typename... Args> void Identify(Args&&...) const {}
