@@ -102,8 +102,19 @@ class SnippetActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // The unreachable body is additionally wrapped in try/catch
+        // (mirroring the csharp-syntax-only scaffold) so fragments that
+        // call checked-exception APIs -- e.g. client.close(), declared
+        // `throws IOException` via java.io.Closeable -- compile without
+        // each fragment carrying its own handler. onCreate overrides
+        // Activity.onCreate, so a `throws` clause can't be added here.
+        // catch (Exception) is legal even when the body throws nothing.
         if (false) {
+            try {
 {{ body }}
+            } catch (Exception e) {
+                // never reached
+            }
         }
     }
 }
