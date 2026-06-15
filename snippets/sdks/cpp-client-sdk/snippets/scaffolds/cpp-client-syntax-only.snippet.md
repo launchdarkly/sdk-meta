@@ -80,6 +80,9 @@ struct _AnyClient {
     template <typename... Args> void Track(Args&&...) const {}
     template <typename... Args> void TrackEvent(Args&&...) const {}
     template <typename... Args> void Identify(Args&&...) const {}
+    // Matches the real Client::FlushAsync surface: fire-and-forget,
+    // returns void.
+    template <typename... Args> void FlushAsync(Args&&...) const {}
     template <typename... Args> auto StartAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
     // Lowercase-first aliases — the v2.x C++ client SDK exposed
     // camelCased methods (e.g. `client->boolVariation(...)`); v3.x
