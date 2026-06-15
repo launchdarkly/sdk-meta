@@ -4,15 +4,14 @@ sdk: android-client-sdk
 kind: reference
 lang: kotlin
 description: Full experimentation onboarding for android-client-sdk — initialize, identify off the main thread on login/eligibility, evaluate, and track conversions.
-# TODO(validate): newly proposed experimentation onboarding snippet, not
-# standalone-runnable (references applyVariant and an Activity host). No
-# validation block yet. See _experimentation-port-notes.md.
+validation:
+  scaffold: android-client-sdk/scaffolds/kotlin-syntax-only
 ---
 
 ```kotlin
 import com.launchdarkly.sdk.LDContext
 import com.launchdarkly.sdk.LDValue
-import com.launchdarkly.sdk.android.AutoEnvAttributes
+import com.launchdarkly.sdk.android.LDConfig.Builder.AutoEnvAttributes
 import com.launchdarkly.sdk.android.LDClient
 import com.launchdarkly.sdk.android.LDConfig
 import kotlinx.coroutines.CoroutineScope
