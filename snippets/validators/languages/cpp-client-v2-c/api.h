@@ -155,6 +155,14 @@ static inline void LDFreeDetailContents(LDVariationDetails details) {
     (void)details;
 }
 
+/* Custom-event surface. The real v2 client header's LDClientTrack
+ * takes just the client and the event key (the client already holds
+ * the user); data/metric variants exist separately. */
+static inline void LDClientTrack(struct LDClient *client, const char *key) {
+    (void)client;
+    (void)key;
+}
+
 /* All-flags surface. The real v2 header returns an object-type LDJSON
  * map of flag keys to values; iteration goes through the shared LDJSON
  * collection helpers below. */

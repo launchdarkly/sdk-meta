@@ -150,6 +150,18 @@ static inline char *LDStringVariation(struct LDClient *client,
     return (char *)fallback;
 }
 
+/* Custom-event surface. The real v2 header's LDClientTrack takes the
+ * event key, the user the event is for, and optional JSON data. */
+static inline void LDClientTrack(struct LDClient *client,
+                                 const char *key,
+                                 const struct LDUser *user,
+                                 struct LDJSON *data) {
+    (void)client;
+    (void)key;
+    (void)user;
+    (void)data;
+}
+
 /* All-flags surface. The real v2 header returns an object-type LDJSON
  * map of flag keys to values; doc fragments only bind the result. */
 static inline struct LDJSON *LDAllFlags(struct LDClient *client,
