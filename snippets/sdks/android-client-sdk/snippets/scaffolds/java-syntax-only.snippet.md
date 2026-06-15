@@ -108,16 +108,20 @@ class SnippetActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    // The body is spliced into its own never-invoked instance method
-    // rather than onCreate: an Activity lifecycle override cannot add
-    // checked exceptions to its throws clause, but doc fragments call
-    // checked-exception APIs like `LDClient.get()` bare, assuming the
-    // enclosing caller method may throw.
-    void _wrappee() throws Exception {
+        // The unreachable body is wrapped in try/catch (mirroring the
+        // csharp-syntax-only scaffold) so fragments that call
+        // checked-exception APIs -- e.g. `LDClient.get()` throws
+        // LaunchDarklyException, `client.close()` throws IOException via
+        // java.io.Closeable -- compile without each fragment carrying
+        // its own handler. onCreate overrides Activity.onCreate, so a
+        // `throws` clause can't be added here. catch (Exception) is
+        // legal even when the body throws nothing.
         if (false) {
+            try {
 {{ body }}
+            } catch (Exception e) {
+                // never reached
+            }
         }
     }
 }

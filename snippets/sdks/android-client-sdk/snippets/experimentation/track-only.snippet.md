@@ -4,15 +4,14 @@ sdk: android-client-sdk
 kind: reference
 lang: kotlin
 description: Experimentation onboarding (track only) for android-client-sdk — initialize and add a trackMetric helper for conversion events.
-# TODO(validate): newly proposed experimentation onboarding snippet, not
-# standalone-runnable (assumes a BaseApplication host + your app). No
-# validation block yet. See _experimentation-port-notes.md.
+validation:
+  scaffold: android-client-sdk/scaffolds/kotlin-syntax-only
 ---
 
 ```kotlin
 import com.launchdarkly.sdk.*
 import com.launchdarkly.sdk.android.*
-import com.launchdarkly.sdk.android.AutoEnvAttributes
+import com.launchdarkly.sdk.android.LDConfig.Builder.AutoEnvAttributes
 
 // This is your mobile key.
 val ldConfig = LDConfig.Builder(AutoEnvAttributes.Enabled)
