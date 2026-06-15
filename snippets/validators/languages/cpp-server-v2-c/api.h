@@ -185,6 +185,15 @@ static inline char *LDStringVariation(struct LDClient *client,
     return (char *)fallback;
 }
 
+/* All-flags surface. The real v2 header returns an object-type LDJSON
+ * map of flag keys to values; doc fragments only bind the result. */
+static inline struct LDJSON *LDAllFlags(struct LDClient *client,
+                                        const struct LDUser *user) {
+    (void)client;
+    (void)user;
+    return (struct LDJSON *)0;
+}
+
 #ifdef __cplusplus
 }
 #endif
