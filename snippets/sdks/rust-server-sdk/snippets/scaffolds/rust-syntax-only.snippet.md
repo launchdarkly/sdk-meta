@@ -23,7 +23,7 @@ validation:
 #[allow(unused_imports)]
 use launchdarkly_server_sdk::{
     ApplicationInfo, AttributeValue, Client, ConfigBuilder, Context, ContextBuilder,
-    MultiContextBuilder, Reason, Reference, ServiceEndpointsBuilder,
+    FlagDetailConfig, MultiContextBuilder, Reason, Reference, ServiceEndpointsBuilder,
     MigratorBuilder, ExecutionOrder, MigrationOpTracker, Stage,
 };
 #[allow(unused_imports)]
@@ -104,6 +104,9 @@ impl _StubMigrator {
 #[allow(dead_code, unused, unused_variables, unused_must_use, unreachable_code)]
 async fn _wrappee() -> Result<(), Box<dyn std::error::Error>> {
     let client: Client = unimplemented!();
+    // Some doc fragments name the ambient client `ldclient` instead of
+    // `client`; stub both so either spelling resolves.
+    let ldclient: Client = unimplemented!();
     let context = ContextBuilder::new("stub").build()?;
     // Migration fragments reference an ambient migrator, a stage from
     // a previous migration_variation call, and its tracker; the docs
