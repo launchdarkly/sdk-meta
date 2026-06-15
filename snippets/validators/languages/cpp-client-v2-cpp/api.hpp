@@ -13,6 +13,7 @@
 #include <cstdbool>
 #include <cstddef>
 #include <cstring>
+#include <iostream>
 
 /* C-flavored types live in the global namespace, matching the
  * v2 SDK's actual layout (the C and C++ headers shared a translation
@@ -69,6 +70,37 @@ inline void LDFreeDetailContents(LDVariationDetails details) {
     (void)details;
 }
 
+/* All-flags surface. getAllFlags on LDClientCPP returns an object-type
+ * LDJSON map of flag keys to values; iteration goes through the shared
+ * LDJSON collection helpers. */
+inline LDJSON *LDGetIter(const LDJSON *collection) {
+    (void)collection;
+    return nullptr;
+}
+
+inline LDJSON *LDIterNext(const LDJSON *iter) {
+    (void)iter;
+    return nullptr;
+}
+
+inline const char *LDIterKey(const LDJSON *iter) {
+    (void)iter;
+    return "";
+}
+
+inline char *LDJSONSerialize(const LDJSON *json) {
+    (void)json;
+    return nullptr;
+}
+
+inline void LDFree(void *buffer) {
+    (void)buffer;
+}
+
+inline void LDJSONFree(LDJSON *json) {
+    (void)json;
+}
+
 /* `LDClientCPP` is the v2 C++ binding's RAII client class. Member
  * stubs covered by variadic templates so any arg list (string flag
  * key + fallback, etc.) resolves at parse time. The class is never
@@ -83,6 +115,7 @@ public:
     template <typename... Args> int intVariation(Args&&...) { return 0; }
     template <typename... Args> double doubleVariation(Args&&...) { return 0; }
     template <typename... Args> const char *stringVariation(Args&&...) { return ""; }
+    LDJSON *getAllFlags() { return nullptr; }
     template <typename... Args> void identify(Args&&...) {}
     template <typename... Args> void track(Args&&...) {}
     template <typename... Args> void close(Args&&...) {}
