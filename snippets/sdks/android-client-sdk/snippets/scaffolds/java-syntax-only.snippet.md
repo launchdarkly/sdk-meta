@@ -102,14 +102,20 @@ class SnippetActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // The try/catch gives statement-shaped bodies that call
-        // checked-throwing APIs (e.g. `LDClient.get()` throws
-        // LaunchDarklyException) a legal home — the docs assume an
-        // enclosing method that may handle or declare the exception.
+        // The unreachable body is wrapped in try/catch (mirroring the
+        // csharp-syntax-only scaffold) so fragments that call
+        // checked-exception APIs -- e.g. `LDClient.get()` throws
+        // LaunchDarklyException, `client.close()` throws IOException via
+        // java.io.Closeable -- compile without each fragment carrying
+        // its own handler. onCreate overrides Activity.onCreate, so a
+        // `throws` clause can't be added here. catch (Exception) is
+        // legal even when the body throws nothing.
         if (false) {
             try {
 {{ body }}
-            } catch (Throwable ignored) { }
+            } catch (Exception e) {
+                // never reached
+            }
         }
     }
 }

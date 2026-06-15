@@ -36,6 +36,7 @@ validation:
 #include <iostream>
 #include <optional>
 #include <string>
+#include <unordered_map>
 // Native C++ headers.
 #include <launchdarkly/client_side/client.hpp>
 #include <launchdarkly/context_builder.hpp>
@@ -87,7 +88,12 @@ struct _AnyClient {
     template <typename... Args> double DoubleVariation(Args&&...) const { return 0; }
     template <typename... Args> std::string StringVariation(Args&&...) const { return {}; }
     template <typename... Args> auto JsonVariation(Args&&...) const { return launchdarkly::Value{}; }
-    template <typename... Args> auto AllFlags(Args&&...) const { return launchdarkly::Value{}; }
+    // The real client's AllFlags returns a flag-key-to-Value map; the
+    // stub matches so range-for fragments with structured bindings
+    // compile.
+    template <typename... Args> auto AllFlags(Args&&...) const {
+        return std::unordered_map<std::string, launchdarkly::Value>{};
+    }
     template <typename... Args> void TrackEvent(Args&&...) const {}
     template <typename... Args> void Identify(Args&&...) const {}
     template <typename... Args> auto StartAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
