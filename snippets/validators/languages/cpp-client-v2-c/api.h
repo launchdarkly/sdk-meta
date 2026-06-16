@@ -66,6 +66,13 @@ static inline LDBoolean LDClientClose(struct LDClient *client) {
     return LDBooleanTrue;
 }
 
+/* Manual event flush: fire-and-forget; delivery happens on the
+ * SDK's background thread. Matches the real v2 header's
+ * `void LDClientFlush(struct LDClient *const client)`. */
+static inline void LDClientFlush(struct LDClient *client) {
+    (void)client;
+}
+
 /* Variation calls take (client, flagKey, fallback) — no per-call
  * user since the client carries the user. Distinct from the server
  * variant which takes (client, user, flagKey, fallback, &details). */
@@ -160,6 +167,14 @@ static inline const char *LDGetText(const struct LDJSON *json) {
 
 static inline void LDFreeDetailContents(LDVariationDetails details) {
     (void)details;
+}
+
+/* Custom-event surface. The real v2 client header's LDClientTrack
+ * takes just the client and the event key (the client already holds
+ * the user); data/metric variants exist separately. */
+static inline void LDClientTrack(struct LDClient *client, const char *key) {
+    (void)client;
+    (void)key;
 }
 
 /* All-flags surface. The real v2 header returns an object-type LDJSON
