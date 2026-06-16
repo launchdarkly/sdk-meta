@@ -20,7 +20,7 @@ val ldConfig = LDConfig.Builder(AutoEnvAttributes.Enabled)
 
 // A "context" is a data object representing users, devices, organizations, and other entities.
 val context = LDContext.builder("EXAMPLE_CONTEXT_KEY")
-    .email("biz@face.dev")
+    .set("email", "biz@face.dev")
     .build()
 
 // If you don't want to block execution while the SDK tries to get
