@@ -12,12 +12,6 @@ description: |
   + Chromium. The body sits in a never-invoked async IIFE so its
   references to Electron-only globals (`require`, `electron.app`, etc.)
   don't have to resolve at runtime; tsdown still parses the syntax.
-
-  Bodies with top-level `import …;` directives are handled via the
-  `//IMPORT_LIFT_TARGET` / `//BODY_BEGIN` / `//BODY_END` marker pair:
-  the js-client harness's awk pre-step lifts any `import` lines from
-  inside the body block up to module scope (ESM forbids imports inside
-  a function body). Mirrors the js-syntax-only scaffold's markers.
 inputs:
   body:
     type: string
@@ -28,16 +22,12 @@ validation:
 ---
 
 ```javascript
-//IMPORT_LIFT_TARGET
-
 // Wrap in an async IIFE so the wrappee body can use top-level `await`
 // (e.g. `await client.waitForInitialization(...)`); the IIFE's
 // `if (false)` guard means the body is never executed at runtime.
 (async function _wrappee() {
   if (false) {
-//BODY_BEGIN
 {{ body }}
-//BODY_END
   }
 })();
 
