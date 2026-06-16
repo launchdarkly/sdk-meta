@@ -83,7 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // Wrappee body — references to client/context here resolve
     // through the stubs above; xcodebuild type-checks but doesn't
     // run.
-    @objc func _wrappee() {
+    @objc func _wrappee() throws {
 {{ body }}
     }
 }
