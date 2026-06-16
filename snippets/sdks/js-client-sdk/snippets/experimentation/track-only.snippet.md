@@ -16,6 +16,7 @@ import { createClient } from '@launchdarkly/js-client-sdk';
 const context = {
   kind: 'user',
   key: 'EXAMPLE_CONTEXT_KEY',
+  email: 'biz@face.dev',
 };
 
 // This is your client-side ID.

@@ -26,7 +26,7 @@ const ldClient = new ReactNativeLDClient('YOUR_MOBILE_KEY', AutoEnvAttributes.En
 });
 
 // A "context" is a data object representing users, devices, organizations, and other entities.
-const context = { kind: 'user', key: 'EXAMPLE_CONTEXT_KEY' };
+const context = { kind: 'user', key: 'EXAMPLE_CONTEXT_KEY', email: 'biz@face.dev' };
 
 export default function App() {
   const [ready, setReady] = useState<boolean>(false);
