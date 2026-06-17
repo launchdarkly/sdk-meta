@@ -18,7 +18,8 @@ func startLaunchDarkly() {
     let config = LDConfig(mobileKey: "YOUR_MOBILE_KEY", autoEnvAttributes: .enabled)
 
     // A "context" is a data object representing users, devices, organizations, and other entities.
-    let contextBuilder = LDContextBuilder(key: "EXAMPLE_CONTEXT_KEY")
+    var contextBuilder = LDContextBuilder(key: "EXAMPLE_CONTEXT_KEY")
+    contextBuilder.trySetValue("email", .string("EXAMPLE_EMAIL"))
     guard case .success(let context) = contextBuilder.build() else { return }
 
     LDClient.start(config: config, context: context, startWaitSeconds: 5) { timedOut in
