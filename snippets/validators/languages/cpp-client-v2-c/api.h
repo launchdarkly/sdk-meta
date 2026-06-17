@@ -47,6 +47,13 @@ static inline void LDUserSetAnonymous(struct LDUser *user, LDBoolean anon) {
     (void)anon;
 }
 
+/* Switches the client to a new user and re-fetches its flag values. */
+static inline void LDClientIdentify(struct LDClient *client,
+                                    struct LDUser *user) {
+    (void)client;
+    (void)user;
+}
+
 /* cpp-client v2 C SDK's `LDClientInit` takes (config, user, maxwait) —
  * the user is bound at init time (mobile/client SDK pattern), unlike
  * the server SDK where the user is passed per-variation call. */
@@ -62,6 +69,13 @@ static inline struct LDClient *LDClientInit(struct LDConfig *config,
 static inline LDBoolean LDClientClose(struct LDClient *client) {
     (void)client;
     return LDBooleanTrue;
+}
+
+/* Manual event flush: fire-and-forget; delivery happens on the
+ * SDK's background thread. Matches the real v2 header's
+ * `void LDClientFlush(struct LDClient *const client)`. */
+static inline void LDClientFlush(struct LDClient *client) {
+    (void)client;
 }
 
 /* Variation calls take (client, flagKey, fallback) — no per-call
@@ -158,6 +172,14 @@ static inline const char *LDGetText(const struct LDJSON *json) {
 
 static inline void LDFreeDetailContents(LDVariationDetails details) {
     (void)details;
+}
+
+/* Custom-event surface. The real v2 client header's LDClientTrack
+ * takes just the client and the event key (the client already holds
+ * the user); data/metric variants exist separately. */
+static inline void LDClientTrack(struct LDClient *client, const char *key) {
+    (void)client;
+    (void)key;
 }
 
 /* All-flags surface. The real v2 header returns an object-type LDJSON
