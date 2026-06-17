@@ -31,7 +31,7 @@ function App() {
 const context = {
   kind: 'user',
   key: 'EXAMPLE_CONTEXT_KEY',
-  email: 'biz@face.dev',
+  email: 'EXAMPLE_EMAIL',
 };
 
 // Initialize the SDK so flag values are ready before your app renders.
