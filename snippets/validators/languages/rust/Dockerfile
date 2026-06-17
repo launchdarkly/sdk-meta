@@ -1,5 +1,7 @@
-# The latest launchdarkly-server-sdk crate (3.x) declares rust-version
-# 1.93.0 as its MSRV; keep the toolchain ahead of it.
+# Toolchain must satisfy the SDK's MSRV: cargo's MSRV-aware resolver
+# picks the newest launchdarkly-server-sdk whose rust-version the
+# toolchain supports, and the 3.x line (flush_blocking, etc.)
+# requires 1.94.
 FROM rust:1.94
 
 WORKDIR /work
