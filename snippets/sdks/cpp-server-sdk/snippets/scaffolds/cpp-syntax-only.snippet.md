@@ -79,8 +79,12 @@ struct _AnyClient {
     template <typename... Args> auto AllFlagsState(Args&&...) const {
         return launchdarkly::server_side::AllFlagsState{};
     }
+    template <typename... Args> void Track(Args&&...) const {}
     template <typename... Args> void TrackEvent(Args&&...) const {}
     template <typename... Args> void Identify(Args&&...) const {}
+    // Matches the real Client::FlushAsync surface: fire-and-forget,
+    // returns void.
+    template <typename... Args> void FlushAsync(Args&&...) const {}
     template <typename... Args> auto StartAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
     template <typename... Args> _AnyStatusProvider DataSourceStatus(Args&&...) const { return {}; }
 };
