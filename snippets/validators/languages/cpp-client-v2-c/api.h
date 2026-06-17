@@ -42,6 +42,13 @@ static inline void LDUserFree(struct LDUser *user) {
     (void)user;
 }
 
+/* Switches the client to a new user and re-fetches its flag values. */
+static inline void LDClientIdentify(struct LDClient *client,
+                                    struct LDUser *user) {
+    (void)client;
+    (void)user;
+}
+
 /* cpp-client v2 C SDK's `LDClientInit` takes (config, user, maxwait) —
  * the user is bound at init time (mobile/client SDK pattern), unlike
  * the server SDK where the user is passed per-variation call. */
