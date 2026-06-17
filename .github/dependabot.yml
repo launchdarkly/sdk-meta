@@ -1,0 +1,218 @@
+version: 2
+updates:
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/android-client"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/apex"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/cpp-client"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/cpp-client-v2-c"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/cpp-client-v2-cpp"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/cpp-server"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/cpp-server-v2-c"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/cpp-server-v2-cpp"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/dotnet-client"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/dotnet-server"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/edge-ts"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/erlang-server"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/flutter-client"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/flutter-client-v2"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/flutter-client-v3"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/go"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/haskell-server"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/haskell-server-v3"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/js-client"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/jvm"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/lua-server"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/node"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/php"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/python"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/react-client"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/react-native-client"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/roku-client"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/ruby"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/rust"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/shell-install"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/snippets/validators/languages/vue-client"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "gomod"
+    directory: "/api"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "gomod"
+    directory: "/snippets"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "gomod"
+    directory: "/tool"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "npm"
+    directory: "/api-js"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
