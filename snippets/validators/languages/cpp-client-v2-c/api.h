@@ -12,6 +12,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <string.h>
 
 #ifdef __cplusplus
@@ -56,6 +57,13 @@ static inline struct LDClient *LDClientInit(struct LDConfig *config,
 static inline LDBoolean LDClientClose(struct LDClient *client) {
     (void)client;
     return LDBooleanTrue;
+}
+
+/* Manual event flush: fire-and-forget; delivery happens on the
+ * SDK's background thread. Matches the real v2 header's
+ * `void LDClientFlush(struct LDClient *const client)`. */
+static inline void LDClientFlush(struct LDClient *client) {
+    (void)client;
 }
 
 /* Variation calls take (client, flagKey, fallback) — no per-call
@@ -152,6 +160,50 @@ static inline const char *LDGetText(const struct LDJSON *json) {
 
 static inline void LDFreeDetailContents(LDVariationDetails details) {
     (void)details;
+}
+
+/* Custom-event surface. The real v2 client header's LDClientTrack
+ * takes just the client and the event key (the client already holds
+ * the user); data/metric variants exist separately. */
+static inline void LDClientTrack(struct LDClient *client, const char *key) {
+    (void)client;
+    (void)key;
+}
+
+/* All-flags surface. The real v2 header returns an object-type LDJSON
+ * map of flag keys to values; iteration goes through the shared LDJSON
+ * collection helpers below. */
+static inline struct LDJSON *LDAllFlags(struct LDClient *client) {
+    (void)client;
+    return (struct LDJSON *)0;
+}
+
+static inline struct LDJSON *LDGetIter(const struct LDJSON *collection) {
+    (void)collection;
+    return (struct LDJSON *)0;
+}
+
+static inline struct LDJSON *LDIterNext(const struct LDJSON *iter) {
+    (void)iter;
+    return (struct LDJSON *)0;
+}
+
+static inline const char *LDIterKey(const struct LDJSON *iter) {
+    (void)iter;
+    return "";
+}
+
+static inline char *LDJSONSerialize(const struct LDJSON *json) {
+    (void)json;
+    return (char *)0;
+}
+
+static inline void LDFree(void *buffer) {
+    (void)buffer;
+}
+
+static inline void LDJSONFree(struct LDJSON *json) {
+    (void)json;
 }
 
 #ifdef __cplusplus
