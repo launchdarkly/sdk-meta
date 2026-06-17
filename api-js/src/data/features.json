@@ -450,6 +450,13 @@
       "removed": null
     }
   },
+  "dotnet-client-sdk": {
+    "perContextSummaryEvents": {
+      "deprecated": null,
+      "introduced": "5.9",
+      "removed": null
+    }
+  },
   "dotnet-server-sdk": {
     "allFlags": {
       "deprecated": null,
