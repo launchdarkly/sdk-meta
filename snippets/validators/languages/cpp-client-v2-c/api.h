@@ -42,6 +42,11 @@ static inline void LDUserFree(struct LDUser *user) {
     (void)user;
 }
 
+static inline void LDUserSetAnonymous(struct LDUser *user, LDBoolean anon) {
+    (void)user;
+    (void)anon;
+}
+
 /* Switches the client to a new user and re-fetches its flag values. */
 static inline void LDClientIdentify(struct LDClient *client,
                                     struct LDUser *user) {
