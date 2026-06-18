@@ -47,6 +47,15 @@ written. Everything else is verbatim from the MDX.
   `lang: cpp` and the docs-side fence tag is corrected to `cpp`
   in the marker pass (the client-side twin of this block is
   already tagged `cpp` on the page).
+- **Go (server-side, and the Go AI twin)**
+  (`go-server-sdk/.../anonymous`, `.../anonymous-ai`): the
+  key-only block ended the builder chain at
+  `.Anonymous(true)`, leaving `context1` a `*ldcontext.Builder`
+  rather than a `Context` (the attributes block below it already
+  ends in `.Build()`). Added `.Build()`. The go-syntax-only
+  scaffold is parse-only (`go/parser.ParseFile`), so it accepts
+  the syntactically valid chain without resolving the builder's
+  return type.
 
 ## Validation routing added in this port
 
