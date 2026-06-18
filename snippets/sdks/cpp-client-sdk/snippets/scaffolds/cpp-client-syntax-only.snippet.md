@@ -83,8 +83,15 @@ struct _AnyClient {
     template <typename... Args> auto AllFlags(Args&&...) const {
         return std::unordered_map<std::string, launchdarkly::Value>{};
     }
+    template <typename... Args> void Track(Args&&...) const {}
     template <typename... Args> void TrackEvent(Args&&...) const {}
     template <typename... Args> void Identify(Args&&...) const {}
+    // Identify-and-examine-the-result fragments treat the return as a
+    // future<bool>, mirroring the real v3 client's IdentifyAsync.
+    template <typename... Args> auto IdentifyAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
+    // Matches the real Client::FlushAsync surface: fire-and-forget,
+    // returns void.
+    template <typename... Args> void FlushAsync(Args&&...) const {}
     template <typename... Args> auto StartAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
     // Lowercase-first aliases — the v2.x C++ client SDK exposed
     // camelCased methods (e.g. `client->boolVariation(...)`); v3.x
@@ -120,6 +127,9 @@ void _wrappee() {
     using namespace launchdarkly::client_side;
     _AnyClient client;
     LDContext context = nullptr;
+    // Identify fragments pass an `updated_context` built by an earlier
+    // fragment; the docs assume it already exists.
+    LDContext updated_context = nullptr;
     LDClientConfig config = nullptr;
     // `maxwait` is referenced by both native-style fragments
     // (`wait_for(maxwait)` — needs a chrono duration) and C-binding

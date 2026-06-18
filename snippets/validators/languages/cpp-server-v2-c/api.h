@@ -68,12 +68,27 @@ static inline LDBoolean LDClientClose(struct LDClient *client) {
     return LDBooleanTrue;
 }
 
+/* Manual event flush: fire-and-forget; delivery happens on the
+ * SDK's background thread. Matches the real v2 header's
+ * `void LDClientFlush(struct LDClient *const client)`. */
+static inline void LDClientFlush(struct LDClient *client) {
+    (void)client;
+}
+
 static inline struct LDUser *LDUserNew(const char *key) {
     (void)key;
     return (struct LDUser *)0;
 }
 
 static inline void LDUserFree(struct LDUser *user) {
+    (void)user;
+}
+
+/* Generates an identify event for the user, adding it to the Contexts
+ * list without requiring a flag evaluation. */
+static inline void LDClientIdentify(struct LDClient *client,
+                                    const struct LDUser *user) {
+    (void)client;
     (void)user;
 }
 
@@ -183,6 +198,18 @@ static inline char *LDStringVariation(struct LDClient *client,
     (void)flagKey;
     (void)details;
     return (char *)fallback;
+}
+
+/* Custom-event surface. The real v2 header's LDClientTrack takes the
+ * event key, the user the event is for, and optional JSON data. */
+static inline void LDClientTrack(struct LDClient *client,
+                                 const char *key,
+                                 const struct LDUser *user,
+                                 struct LDJSON *data) {
+    (void)client;
+    (void)key;
+    (void)user;
+    (void)data;
 }
 
 /* All-flags surface. The real v2 header returns an object-type LDJSON
