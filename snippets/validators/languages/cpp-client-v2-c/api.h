@@ -42,6 +42,52 @@ static inline void LDUserFree(struct LDUser *user) {
     (void)user;
 }
 
+static inline void LDUserSetFirstName(struct LDUser *user, const char *firstName) {
+    (void)user;
+    (void)firstName;
+}
+
+static inline void LDUserSetLastName(struct LDUser *user, const char *lastName) {
+    (void)user;
+    (void)lastName;
+}
+
+static inline void LDUserSetCustomAttributesJSON(struct LDUser *user,
+                                                 struct LDJSON *custom) {
+    (void)user;
+    (void)custom;
+}
+
+/* LDJSON construction surface (shared c-json API) used by the
+ * custom-attributes doc fragments. */
+static inline struct LDJSON *LDNewObject(void) {
+    return (struct LDJSON *)0;
+}
+
+static inline struct LDJSON *LDNewArray(void) {
+    return (struct LDJSON *)0;
+}
+
+static inline struct LDJSON *LDNewText(const char *text) {
+    (void)text;
+    return (struct LDJSON *)0;
+}
+
+static inline LDBoolean LDArrayPush(struct LDJSON *array, struct LDJSON *item) {
+    (void)array;
+    (void)item;
+    return LDBooleanTrue;
+}
+
+static inline LDBoolean LDObjectSetKey(struct LDJSON *object,
+                                       const char *key,
+                                       struct LDJSON *item) {
+    (void)object;
+    (void)key;
+    (void)item;
+    return LDBooleanTrue;
+}
+
 static inline void LDUserSetAnonymous(struct LDUser *user, LDBoolean anon) {
     (void)user;
     (void)anon;
