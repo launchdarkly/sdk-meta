@@ -74,6 +74,15 @@ Everything else is verbatim from the MDX.
   (`const context: ld.LDContext = ...`); the sibling block in the same
   accordion is the JavaScript flavor. Retagged as `ts` (the MDX fence
   tag is updated in the docs-side marker PR).
+- **JS (browser) context-kind + multi-context**
+  (`js-client-sdk/.../context-kind`, `.../multi-context`): the MDX
+  blocks appended `LDClient.initialize(...)` plus a
+  `waitForInitialization` try/catch after the context object. These
+  are context-shape reference snippets; every other SDK's context-kind
+  / multi-context block shows the context object only. Trimmed the
+  client-init and error-handling lines so the two js-client blocks
+  match their siblings (the docs-side render reflects the shorter
+  body).
 
 ## Validation routing added in this port
 

@@ -14,13 +14,4 @@ const context = {
   kind: 'organization',
   key: 'example-organization-key'
 };
-const client = LDClient.initialize('example-client-side-id', context);
-
-try {
-  await client.waitForInitialization(5);
-  proceedWithSuccessfullyInitializedClient();
-} catch(err) {
-  // Client failed to initialized or timed out
-  // variation() calls return fallback values until initialization completes
-}
 ```

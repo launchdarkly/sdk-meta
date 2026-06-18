@@ -28,14 +28,4 @@ const multiContext = {
   user: userContext,
   device: deviceContext
 }
-
-const client = LDClient.initialize('example-client-side-id', multiContext)
-
-try {
-  await client.waitForInitialization(5);
-  proceedWithSuccessfullyInitializedClient();
-} catch(err) {
-  // Client failed to initialized or timed out
-  // variation() calls return fallback values until initialization completes
-}
 ```
