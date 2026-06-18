@@ -1206,9 +1206,15 @@
   "erlang-server-sdk": [
     {
       "major": 3,
+      "minor": 11,
+      "date": "2026-06-17T18:07:44Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 10,
       "date": "2026-05-28T18:53:45Z",
-      "eol": null
+      "eol": "2027-06-17T00:00:00Z"
     },
     {
       "major": 3,

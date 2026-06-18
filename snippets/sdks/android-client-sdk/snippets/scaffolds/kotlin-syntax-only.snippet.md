@@ -87,8 +87,9 @@ val flagKey: String = ""
 // stub. Never read at runtime (the body is unreachable).
 @Suppress("UNUSED")
 val application: Application get() = TODO()
-// Evaluation/init fragments pass an ambient `context` (LDContext)
-// the docs assume an earlier fragment created.
+// Evaluation/init fragments pass an ambient `context` (LDContext) the
+// docs assume an earlier fragment created; identify fragments build an
+// updated context from it.
 @Suppress("UNUSED")
 val context: LDContext get() = TODO()
 

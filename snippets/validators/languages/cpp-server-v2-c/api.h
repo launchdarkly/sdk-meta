@@ -92,6 +92,14 @@ static inline void LDUserFree(struct LDUser *user) {
     (void)user;
 }
 
+/* Generates an identify event for the user, adding it to the Contexts
+ * list without requiring a flag evaluation. */
+static inline void LDClientIdentify(struct LDClient *client,
+                                    const struct LDUser *user) {
+    (void)client;
+    (void)user;
+}
+
 static inline void LDUserSetName(struct LDUser *user, const char *name) {
     (void)user;
     (void)name;
@@ -115,6 +123,41 @@ static inline void LDUserSetLastName(struct LDUser *user, const char *lastName) 
 static inline void LDUserSetAnonymous(struct LDUser *user, LDBoolean anonymous) {
     (void)user;
     (void)anonymous;
+}
+
+static inline void LDUserSetCustom(struct LDUser *user, struct LDJSON *custom) {
+    (void)user;
+    (void)custom;
+}
+
+/* LDJSON construction surface (shared c-json API) used by the
+ * custom-attributes doc fragments. */
+static inline struct LDJSON *LDNewObject(void) {
+    return (struct LDJSON *)0;
+}
+
+static inline struct LDJSON *LDNewArray(void) {
+    return (struct LDJSON *)0;
+}
+
+static inline struct LDJSON *LDNewText(const char *text) {
+    (void)text;
+    return (struct LDJSON *)0;
+}
+
+static inline LDBoolean LDArrayPush(struct LDJSON *array, struct LDJSON *item) {
+    (void)array;
+    (void)item;
+    return LDBooleanTrue;
+}
+
+static inline LDBoolean LDObjectSetKey(struct LDJSON *object,
+                                       const char *key,
+                                       struct LDJSON *item) {
+    (void)object;
+    (void)key;
+    (void)item;
+    return LDBooleanTrue;
 }
 
 static inline LDBoolean LDBoolVariation(struct LDClient *client,
