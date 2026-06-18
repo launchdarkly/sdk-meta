@@ -21,6 +21,11 @@ column 0 for the indented CodeBlock containers).
   `LaunchDarkly` (`import * as LaunchDarkly from ...`) but then
   called `ld.basicLogger(...)` on an undefined `ld` binding;
   corrected to `LaunchDarkly.basicLogger(...)`.
+- **Roku SceneGraph custom logger**
+  (`roku-client-sdk/.../custom-logger-scenegraph-brs`): the observer
+  loop tested `field = "log"` against an undefined `field` variable
+  (always `Invalid`, so the handler never ran). Changed to
+  `msg.getField()`, the changed-field name from the `roSGNodeEvent`.
 
 ## Validation routing added in this port
 

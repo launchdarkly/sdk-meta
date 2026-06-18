@@ -28,7 +28,7 @@ function mainThread() as Void
 
 
         if type(msg) = "roSGNodeEvent" then
-            if field = "log" then
+            if msg.getField() = "log" then
                 value = msg.getData()
 
                 print value.level value.message
