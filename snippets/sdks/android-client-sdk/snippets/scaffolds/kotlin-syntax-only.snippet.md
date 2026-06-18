@@ -83,6 +83,10 @@ fun applyVariant(variant: String) {}
 val client: LDClient get() = TODO()
 @Suppress("UNUSED")
 val flagKey: String = ""
+// Identify fragments build an updated context from an ambient
+// `context` the docs assume already exists.
+@Suppress("UNUSED")
+val context: LDContext get() = TODO()
 
 @Suppress("UNUSED_VARIABLE", "UNREACHABLE_CODE")
 class BaseApplication : Application() {

@@ -38,6 +38,12 @@ validation:
 #include <launchdarkly/server_side/bindings/c/config/builder.h>
 #include <launchdarkly/bindings/c/context.h>
 #include <launchdarkly/bindings/c/context_builder.h>
+// array_builder.h is included at file scope so doc fragments that
+// carry their own in-body `#include <.../array_builder.h>` line
+// hit the header's include guard there (a first include inside the
+// wrappee's function body would be invalid C++ — the header opens
+// an extern "C" block).
+#include <launchdarkly/bindings/c/array_builder.h>
 
 // Polymorphic stub so a body can use `client.BoolVariation(...)`
 // (native-style) AND `LDServerSDK_BoolVariation(client, ...)`

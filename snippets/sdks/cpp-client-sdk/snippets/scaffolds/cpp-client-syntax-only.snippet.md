@@ -52,6 +52,12 @@ validation:
 #include <launchdarkly/client_side/bindings/c/config/builder.h>
 #include <launchdarkly/bindings/c/context.h>
 #include <launchdarkly/bindings/c/context_builder.h>
+// array_builder.h is included at file scope so doc fragments that
+// carry their own in-body `#include <.../array_builder.h>` line
+// hit the header's include guard there (a first include inside the
+// wrappee's function body would be invalid C++ — the header opens
+// an extern "C" block).
+#include <launchdarkly/bindings/c/array_builder.h>
 
 // Polymorphic stub so a body can use `client.BoolVariation(...)`
 // (native-style) AND `LDClientSDK_BoolVariation(client, ...)`
@@ -86,6 +92,9 @@ struct _AnyClient {
     template <typename... Args> void Track(Args&&...) const {}
     template <typename... Args> void TrackEvent(Args&&...) const {}
     template <typename... Args> void Identify(Args&&...) const {}
+    // Identify-and-examine-the-result fragments treat the return as a
+    // future<bool>, mirroring the real v3 client's IdentifyAsync.
+    template <typename... Args> auto IdentifyAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
     // Matches the real Client::FlushAsync surface: fire-and-forget,
     // returns void.
     template <typename... Args> void FlushAsync(Args&&...) const {}
@@ -147,6 +156,9 @@ void _wrappee() {
     using namespace launchdarkly::client_side;
     _AnyClient client;
     LDContext context = nullptr;
+    // Identify fragments pass an `updated_context` built by an earlier
+    // fragment; the docs assume it already exists.
+    LDContext updated_context = nullptr;
     LDClientConfig config = nullptr;
     // `maxwait` is referenced by both native-style fragments
     // (`wait_for(maxwait)` — needs a chrono duration) and C-binding
