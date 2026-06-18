@@ -14,7 +14,7 @@ import (
 )
 
 // Anonymous context with only a key
-context1 := ldcontext.NewBuilder("example-context-key").Anonymous(true)
+context1 := ldcontext.NewBuilder("example-context-key").Anonymous(true).Build()
 
 // Anonymous context with a key plus other attributes
 context2 := ldcontext.NewBuilder("context-key-456def").
