@@ -22,5 +22,5 @@ config.Events = ldcomponents.SendEvents().AllAttributesPrivate(true)
 
 // Or, make just the email and address attributes private for all contexts
 config.Events = ldcomponents.SendEvents().
-    PrivateAttributes("name", "email")
+    PrivateAttributes("email", "address")
 ```
