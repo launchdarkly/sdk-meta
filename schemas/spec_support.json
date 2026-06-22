@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://launchdarkly.com/sdk-meta/spec_support.json",
+  "title": "SDK Spec Support Matrix",
+  "description": "Per-(SDK, spec) high-level support classification, produced by genspecs judge.",
+  "type": "object",
+  "required": ["specs_commit", "harness_commit", "model", "prompt_version", "sdks"],
+  "properties": {
+    "generated_at": { "type": "string", "format": "date-time" },
+    "specs_commit": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
+    "harness_commit": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
+    "model": { "type": "string", "description": "Model identifier used by the judge, e.g. 'claude-opus-4-5' or 'none'." },
+    "prompt_version": { "type": "string", "description": "Versioned prompt id so cached results from older prompts can be invalidated." },
+    "sdks": {
+      "type": "object",
+      "description": "Map of sdk id to a map of spec id to support cell.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "$ref": "#/$defs/Cell" }
+      }
+    }
+  },
+  "$defs": {
+    "Cell": {
+      "type": "object",
+      "required": ["state"],
+      "description": "Per-cell support classification. Intentionally slim: state + confidence + a short rationale + optional human-readable notes. Auditing metadata (source provenance, evidence list, judged-at timestamps, judged-against commit hashes, judge model) is preserved in the on-disk judge cache at tool/specs/.judge-cache/, not in this product.",
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": ["supported", "partial", "not-supported", "not-applicable", "unknown"]
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low", "n/a"]
+        },
+        "rationale": { "type": "string", "maxLength": 480 },
+        "notes_for_human": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
