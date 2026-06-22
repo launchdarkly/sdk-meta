@@ -67,8 +67,9 @@ import com.launchdarkly.sdk.android.integrations.*;
 import com.launchdarkly.observability.plugin.*;
 import com.launchdarkly.observability.api.*;
 import java.util.Collections;
-// Timber is in the validator project's dependencies; the logging doc
-// fragments call `Timber.plant(...)` without showing the import.
+// Timber is in the validator project's dependencies; the logging and
+// monitoring doc fragments call `Timber.plant(...)` without showing
+// the import.
 import timber.log.Timber;
 
 // No `public` modifier: Java requires public top-level classes to
@@ -102,13 +103,14 @@ class SnippetActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // The unreachable body is additionally wrapped in try/catch
-        // (mirroring the csharp-syntax-only scaffold) so fragments that
-        // call checked-exception APIs -- e.g. client.close(), declared
-        // `throws IOException` via java.io.Closeable -- compile without
-        // each fragment carrying its own handler. onCreate overrides
-        // Activity.onCreate, so a `throws` clause can't be added here.
-        // catch (Exception) is legal even when the body throws nothing.
+        // The unreachable body is wrapped in try/catch (mirroring the
+        // csharp-syntax-only scaffold) so fragments that call
+        // checked-exception APIs -- e.g. `LDClient.get()` throws
+        // LaunchDarklyException, `client.close()` throws IOException via
+        // java.io.Closeable -- compile without each fragment carrying
+        // its own handler. onCreate overrides Activity.onCreate, so a
+        // `throws` clause can't be added here. catch (Exception) is
+        // legal even when the body throws nothing.
         if (false) {
             try {
 {{ body }}

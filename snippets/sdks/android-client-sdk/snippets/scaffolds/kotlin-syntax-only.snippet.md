@@ -50,6 +50,10 @@ validation:
 package com.launchdarkly.hello_android
 
 import android.app.Application
+// The monitoring status-listener fragment declares a local
+// `class MainActivity : Activity()`, so the base Activity type must
+// be in scope alongside AppCompatActivity.
+import android.app.Activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 // Wildcard imports cover the doc fragments' references to `LDConfig`,
@@ -65,8 +69,13 @@ import com.launchdarkly.observability.plugin.*
 // don't reach nested types, so it needs an explicit import for the
 // v5-x init body's `AutoEnvAttributes.Enabled` reference.
 import com.launchdarkly.sdk.android.LDConfig.Builder.AutoEnvAttributes
-// Timber is in the validator project's dependencies; the logging doc
-// fragments call `Timber.plant(...)` without showing the import.
+// The monitoring failure-types fragment matches on unqualified
+// `LDFailure.FailureType` entries in a `when`; Kotlin doesn't resolve
+// enum entries from the subject's type, so import them explicitly.
+import com.launchdarkly.sdk.android.LDFailure.FailureType.*
+// Timber is in the validator project's dependencies; the logging and
+// monitoring doc fragments call `Timber.plant(...)` without showing
+// the import.
 import timber.log.Timber
 
 // File-scope stubs so wrappee bodies that reference caller-supplied
