@@ -12,6 +12,7 @@ validation:
 ```kotlin
 // All attributes marked private
 var config = LDConfig.Builder()
+    .mobileKey("example-mobile-key")
     .events(
         Components.sendEvents()
             .allAttributesPrivate(true)

@@ -12,7 +12,7 @@ validation:
 ```js
 
 // All attributes marked private
-const ldclient = ld.initialize('example-client-side-id', context, options = {
+const client = ld.initialize('example-client-side-id', context, options = {
   allAttributesPrivate: true
 });
 
