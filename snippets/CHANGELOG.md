@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.17.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.16.0...snippets/v0.17.0) (2026-06-22)
+
+
+### Features
+
+* **snippets:** port /sdk/features/logging to canonical snippets ([#484](https://github.com/launchdarkly/sdk-meta/issues/484)) ([47f74e7](https://github.com/launchdarkly/sdk-meta/commit/47f74e7718169d94bc27303a2fbf5a736390695d))
+* **snippets:** port /sdk/features/monitoring to canonical snippets ([#482](https://github.com/launchdarkly/sdk-meta/issues/482)) ([bf1984a](https://github.com/launchdarkly/sdk-meta/commit/bf1984a26fafe68d6fa81fdb71bffda2eea6217a))
+* **snippets:** port /sdk/features/private-attrs to canonical snippets ([#483](https://github.com/launchdarkly/sdk-meta/issues/483)) ([6c16341](https://github.com/launchdarkly/sdk-meta/commit/6c163414d8aade24d383ee516ebe81b0fd63952c))
+* **snippets:** port /sdk/features/secure-mode to canonical snippets ([#481](https://github.com/launchdarkly/sdk-meta/issues/481)) ([c477737](https://github.com/launchdarkly/sdk-meta/commit/c477737982a1fb89d2eb564cd169f0bada794abd))
+
 ## [0.16.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.15.0...snippets/v0.16.0) (2026-06-18)
 
 
