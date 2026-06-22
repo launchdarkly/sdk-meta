@@ -57,6 +57,19 @@ static inline struct LDConfig *LDConfigNew(const char *key) {
     return (struct LDConfig *)0;
 }
 
+static inline void LDConfigSetAllAttributesPrivate(struct LDConfig *config,
+                                                   LDBoolean allPrivate) {
+    (void)config;
+    (void)allPrivate;
+}
+
+static inline LDBoolean LDConfigAddPrivateAttribute(struct LDConfig *config,
+                                                    const char *attribute) {
+    (void)config;
+    (void)attribute;
+    return LDBooleanTrue;
+}
+
 static inline struct LDClient *LDClientInit(struct LDConfig *config, unsigned int maxwait) {
     (void)config;
     (void)maxwait;
@@ -78,6 +91,13 @@ static inline void LDClientFlush(struct LDClient *client) {
 static inline struct LDUser *LDUserNew(const char *key) {
     (void)key;
     return (struct LDUser *)0;
+}
+
+static inline LDBoolean LDUserAddPrivateAttribute(struct LDUser *user,
+                                                  const char *attribute) {
+    (void)user;
+    (void)attribute;
+    return LDBooleanTrue;
 }
 
 static inline void LDUserFree(struct LDUser *user) {
