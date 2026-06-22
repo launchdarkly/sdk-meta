@@ -43,7 +43,9 @@ class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        client.unregisterStatusListener(ldStatusListener);
+        if (client != null) {
+            client.unregisterStatusListener(ldStatusListener);
+        }
     }
 }
 ```
