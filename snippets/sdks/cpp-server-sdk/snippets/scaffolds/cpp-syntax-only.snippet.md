@@ -45,6 +45,23 @@ validation:
 // shape the body uses. The wrappee is a never-instantiated template,
 // so the conversion operator and member functions exist at the type
 // system level but are never invoked.
+// Stub of the data-source-status provider returned by the native
+// API's `client.DataSourceStatus()` — variadic member so the body's
+// `.OnDataSourceStatusChange(lambda)` chain type-checks (the lambda
+// itself is checked against the real DataSourceStatus type).
+struct _AnyStatusProvider {
+    template <typename... Args> int OnDataSourceStatusChange(Args&&...) const { return 0; }
+};
+
+// Stub matching the C-binding listener callback the docs define in a
+// separate code block; bodies that only show the assignment
+// (`listener.StatusChanged = OnDataSourceStatusChanged;`) resolve
+// against this. Signature mirrors ServerDataSourceStatusCallbackFn.
+inline void OnDataSourceStatusChanged(LDServerDataSourceStatus status, void* user_data) {
+    (void)status;
+    (void)user_data;
+}
+
 struct _AnyClient {
     operator LDServerSDK() const { return nullptr; }
     // operator-> makes `client->Method(...)` resolve when the body
@@ -75,6 +92,7 @@ struct _AnyClient {
     // returns void.
     template <typename... Args> void FlushAsync(Args&&...) const {}
     template <typename... Args> auto StartAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
+    template <typename... Args> _AnyStatusProvider DataSourceStatus(Args&&...) const { return {}; }
 };
 
 // Wrappee is a never-instantiated template — body is parsed but
@@ -98,6 +116,10 @@ void _wrappee() {
     _AnyClient client;
     LDContext context = nullptr;
     LDServerConfig config = nullptr;
+    // The listener fragments split "create the connection" and "free
+    // the connection" across separate code blocks; the free-side body
+    // references `connection` as if pre-existing.
+    LDListenerConnection connection = nullptr;
     // `maxwait` is referenced by both native-style fragments
     // (`wait_for(maxwait)` — needs a chrono duration) and C-binding
     // fragments (`LDServerSDK_Start(client, maxwait, ...)` — needs an
