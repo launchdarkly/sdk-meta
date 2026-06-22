@@ -67,8 +67,9 @@ import com.launchdarkly.sdk.android.integrations.*;
 import com.launchdarkly.observability.plugin.*;
 import com.launchdarkly.observability.api.*;
 import java.util.Collections;
-// The monitoring fragments log through Timber (the validator's gradle
-// project carries the dependency).
+// Timber is in the validator project's dependencies; the logging and
+// monitoring doc fragments call `Timber.plant(...)` without showing
+// the import.
 import timber.log.Timber;
 
 // No `public` modifier: Java requires public top-level classes to

@@ -20,6 +20,7 @@ validation:
 #include <cstdio>
 #include <future>
 #include <iostream>
+#include <memory>
 #include <optional>
 #include <string>
 // Native C++ headers.
@@ -27,6 +28,11 @@ validation:
 #include <launchdarkly/server_side/config/config_builder.hpp>
 #include <launchdarkly/context_builder.hpp>
 #include <launchdarkly/value.hpp>
+// Logging interface headers -- the logging doc fragments re-include
+// these inside the body (a no-op thanks to pragma once / guards) and
+// the custom-logger stubs below need them at file scope.
+#include <launchdarkly/logging/log_backend.hpp>
+#include <launchdarkly/logging/log_level.hpp>
 // C-binding headers — doc fragments mix C-binding and native styles.
 #include <launchdarkly/server_side/bindings/c/sdk.h>
 #include <launchdarkly/server_side/bindings/c/config/builder.h>
@@ -101,6 +107,29 @@ struct _AnyClient {
 // `client` / `context` when the fragment shows the native or
 // C-binding init form (e.g. `server_side::Client client(*config);`,
 // `LDServerSDK client = LDServerSDK_New(...)`).
+// Stubs for the install-a-custom-logger fragments, which reference a
+// CustomLogger backend (native) or enabled/write callbacks (C
+// binding) defined in a preceding fragment on the same docs page.
+// Never invoked.
+class CustomLogger : public launchdarkly::ILogBackend {
+   public:
+    bool Enabled(launchdarkly::LogLevel level) noexcept override {
+        return true;
+    }
+    void Write(launchdarkly::LogLevel level,
+               std::string message) noexcept override {}
+};
+
+static bool enabled(enum LDLogLevel level, void* user_data) {
+    return true;
+}
+
+static void write(enum LDLogLevel level, char const* msg, void* user_data) {
+    (void)level;
+    (void)msg;
+    (void)user_data;
+}
+
 template <int = 0>
 void _wrappee() {
     // Doc fragments mix unqualified names from `launchdarkly` and
@@ -113,6 +142,13 @@ void _wrappee() {
     // resolve through the qualified name first.
     using namespace launchdarkly;
     using namespace launchdarkly::server_side;
+    // The logging page's basic-logging fragment declares a
+    // `LoggingBuilder` alias that later fragments on the same page
+    // assume is still in scope. Lift the builders namespace so the
+    // unqualified name resolves; every name it brings in denotes the
+    // same entity as its shared-builders counterpart, so bodies that
+    // also spell the qualified form stay unambiguous.
+    using namespace launchdarkly::server_side::config::builders;
     _AnyClient client;
     LDContext context = nullptr;
     LDServerConfig config = nullptr;

@@ -73,8 +73,9 @@ import com.launchdarkly.sdk.android.LDConfig.Builder.AutoEnvAttributes
 // `LDFailure.FailureType` entries in a `when`; Kotlin doesn't resolve
 // enum entries from the subject's type, so import them explicitly.
 import com.launchdarkly.sdk.android.LDFailure.FailureType.*
-// The monitoring fragments log through Timber (the validator's gradle
-// project carries the dependency).
+// Timber is in the validator project's dependencies; the logging and
+// monitoring doc fragments call `Timber.plant(...)` without showing
+// the import.
 import timber.log.Timber
 
 // File-scope stubs so wrappee bodies that reference caller-supplied
