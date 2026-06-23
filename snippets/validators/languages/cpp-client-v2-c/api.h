@@ -12,6 +12,8 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+/* The monitoring status-callback fragment calls printf without its
+ * own include; the real v2 header pulled in stdio transitively. */
 #include <stdio.h>
 #include <string.h>
 
@@ -28,9 +30,29 @@ struct LDClient;
 struct LDUser;
 struct LDJSON;
 
+/* Client status surface — the v2 SDK exposed the client lifecycle
+ * state as an enum plus a global callback registration. */
+typedef enum {
+    LDStatusInitializing = 0,
+    LDStatusInitialized,
+    LDStatusFailed,
+    LDStatusShuttingdown,
+    LDStatusShutdown
+} LDStatus;
+
+static inline void LDSetClientStatusCallback(void (*callback)(LDStatus status)) {
+    (void)callback;
+}
+
 static inline struct LDConfig *LDConfigNew(const char *key) {
     (void)key;
     return (struct LDConfig *)0;
+}
+
+static inline void LDConfigSetAllAttributesPrivate(struct LDConfig *config,
+                                                   LDBoolean allPrivate) {
+    (void)config;
+    (void)allPrivate;
 }
 
 static inline struct LDUser *LDUserNew(const char *key) {
