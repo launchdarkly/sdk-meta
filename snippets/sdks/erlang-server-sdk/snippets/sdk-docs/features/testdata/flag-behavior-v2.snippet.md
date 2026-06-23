@@ -14,6 +14,7 @@ validation:
 UpdatedFlag2 = ldclient_flagbuilder:fallthrough_variation(false,
   ldclient_flagbuilder:variation_for_context(true,  <<"user">>, <<"example-user-key">>, Flag2)
 ),
+ldclient_testdata:update(UpdatedFlag2),
 
 %% This flag returns the string variation "green" for contexts that have the custom
 %% attribute "admin" with a value of true, and "red" for everyone else.
