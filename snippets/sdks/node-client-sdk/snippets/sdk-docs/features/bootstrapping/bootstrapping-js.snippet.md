@@ -14,12 +14,11 @@ const flags = JSON.parse(bootstrapData)
 
 function onPageLoad(flags) {
   // ...
+  const options = { bootstrap: flags };
   const client = LDClient.initialize(
     'example-client-side-id',
     context,
-    options = {
-      bootstrap: flags
-    }
+    options
   );
 
   // ...

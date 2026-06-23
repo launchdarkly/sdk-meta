@@ -11,10 +11,10 @@ validation:
 ```js
 // bootstrapData is the result of your server-side SDK call to get all flags
 const flags = JSON.parse(bootstrapData)
-const options = { bootstrap: flags }
 
 function onPageLoad(flags) {
   // ...
+  const options = { bootstrap: flags };
   const client = LDClient.initialize(
     'example-client-side-id',
     context,
