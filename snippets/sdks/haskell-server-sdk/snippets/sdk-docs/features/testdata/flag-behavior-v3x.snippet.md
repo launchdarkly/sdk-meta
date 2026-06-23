@@ -18,7 +18,7 @@ TestData.update td =<< ( TestData.flag td "flag-key-456def"
 
 -- This flag returns the string variation "green" for users who have the custom
 -- attribute "admin" with a value of true, and "red" for everyone else.
-TestData.update td =<< ( TestData.flag td "flag-key-456def"
+TestData.update td =<< ( TestData.flag td "flag-key-789ghi"
 	<&> TestData.variations [toJSON "red", toJSON "green"]
 	<&> TestData.ifMatch "admin" [Aeson.Bool True]
 	<&> TestData.thenReturn (1 :: TestData.VariationIndex)
