@@ -9,6 +9,10 @@ validation:
 ---
 
 ```go
+import (
+    "github.com/launchdarkly/go-sdk-common/v3/ldvalue"
+)
+
 // This flag is true for the context with the key "example-context-key" and kind of "organization",
 // and false for everyone else
 td.Update(td.Flag("flag-key-456def").

@@ -14,5 +14,5 @@ from ldclient import LDClient, Config
 
 td = TestData.data_source()
 # You can set any initial flag states here with td.update
-client = LDClient(config=Config(sdk_key, update_processor_class = td))
+client = LDClient(config=Config("YOUR_SDK_KEY", update_processor_class = td))
 ```

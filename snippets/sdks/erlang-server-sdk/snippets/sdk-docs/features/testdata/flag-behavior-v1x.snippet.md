@@ -13,6 +13,7 @@ validation:
 {ok, Flag2} = ldclient_testdata:flag("flag-key-456def"),
 UpdatedFlag2 = ldclient_flagbuilder:fallthrough_variation(false,
   ldclient_flagbuilder:variation_for_user(<<"example-user-key">>, true, Flag2)),
+ldclient_testdata:update(UpdatedFlag2),
 
 %% This flag returns the string variation "green" for users who have the custom
 %% attribute "admin" with a value of true, and "red" for everyone else.

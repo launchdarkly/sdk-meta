@@ -14,5 +14,5 @@ require 'vendor/autoload.php';
 $td = new LaunchDarkly\Integrations\TestData();
 // You can set any initial flag states here with td.update
 
-$client = new LaunchDarkly\LDClient($sdkKey, ['feature_requester' => $td]);
+$client = new LaunchDarkly\LDClient("YOUR_SDK_KEY", ['feature_requester' => $td]);
 ```

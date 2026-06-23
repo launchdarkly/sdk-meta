@@ -9,6 +9,7 @@ validation:
 ---
 
 ```haskell
+import qualified LaunchDarkly.Server as LD
 import qualified LaunchDarkly.Server.Integrations.TestData as TestData
 
 td <- TestData.newTestData
