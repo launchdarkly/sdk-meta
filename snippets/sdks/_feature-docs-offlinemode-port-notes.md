@@ -46,27 +46,26 @@ column 0).
 
 ## Validation routing added in this port
 
-- `android-client-sdk/scaffolds/kotlin-syntax-only-v4` — NEW scaffold
-  for v4-era Android Kotlin fragments (`LDConfig.Builder()` is 0-arg
-  in v4; v5 requires `AutoEnvAttributes`). Unlike the Java sibling
-  (`java-syntax-only-v4`, jvm-routed because a Java file carries one
-  top-level class), Kotlin permits multiple top-level classes per
-  file and same-file declarations out-prioritize star imports, so
-  this scaffold stays in the `android-client` container
-  (`SNIPPET_CHECK=parse`) with file-scope stub `LDConfig` /
-  `LDClient` classes plus `application` / `context` ambient stubs.
-  No new CI row needed — it rides the existing
+- `android-client-sdk/scaffolds/kotlin-syntax-only-v4` — scaffold for
+  v4-era Android Kotlin fragments (`LDConfig.Builder()` is 0-arg in
+  v4; v5 requires `AutoEnvAttributes`). Stays in the `android-client`
+  container (`SNIPPET_CHECK=parse`) with nested stub `LDConfig` /
+  `LDClient` classes plus `application` / `context` ambient stubs. No
+  new CI row needed — it rides the existing
   `android-client-sdk (sdk-docs)` mobile row.
-- CI matrix: new `android-client-sdk (sdk-docs v4 jvm offline-mode)`
-  row pinned to `offline-mode-v4-java` (jvm-routed via
-  `java-syntax-only-v4`, needs a server key). The mobile sdk-docs
-  row's `snippet_skip` already carries the evaluation-reasons v4
-  snippet and the field takes a single id, so the second jvm-routed
-  snippet cannot also be skipped there; the workflow needs
-  multi-skip support (or a per-row group split) at merge time.
+- `offline-mode-v4-java` binds to `java-syntax-only-v4-android` (the
+  in-container Java sibling, mobile key, `SNIPPET_CHECK=parse`) rather
+  than the jvm-routed `java-syntax-only-v4`, so it needs no server-key
+  row and no `snippet_skip`. `evaluation-reasons-v4-java` moved to the
+  same scaffold, which let the jvm-routed `java-syntax-only-v4`
+  scaffold and both dedicated server-key CI rows be removed; the
+  mobile `android-client-sdk (sdk-docs)` row now validates both v4
+  Java fragments directly.
 - Stub-surface extensions (all additive):
-  - `java-syntax-only-v4`: `offline(boolean)` on the stub Builder,
-    `setOffline()` on the stub LDClient.
+  - `java-syntax-only-v4-android`: `offline(boolean)` /
+    `evaluationReasons(boolean)` on the stub Builder, and a stub
+    `LDClient` (`init`, `setOffline`, `boolVariationDetail`) plus
+    `getApplication()` / `context` ambient stubs.
   - `kotlin-syntax-only`: file-scope `application` and `context`
     stubs (the docs assume an Activity host where the `application`
     property exists and an earlier fragment that created an
