@@ -13,7 +13,6 @@ List<Hook> hookList = new ArrayList<>();
 ExampleHook exampleHook = new ExampleHook("Example hook");
 hookList.add(exampleHook);
 
-LDClient client = LDClient.init(this.getApplication(), ldConfig, context, 0);
 client.addHook(exampleHook);
 
 ```
