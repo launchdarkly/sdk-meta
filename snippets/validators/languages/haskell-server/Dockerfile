@@ -27,6 +27,8 @@ executable hello-haskell-exe\n\
     text,\n\
     hedis,\n\
     launchdarkly-server-sdk-redis-hedis,\n\
+    containers,\n\
+    aeson,\n\
     launchdarkly-server-sdk == %s\n\
   default-language: Haskell2010\n\
   ghc-options: -threaded -rtsopts -with-rtsopts=-N\n' \
