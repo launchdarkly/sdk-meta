@@ -33,7 +33,7 @@ export class ExampleHook implements Hook {
   // after the event has been enqueued
 }
 
-const options: ld.LDOptions = {
+const options: LDOptions = {
   hooks: [new ExampleHook()]
 };
 
