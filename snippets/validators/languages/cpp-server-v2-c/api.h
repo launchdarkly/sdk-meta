@@ -25,6 +25,38 @@ struct LDUser;
 struct LDJSON;
 struct LDStoreInterface;
 
+/* Logging surface. Mirrors the real v2 header's
+ * <launchdarkly/logging.h> (vendored from c-sdk-common): the level
+ * enum order, the convenience LDBasicLogger, the global logger
+ * registration hook, and the level-to-string helper. */
+typedef enum
+{
+    LD_LOG_FATAL = 0,
+    LD_LOG_CRITICAL,
+    LD_LOG_ERROR,
+    LD_LOG_WARNING,
+    LD_LOG_INFO,
+    LD_LOG_DEBUG,
+    LD_LOG_TRACE
+} LDLogLevel;
+
+static inline void LDBasicLogger(const LDLogLevel level, const char *const text) {
+    (void)level;
+    (void)text;
+}
+
+static inline void LDConfigureGlobalLogger(
+    const LDLogLevel level,
+    void (*logger)(const LDLogLevel level, const char *const text)) {
+    (void)level;
+    (void)logger;
+}
+
+static inline const char *LDLogLevelToString(const LDLogLevel level) {
+    (void)level;
+    return "";
+}
+
 /* Evaluation-reason surface. Mirrors the real v2 header's enum order
  * and the LDDetails fields the doc fragments touch (the real struct
  * carries an additional per-kind `extra` union the fragments never
@@ -74,6 +106,19 @@ static inline void LDConfigSetUseLDD(struct LDConfig *config, LDBoolean useLDD) 
     (void)useLDD;
 }
 
+static inline void LDConfigSetAllAttributesPrivate(struct LDConfig *config,
+                                                   LDBoolean allPrivate) {
+    (void)config;
+    (void)allPrivate;
+}
+
+static inline LDBoolean LDConfigAddPrivateAttribute(struct LDConfig *config,
+                                                    const char *attribute) {
+    (void)config;
+    (void)attribute;
+    return LDBooleanTrue;
+}
+
 static inline struct LDClient *LDClientInit(struct LDConfig *config, unsigned int maxwait) {
     (void)config;
     (void)maxwait;
@@ -97,7 +142,22 @@ static inline struct LDUser *LDUserNew(const char *key) {
     return (struct LDUser *)0;
 }
 
+static inline LDBoolean LDUserAddPrivateAttribute(struct LDUser *user,
+                                                  const char *attribute) {
+    (void)user;
+    (void)attribute;
+    return LDBooleanTrue;
+}
+
 static inline void LDUserFree(struct LDUser *user) {
+    (void)user;
+}
+
+/* Generates an identify event for the user, adding it to the Contexts
+ * list without requiring a flag evaluation. */
+static inline void LDClientIdentify(struct LDClient *client,
+                                    const struct LDUser *user) {
+    (void)client;
     (void)user;
 }
 
@@ -124,6 +184,41 @@ static inline void LDUserSetLastName(struct LDUser *user, const char *lastName) 
 static inline void LDUserSetAnonymous(struct LDUser *user, LDBoolean anonymous) {
     (void)user;
     (void)anonymous;
+}
+
+static inline void LDUserSetCustom(struct LDUser *user, struct LDJSON *custom) {
+    (void)user;
+    (void)custom;
+}
+
+/* LDJSON construction surface (shared c-json API) used by the
+ * custom-attributes doc fragments. */
+static inline struct LDJSON *LDNewObject(void) {
+    return (struct LDJSON *)0;
+}
+
+static inline struct LDJSON *LDNewArray(void) {
+    return (struct LDJSON *)0;
+}
+
+static inline struct LDJSON *LDNewText(const char *text) {
+    (void)text;
+    return (struct LDJSON *)0;
+}
+
+static inline LDBoolean LDArrayPush(struct LDJSON *array, struct LDJSON *item) {
+    (void)array;
+    (void)item;
+    return LDBooleanTrue;
+}
+
+static inline LDBoolean LDObjectSetKey(struct LDJSON *object,
+                                       const char *key,
+                                       struct LDJSON *item) {
+    (void)object;
+    (void)key;
+    (void)item;
+    return LDBooleanTrue;
 }
 
 static inline LDBoolean LDBoolVariation(struct LDClient *client,

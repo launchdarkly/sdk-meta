@@ -843,6 +843,11 @@
       "introduced": "5.4",
       "removed": null
     },
+    "fdv2": {
+      "deprecated": null,
+      "introduced": "7.15",
+      "removed": null
+    },
     "fileDataSource": {
       "deprecated": null,
       "introduced": "4.4",
@@ -1943,6 +1948,11 @@
     "experimentation": {
       "deprecated": null,
       "introduced": "6.2",
+      "removed": null
+    },
+    "fdv2": {
+      "deprecated": null,
+      "introduced": "8.12",
       "removed": null
     },
     "fileDataSource": {

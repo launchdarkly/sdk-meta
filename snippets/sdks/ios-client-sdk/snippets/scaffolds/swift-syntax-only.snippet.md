@@ -45,6 +45,16 @@ import LaunchDarklyObservability
 // type-check. Never invoked.
 func applyVariant(_ variant: String) {}
 
+// v8-era convenience surface: v9 made the `autoEnvAttributes:`
+// constructor argument mandatory, so v8.x doc fragments that say
+// `LDConfig(mobileKey:)` would not compile against the current SDK
+// without this shim. Never invoked at runtime.
+extension LDConfig {
+    init(mobileKey: String) {
+        self.init(mobileKey: mobileKey, autoEnvAttributes: .disabled)
+    }
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
@@ -65,12 +75,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // ambient context to `LDClient.start` — the docs assume earlier
     // init snippets created them.
     var ldConfig = LDConfig(mobileKey: "stub-mobile-key", autoEnvAttributes: .disabled)
+    // Some config fragments assign to a bare `config` the docs assume
+    // an earlier snippet declared.
+    var config = LDConfig(mobileKey: "stub-mobile-key", autoEnvAttributes: .disabled)
     var context = try! LDContextBuilder(key: "stub-context-key").build().get()
 
     // Wrappee body — references to client/context here resolve
     // through the stubs above; xcodebuild type-checks but doesn't
-    // run.
-    @objc func _wrappee() {
+    // run. Marked `throws` so fragments that use bare `try`
+    // (e.g. `try LDContextBuilder(...).build().get()`) compile
+    // without per-fragment error handling.
+    @objc func _wrappee() throws {
 {{ body }}
     }
 }
