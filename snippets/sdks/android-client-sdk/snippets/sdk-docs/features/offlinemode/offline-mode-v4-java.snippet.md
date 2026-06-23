@@ -5,7 +5,7 @@ kind: reference
 lang: java
 description: Offline mode example for Android SDK v4.x (Java).
 validation:
-  scaffold: android-client-sdk/scaffolds/java-syntax-only-v4
+  scaffold: android-client-sdk/scaffolds/java-syntax-only-v4-android
 
 ---
 
