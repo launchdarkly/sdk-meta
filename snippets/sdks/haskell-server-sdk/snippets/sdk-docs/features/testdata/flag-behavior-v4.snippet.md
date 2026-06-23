@@ -18,7 +18,7 @@ TestData.update td =<< ( TestData.flag td "flag-key-456def"
 
 -- This flag returns the string variation "green" for contexts with kind "context-kind"
 -- that have the custom attribute "admin" with a value of true, and "red" for everyone else.
-TestData.update td =<< ( TestData.flag td "flag-key-456def"
+TestData.update td =<< ( TestData.flag td "flag-key-789ghi"
 	<&> TestData.variations [toJSON "red", toJSON "green"]
 	<&> TestData.ifMatchContext "context-kind" "admin" [Aeson.Bool True]
 	<&> TestData.thenReturn (1 :: TestData.VariationIndex)
