@@ -15,7 +15,7 @@ import           LaunchDarkly.Server
 import           LaunchDarkly.Server.Store.Redis
 
 main = do
-    con <- R.checkedConnect R.defaultConnectInfo { R.connectHost = "my-redis:6379" }
+    con <- R.checkedConnect R.defaultConnectInfo { R.connectHost = "my-redis", R.connectPort = R.PortNumber 6379 }
     backend <- makeRedisStore $ redisConfigSetNamespace "my-key-prefix" $ makeRedisStoreConfig con
 
     let config = configSetStoreBackend (Just backend) $ makeConfig "YOUR_SDK_KEY"

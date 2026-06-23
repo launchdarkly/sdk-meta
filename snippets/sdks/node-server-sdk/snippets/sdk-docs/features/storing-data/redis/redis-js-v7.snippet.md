@@ -11,7 +11,7 @@ validation:
 
 ```js
 const ld = require('launchdarkly-node-server-sdk');
-const RedisFeatureStore = require('launchdarkly-node-server-sdk-redis');
+const { RedisFeatureStore } = require('launchdarkly-node-server-sdk-redis');
 
 const redisOpts = {
   url: 'redis://your-redis:6379'
