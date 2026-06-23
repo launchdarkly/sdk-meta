@@ -5,16 +5,19 @@ kind: scaffold
 lang: cpp
 file: main.cpp
 description: |
-  File-scope sibling of `cpp-client-syntax-only`. That scaffold
-  splices the body inside a nested block of a never-instantiated
-  function template, which breaks for fragments that are themselves
-  top-level declarations — C++ has no local free functions, so a
-  C-binding callback definition like
-  `void OnFlagChange(char const* flag_key, ...) { ... }` cannot live
-  there. This variant splices the body at file scope instead.
+  File-scope variant of `cpp-client-syntax-only` for C++ client SDK
+  doc fragments that are themselves top-level declarations -- custom
+  log backend classes (logging) and C-binding callback function
+  definitions for the listener / data-source-status APIs (monitoring)
+  -- which cannot live inside the nested-block `_wrappee()` body (C++
+  forbids function definitions inside a function, and `static`
+  storage on a local declaration of one is a hard error).
 
-  Same `cpp-client` validator, so the body compiles against the real
-  SDK headers from the pre-cloned cpp-sdks checkout.
+  The body is spliced at file scope after the SDK headers. Fragments
+  that carry their own `#include` directives re-include cheaply
+  (header guards / pragma once) because the same headers are already
+  included here. Nothing in the body is ever invoked; `main()` just
+  prints the EXAM-HELLO sentinel.
 inputs:
   body:
     type: string
@@ -25,13 +28,30 @@ validation:
 ---
 
 ```cpp
+#include <chrono>
 #include <cstdio>
+#include <future>
 #include <iostream>
-// C-binding headers — top-level callback-definition fragments
-// reference LDValue and friends.
+#include <memory>
+#include <optional>
+#include <string>
+// Native C++ headers, including the logging interface custom-backend
+// fragments implement.
+#include <launchdarkly/client_side/client.hpp>
+#include <launchdarkly/context_builder.hpp>
+#include <launchdarkly/value.hpp>
+#include <launchdarkly/logging/log_backend.hpp>
+#include <launchdarkly/logging/log_level.hpp>
+// C-binding headers -- doc fragments mix C-binding and native styles.
 #include <launchdarkly/client_side/bindings/c/sdk.h>
+#include <launchdarkly/client_side/bindings/c/config/builder.h>
+#include <launchdarkly/bindings/c/context.h>
+#include <launchdarkly/bindings/c/context_builder.h>
 #include <launchdarkly/bindings/c/value.h>
 
+// The fragment shows `printf` without its own include; <cstdio>
+// above provides it in the global namespace on the toolchains the
+// validator uses.
 {{ body }}
 
 int main() {

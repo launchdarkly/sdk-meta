@@ -73,6 +73,10 @@ import java.util.Collections;
 // The all-flags-listener fragment's `onChange(List<String> flagKeys)`
 // override needs the collection interface itself.
 import java.util.List;
+// Timber is in the validator project's dependencies; the logging and
+// monitoring doc fragments call `Timber.plant(...)` without showing
+// the import.
+import timber.log.Timber;
 
 // No `public` modifier: Java requires public top-level classes to
 // live in a file matching the class name. We need this scaffold's
