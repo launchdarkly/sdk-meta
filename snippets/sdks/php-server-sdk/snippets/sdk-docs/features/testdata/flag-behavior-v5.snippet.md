@@ -20,7 +20,7 @@ $td->update(
 // This flag returns the string variation "green" for contexts that have the custom
 // attribute "admin" with a value of true, and "red" for everyone else.
 $td->update(
-    $td->flag("example-flag-key")
+    $td->flag("example-string-flag-key")
        ->variations("red", "green")
        ->fallthroughVariation(0)
        ->ifMatch("admin", true)

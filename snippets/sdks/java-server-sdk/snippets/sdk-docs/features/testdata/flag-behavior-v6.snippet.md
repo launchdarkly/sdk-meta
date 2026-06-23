@@ -17,7 +17,7 @@ td.update(td.flag("example-flag-key")
 
 // This flag returns the string variation "green" for contexts who have the custom
 // attribute "admin" with a value of true, and "red" for everyone else.
-td.update(td.flag("example-flag-key")
+td.update(td.flag("example-string-flag-key")
   .variations(LDValue.of("red"), LDValue.of("green"))
   .fallthroughVariation(0)
   .ifMatch("admin", LDValue.of(true))
