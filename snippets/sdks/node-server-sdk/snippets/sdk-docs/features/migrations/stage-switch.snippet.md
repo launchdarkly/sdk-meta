@@ -12,7 +12,7 @@ validation:
 // define the combination of reads and writes from the new and old systems
 // that should occur at each migration stage
 
-switch (value) {
+switch (stage) {
   case LDMigrationStage.Off: { }
   case LDMigrationStage.DualWrite: { }
   case LDMigrationStage.Shadow: { }
