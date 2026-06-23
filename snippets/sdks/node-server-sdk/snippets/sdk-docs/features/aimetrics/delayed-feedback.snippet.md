@@ -27,7 +27,7 @@ ldClient.track(
     ? "$ld:ai:feedback:user:positive"
     : "$ld:ai:feedback:user:negative",
   context, // context from generation time
-  persistedTrackData,
+  trackData,
   1
 );
 ```
