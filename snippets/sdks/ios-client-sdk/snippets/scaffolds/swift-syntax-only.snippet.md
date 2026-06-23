@@ -75,6 +75,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // ambient context to `LDClient.start` — the docs assume earlier
     // init snippets created them.
     var ldConfig = LDConfig(mobileKey: "stub-mobile-key", autoEnvAttributes: .disabled)
+    // Some config fragments assign to a bare `config` the docs assume
+    // an earlier snippet declared.
+    var config = LDConfig(mobileKey: "stub-mobile-key", autoEnvAttributes: .disabled)
     var context = try! LDContextBuilder(key: "stub-context-key").build().get()
 
     // Multi-environment fragments call methods on an ambient
