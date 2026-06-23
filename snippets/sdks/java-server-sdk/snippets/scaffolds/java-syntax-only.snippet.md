@@ -30,6 +30,9 @@ package com.launchdarkly;
 
 import com.launchdarkly.sdk.*;
 import com.launchdarkly.sdk.server.*;
+// Monitoring fragments reference `DataSourceStatusProvider.Status`
+// unqualified; the provider interfaces live under `.interfaces`.
+import com.launchdarkly.sdk.server.interfaces.*;
 import com.launchdarkly.sdk.server.migrations.*;
 // Common JDK types config/timeout fragments reference without their own
 // import line (the docs assume it); provide it so they resolve.
