@@ -65,6 +65,12 @@ namespace LaunchDarklySnippet
         // them.
         private static User newUser = null;
         private static User previousUser = null;
+        // The logging fragments pass an ILoggerFactory obtained from
+        // ASP.NET Core dependency injection; the docs assume it
+        // already exists. `dynamic` keeps the stub independent of the
+        // Microsoft.Extensions.Logging.Abstractions type while still
+        // letting `Logs.CoreLogging(loggerFactory)` compile.
+        private static dynamic loggerFactory = null;
 #pragma warning restore CS0414, CS0649
 
         public static void Main(string[] args)

@@ -32,6 +32,9 @@ validation:
  * init snippets already declared these. */
 static struct LDClient *client;
 static struct LDUser *user;
+/* The identify fragment switches to a `newUser` built by an earlier
+ * (unshown) fragment; the docs assume it already exists. */
+static struct LDUser *newUser;
 static struct LDConfig *config;
 static unsigned int maxwait;
 static unsigned int maxwaitmilliseconds;

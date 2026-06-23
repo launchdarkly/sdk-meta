@@ -40,6 +40,15 @@ static unsigned int maxwaitmilliseconds;
 static struct LDUser *newUser;
 static struct LDUser *previousUser;
 
+/* Stub of the custom logger that the install-a-custom-logger fragment
+ * passes to LDConfigureGlobalLogger; the docs assume the reader
+ * defined it in the preceding fragment on the same page. */
+static void myCustomLogger(const LDLogLevel level, const char *const text)
+{
+    (void)level;
+    (void)text;
+}
+
 static void _wrappee(void) {
 {{ body }}
 }
