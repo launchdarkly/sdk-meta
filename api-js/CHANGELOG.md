@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.23](https://github.com/launchdarkly/sdk-meta/compare/api-js/v0.3.22...api-js/v0.3.23) (2026-06-23)
+
+
+### Bug Fixes
+
+* **metadata:** ingest new data and regenerate products ([#517](https://github.com/launchdarkly/sdk-meta/issues/517)) ([cf08abe](https://github.com/launchdarkly/sdk-meta/commit/cf08abe56a58cc9d18b52ec76d06d7277e331798))
+
 ## [0.3.22](https://github.com/launchdarkly/sdk-meta/compare/api-js/v0.3.21...api-js/v0.3.22) (2026-06-18)
 
 
