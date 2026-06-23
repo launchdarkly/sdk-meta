@@ -10,14 +10,14 @@ description: |
 
   The default csharp-syntax-only scaffold types `client` as `dynamic`
   so one stub serves both the v6 `User` and v7+ `Context` API
-  surfaces, but some C# constructs cannot compile through a `dynamic`
-  receiver: a lambda used as an operand of a dynamically dispatched
-  operation (error CS1977, e.g.
-  `client.DataSourceStatusProvider.StatusChanged += (sender, status) => …`)
-  and tuple deconstruction of a dynamic result (error CS8133, e.g.
-  `var (stage, tracker) = client.MigrationVariation(…)`). This variant
-  types `client` as the real `LdClient` so those bodies bind against
-  the actual member signatures.
+  surfaces, but C# rejects a lambda used as an operand of a
+  dynamically dispatched operation (error CS1977) — event-handler
+  fragments such as
+  `client.DataSourceStatusProvider.StatusChanged += (sender, status) => …`
+  cannot compile through a `dynamic` receiver. This variant types
+  `client` as the real `LdClient` so `+=` binds against the actual
+  `event EventHandler<DataSourceStatus>` member and the lambda's
+  parameter types are inferred.
 inputs:
   body:
     type: string
