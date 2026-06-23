@@ -70,6 +70,12 @@ namespace LaunchDarklySnippet
         // AI metrics flush fragments call Flush() on the underlying
         // LaunchDarkly client, which the docs name `baseClient`.
         private static dynamic baseClient = null;
+        // The logging fragments pass an ILoggerFactory obtained from
+        // ASP.NET Core dependency injection; the docs assume it
+        // already exists. `dynamic` keeps the stub independent of the
+        // Microsoft.Extensions.Logging.Abstractions type while still
+        // letting `Logs.CoreLogging(loggerFactory)` compile.
+        private static dynamic loggerFactory = null;
 #pragma warning restore CS0414, CS0649
 
         public static void Main(string[] args)
