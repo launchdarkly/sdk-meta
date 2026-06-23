@@ -26,6 +26,7 @@ executable hello-haskell-exe\n\
     base >= 4.7 && < 5,\n\
     text,\n\
     aeson,\n\
+    containers,\n\
     launchdarkly-server-sdk == %s\n\
   default-language: Haskell2010\n\
   ghc-options: -threaded -rtsopts -with-rtsopts=-N\n' \
