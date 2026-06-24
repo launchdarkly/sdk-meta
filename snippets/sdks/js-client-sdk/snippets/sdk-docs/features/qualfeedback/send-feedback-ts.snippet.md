@@ -10,6 +10,8 @@ validation:
 ---
 
 ```ts
+import type { LDClient } from "launchdarkly-js-client-sdk";
+
 // Create an object
 type LDFeedbackData = {
     feedback_answer: string;

@@ -10,6 +10,7 @@ validation:
 ---
 
 ```ts
+import type { LDClient } from "launchdarkly-js-client-sdk";
 import { LDRecord } from '@launchdarkly/session-replay';
 
 // Create an object
