@@ -22,7 +22,7 @@ type Config struct {
 	ValidatorsDir string // path to validators/ (must be on disk — Docker COPY needs it)
 	SDK           string // sdk id to validate (empty = all)
 	Snippet       string // snippet id to validate (empty = all in the SDK)
-	SnippetSkip   string // snippet id to skip (empty = none)
+	SnippetSkip   string // comma-separated snippet ids to skip (empty = none)
 	Group         string // snippet group to validate (empty = all; e.g. "sdk-info" or "sdk-docs")
 }
 
@@ -47,6 +47,20 @@ type envInputs struct {
 // caller's environment. Snippets that need a particular key declare an input
 // of the matching type; the dispatcher refuses to run if a needed key is
 // not set.
+// skipID reports whether id appears in the comma-separated skip list.
+// Entries are trimmed so CI matrix values can wrap across lines.
+func skipID(skipList, id string) bool {
+	if skipList == "" {
+		return false
+	}
+	for _, entry := range strings.Split(skipList, ",") {
+		if strings.TrimSpace(entry) == id {
+			return true
+		}
+	}
+	return false
+}
+
 func Run(cfg Config) error {
 	env := envInputs{
 		sdkKey:       os.Getenv("LAUNCHDARKLY_SDK_KEY"),
@@ -69,7 +83,7 @@ func Run(cfg Config) error {
 		if cfg.Snippet != "" && s.Frontmatter.ID != cfg.Snippet {
 			continue
 		}
-		if cfg.SnippetSkip != "" && s.Frontmatter.ID == cfg.SnippetSkip {
+		if skipID(cfg.SnippetSkip, s.Frontmatter.ID) {
 			continue
 		}
 		if cfg.Group != "" {

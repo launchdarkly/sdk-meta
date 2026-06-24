@@ -161,6 +161,19 @@ struct _AnyClient {
     _AnyNotifier FlagNotifier() const { return {}; }
 };
 
+// Polymorphic stub for the ambient `config_builder` some doc
+// fragments reference (the docs assume an earlier init fragment
+// declared it). Satisfies both the native member-call shape
+// (`config_builder.Offline(true)`) and the C-binding shape
+// (`LDClientConfigBuilder_Offline(config_builder, true)`) via an
+// implicit conversion to the opaque builder handle. File-scope
+// because local classes cannot declare member templates.
+struct _AnyConfigBuilder {
+    operator LDClientConfigBuilder() const { return nullptr; }
+    const _AnyConfigBuilder* operator->() const { return this; }
+    template <typename... Args> void Offline(Args&&...) const {}
+};
+
 // Stubs for the install-a-custom-logger fragments, which reference a
 // CustomLogger backend (native) or enabled/write callbacks (C
 // binding) defined in a preceding fragment on the same docs page.
@@ -184,6 +197,7 @@ static void write(enum LDLogLevel level, char const* msg, void* user_data) {
     (void)user_data;
 }
 
+
 template <int = 0>
 void _wrappee() {
     // Body lives in a nested block so it can re-declare `client` /
@@ -202,6 +216,7 @@ void _wrappee() {
     using namespace launchdarkly;
     using namespace launchdarkly::client_side;
     _AnyClient client;
+    _AnyConfigBuilder config_builder;
     // Some C-binding fragments name the client handle `sdk` (matching
     // the binding's parameter names) rather than `client`.
     _AnyClient sdk;

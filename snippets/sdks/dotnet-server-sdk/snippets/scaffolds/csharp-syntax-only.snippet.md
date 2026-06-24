@@ -60,6 +60,11 @@ namespace LaunchDarklySnippet
         // Evaluation fragments pass `myContext` to the variation
         // methods; the docs assume it already exists.
         private static Context myContext = default;
+        // The legacy aliasing fragment passes `newUser` /
+        // `previousUser`; the docs assume earlier snippets created
+        // them.
+        private static User newUser = null;
+        private static User previousUser = null;
         // The logging fragments pass an ILoggerFactory obtained from
         // ASP.NET Core dependency injection; the docs assume it
         // already exists. `dynamic` keeps the stub independent of the
