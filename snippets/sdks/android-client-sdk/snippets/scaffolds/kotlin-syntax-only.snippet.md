@@ -92,10 +92,29 @@ fun applyVariant(variant: String) {}
 val client: LDClient get() = TODO()
 @Suppress("UNUSED")
 val flagKey: String = ""
-// Identify fragments build an updated context from an ambient
-// `context` the docs assume already exists.
+// Init fragments reference the Application instance as a bare
+// `application` name — the docs assume an Activity host, where that
+// property exists. This scaffold splices bodies into an Application
+// subclass (which has no such property), so provide a file-scope
+// stub. Never read at runtime (the body is unreachable).
+@Suppress("UNUSED")
+val application: Application get() = TODO()
+// Evaluation/init fragments pass an ambient `context` (LDContext) the
+// docs assume an earlier fragment created; identify fragments build an
+// updated context from it.
 @Suppress("UNUSED")
 val context: LDContext get() = TODO()
+
+// Stub of the legacy alias API (removed at 4.0) so the v3-era
+// aliasing fragment type-checks against the v5 aar. The ambient
+// `newUser` / `previousUser` names are typed LDContext because the
+// stub only needs self-consistent opaque arguments. Never invoked.
+@Suppress("UNUSED_PARAMETER", "UNUSED")
+fun LDClient.alias(newUser: LDContext, previousUser: LDContext) {}
+@Suppress("UNUSED")
+val newUser: LDContext get() = TODO()
+@Suppress("UNUSED")
+val previousUser: LDContext get() = TODO()
 
 @Suppress("UNUSED_VARIABLE", "UNREACHABLE_CODE")
 class BaseApplication : Application() {
