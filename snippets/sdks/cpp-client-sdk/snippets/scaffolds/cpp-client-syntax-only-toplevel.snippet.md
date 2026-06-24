@@ -47,6 +47,7 @@ validation:
 #include <launchdarkly/client_side/bindings/c/config/builder.h>
 #include <launchdarkly/bindings/c/context.h>
 #include <launchdarkly/bindings/c/context_builder.h>
+#include <launchdarkly/bindings/c/value.h>
 
 // The fragment shows `printf` without its own include; <cstdio>
 // above provides it in the global namespace on the toolchains the
