@@ -108,10 +108,6 @@ val application: Application get() = TODO()
 // updated context from it.
 @Suppress("UNUSED")
 val context: LDContext get() = TODO()
-// Multi-environment init fragments pass an ambient `application`
-// the docs assume an Activity host provides.
-@Suppress("UNUSED")
-val application: Application get() = TODO()
 // Event fragments pass an ambient `data` payload to
 // `client.trackData(eventName, data)`.
 @Suppress("UNUSED")
