@@ -41,6 +41,8 @@ static struct LDClient *client;
 static struct LDUser *user;
 static struct LDConfig *config;
 static unsigned int maxwaitmilliseconds;
+static struct LDUser *newUser;
+static struct LDUser *previousUser;
 
 /* Stub of the custom logger that the install-a-custom-logger fragment
  * passes to LDConfigureGlobalLogger; the docs assume the reader
