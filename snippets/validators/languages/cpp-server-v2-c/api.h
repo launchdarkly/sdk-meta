@@ -106,6 +106,14 @@ static inline void LDConfigSetUseLDD(struct LDConfig *config, LDBoolean useLDD) 
     (void)useLDD;
 }
 
+/* Mirrors the real v2 header's offline-mode setter: when offline is
+ * true the SDK makes no network requests and evaluations return the
+ * in-code fallback values. */
+static inline void LDConfigSetOffline(struct LDConfig *config, LDBoolean offline) {
+    (void)config;
+    (void)offline;
+}
+
 static inline void LDConfigSetAllAttributesPrivate(struct LDConfig *config,
                                                    LDBoolean allPrivate) {
     (void)config;
@@ -128,6 +136,16 @@ static inline struct LDClient *LDClientInit(struct LDConfig *config, unsigned in
 static inline LDBoolean LDClientClose(struct LDClient *client) {
     (void)client;
     return LDBooleanTrue;
+}
+
+/* Associates two users for analytics purposes (legacy alias event;
+ * the v2 SDKs were the last majors to carry it). */
+static inline void LDClientAlias(struct LDClient *client,
+                                 struct LDUser *currentUser,
+                                 struct LDUser *previousUser) {
+    (void)client;
+    (void)currentUser;
+    (void)previousUser;
 }
 
 /* Manual event flush: fire-and-forget; delivery happens on the

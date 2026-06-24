@@ -37,6 +37,8 @@ static struct LDClient *client;
 static struct LDUser *user;
 static struct LDConfig *config;
 static unsigned int maxwaitmilliseconds;
+static struct LDUser *newUser;
+static struct LDUser *previousUser;
 
 /* Daemon-mode fragments construct their store backend via a
  * placeholder `ConstructYourFeatureStoreInterface()` standing in for
