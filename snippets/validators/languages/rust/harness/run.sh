@@ -19,7 +19,10 @@ cd hello-rust
 # `file:` is `src/main.rs`, so /snippet/src/main.rs holds it.
 cp "/snippet/$SNIPPET_ENTRYPOINT" "$SNIPPET_ENTRYPOINT"
 
-cargo add --quiet launchdarkly-server-sdk
+# Version-pinned scaffolds (e.g. rust-syntax-only-v1) set
+# LD_RUST_SDK_VERSION via validation.env so older-API fragments
+# compile against the SDK major they document. Unset means latest.
+cargo add --quiet "launchdarkly-server-sdk${LD_RUST_SDK_VERSION:+@${LD_RUST_SDK_VERSION}}"
 cargo add --quiet tokio@1 -F rt,macros
 cargo add --quiet futures
 # Web-proxy doc fragments configure the 3.x transport layer directly

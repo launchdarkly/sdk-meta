@@ -28,6 +28,11 @@ validation:
 
 ```c
 #include <launchdarkly/api.h>
+/* Pre-include integration headers a fragment may include from inside
+ * the `_wrappee` body. With the guard already defined, the in-body
+ * `#include` expands to nothing — the header's `static inline`
+ * definitions must not land inside a function body. */
+#include <launchdarkly/integrations/file_data.h>
 
 /* File-scope stubs so fragments that read like statement bodies
  * (`user = LDUserNew(...);` — assignment to a pre-declared `user`)
@@ -37,6 +42,17 @@ static struct LDClient *client;
 static struct LDUser *user;
 static struct LDConfig *config;
 static unsigned int maxwaitmilliseconds;
+static struct LDUser *newUser;
+static struct LDUser *previousUser;
+
+/* Stub of the custom logger that the install-a-custom-logger fragment
+ * passes to LDConfigureGlobalLogger; the docs assume the reader
+ * defined it in the preceding fragment on the same page. */
+static void myCustomLogger(const LDLogLevel level, const char *const text)
+{
+    (void)level;
+    (void)text;
+}
 
 static void _wrappee(void) {
 {{ body }}

@@ -28,6 +28,18 @@ validation:
 module Main where
 
 import LaunchDarkly.Server
+-- Qualified helpers several doc fragments use without showing their
+-- own import lines (the docs assume an earlier snippet added them).
+import qualified Data.Set as S
+import qualified LaunchDarkly.Server.Reference as R
+import Data.Function ((&))
+import Data.Text (Text)
+
+-- The body is spliced at module scope, BEFORE the stub declarations
+-- below, so fragments that carry their own leading `import` lines
+-- stay legal (Haskell requires every import to precede the module's
+-- first declaration; declaration order itself is irrelevant).
+{{ body }}
 
 -- Module-scope stubs for the ambient bindings the doc fragments
 -- assume earlier init snippets created.
@@ -37,7 +49,14 @@ client = undefined
 context :: Context
 context = undefined
 
-{{ body }}
+-- Config fragments derive a new config from an ambient `config`
+-- binding the docs assume an earlier init snippet created.
+config :: Config
+config = undefined
+
+-- Config fragments pass a bare `sdkKey` the docs assume exists.
+sdkKey :: Text
+sdkKey = "YOUR_SDK_KEY"
 
 main :: IO ()
 main = putStrLn "feature flag evaluates to true"
