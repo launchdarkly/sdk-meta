@@ -89,6 +89,14 @@ static inline struct LDConfig *LDConfigNew(const char *key) {
     return (struct LDConfig *)0;
 }
 
+/* Mirrors the real v2 header's offline-mode setter: when offline is
+ * true the SDK makes no network requests and evaluations return the
+ * in-code fallback values. */
+static inline void LDConfigSetOffline(struct LDConfig *config, LDBoolean offline) {
+    (void)config;
+    (void)offline;
+}
+
 static inline void LDConfigSetAllAttributesPrivate(struct LDConfig *config,
                                                    LDBoolean allPrivate) {
     (void)config;
