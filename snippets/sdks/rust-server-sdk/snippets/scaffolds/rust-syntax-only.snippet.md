@@ -102,6 +102,16 @@ impl _StubMigrator {
     async fn write(&mut self, _context: &Context, _flag_key: String, _default_stage: Stage, _payload: String) {}
 }
 
+// Stub of the pre-1.0 (beta) `alias` method — dropped at 1.0 along
+// with the rest of the User API. An extension trait lets the doc
+// fragment's `client.alias(user, previous_user)` resolve against the
+// real `Client` type without touching the SDK surface.
+#[allow(dead_code)]
+trait BetaAliasExt {
+    fn alias(&self, _user: User, _previous_user: User) {}
+}
+impl BetaAliasExt for Client {}
+
 #[allow(dead_code, unused, unused_variables, unused_must_use, unreachable_code)]
 async fn _wrappee() -> Result<(), Box<dyn std::error::Error>> {
     let client: Client = unimplemented!();
@@ -115,6 +125,10 @@ async fn _wrappee() -> Result<(), Box<dyn std::error::Error>> {
     let mut migrator = _StubMigrator;
     let stage: Stage = unimplemented!();
     let tracker: Arc<Mutex<MigrationOpTracker>> = unimplemented!();
+    // Ambient names the beta aliasing fragment assumes earlier
+    // snippets created.
+    let user = User::with_key("stub").build();
+    let previous_user = User::with_key("stub").build();
 {{ body }}
     Ok(())
 }
