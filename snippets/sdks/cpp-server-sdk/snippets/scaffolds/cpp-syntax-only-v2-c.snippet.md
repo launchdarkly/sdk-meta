@@ -28,6 +28,11 @@ validation:
 
 ```c
 #include <launchdarkly/api.h>
+/* Pre-include integration headers a fragment may include from inside
+ * the `_wrappee` body. With the guard already defined, the in-body
+ * `#include` expands to nothing — the header's `static inline`
+ * definitions must not land inside a function body. */
+#include <launchdarkly/integrations/file_data.h>
 
 /* File-scope stubs so fragments that read like statement bodies
  * (`user = LDUserNew(...);` — assignment to a pre-declared `user`)

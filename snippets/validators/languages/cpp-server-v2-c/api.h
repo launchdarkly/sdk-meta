@@ -24,6 +24,7 @@ struct LDClient;
 struct LDUser;
 struct LDJSON;
 struct LDStoreInterface;
+struct LDDataSource;
 
 /* Logging surface. Mirrors the real v2 header's
  * <launchdarkly/logging.h> (vendored from c-sdk-common): the level
@@ -104,6 +105,21 @@ static inline void LDConfigSetFeatureStoreBackend(struct LDConfig *config, struc
 static inline void LDConfigSetUseLDD(struct LDConfig *config, LDBoolean useLDD) {
     (void)config;
     (void)useLDD;
+}
+
+/* Mirrors the real v2 header's data-source setter: replaces the default
+ * streaming/polling-update mechanism with the supplied source (e.g. the
+ * file data source from <launchdarkly/integrations/file_data.h>). */
+static inline void LDConfigSetDataSource(struct LDConfig *config, struct LDDataSource *dataSource) {
+    (void)config;
+    (void)dataSource;
+}
+
+/* Mirrors the real v2 header's analytics-events toggle: when sendEvents
+ * is false the SDK sends no analytics events to LaunchDarkly. */
+static inline void LDConfigSetSendEvents(struct LDConfig *config, LDBoolean sendEvents) {
+    (void)config;
+    (void)sendEvents;
 }
 
 /* Mirrors the real v2 header's offline-mode setter: when offline is

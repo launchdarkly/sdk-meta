@@ -59,6 +59,32 @@ validation:
 // an extern "C" block).
 #include <launchdarkly/bindings/c/array_builder.h>
 
+// File-scope stub matching the C binding's FlagChangedCallbackFn
+// signature so flag-change bodies that assign a caller-defined
+// callback (`listener.FlagChanged = OnFlagChange;`) resolve. The
+// callback definition itself is shown in a separate doc fragment
+// validated through the toplevel scaffold. Never invoked.
+inline void OnFlagChange(char const* flag_key,
+                         LDValue new_value,
+                         LDValue old_value,
+                         bool deleted,
+                         void* user_data) {}
+
+// Stub connection returned by the flag-notifier stub below; supports
+// both `listener->Disconnect()` (the native API returns a
+// unique_ptr<IConnection>) and value semantics.
+struct _AnyConnection {
+    const _AnyConnection* operator->() const { return this; }
+    void Disconnect() const {}
+};
+
+// Stub notifier so `client.FlagNotifier().OnFlagChange(key, handler)`
+// type-checks. The handler is a generic lambda in the doc fragments,
+// so its body is never instantiated.
+struct _AnyNotifier {
+    template <typename... Args> _AnyConnection OnFlagChange(Args&&...) const { return {}; }
+};
+
 // Polymorphic stub so a body can use `client.BoolVariation(...)`
 // (native-style) AND `LDClientSDK_BoolVariation(client, ...)`
 // (C-binding-style) without needing the scaffold to know which
@@ -130,6 +156,9 @@ struct _AnyClient {
     template <typename... Args> void trackEvent(Args&&...) const {}
     template <typename... Args> void identify(Args&&...) const {}
     template <typename... Args> auto startAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
+    // Flag-notifier stub so subscribe-to-changes bodies can chain
+    // `client.FlagNotifier().OnFlagChange(...)`.
+    _AnyNotifier FlagNotifier() const { return {}; }
 };
 
 // Polymorphic stub for the ambient `config_builder` some doc
@@ -196,6 +225,10 @@ void _wrappee() {
     // fragment; the docs assume it already exists.
     LDContext updated_context = nullptr;
     LDClientConfig config = nullptr;
+    // C-binding flag-change fragments reference an ambient `sdk`
+    // handle (the docs' init fragments name the client `sdk` in the
+    // C-binding style) — served by the `_AnyClient sdk` stub above
+    // via its `operator LDClientSDK()` conversion.
     // The listener fragments split "create the connection" and "free
     // the connection" across separate code blocks; the free-side body
     // references `connection` as if pre-existing.
