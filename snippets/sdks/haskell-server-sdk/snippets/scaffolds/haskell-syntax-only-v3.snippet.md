@@ -55,6 +55,11 @@ _wrappee = do
   -- functions; the docs assume it exists. Annotated so it stays
   -- unambiguous for sibling bodies that never reference it.
   let user = undefined :: User
+  -- The v3.x aliasing fragment passes bare `newUser` /
+  -- `previousUser` to `alias`; the docs assume earlier snippets
+  -- created them.
+  let newUser = undefined :: User
+  let previousUser = undefined :: User
 --BODY_BEGIN--
 {{ body }}
 --BODY_END--

@@ -61,7 +61,7 @@ usage:
       a marker's hash does not match its current region's content. Never
       writes; never executes any snippet code.
 
-  snippets validate --sdk=<sdk-id> [--snippet=<id>] [--snippet-skip=<id>]
+  snippets validate --sdk=<sdk-id> [--snippet=<id>] [--snippet-skip=<id>[,<id>...]]
                     [--group=<sdk-info|sdk-docs>] [--sdks=./sdks] [--validators=./validators]
       Builds the SDK's per-language validator (Docker image or native harness),
       stages each runnable snippet with concrete input values, and runs it
@@ -197,7 +197,7 @@ func runValidate(args []string) {
 	fset := flag.NewFlagSet("validate", flag.ExitOnError)
 	sdk := fset.String("sdk", "", "sdk id to validate (required)")
 	snippet := fset.String("snippet", "", "snippet id to validate (optional; restricts to one snippet)")
-	snippetSkip := fset.String("snippet-skip", "", "snippet id to skip (optional; useful for splitting one SDK across CI rows)")
+	snippetSkip := fset.String("snippet-skip", "", "comma-separated snippet ids to skip (optional; useful for splitting one SDK across CI rows)")
 	group := fset.String("group", "", "snippet group to validate (optional; e.g. `sdk-info` or `sdk-docs`)")
 	sdks := fset.String("sdks", "", "path to a sdks/ directory (default: embedded)")
 	validators := fset.String("validators", "./validators", "path to the validators/ directory")
