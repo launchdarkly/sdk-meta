@@ -101,6 +101,19 @@ struct _AnyClient {
     template <typename... Args> _AnyStatusProvider DataSourceStatus(Args&&...) const { return {}; }
 };
 
+// Polymorphic stub for the ambient `config_builder` some doc
+// fragments reference (the docs assume an earlier init fragment
+// declared it). Satisfies both the native member-call shape
+// (`config_builder.Offline(true)`) and the C-binding shape
+// (`LDServerConfigBuilder_Offline(config_builder, true)`) via an
+// implicit conversion to the opaque builder handle. File-scope
+// because local classes cannot declare member templates.
+struct _AnyConfigBuilder {
+    operator LDServerConfigBuilder() const { return nullptr; }
+    const _AnyConfigBuilder* operator->() const { return this; }
+    template <typename... Args> void Offline(Args&&...) const {}
+};
+
 // Wrappee is a never-instantiated template — body is parsed but
 // most type-checks are deferred to instantiation (which never
 // happens). The body lives in a nested block so it can re-declare
@@ -150,6 +163,7 @@ void _wrappee() {
     // also spell the qualified form stay unambiguous.
     using namespace launchdarkly::server_side::config::builders;
     _AnyClient client;
+    _AnyConfigBuilder config_builder;
     LDContext context = nullptr;
     LDServerConfig config = nullptr;
     // The listener fragments split "create the connection" and "free

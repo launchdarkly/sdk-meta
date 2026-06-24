@@ -23,6 +23,7 @@ struct LDConfig;
 struct LDClient;
 struct LDUser;
 struct LDJSON;
+struct LDDataSource;
 
 /* Logging surface. Mirrors the real v2 header's
  * <launchdarkly/logging.h> (vendored from c-sdk-common): the level
@@ -89,6 +90,29 @@ static inline struct LDConfig *LDConfigNew(const char *key) {
     return (struct LDConfig *)0;
 }
 
+/* Mirrors the real v2 header's data-source setter: replaces the default
+ * streaming/polling-update mechanism with the supplied source (e.g. the
+ * file data source from <launchdarkly/integrations/file_data.h>). */
+static inline void LDConfigSetDataSource(struct LDConfig *config, struct LDDataSource *dataSource) {
+    (void)config;
+    (void)dataSource;
+}
+
+/* Mirrors the real v2 header's analytics-events toggle: when sendEvents
+ * is false the SDK sends no analytics events to LaunchDarkly. */
+static inline void LDConfigSetSendEvents(struct LDConfig *config, LDBoolean sendEvents) {
+    (void)config;
+    (void)sendEvents;
+}
+
+/* Mirrors the real v2 header's offline-mode setter: when offline is
+ * true the SDK makes no network requests and evaluations return the
+ * in-code fallback values. */
+static inline void LDConfigSetOffline(struct LDConfig *config, LDBoolean offline) {
+    (void)config;
+    (void)offline;
+}
+
 static inline void LDConfigSetAllAttributesPrivate(struct LDConfig *config,
                                                    LDBoolean allPrivate) {
     (void)config;
@@ -111,6 +135,16 @@ static inline struct LDClient *LDClientInit(struct LDConfig *config, unsigned in
 static inline LDBoolean LDClientClose(struct LDClient *client) {
     (void)client;
     return LDBooleanTrue;
+}
+
+/* Associates two users for analytics purposes (legacy alias event;
+ * the v2 SDKs were the last majors to carry it). */
+static inline void LDClientAlias(struct LDClient *client,
+                                 struct LDUser *currentUser,
+                                 struct LDUser *previousUser) {
+    (void)client;
+    (void)currentUser;
+    (void)previousUser;
 }
 
 /* Manual event flush: fire-and-forget; delivery happens on the
