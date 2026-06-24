@@ -71,6 +71,11 @@ _wrappee = do
   -- Test-data fragments pass a bare `td` the docs assume an earlier
   -- `TestData.newTestData` binding created.
   let td = undefined :: TestData.TestData
+  -- The v3.x aliasing fragment passes bare `newUser` /
+  -- `previousUser` to `alias`; the docs assume earlier snippets
+  -- created them.
+  let newUser = undefined :: User
+  let previousUser = undefined :: User
 --BODY_BEGIN--
 {{ body }}
 --BODY_END--

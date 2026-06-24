@@ -56,6 +56,11 @@ namespace LaunchDarklySnippet
         // `VariationFunc(...)`-style builder calls keep compiling --
         // C# forbids lambdas in dynamically dispatched invocations.
         private static TestData td = null;
+        // The legacy aliasing fragment passes `newUser` /
+        // `previousUser`; the docs assume earlier snippets created
+        // them.
+        private static dynamic newUser = null;
+        private static dynamic previousUser = null;
         #pragma warning restore CS8625, CS0414, CS0649
 
         public static void Main(string[] args)

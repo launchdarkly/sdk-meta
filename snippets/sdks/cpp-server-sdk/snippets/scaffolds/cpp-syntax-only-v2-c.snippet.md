@@ -45,6 +45,8 @@ static unsigned int maxwaitmilliseconds;
 /* Test-data fragments reference a `td` the docs assume an earlier
  * LDTestDataInit() call created. */
 static struct LDTestData *td;
+static struct LDUser *newUser;
+static struct LDUser *previousUser;
 
 /* Stub of the custom logger that the install-a-custom-logger fragment
  * passes to LDConfigureGlobalLogger; the docs assume the reader

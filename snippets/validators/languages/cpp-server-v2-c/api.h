@@ -89,6 +89,14 @@ static inline struct LDConfig *LDConfigNew(const char *key) {
     return (struct LDConfig *)0;
 }
 
+/* Mirrors the real v2 header's offline-mode setter: when offline is
+ * true the SDK makes no network requests and evaluations return the
+ * in-code fallback values. */
+static inline void LDConfigSetOffline(struct LDConfig *config, LDBoolean offline) {
+    (void)config;
+    (void)offline;
+}
+
 static inline void LDConfigSetAllAttributesPrivate(struct LDConfig *config,
                                                    LDBoolean allPrivate) {
     (void)config;
@@ -111,6 +119,16 @@ static inline struct LDClient *LDClientInit(struct LDConfig *config, unsigned in
 static inline LDBoolean LDClientClose(struct LDClient *client) {
     (void)client;
     return LDBooleanTrue;
+}
+
+/* Associates two users for analytics purposes (legacy alias event;
+ * the v2 SDKs were the last majors to carry it). */
+static inline void LDClientAlias(struct LDClient *client,
+                                 struct LDUser *currentUser,
+                                 struct LDUser *previousUser) {
+    (void)client;
+    (void)currentUser;
+    (void)previousUser;
 }
 
 /* Manual event flush: fire-and-forget; delivery happens on the
@@ -251,26 +269,12 @@ static inline void LDConfigSetDataSource(struct LDConfig *config,
     (void)dataSource;
 }
 
-/* Minimal LDJSON construction surface. Fragments build variation arrays
- * with these before handing them to the flag builder. */
-static inline struct LDJSON *LDNewArray(void) {
-    return (struct LDJSON *)0;
-}
-
-static inline struct LDJSON *LDNewText(const char *text) {
-    (void)text;
-    return (struct LDJSON *)0;
-}
-
+/* LDNewBool: variation arrays for the test-data flag builder need a
+ * JSON boolean value node; the custom-attributes block above covers
+ * text and array, but not bool. */
 static inline struct LDJSON *LDNewBool(LDBoolean value) {
     (void)value;
     return (struct LDJSON *)0;
-}
-
-static inline LDBoolean LDArrayPush(struct LDJSON *array, struct LDJSON *item) {
-    (void)array;
-    (void)item;
-    return LDBooleanTrue;
 }
 
 static inline char *LDStringVariation(struct LDClient *client,
