@@ -26,5 +26,5 @@ config.BigSegments = ldcomponents.BigSegments(
     ).
     ContextCacheSize(2000).
     ContextCacheTime(30*time.Second)
-client, _ := ld.MakeCustomClient(sdkKey, config, 5*time.Second)
+client, _ := ld.MakeCustomClient("YOUR_SDK_KEY", config, 5*time.Second)
 ```

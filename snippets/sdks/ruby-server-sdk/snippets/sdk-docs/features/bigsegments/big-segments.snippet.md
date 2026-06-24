@@ -19,5 +19,5 @@ config = LaunchDarkly::Config.new(
   big_segments: LaunchDarkly::BigSegmentsConfig.new(store: store)
 )
 
-client = LaunchDarkly::LDClient.new(sdk_key, config)
+client = LaunchDarkly::LDClient.new("YOUR_SDK_KEY", config)
 ```

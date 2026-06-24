@@ -18,7 +18,7 @@ store = Redis.new_big_segment_store(
     url='redis://your-redis:6379',
     prefix='example-client-side-id')
 
-config = Config(sdk_key, big_segments=BigSegmentsConfig(store=store))
+config = Config("YOUR_SDK_KEY", big_segments=BigSegmentsConfig(store=store))
 ldclient.set_config(config)
 client = ldclient.get()
 ```
