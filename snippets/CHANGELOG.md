@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.18.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.17.0...snippets/v0.18.0) (2026-06-24)
+
+
+### Features
+
+* **snippets:** accept a comma-separated list in --snippet-skip ([#486](https://github.com/launchdarkly/sdk-meta/issues/486)) ([02972de](https://github.com/launchdarkly/sdk-meta/commit/02972def3f5586a3629c4f6ef3b324386d7809c6))
+* **snippets:** port /sdk/features/aliasing-users to canonical snippets ([#487](https://github.com/launchdarkly/sdk-meta/issues/487)) ([5e6561f](https://github.com/launchdarkly/sdk-meta/commit/5e6561fca524d691739ec219266bfcb5da30943a))
+* **snippets:** port /sdk/features/flag-changes to canonical snippets ([#489](https://github.com/launchdarkly/sdk-meta/issues/489)) ([ecbd681](https://github.com/launchdarkly/sdk-meta/commit/ecbd681b3552e343d2a2ad7a5673a73b8b29ffec))
+* **snippets:** port /sdk/features/flags-from-files to canonical snippets ([#488](https://github.com/launchdarkly/sdk-meta/issues/488)) ([598e4d8](https://github.com/launchdarkly/sdk-meta/commit/598e4d82bb4afdae9f0dc28ff356707e512d94b9))
+* **snippets:** port /sdk/features/offline-mode to canonical snippets ([#485](https://github.com/launchdarkly/sdk-meta/issues/485)) ([c09316c](https://github.com/launchdarkly/sdk-meta/commit/c09316cf1db2e55240893554d1593979a3e0683b))
+
 ## [0.17.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.16.0...snippets/v0.17.0) (2026-06-22)
 
 
