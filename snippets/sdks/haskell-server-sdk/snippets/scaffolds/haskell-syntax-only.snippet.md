@@ -37,11 +37,13 @@ module Main where
 
 import LaunchDarkly.Server
 import qualified Data.Function as LDStub
--- Test-data fragments call the SDK through a qualified `LD.` alias and
--- assume `<&>`, `toJSON`, and `Aeson.Bool` are in scope; the docs rely
--- on the reader's earlier imports for all of these.
+-- Qualified aliases some doc fragments use without showing their own
+-- import lines (the docs assume the reader's module already has them).
+-- Test-data fragments additionally assume `<&>`, `toJSON`, and
+-- `Aeson.Bool` are in scope.
 import qualified LaunchDarkly.Server as LD
 import qualified LaunchDarkly.Server.Integrations.TestData as TestData
+import qualified LaunchDarkly.Server.Integrations.FileData as FileData
 import Data.Functor ((<&>))
 import Data.Aeson (toJSON)
 import qualified Data.Aeson as Aeson

@@ -23,6 +23,7 @@ struct LDConfig;
 struct LDClient;
 struct LDUser;
 struct LDJSON;
+struct LDDataSource;
 
 /* Logging surface. Mirrors the real v2 header's
  * <launchdarkly/logging.h> (vendored from c-sdk-common): the level
@@ -87,6 +88,21 @@ static inline void LDDetailsClear(struct LDDetails *details) {
 static inline struct LDConfig *LDConfigNew(const char *key) {
     (void)key;
     return (struct LDConfig *)0;
+}
+
+/* Mirrors the real v2 header's data-source setter: replaces the default
+ * streaming/polling-update mechanism with the supplied source (e.g. the
+ * file data source from <launchdarkly/integrations/file_data.h>). */
+static inline void LDConfigSetDataSource(struct LDConfig *config, struct LDDataSource *dataSource) {
+    (void)config;
+    (void)dataSource;
+}
+
+/* Mirrors the real v2 header's analytics-events toggle: when sendEvents
+ * is false the SDK sends no analytics events to LaunchDarkly. */
+static inline void LDConfigSetSendEvents(struct LDConfig *config, LDBoolean sendEvents) {
+    (void)config;
+    (void)sendEvents;
 }
 
 /* Mirrors the real v2 header's offline-mode setter: when offline is
@@ -256,17 +272,6 @@ static inline double LDDoubleVariation(struct LDClient *client,
     (void)flagKey;
     (void)details;
     return fallback;
-}
-
-/* Data-source plumbing used by the test-data-source fragments. The real
- * v2 header returns a heap-allocated LDDataSource; the stub only needs
- * the types to line up. */
-struct LDDataSource;
-
-static inline void LDConfigSetDataSource(struct LDConfig *config,
-                                         struct LDDataSource *dataSource) {
-    (void)config;
-    (void)dataSource;
 }
 
 /* LDNewBool: variation arrays for the test-data flag builder need a

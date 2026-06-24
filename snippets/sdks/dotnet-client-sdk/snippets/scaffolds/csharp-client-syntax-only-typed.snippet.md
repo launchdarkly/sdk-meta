@@ -48,6 +48,9 @@ namespace LaunchDarklySnippet
         private static LdClient client = null;
         #pragma warning restore CS8625, CS0414, CS0649
 
+        // Caller-supplied helper the flag-changes body assumes exists.
+        private static void DoSomethingWithNewFlagValue(bool newValue) {}
+
         public static void Main(string[] args)
         {
             System.Console.WriteLine("feature flag evaluates to true");
