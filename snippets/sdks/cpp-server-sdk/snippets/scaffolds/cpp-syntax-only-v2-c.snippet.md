@@ -28,10 +28,12 @@ validation:
 
 ```c
 #include <launchdarkly/api.h>
-/* Pre-included at file scope so fragments that #include it inside the
- * wrappee body hit the include guard (a no-op) instead of expanding
- * declarations at function scope. */
+/* Pre-include integration headers a fragment may include from inside
+ * the `_wrappee` body. With the guard already defined, the in-body
+ * `#include` expands to nothing — the header's `static inline`
+ * definitions must not land inside a function body. */
 #include <launchdarkly/store/redis.h>
+#include <launchdarkly/integrations/file_data.h>
 
 /* File-scope stubs so fragments that read like statement bodies
  * (`user = LDUserNew(...);` — assignment to a pre-declared `user`)
