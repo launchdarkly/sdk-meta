@@ -9,5 +9,7 @@ validation:
 ---
 
 ```python
+import os
+
 os.environ["HTTPS_PROXY"] = "https://my-proxy-host:8080"
 ```
