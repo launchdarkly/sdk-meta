@@ -9,6 +9,12 @@ validation:
 ---
 
 ```php
+require 'vendor/autoload.php';
+
+use LaunchDarkly\LDClient;
+use LaunchDarkly\OpenTelemetry\TracingHook;
+use LaunchDarkly\OpenTelemetry\TracingHookOptions;
+
 $client = new LDClient('YOUR_SDK_KEY', [
     'hooks' => [
         new TracingHook(new TracingHookOptions(
