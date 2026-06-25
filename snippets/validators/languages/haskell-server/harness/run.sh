@@ -42,6 +42,14 @@ if grep -qF -- '--TOP_LIFT_TARGET--' /opt/hello-haskell/app/Main.hs; then
             if ($0 ~ /^(import |data |type |newtype |class |instance )/ ||
                 $0 ~ /^[A-Za-z_][A-Za-z0-9_'\'']*[ \t]+(::|=)/) {
                 lift[++nlift] = $0;
+            } else if ($0 ~ /^[)\]}]/) {
+                # A closing bracket at column 0 continues the previous
+                # statement. Indenting it by the same two spaces as the
+                # statement itself would land it on the do-block layout
+                # column, where the layout algorithm inserts a statement
+                # separator and breaks the enclosing expression. Indent
+                # it deeper so it stays a continuation line.
+                rest[++nrest] = "    " $0;
             } else if ($0 ~ /^[^ \t]/ && length($0) > 0) {
                 rest[++nrest] = "  " $0;
             } else {
