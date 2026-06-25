@@ -23,8 +23,9 @@ validation:
 #[allow(unused_imports)]
 use launchdarkly_server_sdk::{
     ApplicationInfo, AttributeValue, Client, ConfigBuilder, Context, ContextBuilder,
-    FlagDetailConfig, MultiContextBuilder, Reason, Reference, ServiceEndpointsBuilder,
-    MigratorBuilder, ExecutionOrder,
+    EventProcessorBuilder, FlagDetailConfig, MultiContextBuilder, Reason, Reference,
+    ServiceEndpointsBuilder,
+    MigratorBuilder, ExecutionOrder, TestData, FlagBuilder,
 };
 #[allow(unused_imports)]
 use std::sync::Arc;
@@ -86,6 +87,16 @@ macro_rules! hashmap {
     }};
 }
 
+// Stub of the pre-1.0 (beta) `alias` method — dropped at 1.0 along
+// with the rest of the User API. An extension trait lets the doc
+// fragment's `client.alias(user, previous_user)` resolve against the
+// real `Client` type without touching the SDK surface.
+#[allow(dead_code)]
+trait BetaAliasExt {
+    fn alias(&self, _user: User, _previous_user: User) {}
+}
+impl BetaAliasExt for Client {}
+
 #[allow(dead_code, unused, unused_variables, unused_must_use)]
 async fn _wrappee() -> Result<(), Box<dyn std::error::Error>> {
     let client: Client = unimplemented!();
@@ -93,6 +104,13 @@ async fn _wrappee() -> Result<(), Box<dyn std::error::Error>> {
     // `client`; stub both so either spelling resolves.
     let ldclient: Client = unimplemented!();
     let context = ContextBuilder::new("stub").build()?;
+    // Test-data fragments reference a `td` the docs assume an earlier
+    // `TestData::new()` binding created.
+    let td = TestData::new();
+    // Ambient names the beta aliasing fragment assumes earlier
+    // snippets created.
+    let user = User::with_key("stub").build();
+    let previous_user = User::with_key("stub").build();
 {{ body }}
     Ok(())
 }

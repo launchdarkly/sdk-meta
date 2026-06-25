@@ -47,6 +47,20 @@ namespace LaunchDarklySnippet
         // Evaluation/init fragments pass an ambient `context`; the
         // docs assume it already exists.
         private static dynamic context = null;
+        // Init fragments pass a `startWaitTime` the docs assume already
+        // exists.
+        private static System.TimeSpan startWaitTime = default;
+        // Test-data fragments reference a `td` the docs assume an
+        // earlier `TestData.DataSource()` call created. Typed as the
+        // real TestData (not dynamic) so lambda arguments to
+        // `VariationFunc(...)`-style builder calls keep compiling --
+        // C# forbids lambdas in dynamically dispatched invocations.
+        private static TestData td = null;
+        // The legacy aliasing fragment passes `newUser` /
+        // `previousUser`; the docs assume earlier snippets created
+        // them.
+        private static dynamic newUser = null;
+        private static dynamic previousUser = null;
         #pragma warning restore CS8625, CS0414, CS0649
 
         public static void Main(string[] args)

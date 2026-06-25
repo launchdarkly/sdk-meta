@@ -34,6 +34,7 @@ validation:
 #include <cstdio>
 #include <future>
 #include <iostream>
+#include <memory>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -41,11 +42,48 @@ validation:
 #include <launchdarkly/client_side/client.hpp>
 #include <launchdarkly/context_builder.hpp>
 #include <launchdarkly/value.hpp>
+// Logging interface headers -- the logging doc fragments re-include
+// these inside the body (a no-op thanks to pragma once / guards) and
+// the custom-logger stubs below need them at file scope.
+#include <launchdarkly/logging/log_backend.hpp>
+#include <launchdarkly/logging/log_level.hpp>
 // C-binding headers — doc fragments mix C-binding and native styles.
 #include <launchdarkly/client_side/bindings/c/sdk.h>
 #include <launchdarkly/client_side/bindings/c/config/builder.h>
 #include <launchdarkly/bindings/c/context.h>
 #include <launchdarkly/bindings/c/context_builder.h>
+// array_builder.h is included at file scope so doc fragments that
+// carry their own in-body `#include <.../array_builder.h>` line
+// hit the header's include guard there (a first include inside the
+// wrappee's function body would be invalid C++ — the header opens
+// an extern "C" block).
+#include <launchdarkly/bindings/c/array_builder.h>
+
+// File-scope stub matching the C binding's FlagChangedCallbackFn
+// signature so flag-change bodies that assign a caller-defined
+// callback (`listener.FlagChanged = OnFlagChange;`) resolve. The
+// callback definition itself is shown in a separate doc fragment
+// validated through the toplevel scaffold. Never invoked.
+inline void OnFlagChange(char const* flag_key,
+                         LDValue new_value,
+                         LDValue old_value,
+                         bool deleted,
+                         void* user_data) {}
+
+// Stub connection returned by the flag-notifier stub below; supports
+// both `listener->Disconnect()` (the native API returns a
+// unique_ptr<IConnection>) and value semantics.
+struct _AnyConnection {
+    const _AnyConnection* operator->() const { return this; }
+    void Disconnect() const {}
+};
+
+// Stub notifier so `client.FlagNotifier().OnFlagChange(key, handler)`
+// type-checks. The handler is a generic lambda in the doc fragments,
+// so its body is never instantiated.
+struct _AnyNotifier {
+    template <typename... Args> _AnyConnection OnFlagChange(Args&&...) const { return {}; }
+};
 
 // Polymorphic stub so a body can use `client.BoolVariation(...)`
 // (native-style) AND `LDClientSDK_BoolVariation(client, ...)`
@@ -53,6 +91,23 @@ validation:
 // shape the body uses. The wrappee is a never-instantiated template,
 // so the conversion operator and member functions exist at the type
 // system level but are never invoked.
+// Stub of the data-source-status provider returned by the native
+// API's `client.DataSourceStatus()` — variadic member so the body's
+// `.OnDataSourceStatusChange(lambda)` chain type-checks (the lambda
+// itself is checked against the real DataSourceStatus type).
+struct _AnyStatusProvider {
+    template <typename... Args> int OnDataSourceStatusChange(Args&&...) const { return 0; }
+};
+
+// Stub matching the C-binding listener callback the docs define in a
+// separate code block; bodies that only show the assignment
+// (`listener.StatusChanged = OnDataSourceStatusChanged;`) resolve
+// against this. Signature mirrors DataSourceStatusCallbackFn.
+inline void OnDataSourceStatusChanged(LDDataSourceStatus status, void* user_data) {
+    (void)status;
+    (void)user_data;
+}
+
 struct _AnyClient {
     operator LDClientSDK() const { return nullptr; }
     // operator-> makes `client->Method(...)` resolve when the body
@@ -80,10 +135,14 @@ struct _AnyClient {
     template <typename... Args> void Track(Args&&...) const {}
     template <typename... Args> void TrackEvent(Args&&...) const {}
     template <typename... Args> void Identify(Args&&...) const {}
+    // Identify-and-examine-the-result fragments treat the return as a
+    // future<bool>, mirroring the real v3 client's IdentifyAsync.
+    template <typename... Args> auto IdentifyAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
     // Matches the real Client::FlushAsync surface: fire-and-forget,
     // returns void.
     template <typename... Args> void FlushAsync(Args&&...) const {}
     template <typename... Args> auto StartAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
+    template <typename... Args> _AnyStatusProvider DataSourceStatus(Args&&...) const { return {}; }
     // Lowercase-first aliases — the v2.x C++ client SDK exposed
     // camelCased methods (e.g. `client->boolVariation(...)`); v3.x
     // renamed to PascalCase. Doc fragments still cover both eras, so
@@ -97,7 +156,47 @@ struct _AnyClient {
     template <typename... Args> void trackEvent(Args&&...) const {}
     template <typename... Args> void identify(Args&&...) const {}
     template <typename... Args> auto startAsync(Args&&...) const { return std::async(std::launch::deferred, []{ return false; }); }
+    // Flag-notifier stub so subscribe-to-changes bodies can chain
+    // `client.FlagNotifier().OnFlagChange(...)`.
+    _AnyNotifier FlagNotifier() const { return {}; }
 };
+
+// Polymorphic stub for the ambient `config_builder` some doc
+// fragments reference (the docs assume an earlier init fragment
+// declared it). Satisfies both the native member-call shape
+// (`config_builder.Offline(true)`) and the C-binding shape
+// (`LDClientConfigBuilder_Offline(config_builder, true)`) via an
+// implicit conversion to the opaque builder handle. File-scope
+// because local classes cannot declare member templates.
+struct _AnyConfigBuilder {
+    operator LDClientConfigBuilder() const { return nullptr; }
+    const _AnyConfigBuilder* operator->() const { return this; }
+    template <typename... Args> void Offline(Args&&...) const {}
+};
+
+// Stubs for the install-a-custom-logger fragments, which reference a
+// CustomLogger backend (native) or enabled/write callbacks (C
+// binding) defined in a preceding fragment on the same docs page.
+// Never invoked.
+class CustomLogger : public launchdarkly::ILogBackend {
+   public:
+    bool Enabled(launchdarkly::LogLevel level) noexcept override {
+        return true;
+    }
+    void Write(launchdarkly::LogLevel level,
+               std::string message) noexcept override {}
+};
+
+static bool enabled(enum LDLogLevel level, void* user_data) {
+    return true;
+}
+
+static void write(enum LDLogLevel level, char const* msg, void* user_data) {
+    (void)level;
+    (void)msg;
+    (void)user_data;
+}
+
 
 template <int = 0>
 void _wrappee() {
@@ -117,8 +216,23 @@ void _wrappee() {
     using namespace launchdarkly;
     using namespace launchdarkly::client_side;
     _AnyClient client;
+    _AnyConfigBuilder config_builder;
+    // Some C-binding fragments name the client handle `sdk` (matching
+    // the binding's parameter names) rather than `client`.
+    _AnyClient sdk;
     LDContext context = nullptr;
+    // Identify fragments pass an `updated_context` built by an earlier
+    // fragment; the docs assume it already exists.
+    LDContext updated_context = nullptr;
     LDClientConfig config = nullptr;
+    // C-binding flag-change fragments reference an ambient `sdk`
+    // handle (the docs' init fragments name the client `sdk` in the
+    // C-binding style) — served by the `_AnyClient sdk` stub above
+    // via its `operator LDClientSDK()` conversion.
+    // The listener fragments split "create the connection" and "free
+    // the connection" across separate code blocks; the free-side body
+    // references `connection` as if pre-existing.
+    LDListenerConnection connection = nullptr;
     // `maxwait` is referenced by both native-style fragments
     // (`wait_for(maxwait)` — needs a chrono duration) and C-binding
     // fragments (`LDClientSDK_Start(client, maxwait, ...)` — needs an
