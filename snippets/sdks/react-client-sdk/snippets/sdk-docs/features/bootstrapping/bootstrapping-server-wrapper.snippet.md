@@ -1,9 +1,9 @@
 ---
-id: react-client-sdk/sdk-docs/bootstrap-react-server-wrapper-javascript
+id: react-client-sdk/sdk-docs/features/bootstrapping/bootstrapping-server-wrapper
 sdk: react-client-sdk
 kind: reference
 lang: javascript
-description: "JavaScript in section \"React Server Wrapper\""
+description: Bootstrapping through the React Server Wrapper (LDIsomorphicProvider).
 validation:
   scaffold: react-client-sdk/scaffolds/react-server-syntax-only
 ---
