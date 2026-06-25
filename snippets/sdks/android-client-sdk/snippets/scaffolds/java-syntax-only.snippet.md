@@ -105,6 +105,9 @@ class SnippetActivity extends Activity {
     // timeout the docs assume already exist.
     LDContext context;
     int secondsToBlock;
+    // Test-data fragments reference a `td` the docs assume an earlier
+    // `TestData.dataSource()` call created.
+    TestData td;
     // Unregistration fragments reference a listener the docs assume
     // was created by an earlier registration fragment.
     FeatureFlagChangeListener listener;

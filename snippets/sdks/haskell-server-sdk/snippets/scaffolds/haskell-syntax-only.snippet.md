@@ -28,14 +28,25 @@ validation:
 
 ```haskell
 {-# LANGUAGE OverloadedStrings #-}
+-- Extended defaulting so polymorphic string literals inside generic
+-- calls the docs show (e.g. `toJSON "red"`, where the literal is both
+-- IsString and ToJSON constrained) default to String instead of
+-- failing as ambiguous.
+{-# LANGUAGE ExtendedDefaultRules #-}
 module Main where
 
 import LaunchDarkly.Server
 import qualified Data.Function as LDStub
 -- Qualified aliases some doc fragments use without showing their own
 -- import lines (the docs assume the reader's module already has them).
+-- Test-data fragments additionally assume `<&>`, `toJSON`, and
+-- `Aeson.Bool` are in scope.
 import qualified LaunchDarkly.Server as LD
+import qualified LaunchDarkly.Server.Integrations.TestData as TestData
 import qualified LaunchDarkly.Server.Integrations.FileData as FileData
+import Data.Functor ((<&>))
+import Data.Aeson (toJSON)
+import qualified Data.Aeson as Aeson
 
 --TOP_LIFT_TARGET--
 
@@ -58,6 +69,9 @@ _wrappee = do
   -- functions; the docs assume it exists. Annotated so it stays
   -- unambiguous for sibling bodies that never reference it.
   let context = undefined :: Context
+  -- Test-data fragments pass a bare `td` the docs assume an earlier
+  -- `TestData.newTestData` binding created.
+  let td = undefined :: TestData.TestData
 --BODY_BEGIN--
 {{ body }}
 --BODY_END--

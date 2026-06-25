@@ -274,6 +274,14 @@ static inline double LDDoubleVariation(struct LDClient *client,
     return fallback;
 }
 
+/* LDNewBool: variation arrays for the test-data flag builder need a
+ * JSON boolean value node; the custom-attributes block above covers
+ * text and array, but not bool. */
+static inline struct LDJSON *LDNewBool(LDBoolean value) {
+    (void)value;
+    return (struct LDJSON *)0;
+}
+
 static inline char *LDStringVariation(struct LDClient *client,
                                       struct LDUser *user,
                                       const char *flagKey,
