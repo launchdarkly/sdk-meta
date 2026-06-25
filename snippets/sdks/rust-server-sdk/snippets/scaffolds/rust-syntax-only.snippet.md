@@ -27,10 +27,11 @@ use launchdarkly_server_sdk::{
     ServiceEndpointsBuilder,
     MigratorBuilder, ExecutionOrder,
     PersistentDataStore, PersistentDataStoreFactory,
+    MigrationOpTracker, Stage,
     TestData, FlagBuilder,
 };
 #[allow(unused_imports)]
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 #[allow(unused_imports)]
 use futures::future::FutureExt;
 #[allow(unused_imports)]
@@ -110,6 +111,21 @@ impl PersistentDataStoreFactory for SomeKindOfFeatureStore {
     }
 }
 
+// Stub migrator for migration doc fragments. The real `Migrator` type
+// is generic over its read/write closures, which a parse-only stub
+// binding cannot name; a minimal inherent-method stub with concrete
+// flag-key and payload parameter types lets `migrator.read(...)` /
+// `migrator.write(...)` fragments resolve, including the `.into()`
+// calls on the flag key and payload (which need a concrete target
+// type to infer).
+#[allow(dead_code)]
+struct _StubMigrator;
+#[allow(dead_code)]
+impl _StubMigrator {
+    async fn read(&mut self, _context: &Context, _flag_key: String, _default_stage: Stage, _payload: String) {}
+    async fn write(&mut self, _context: &Context, _flag_key: String, _default_stage: Stage, _payload: String) {}
+}
+
 // Stub of the pre-1.0 (beta) `alias` method — dropped at 1.0 along
 // with the rest of the User API. An extension trait lets the doc
 // fragment's `client.alias(user, previous_user)` resolve against the
@@ -120,7 +136,7 @@ trait BetaAliasExt {
 }
 impl BetaAliasExt for Client {}
 
-#[allow(dead_code, unused, unused_variables, unused_must_use)]
+#[allow(dead_code, unused, unused_variables, unused_must_use, unreachable_code)]
 async fn _wrappee() -> Result<(), Box<dyn std::error::Error>> {
     let client: Client = unimplemented!();
     // Some doc fragments name the ambient client `ldclient` instead of
@@ -130,6 +146,12 @@ async fn _wrappee() -> Result<(), Box<dyn std::error::Error>> {
     // Persistent-store fragments pass ambient `store_options` the docs
     // assume an earlier snippet created.
     let store_options = ();
+    // Migration fragments reference an ambient migrator, a stage from
+    // a previous migration_variation call, and its tracker; the docs
+    // assume they already exist.
+    let mut migrator = _StubMigrator;
+    let stage: Stage = unimplemented!();
+    let tracker: Arc<Mutex<MigrationOpTracker>> = unimplemented!();
     // Test-data fragments reference a `td` the docs assume an earlier
     // `TestData::new()` binding created.
     let td = TestData::new();
