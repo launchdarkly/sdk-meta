@@ -25,7 +25,7 @@ use launchdarkly_server_sdk::{
     ApplicationInfo, AttributeValue, Client, ConfigBuilder, Context, ContextBuilder,
     EventProcessorBuilder, FlagDetailConfig, MultiContextBuilder, Reason, Reference,
     ServiceEndpointsBuilder,
-    MigratorBuilder, ExecutionOrder,
+    MigratorBuilder, ExecutionOrder, TestData, FlagBuilder,
 };
 #[allow(unused_imports)]
 use std::sync::Arc;
@@ -104,6 +104,9 @@ async fn _wrappee() -> Result<(), Box<dyn std::error::Error>> {
     // `client`; stub both so either spelling resolves.
     let ldclient: Client = unimplemented!();
     let context = ContextBuilder::new("stub").build()?;
+    // Test-data fragments reference a `td` the docs assume an earlier
+    // `TestData::new()` binding created.
+    let td = TestData::new();
     // Ambient names the beta aliasing fragment assumes earlier
     // snippets created.
     let user = User::with_key("stub").build();
