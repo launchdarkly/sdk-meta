@@ -49,6 +49,10 @@ Future<void> _wrappee() async {
   dynamic context = Object();
   // ignore: unused_local_variable
   String flagKey = '';
+  // Flag-change fragments cancel a stream subscription the docs
+  // assume was created by an earlier subscribe fragment.
+  // ignore: unused_local_variable
+  dynamic sub = Object();
   {
 //BODY_BEGIN
 {{ body }}

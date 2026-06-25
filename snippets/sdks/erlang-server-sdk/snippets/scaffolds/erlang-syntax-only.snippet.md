@@ -38,6 +38,12 @@ main() ->
 %% to start with a lowercase letter (atoms), so the conventional
 %% leading-underscore name from other scaffolds doesn't translate
 %% here — `wrappee_` is the closest lexical match.
+%% The terminating dot sits on its own line: some doc fragments end
+%% with %%-comment lines, and a dot appended directly after the body
+%% would be swallowed by the trailing comment. The scanner treats
+%% comments and whitespace before the dot as insignificant, so a
+%% stand-alone dot terminates the clause either way.
 wrappee_() ->
-{{ body }}.
+{{ body }}
+.
 ```
