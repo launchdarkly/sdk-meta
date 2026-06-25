@@ -27,6 +27,7 @@ use launchdarkly_server_sdk::{
     ServiceEndpointsBuilder,
     MigratorBuilder, ExecutionOrder,
     PersistentDataStore, PersistentDataStoreFactory,
+    TestData, FlagBuilder,
 };
 #[allow(unused_imports)]
 use std::sync::Arc;
@@ -129,6 +130,9 @@ async fn _wrappee() -> Result<(), Box<dyn std::error::Error>> {
     // Persistent-store fragments pass ambient `store_options` the docs
     // assume an earlier snippet created.
     let store_options = ();
+    // Test-data fragments reference a `td` the docs assume an earlier
+    // `TestData::new()` binding created.
+    let td = TestData::new();
     // Ambient names the beta aliasing fragment assumes earlier
     // snippets created.
     let user = User::with_key("stub").build();

@@ -32,10 +32,23 @@ validation:
 
 ```haskell
 {-# LANGUAGE OverloadedStrings #-}
+-- Extended defaulting so polymorphic string literals inside generic
+-- calls the docs show (e.g. `toJSON "red"`, where the literal is both
+-- IsString and ToJSON constrained) default to String instead of
+-- failing as ambiguous.
+{-# LANGUAGE ExtendedDefaultRules #-}
 module Main where
 
 import LaunchDarkly.Server
 import qualified Data.Function as LDStub
+-- Test-data fragments call the SDK through a qualified `LD.` alias and
+-- assume `<&>`, `toJSON`, and `Aeson.Bool` are in scope; the docs rely
+-- on the reader's earlier imports for all of these.
+import qualified LaunchDarkly.Server as LD
+import qualified LaunchDarkly.Server.Integrations.TestData as TestData
+import Data.Functor ((<&>))
+import Data.Aeson (toJSON)
+import qualified Data.Aeson as Aeson
 
 --TOP_LIFT_TARGET--
 
@@ -55,6 +68,9 @@ _wrappee = do
   -- functions; the docs assume it exists. Annotated so it stays
   -- unambiguous for sibling bodies that never reference it.
   let user = undefined :: User
+  -- Test-data fragments pass a bare `td` the docs assume an earlier
+  -- `TestData.newTestData` binding created.
+  let td = undefined :: TestData.TestData
   -- The v3.x aliasing fragment passes bare `newUser` /
   -- `previousUser` to `alias`; the docs assume earlier snippets
   -- created them.

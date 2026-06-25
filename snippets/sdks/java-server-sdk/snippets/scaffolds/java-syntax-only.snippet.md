@@ -62,6 +62,13 @@ public class Snippet {
     }
     @SuppressWarnings("unused")
     private static final Object storeOptions = null;
+    // Test-data fragments reference a `td` the docs assume an earlier
+    // `TestData.dataSource()` call created.
+    @SuppressWarnings("unused")
+    private static final TestData td = null;
+    // Init fragments pass an `sdkKey` the docs assume already exists.
+    @SuppressWarnings("unused")
+    private static final String sdkKey = "";
 
     public static void main(String[] args) {
         System.out.println("feature flag evaluates to true");
