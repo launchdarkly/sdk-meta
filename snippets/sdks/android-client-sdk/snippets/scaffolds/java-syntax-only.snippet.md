@@ -112,6 +112,9 @@ class SnippetActivity extends Activity {
     // Event fragments pass an ambient `data` payload to
     // `client.trackData(eventName, data)`.
     LDValue data;
+    // Test-data fragments reference a `td` the docs assume an earlier
+    // `TestData.dataSource()` call created.
+    TestData td;
     // Unregistration fragments reference a listener the docs assume
     // was created by an earlier registration fragment.
     FeatureFlagChangeListener listener;
