@@ -9,10 +9,12 @@ validation:
 ---
 
 ```typescript
+import { LDMigrationStage } from '@launchdarkly/node-server-sdk';
+
 // define the combination of reads and writes from the new and old systems
 // that should occur at each migration stage
 
-switch (stage) {
+switch (value) {
   case LDMigrationStage.Off: { }
   case LDMigrationStage.DualWrite: { }
   case LDMigrationStage.Shadow: { }
