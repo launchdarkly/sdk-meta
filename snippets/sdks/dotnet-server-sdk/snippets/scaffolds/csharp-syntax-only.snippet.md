@@ -29,9 +29,14 @@ validation:
 // USING_LIFT_MARKER
 using System;
 using System.Collections.Generic;
+// Web-proxy fragments construct `NetworkCredential` unqualified while
+// fully qualifying the other System.Net types; the docs assume the
+// using directive is ambient, so provide it here.
+using System.Net;
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Server;
 using LaunchDarkly.Sdk.Server.Migrations;
+using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Ai;
 using LaunchDarkly.Sdk.Server.Ai.Adapters;
 using LaunchDarkly.Sdk.Server.Ai.Config;
@@ -67,6 +72,12 @@ namespace LaunchDarklySnippet
         private static dynamic payload = null;
         private static dynamic tracker = null;
         private static MigrationStage stage = default;
+        // Test-data fragments reference a `td` the docs assume an
+        // earlier `TestData.DataSource()` call created. Typed as the
+        // real TestData (not dynamic) so lambda arguments to
+        // `VariationFunc(...)`-style builder calls keep compiling --
+        // C# forbids lambdas in dynamically dispatched invocations.
+        private static TestData td = null;
         // The legacy aliasing fragment passes `newUser` /
         // `previousUser`; the docs assume earlier snippets created
         // them.

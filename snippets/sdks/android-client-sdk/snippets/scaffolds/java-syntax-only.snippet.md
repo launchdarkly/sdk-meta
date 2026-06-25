@@ -19,9 +19,12 @@ description: |
   Google's Maven plus the AndroidX runtime — neither of which the
   `jvm` validator's Java + Maven path can resolve.
 
-  The wrappee body is spliced inside `BaseApplication.onCreate()`'s
-  unreachable `if (false)` block so unresolved caller surfaces
-  (Activity host lifecycle, etc.) have somewhere legal to land.
+  The wrappee body is spliced inside a never-invoked `_wrappee()`
+  instance method's unreachable `if (false)` block so unresolved
+  caller surfaces (Activity host lifecycle, etc.) have somewhere
+  legal to land. The method declares `throws Exception` because doc
+  fragments call checked-exception APIs (e.g. `LDClient.get()`)
+  without a try/catch.
   Bodies that declare local helper variables, call methods on
   `this.getApplication()`, or reference Android Application context
   resolve through the enclosing BaseApplication instance.
@@ -67,6 +70,9 @@ import com.launchdarkly.sdk.android.integrations.*;
 import com.launchdarkly.observability.plugin.*;
 import com.launchdarkly.observability.api.*;
 import java.util.Collections;
+// The all-flags-listener fragment's `onChange(List<String> flagKeys)`
+// override needs the collection interface itself.
+import java.util.List;
 // Timber is in the validator project's dependencies; the logging and
 // monitoring doc fragments call `Timber.plant(...)` without showing
 // the import.
@@ -99,6 +105,12 @@ class SnippetActivity extends Activity {
     // timeout the docs assume already exist.
     LDContext context;
     int secondsToBlock;
+    // Test-data fragments reference a `td` the docs assume an earlier
+    // `TestData.dataSource()` call created.
+    TestData td;
+    // Unregistration fragments reference a listener the docs assume
+    // was created by an earlier registration fragment.
+    FeatureFlagChangeListener listener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

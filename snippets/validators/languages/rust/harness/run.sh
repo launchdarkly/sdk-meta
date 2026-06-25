@@ -25,6 +25,9 @@ cp "/snippet/$SNIPPET_ENTRYPOINT" "$SNIPPET_ENTRYPOINT"
 cargo add --quiet "launchdarkly-server-sdk${LD_RUST_SDK_VERSION:+@${LD_RUST_SDK_VERSION}}"
 cargo add --quiet tokio@1 -F rt,macros
 cargo add --quiet futures
+# Web-proxy doc fragments configure the 3.x transport layer directly
+# (HyperTransport); the `hyper` feature gates that type.
+cargo add --quiet launchdarkly-sdk-transport -F hyper
 
 LOG=$(mktemp)
 

@@ -1,0 +1,22 @@
+---
+id: dotnet-server-sdk/sdk-docs/features/webproxy/web-proxy-auth
+sdk: dotnet-server-sdk
+kind: reference
+lang: csharp
+description: Web proxy configuration with authentication for .NET (server-side).
+validation:
+  scaffold: dotnet-server-sdk/scaffolds/csharp-syntax-only
+---
+
+```csharp
+var proxyUri = new Uri("http://my-proxy-host:8080");
+var proxy = new System.Net.WebProxy(proxyUri);
+var credentials = new System.Net.CredentialCache();
+credentials.Add(proxy.Address, "Basic",
+    new NetworkCredential("username", "password"));
+proxy.Credentials = credentials;
+
+var config = Configuration.Builder("YOUR_SDK_KEY")
+    .Http(Components.HttpConfiguration().Proxy(proxy))
+    .Build();
+```

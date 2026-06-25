@@ -21,8 +21,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # fragments reference. Inline no-op definitions so the staged
 # snippet links cleanly with a single `gcc` invocation against
 # `-include launchdarkly/api.h`.
-RUN mkdir -p /usr/local/include/launchdarkly
+RUN mkdir -p /usr/local/include/launchdarkly/integrations
 COPY languages/cpp-server-v2-c/api.h /usr/local/include/launchdarkly/api.h
+COPY languages/cpp-server-v2-c/integrations/test_data.h /usr/local/include/launchdarkly/integrations/test_data.h
+# Stub `launchdarkly/integrations/file_data.h` — the v2 file data
+# source header that flags-from-files fragments include.
+COPY languages/cpp-server-v2-c/file_data.h /usr/local/include/launchdarkly/integrations/file_data.h
 
 WORKDIR /work
 
