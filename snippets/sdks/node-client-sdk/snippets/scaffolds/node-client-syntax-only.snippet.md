@@ -44,9 +44,17 @@ const body = String.raw`
 //   - `as Type` assertions: only when preceded by `)` or an
 //     identifier (not by `*`, which would mis-erase
 //     `import * as Foo`).
+//   - Parameter annotations: only on lines that open a `function`
+//     declaration, so `: value` pairs inside object literals are
+//     never touched.
 const erased = body
   .replace(/(\bconst|\blet|\bvar)\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*:\s*[^=;]+=/g, '$1 $2 =')
-  .replace(/([A-Za-z0-9_$\)])\s+as\s+[A-Za-z_$][A-Za-z0-9_$.<>\[\]\s|&,()]*/g, '$1');
+  .replace(/([A-Za-z0-9_$\)])\s+as\s+[A-Za-z_$][A-Za-z0-9_$.<>\[\]\s|&,()]*/g, '$1')
+  .replace(
+    /^([ \t]*(?:export\s+)?(?:default\s+)?(?:async\s+)?function\s+[A-Za-z_$][A-Za-z0-9_$]*\s*\()([^)]*)(\))/gm,
+    (m, pre, params, post) =>
+      pre + params.replace(/\s*:\s*[A-Za-z_$][A-Za-z0-9_$.<>\[\]|&\s]*/g, '') + post,
+  );
 
 fs.writeFileSync('fragment.mjs', erased);
 

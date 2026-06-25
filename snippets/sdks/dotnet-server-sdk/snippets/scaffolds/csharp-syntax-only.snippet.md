@@ -70,11 +70,17 @@ namespace LaunchDarklySnippet
         // AI metrics fragments call methods on the config's `tracker`
         // and read fields from a provider `response`; both come from
         // surrounding application code in the docs.
-        private static dynamic tracker = null;
         private static dynamic response = null;
         // AI metrics flush fragments call Flush() on the underlying
         // LaunchDarkly client, which the docs name `baseClient`.
         private static dynamic baseClient = null;
+        // Migration fragments reference an ambient migrator, payload,
+        // op tracker, and the stage from a previous MigrationVariation
+        // call; the docs assume they already exist.
+        private static dynamic migration = null;
+        private static dynamic payload = null;
+        private static dynamic tracker = null;
+        private static MigrationStage stage = default;
         // Test-data fragments reference a `td` the docs assume an
         // earlier `TestData.DataSource()` call created. Typed as the
         // real TestData (not dynamic) so lambda arguments to
