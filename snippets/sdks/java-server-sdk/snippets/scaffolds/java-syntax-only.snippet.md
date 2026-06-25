@@ -50,6 +50,13 @@ public class Snippet {
     // docs assume it already exists, so provide it as a stub symbol.
     @SuppressWarnings("unused")
     private static final LDContext context = null;
+    // Migration fragments reference an ambient migrator and the result
+    // of a previous migrationVariation call; the docs assume they
+    // already exist, so provide them as stub symbols.
+    @SuppressWarnings("unused")
+    private static final Migration<String, String, String, String> migration = null;
+    @SuppressWarnings("unused")
+    private static final MigrationVariation migrationVariation = null;
     // Test-data fragments reference a `td` the docs assume an earlier
     // `TestData.dataSource()` call created.
     @SuppressWarnings("unused")

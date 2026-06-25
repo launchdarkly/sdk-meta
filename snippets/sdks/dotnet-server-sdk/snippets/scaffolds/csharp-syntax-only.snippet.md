@@ -65,6 +65,13 @@ namespace LaunchDarklySnippet
         // Evaluation fragments pass `myContext` to the variation
         // methods; the docs assume it already exists.
         private static Context myContext = default;
+        // Migration fragments reference an ambient migrator, payload,
+        // op tracker, and the stage from a previous MigrationVariation
+        // call; the docs assume they already exist.
+        private static dynamic migration = null;
+        private static dynamic payload = null;
+        private static dynamic tracker = null;
+        private static MigrationStage stage = default;
         // Test-data fragments reference a `td` the docs assume an
         // earlier `TestData.DataSource()` call created. Typed as the
         // real TestData (not dynamic) so lambda arguments to
