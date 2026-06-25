@@ -28,5 +28,5 @@ const config = {
     userCacheTime: 30
   }
 };
-const client = init(sdkKey, config);
+const client = init("YOUR_SDK_KEY", config);
 ```

@@ -25,5 +25,5 @@ const config = {
     userCacheTime: 30
   }
 };
-const client = LaunchDarkly.init(sdkKey, config);
+const client = LaunchDarkly.init("YOUR_SDK_KEY", config);
 ```

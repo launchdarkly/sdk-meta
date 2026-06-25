@@ -27,5 +27,5 @@ LDConfig config = new LDConfig.Builder()
         .userCacheTime(Duration.ofSeconds(30))
     )
     .build();
-LDClient client = new LDClient(sdkKey, config);
+LDClient client = new LDClient("YOUR_SDK_KEY", config);
 ```
