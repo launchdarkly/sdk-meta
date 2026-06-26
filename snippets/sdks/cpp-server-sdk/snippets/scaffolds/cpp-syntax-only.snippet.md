@@ -193,10 +193,6 @@ void _wrappee() {
         operator std::chrono::milliseconds() const { return std::chrono::milliseconds{10000}; }
         operator std::chrono::seconds() const { return std::chrono::seconds{10}; }
     } maxwait;
-    // Init-shaped fragments pass an `sdk_key` the docs assume already
-    // exists.
-    char const* sdk_key = "";
-    (void)sdk_key;
     {
 {{ body }}
     }

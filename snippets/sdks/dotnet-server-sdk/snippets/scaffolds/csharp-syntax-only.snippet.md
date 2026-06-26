@@ -121,14 +121,6 @@ namespace LaunchDarklySnippet
         private static dynamic loggerFactory = null;
 #pragma warning restore CS0414, CS0649
 
-        // Generic database-integration placeholder the storing-data docs
-        // use (`SomeDatabaseName.DataStore()`); stands in for a real
-        // integration package such as Redis or DynamoDB.
-        private static class SomeDatabaseName
-        {
-            public static LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer<LaunchDarkly.Sdk.Server.Subsystems.IPersistentDataStore> DataStore() => null;
-        }
-
         public static void Main(string[] args)
         {
             System.Console.WriteLine("feature flag evaluates to true");
