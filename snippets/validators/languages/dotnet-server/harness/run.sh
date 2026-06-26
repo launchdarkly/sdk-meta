@@ -30,12 +30,14 @@ if marker_idx is None:
 # block to splice ABOVE the marker, replace each lifted line with a
 # blank to preserve numbering. `using (var x = …)` C# statement form
 # is excluded by requiring a `;` immediately after the namespace path
-# (no `(`).
+# (no `(`). A trailing `// ...` line comment (docs sometimes annotate a
+# directive with the minimum package version) lifts along with the
+# directive.
 import re
 lift = []
 for i in range(marker_idx + 1, len(lines)):
     s = lines[i].lstrip()
-    m = re.match(r'using\s+([A-Za-z_][A-Za-z0-9_.]*)\s*;\s*$', s)
+    m = re.match(r'using\s+([A-Za-z_][A-Za-z0-9_.]*)\s*;\s*(//.*)?$', s)
     if m:
         if s not in lift:
             lift.append(s.rstrip())

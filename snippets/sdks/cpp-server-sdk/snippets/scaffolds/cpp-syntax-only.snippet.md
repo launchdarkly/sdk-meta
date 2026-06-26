@@ -101,10 +101,10 @@ struct _AnyClient {
     template <typename... Args> _AnyStatusProvider DataSourceStatus(Args&&...) const { return {}; }
 };
 
-// Generic database-integration placeholder the storing-data docs use
-// (`YourDatabaseIntegration()`); stands in for a real source such as
-// the Redis integration. Returns the pointer type that
-// LazyLoadBuilder::Source accepts.
+// Lazy-load fragments construct their store source via a placeholder
+// `YourDatabaseIntegration()` standing in for whichever database
+// integration the reader uses. Returns the ISerializedDataReader
+// pointer shape LazyLoadBuilder::Source() expects.
 inline std::shared_ptr<launchdarkly::server_side::integrations::ISerializedDataReader>
 YourDatabaseIntegration() {
     return nullptr;
@@ -175,6 +175,9 @@ void _wrappee() {
     _AnyConfigBuilder config_builder;
     LDContext context = nullptr;
     LDServerConfig config = nullptr;
+    // Config fragments construct the builder from an ambient `sdk_key`
+    // the docs assume an earlier snippet defined.
+    std::string sdk_key = "";
     // The listener fragments split "create the connection" and "free
     // the connection" across separate code blocks; the free-side body
     // references `connection` as if pre-existing.

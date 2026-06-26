@@ -23,6 +23,7 @@ struct LDConfig;
 struct LDClient;
 struct LDUser;
 struct LDJSON;
+struct LDStoreInterface;
 struct LDDataSource;
 
 /* Persistent-feature-store surface. The store interface itself is an
@@ -99,6 +100,22 @@ static inline void LDDetailsClear(struct LDDetails *details) {
 static inline struct LDConfig *LDConfigNew(const char *key) {
     (void)key;
     return (struct LDConfig *)0;
+}
+
+/* Mirrors the real v2 header's persistent-store setter: routes flag
+ * reads through the supplied store backend (daemon mode reads the
+ * store that the Relay Proxy populates). */
+static inline void LDConfigSetFeatureStoreBackend(struct LDConfig *config, struct LDStoreInterface *backend) {
+    (void)config;
+    (void)backend;
+}
+
+/* Mirrors the real v2 header's LDD-mode toggle: when useLDD is true
+ * the SDK reads flags only from the configured store backend instead
+ * of connecting to LaunchDarkly. */
+static inline void LDConfigSetUseLDD(struct LDConfig *config, LDBoolean useLDD) {
+    (void)config;
+    (void)useLDD;
 }
 
 /* Mirrors the real v2 header's data-source setter: replaces the default

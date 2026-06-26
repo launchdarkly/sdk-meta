@@ -32,6 +32,7 @@ validation:
     LaunchDarkly.ServerSdk
     LaunchDarkly.Observability
     LaunchDarkly.ServerSdk.Ai
+    LaunchDarkly.ServerSdk.Telemetry
     LaunchDarkly.ServerSdk.Redis
     LaunchDarkly.ServerSdk.DynamoDB
     LaunchDarkly.ServerSdk.Consul
@@ -41,6 +42,7 @@ validation:
 // USING_LIFT_MARKER
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 // Web-proxy fragments construct `NetworkCredential` unqualified while
 // fully qualifying the other System.Net types; the docs assume the
 // using directive is ambient, so provide it here.
@@ -52,6 +54,7 @@ using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Ai;
 using LaunchDarkly.Sdk.Server.Ai.Adapters;
 using LaunchDarkly.Sdk.Server.Ai.Config;
+using LaunchDarkly.Sdk.Server.Ai.Tracking;
 
 namespace LaunchDarklySnippet
 {
@@ -78,6 +81,18 @@ namespace LaunchDarklySnippet
         // Evaluation fragments pass `myContext` to the variation
         // methods; the docs assume it already exists.
         private static Context myContext = default;
+        // Persistent-store fragments reference a placeholder
+        // `SomeDatabaseName` integration standing in for whichever
+        // database package the reader installs; dynamic so its
+        // `.DataStore()` call resolves without pinning a package.
+        private static dynamic SomeDatabaseName = null;
+        // AI metrics fragments call methods on the config's `tracker`
+        // and read fields from a provider `response`; both come from
+        // surrounding application code in the docs.
+        private static dynamic response = null;
+        // AI metrics flush fragments call Flush() on the underlying
+        // LaunchDarkly client, which the docs name `baseClient`.
+        private static dynamic baseClient = null;
         // Migration fragments reference an ambient migrator, payload,
         // op tracker, and the stage from a previous MigrationVariation
         // call; the docs assume they already exist.
