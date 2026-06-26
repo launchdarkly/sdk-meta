@@ -1,0 +1,43 @@
+---
+id: cloudflare-server-sdk/sdk-docs/features/migrations/read-write
+sdk: cloudflare-server-sdk
+kind: reference
+lang: typescript
+description: Migration read and write example for Cloudflare SDK v2.2.2+.
+validation:
+  scaffold: cloudflare-server-sdk/scaffolds/cloudflare-syntax-only
+---
+
+```typescript
+import {
+  createMigration,
+  LDContext,
+  LDMigrationStage,
+} from '@launchdarkly/cloudflare-server-sdk';
+
+const context: LDContext = {
+   kind: 'user',
+   key: 'example-user-key',
+   name: 'Sandy',
+};
+
+// this is the migration stage to use if the flag's migration stage
+// is not available from LaunchDarkly
+let defaultStage: LDMigrationStage = LDMigrationStage.Off;
+
+const migration = createMigration(client, options);
+
+// when you need to perform a read in your application
+migration.read(
+  'example-migration-flag-key',
+  context,
+  defaultStage
+);
+
+// when you need to perform a write in your application
+migration.write(
+  'example-migration-flag-key',
+  context,
+  defaultStage
+);
+```

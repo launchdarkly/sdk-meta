@@ -37,7 +37,10 @@ RUN yes | sdkmanager --licenses >/dev/null \
 # pinned ref, then patch app/build.gradle to use the latest SDK +
 # Robolectric (so the validator runs in a pure JVM, no emulator).
 ARG HELLO_ANDROID_REF=main
-ARG LD_ANDROID_SDK_VERSION=5.11.1
+# 5.13.0 introduced the EAP data system surface (Components.dataSystem(),
+# DataSystemBuilder, AutomaticModeSwitchingConfig) that the
+# data-saving-mode doc fragments compile against.
+ARG LD_ANDROID_SDK_VERSION=5.13.1
 ARG ROBOLECTRIC_VERSION=4.12.2
 # Optional observability plugin AAR. Doc fragments under
 # initialize-the-client-android-sdk-v5-x-* show the v5.9+ pattern

@@ -80,6 +80,10 @@ RUN printf "export default function App() { return <div>placeholder</div>; }\n" 
 # resolve.
 RUN printf "import { initLDReactContext } from '@launchdarkly/react-sdk';\nexport const ProdLDContext = initLDReactContext();\nexport const StagingLDContext = initLDReactContext();\n" > src/environments.ts
 
+# Stub feedback-helper module so sdk-docs parse-only snippets that
+# `import { sendFeedback } from './sendFeedback'` resolve.
+RUN printf "export type LDFeedbackSentiment = 'positive' | 'neutral' | 'negative';\nexport function sendFeedback(..._args: unknown[]): void {}\n" > src/sendFeedback.ts
+
 RUN printf '<!doctype html>\n\
 <html lang="en">\n\
   <head><meta charset="UTF-8" /><title>hello-react</title></head>\n\

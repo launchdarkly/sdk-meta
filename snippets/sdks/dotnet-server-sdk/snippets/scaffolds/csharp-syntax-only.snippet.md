@@ -12,6 +12,15 @@ description: |
   comment cues the harness pre-stage rewrite to lift any `using …;`
   lines from the wrappee body up to the marker, so doc fragments that
   show install-time `using LaunchDarkly.Sdk;` etc. can compile.
+
+  C# has no local type declarations, so doc fragments that define a
+  class alongside statements (e.g. a hook implementation followed by
+  the configuration that registers it) cannot compile inside
+  `Wrappee()`. The `// TYPE_LIFT_TARGET` comment cues a second harness
+  pre-stage rewrite: brace-balanced type declarations found between
+  the `// BODY_BEGIN` / `// BODY_END` markers are moved up to the
+  target at namespace scope, where they compile as ordinary top-level
+  types. Bodies without type declarations are untouched.
 inputs:
   body:
     type: string
@@ -46,6 +55,7 @@ using LaunchDarkly.Sdk.Server.Ai.Config;
 
 namespace LaunchDarklySnippet
 {
+    // TYPE_LIFT_TARGET
     public class Program
     {
         // Stub fields the wrappee body refers to. Never used at runtime.
@@ -68,6 +78,13 @@ namespace LaunchDarklySnippet
         // Evaluation fragments pass `myContext` to the variation
         // methods; the docs assume it already exists.
         private static Context myContext = default;
+        // Migration fragments reference an ambient migrator, payload,
+        // op tracker, and the stage from a previous MigrationVariation
+        // call; the docs assume they already exist.
+        private static dynamic migration = null;
+        private static dynamic payload = null;
+        private static dynamic tracker = null;
+        private static MigrationStage stage = default;
         // Test-data fragments reference a `td` the docs assume an
         // earlier `TestData.DataSource()` call created. Typed as the
         // real TestData (not dynamic) so lambda arguments to
@@ -105,7 +122,9 @@ namespace LaunchDarklySnippet
         private void Wrappee()
         {
             try {
+// BODY_BEGIN
 {{ body }}
+// BODY_END
             } catch (System.Exception) { /* never reached */ }
         }
     }
