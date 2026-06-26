@@ -69,6 +69,12 @@ public class Snippet {
         static com.launchdarkly.sdk.server.subsystems.ComponentConfigurer<com.launchdarkly.sdk.server.subsystems.PersistentDataStore> DataStore(Object options) {
             return null;
         }
+        // The storing-data fragments spell the factory method
+        // `dataStore` (lowercase); the relay-proxy daemon-mode fragment
+        // spells it `DataStore`. Expose both so each resolves.
+        static com.launchdarkly.sdk.server.subsystems.ComponentConfigurer<com.launchdarkly.sdk.server.subsystems.PersistentDataStore> dataStore(Object options) {
+            return null;
+        }
     }
     @SuppressWarnings("unused")
     private static final Object storeOptions = null;
@@ -86,19 +92,6 @@ public class Snippet {
     // Init fragments pass an `sdkKey` the docs assume already exists.
     @SuppressWarnings("unused")
     private static final String sdkKey = "";
-    // Store-configuration fragments pass a `storeOptions` the docs
-    // assume already exists.
-    @SuppressWarnings("unused")
-    private static final Object storeOptions = null;
-
-    // Generic database-integration placeholder the storing-data docs
-    // use (`SomeDatabaseName.dataStore(...)`); stands in for a real
-    // integration package such as Redis or DynamoDB.
-    private static class SomeDatabaseName {
-        static com.launchdarkly.sdk.server.subsystems.ComponentConfigurer<com.launchdarkly.sdk.server.subsystems.PersistentDataStore> dataStore(Object options) {
-            return null;
-        }
-    }
 
     public static void main(String[] args) {
         System.out.println("feature flag evaluates to true");

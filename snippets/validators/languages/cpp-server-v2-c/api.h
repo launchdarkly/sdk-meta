@@ -26,17 +26,6 @@ struct LDJSON;
 struct LDStoreInterface;
 struct LDDataSource;
 
-/* Persistent-feature-store surface. The store interface itself is an
- * opaque struct here; the storing-data fragments only pass the pointer
- * returned by an integration (see store/redis.h) into the config. */
-struct LDStoreInterface;
-
-static inline void LDConfigSetFeatureStoreBackend(struct LDConfig *config,
-                                                  struct LDStoreInterface *backend) {
-    (void)config;
-    (void)backend;
-}
-
 /* Logging surface. Mirrors the real v2 header's
  * <launchdarkly/logging.h> (vendored from c-sdk-common): the level
  * enum order, the convenience LDBasicLogger, the global logger
