@@ -38,6 +38,7 @@ import com.launchdarkly.sdk.server.integrations.*;
 // Common JDK types config/timeout fragments reference without their own
 // import line (the docs assume it); provide it so they resolve.
 import java.time.Duration;
+import java.util.Collections;
 // IMPORT_LIFT_MARKER
 
 public class Snippet {
