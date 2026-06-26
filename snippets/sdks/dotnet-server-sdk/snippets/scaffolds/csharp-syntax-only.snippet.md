@@ -12,6 +12,15 @@ description: |
   comment cues the harness pre-stage rewrite to lift any `using …;`
   lines from the wrappee body up to the marker, so doc fragments that
   show install-time `using LaunchDarkly.Sdk;` etc. can compile.
+
+  C# has no local type declarations, so doc fragments that define a
+  class alongside statements (e.g. a hook implementation followed by
+  the configuration that registers it) cannot compile inside
+  `Wrappee()`. The `// TYPE_LIFT_TARGET` comment cues a second harness
+  pre-stage rewrite: brace-balanced type declarations found between
+  the `// BODY_BEGIN` / `// BODY_END` markers are moved up to the
+  target at namespace scope, where they compile as ordinary top-level
+  types. Bodies without type declarations are untouched.
 inputs:
   body:
     type: string
@@ -23,6 +32,7 @@ validation:
     LaunchDarkly.ServerSdk
     LaunchDarkly.Observability
     LaunchDarkly.ServerSdk.Ai
+    LaunchDarkly.ServerSdk.Telemetry
     LaunchDarkly.ServerSdk.Redis
 ---
 
@@ -30,6 +40,7 @@ validation:
 // USING_LIFT_MARKER
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 // Web-proxy fragments construct `NetworkCredential` unqualified while
 // fully qualifying the other System.Net types; the docs assume the
 // using directive is ambient, so provide it here.
@@ -41,9 +52,11 @@ using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Ai;
 using LaunchDarkly.Sdk.Server.Ai.Adapters;
 using LaunchDarkly.Sdk.Server.Ai.Config;
+using LaunchDarkly.Sdk.Server.Ai.Tracking;
 
 namespace LaunchDarklySnippet
 {
+    // TYPE_LIFT_TARGET
     public class Program
     {
         // Stub fields the wrappee body refers to. Never used at runtime.
@@ -71,6 +84,13 @@ namespace LaunchDarklySnippet
         // database package the reader installs; dynamic so its
         // `.DataStore()` call resolves without pinning a package.
         private static dynamic SomeDatabaseName = null;
+        // AI metrics fragments call methods on the config's `tracker`
+        // and read fields from a provider `response`; both come from
+        // surrounding application code in the docs.
+        private static dynamic response = null;
+        // AI metrics flush fragments call Flush() on the underlying
+        // LaunchDarkly client, which the docs name `baseClient`.
+        private static dynamic baseClient = null;
         // Migration fragments reference an ambient migrator, payload,
         // op tracker, and the stage from a previous MigrationVariation
         // call; the docs assume they already exist.
@@ -105,7 +125,9 @@ namespace LaunchDarklySnippet
         private void Wrappee()
         {
             try {
+// BODY_BEGIN
 {{ body }}
+// BODY_END
             } catch (System.Exception) { /* never reached */ }
         }
     }

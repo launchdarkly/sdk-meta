@@ -36,9 +36,12 @@ const body = String.raw`
 // Strip simple TS bits (`as Type` assertions, `: Type =`
 // declarations) before the parser sees them. Same approach as the
 // node-client scaffold; see comment there for regex shape rationale.
+// The `as Type` pass must not consume parentheses: doc fragments use
+// parenthesized casts like `(x.y as number) ?? 0.5`, and eating the
+// closing paren would unbalance the expression.
 const erased = body
   .replace(/(\bconst|\blet|\bvar)\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*:\s*[^=;]+=/g, '$1 $2 =')
-  .replace(/([A-Za-z0-9_$\)])\s+as\s+[A-Za-z_$][A-Za-z0-9_$.<>\[\]\s|&,()]*/g, '$1');
+  .replace(/([A-Za-z0-9_$\)])\s+as\s+[A-Za-z_$][A-Za-z0-9_$.<>\[\]\s|&,]*/g, '$1');
 
 fs.writeFileSync('fragment.mjs', erased);
 
