@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.19.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.18.0...snippets/v0.19.0) (2026-06-26)
+
+
+### Features
+
+* **snippets:** port /sdk/features/agentcontrol-config to canonical snippets ([#503](https://github.com/launchdarkly/sdk-meta/issues/503)) ([a9c521e](https://github.com/launchdarkly/sdk-meta/commit/a9c521eb0a901563e16ab14e6361ad350305046a))
+* **snippets:** port /sdk/features/ai-metrics to canonical snippets ([#504](https://github.com/launchdarkly/sdk-meta/issues/504)) ([6a202b5](https://github.com/launchdarkly/sdk-meta/commit/6a202b5bd0c44b11fe227d66b7ca37e000ce1045))
+* **snippets:** port /sdk/features/big-segments to canonical snippets ([#500](https://github.com/launchdarkly/sdk-meta/issues/500)) ([785cd35](https://github.com/launchdarkly/sdk-meta/commit/785cd350d10d798df0693c6ce44b5a656a0c8dca))
+* **snippets:** port /sdk/features/bootstrapping to canonical snippets ([#493](https://github.com/launchdarkly/sdk-meta/issues/493)) ([58540bf](https://github.com/launchdarkly/sdk-meta/commit/58540bf59b66e0f4ee9b32593ca3a2e82675a8f7))
+* **snippets:** port /sdk/features/data-saving-mode to canonical snippets ([#497](https://github.com/launchdarkly/sdk-meta/issues/497)) ([bc9c818](https://github.com/launchdarkly/sdk-meta/commit/bc9c818035ef84b296aaee1177935e16c39e0c76))
+* **snippets:** port /sdk/features/environment-attributes to canonical snippets ([#502](https://github.com/launchdarkly/sdk-meta/issues/502)) ([d42cb8a](https://github.com/launchdarkly/sdk-meta/commit/d42cb8a2ef9de7a0875e5111c8c9f165ada96273))
+* **snippets:** port /sdk/features/hooks to canonical snippets ([#499](https://github.com/launchdarkly/sdk-meta/issues/499)) ([2b3cfc2](https://github.com/launchdarkly/sdk-meta/commit/2b3cfc2ea00274e2596dfab18b46bab21ced0300))
+* **snippets:** port /sdk/features/inspectors to canonical snippets ([#496](https://github.com/launchdarkly/sdk-meta/issues/496)) ([2578d3b](https://github.com/launchdarkly/sdk-meta/commit/2578d3b11e5cb738c5bcd6c2c9171ede775d933f))
+* **snippets:** port /sdk/features/local-storage to canonical snippets ([#494](https://github.com/launchdarkly/sdk-meta/issues/494)) ([b658474](https://github.com/launchdarkly/sdk-meta/commit/b6584743ab230f48c4e9e619583f40ae2165699c))
+* **snippets:** port /sdk/features/migrations to canonical snippets ([#492](https://github.com/launchdarkly/sdk-meta/issues/492)) ([2b09c95](https://github.com/launchdarkly/sdk-meta/commit/2b09c952a80e9a9b283a052975f0aec7a7978ae4))
+* **snippets:** port /sdk/features/multiple-environments to canonical snippets ([#495](https://github.com/launchdarkly/sdk-meta/issues/495)) ([defb83d](https://github.com/launchdarkly/sdk-meta/commit/defb83d7953ca512c4cc17145069f8fe133f72e3))
+* **snippets:** port /sdk/features/opentelemetry to canonical snippets ([#501](https://github.com/launchdarkly/sdk-meta/issues/501)) ([0c29d87](https://github.com/launchdarkly/sdk-meta/commit/0c29d87a6baf91237dbdfe9b544583ae0c6688d2))
+* **snippets:** port /sdk/features/qual-feedback to canonical snippets ([#498](https://github.com/launchdarkly/sdk-meta/issues/498)) ([c77e42d](https://github.com/launchdarkly/sdk-meta/commit/c77e42d17a2ccaa799c0006ae3b226b9ce0e2287))
+* **snippets:** port /sdk/features/relay-proxy-config to canonical snippets ([#505](https://github.com/launchdarkly/sdk-meta/issues/505)) ([b7a4632](https://github.com/launchdarkly/sdk-meta/commit/b7a4632775cef50246859d3e484ff5e539a98f4d))
+* **snippets:** port /sdk/features/storing-data to canonical snippets ([#506](https://github.com/launchdarkly/sdk-meta/issues/506)) ([ee87c66](https://github.com/launchdarkly/sdk-meta/commit/ee87c66a6a9a5ee106522636ef88a1ec13e4c396))
+* **snippets:** port /sdk/features/test-data-sources to canonical snippets ([#491](https://github.com/launchdarkly/sdk-meta/issues/491)) ([f073859](https://github.com/launchdarkly/sdk-meta/commit/f0738598b0e5b8d52ffc9d6d257f02eec90ac3b6))
+* **snippets:** port /sdk/features/web-proxy to canonical snippets ([#490](https://github.com/launchdarkly/sdk-meta/issues/490)) ([19d844f](https://github.com/launchdarkly/sdk-meta/commit/19d844fe9fd988bed18b26b3d75b7d11ca958c09))
+
 ## [0.18.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.17.0...snippets/v0.18.0) (2026-06-24)
 
 
