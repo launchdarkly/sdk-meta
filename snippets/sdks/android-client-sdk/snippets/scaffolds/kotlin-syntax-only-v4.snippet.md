@@ -22,9 +22,12 @@ description: |
   project reference the real v5 `LDConfig` / `LDClient`, and the file
   deliberately does NOT import `com.launchdarkly.sdk.android`, so the v5
   aar's same-named types never collide with the stubs. The shared
-  `com.launchdarkly.sdk.LDContext` type is real and version-stable
-  across v4/v5. The existing android sdk-docs CI row picks these
-  snippets up with no workflow changes.
+  `com.launchdarkly.sdk` types (`LDContext`) are real and version-stable
+  across v4/v5. Stubs for `LDClient` (v4 init surface),
+  `Components` / `EventProcessorBuilder` (v4 events config), and ambient
+  `application` / `context` cover the multienv and private-attrs
+  fragments that reference these names. The existing android sdk-docs CI
+  row picks these snippets up with no workflow changes.
 inputs:
   body:
     type: string
@@ -41,6 +44,7 @@ package com.launchdarkly.hello_android
 
 import android.app.Application
 import com.launchdarkly.sdk.LDContext
+import java.util.concurrent.Future
 
 // Stub of the v4-era android config + client surface. Only the members
 // the doc fragments call are declared; everything returns a stub so the
@@ -53,6 +57,7 @@ class SnippetV4 {
     class LDConfig {
         class Builder {
             fun mobileKey(key: String): Builder = this
+            fun secondaryMobileKeys(keys: Map<String, String>): Builder = this
             fun offline(offline: Boolean): Builder = this
             fun events(eventsConfig: EventProcessorBuilder): Builder = this
             fun build(): LDConfig = LDConfig()
@@ -68,8 +73,9 @@ class SnippetV4 {
         fun sendEvents(): EventProcessorBuilder = EventProcessorBuilder()
     }
 
-    // Stub of the v4 android LDClient surface the offline-mode fragments
-    // touch.
+    // Stub of the v4 android LDClient init surface. The application
+    // parameter is typed Application. The non-blocking overload (no
+    // startWaitSeconds) returns a Future, matching the real v4 signature.
     class LDClient private constructor() {
         fun setOffline() {}
         companion object {
@@ -79,11 +85,18 @@ class SnippetV4 {
                 context: LDContext,
                 startWaitSeconds: Int
             ): LDClient = LDClient()
+            // The non-blocking v4 init overload (no startWaitSeconds)
+            // returns a Future, matching the real v4 signature.
+            fun init(
+                application: Application,
+                config: LDConfig,
+                context: LDContext
+            ): Future<LDClient> = TODO()
         }
     }
 
-    // Ambient names the offline-mode fragments assume an Activity host
-    // provides. Never read at runtime (the body below is unreachable).
+    // Ambient names the doc fragments assume an Activity host provides.
+    // Never read at runtime (the body below is unreachable).
     @Suppress("UNUSED")
     val application: Application get() = TODO()
     @Suppress("UNUSED")

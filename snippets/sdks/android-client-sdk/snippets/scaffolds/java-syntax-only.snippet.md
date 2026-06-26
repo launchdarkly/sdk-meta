@@ -70,6 +70,10 @@ import com.launchdarkly.sdk.android.integrations.*;
 import com.launchdarkly.observability.plugin.*;
 import com.launchdarkly.observability.api.*;
 import java.util.Collections;
+// Multi-environment config fragments build a `Map<String, String>` of
+// secondary mobile keys with `new HashMap<>()`.
+import java.util.Map;
+import java.util.HashMap;
 // The all-flags-listener fragment's `onChange(List<String> flagKeys)`
 // override needs the collection interface itself.
 import java.util.List;
@@ -105,6 +109,9 @@ class SnippetActivity extends Activity {
     // timeout the docs assume already exist.
     LDContext context;
     int secondsToBlock;
+    // Event fragments pass an ambient `data` payload to
+    // `client.trackData(eventName, data)`.
+    LDValue data;
     // Test-data fragments reference a `td` the docs assume an earlier
     // `TestData.dataSource()` call created.
     TestData td;

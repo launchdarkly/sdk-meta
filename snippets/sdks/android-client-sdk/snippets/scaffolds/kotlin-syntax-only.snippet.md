@@ -108,6 +108,10 @@ val application: Application get() = TODO()
 // updated context from it.
 @Suppress("UNUSED")
 val context: LDContext get() = TODO()
+// Event fragments pass an ambient `data` payload to
+// `client.trackData(eventName, data)`.
+@Suppress("UNUSED")
+val data: LDValue get() = TODO()
 
 // Stub of the legacy alias API (removed at 4.0) so the v3-era
 // aliasing fragment type-checks against the v5 aar. The ambient
