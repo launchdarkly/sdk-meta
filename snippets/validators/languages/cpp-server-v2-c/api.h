@@ -23,6 +23,39 @@ struct LDConfig;
 struct LDClient;
 struct LDUser;
 struct LDJSON;
+struct LDDataSource;
+
+/* Logging surface. Mirrors the real v2 header's
+ * <launchdarkly/logging.h> (vendored from c-sdk-common): the level
+ * enum order, the convenience LDBasicLogger, the global logger
+ * registration hook, and the level-to-string helper. */
+typedef enum
+{
+    LD_LOG_FATAL = 0,
+    LD_LOG_CRITICAL,
+    LD_LOG_ERROR,
+    LD_LOG_WARNING,
+    LD_LOG_INFO,
+    LD_LOG_DEBUG,
+    LD_LOG_TRACE
+} LDLogLevel;
+
+static inline void LDBasicLogger(const LDLogLevel level, const char *const text) {
+    (void)level;
+    (void)text;
+}
+
+static inline void LDConfigureGlobalLogger(
+    const LDLogLevel level,
+    void (*logger)(const LDLogLevel level, const char *const text)) {
+    (void)level;
+    (void)logger;
+}
+
+static inline const char *LDLogLevelToString(const LDLogLevel level) {
+    (void)level;
+    return "";
+}
 
 /* Evaluation-reason surface. Mirrors the real v2 header's enum order
  * and the LDDetails fields the doc fragments touch (the real struct
@@ -57,6 +90,42 @@ static inline struct LDConfig *LDConfigNew(const char *key) {
     return (struct LDConfig *)0;
 }
 
+/* Mirrors the real v2 header's data-source setter: replaces the default
+ * streaming/polling-update mechanism with the supplied source (e.g. the
+ * file data source from <launchdarkly/integrations/file_data.h>). */
+static inline void LDConfigSetDataSource(struct LDConfig *config, struct LDDataSource *dataSource) {
+    (void)config;
+    (void)dataSource;
+}
+
+/* Mirrors the real v2 header's analytics-events toggle: when sendEvents
+ * is false the SDK sends no analytics events to LaunchDarkly. */
+static inline void LDConfigSetSendEvents(struct LDConfig *config, LDBoolean sendEvents) {
+    (void)config;
+    (void)sendEvents;
+}
+
+/* Mirrors the real v2 header's offline-mode setter: when offline is
+ * true the SDK makes no network requests and evaluations return the
+ * in-code fallback values. */
+static inline void LDConfigSetOffline(struct LDConfig *config, LDBoolean offline) {
+    (void)config;
+    (void)offline;
+}
+
+static inline void LDConfigSetAllAttributesPrivate(struct LDConfig *config,
+                                                   LDBoolean allPrivate) {
+    (void)config;
+    (void)allPrivate;
+}
+
+static inline LDBoolean LDConfigAddPrivateAttribute(struct LDConfig *config,
+                                                    const char *attribute) {
+    (void)config;
+    (void)attribute;
+    return LDBooleanTrue;
+}
+
 static inline struct LDClient *LDClientInit(struct LDConfig *config, unsigned int maxwait) {
     (void)config;
     (void)maxwait;
@@ -66,6 +135,16 @@ static inline struct LDClient *LDClientInit(struct LDConfig *config, unsigned in
 static inline LDBoolean LDClientClose(struct LDClient *client) {
     (void)client;
     return LDBooleanTrue;
+}
+
+/* Associates two users for analytics purposes (legacy alias event;
+ * the v2 SDKs were the last majors to carry it). */
+static inline void LDClientAlias(struct LDClient *client,
+                                 struct LDUser *currentUser,
+                                 struct LDUser *previousUser) {
+    (void)client;
+    (void)currentUser;
+    (void)previousUser;
 }
 
 /* Manual event flush: fire-and-forget; delivery happens on the
@@ -80,7 +159,22 @@ static inline struct LDUser *LDUserNew(const char *key) {
     return (struct LDUser *)0;
 }
 
+static inline LDBoolean LDUserAddPrivateAttribute(struct LDUser *user,
+                                                  const char *attribute) {
+    (void)user;
+    (void)attribute;
+    return LDBooleanTrue;
+}
+
 static inline void LDUserFree(struct LDUser *user) {
+    (void)user;
+}
+
+/* Generates an identify event for the user, adding it to the Contexts
+ * list without requiring a flag evaluation. */
+static inline void LDClientIdentify(struct LDClient *client,
+                                    const struct LDUser *user) {
+    (void)client;
     (void)user;
 }
 
@@ -107,6 +201,41 @@ static inline void LDUserSetLastName(struct LDUser *user, const char *lastName) 
 static inline void LDUserSetAnonymous(struct LDUser *user, LDBoolean anonymous) {
     (void)user;
     (void)anonymous;
+}
+
+static inline void LDUserSetCustom(struct LDUser *user, struct LDJSON *custom) {
+    (void)user;
+    (void)custom;
+}
+
+/* LDJSON construction surface (shared c-json API) used by the
+ * custom-attributes doc fragments. */
+static inline struct LDJSON *LDNewObject(void) {
+    return (struct LDJSON *)0;
+}
+
+static inline struct LDJSON *LDNewArray(void) {
+    return (struct LDJSON *)0;
+}
+
+static inline struct LDJSON *LDNewText(const char *text) {
+    (void)text;
+    return (struct LDJSON *)0;
+}
+
+static inline LDBoolean LDArrayPush(struct LDJSON *array, struct LDJSON *item) {
+    (void)array;
+    (void)item;
+    return LDBooleanTrue;
+}
+
+static inline LDBoolean LDObjectSetKey(struct LDJSON *object,
+                                       const char *key,
+                                       struct LDJSON *item) {
+    (void)object;
+    (void)key;
+    (void)item;
+    return LDBooleanTrue;
 }
 
 static inline LDBoolean LDBoolVariation(struct LDClient *client,
@@ -143,6 +272,14 @@ static inline double LDDoubleVariation(struct LDClient *client,
     (void)flagKey;
     (void)details;
     return fallback;
+}
+
+/* LDNewBool: variation arrays for the test-data flag builder need a
+ * JSON boolean value node; the custom-attributes block above covers
+ * text and array, but not bool. */
+static inline struct LDJSON *LDNewBool(LDBoolean value) {
+    (void)value;
+    return (struct LDJSON *)0;
 }
 
 static inline char *LDStringVariation(struct LDClient *client,

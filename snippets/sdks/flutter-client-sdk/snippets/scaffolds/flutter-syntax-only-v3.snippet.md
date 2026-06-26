@@ -37,6 +37,10 @@ Future<void> _wrappee() async {
   dynamic context = Object();
   // ignore: unused_local_variable
   String flagKey = '';
+  // Flag-change fragments unregister a listener the docs assume was
+  // created by an earlier registration fragment.
+  // ignore: unused_local_variable
+  dynamic listener = Object();
   {
 //BODY_BEGIN
 {{ body }}

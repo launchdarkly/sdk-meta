@@ -19,12 +19,26 @@ description: |
   Google's Maven plus the AndroidX runtime — neither of which the
   `jvm` validator's Java + Maven path can resolve.
 
-  The wrappee body is spliced inside `BaseApplication.onCreate()`'s
-  unreachable `if (false)` block so unresolved caller surfaces
-  (Activity host lifecycle, etc.) have somewhere legal to land.
+  The wrappee body is spliced inside a never-invoked `_wrappee()`
+  instance method's unreachable `if (false)` block so unresolved
+  caller surfaces (Activity host lifecycle, etc.) have somewhere
+  legal to land. The method declares `throws Exception` because doc
+  fragments call checked-exception APIs (e.g. `LDClient.get()`)
+  without a try/catch.
   Bodies that declare local helper variables, call methods on
   `this.getApplication()`, or reference Android Application context
   resolve through the enclosing BaseApplication instance.
+
+  Java has no local classes with access modifiers, so doc fragments
+  that define a `public class` alongside statements (e.g. a hook
+  implementation followed by the configuration that registers it)
+  cannot compile inside `onCreate()`. The `// TYPE_LIFT_TARGET`
+  comment cues a harness pre-stage rewrite: brace-balanced type
+  declarations found between the `// BODY_BEGIN` / `// BODY_END`
+  markers are moved up to the target at SnippetActivity member scope,
+  where they compile as nested classes (shadowing same-named
+  file-scope stubs for the statement residue that follows). Bodies
+  without type declarations are untouched.
 
   Bodies with `import …` lines from inside the body block are
   handled by the harness's existing Python import-lift pre-step:
@@ -67,6 +81,18 @@ import com.launchdarkly.sdk.android.integrations.*;
 import com.launchdarkly.observability.plugin.*;
 import com.launchdarkly.observability.api.*;
 import java.util.Collections;
+// Multi-environment config fragments build a `Map<String, String>` of
+// secondary mobile keys with `new HashMap<>()`.
+import java.util.Map;
+import java.util.HashMap;
+// The all-flags-listener fragment's `onChange(List<String> flagKeys)`
+// override needs the collection interface itself.
+import java.util.List;
+import java.util.ArrayList;
+// Timber is in the validator project's dependencies; the logging and
+// monitoring doc fragments call `Timber.plant(...)` without showing
+// the import.
+import timber.log.Timber;
 
 // No `public` modifier: Java requires public top-level classes to
 // live in a file matching the class name. We need this scaffold's
@@ -81,6 +107,17 @@ import java.util.Collections;
 // `this@BaseApplication` against the kotlin scaffold's
 // Application-typed `BaseApplication`; Java's
 // `this.getApplication()` only exists on `android.app.Activity`.
+// Ambient stub for fragments that register a hook on an existing
+// client: the docs define `ExampleHook` in a preceding example, so
+// provide a minimal implementation at file scope. Fragments that
+// define their own `ExampleHook` get it type-lifted to
+// SnippetActivity member scope, which shadows this stub.
+class ExampleHook extends Hook {
+    ExampleHook(String name) {
+        super(name);
+    }
+}
+
 @SuppressWarnings({"unused", "ConstantConditions"})
 class SnippetActivity extends Activity {
     // Instance-field stubs so bodies like
@@ -95,20 +132,37 @@ class SnippetActivity extends Activity {
     // timeout the docs assume already exist.
     LDContext context;
     int secondsToBlock;
+    // Init fragments pass an ambient config the docs assume an earlier
+    // example created.
+    LDConfig ldConfig;
+    // Event fragments pass an ambient `data` payload to
+    // `client.trackData(eventName, data)`.
+    LDValue data;
+    // Test-data fragments reference a `td` the docs assume an earlier
+    // `TestData.dataSource()` call created.
+    TestData td;
+    // Unregistration fragments reference a listener the docs assume
+    // was created by an earlier registration fragment.
+    FeatureFlagChangeListener listener;
+
+    // TYPE_LIFT_TARGET
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // The unreachable body is additionally wrapped in try/catch
-        // (mirroring the csharp-syntax-only scaffold) so fragments that
-        // call checked-exception APIs -- e.g. client.close(), declared
-        // `throws IOException` via java.io.Closeable -- compile without
-        // each fragment carrying its own handler. onCreate overrides
-        // Activity.onCreate, so a `throws` clause can't be added here.
-        // catch (Exception) is legal even when the body throws nothing.
+        // The unreachable body is wrapped in try/catch (mirroring the
+        // csharp-syntax-only scaffold) so fragments that call
+        // checked-exception APIs -- e.g. `LDClient.get()` throws
+        // LaunchDarklyException, `client.close()` throws IOException via
+        // java.io.Closeable -- compile without each fragment carrying
+        // its own handler. onCreate overrides Activity.onCreate, so a
+        // `throws` clause can't be added here. catch (Exception) is
+        // legal even when the body throws nothing.
         if (false) {
             try {
+// BODY_BEGIN
 {{ body }}
+// BODY_END
             } catch (Exception e) {
                 // never reached
             }

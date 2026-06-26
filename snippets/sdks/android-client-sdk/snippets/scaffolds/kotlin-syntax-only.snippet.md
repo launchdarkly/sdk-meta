@@ -50,6 +50,10 @@ validation:
 package com.launchdarkly.hello_android
 
 import android.app.Application
+// The monitoring status-listener fragment declares a local
+// `class MainActivity : Activity()`, so the base Activity type must
+// be in scope alongside AppCompatActivity.
+import android.app.Activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 // Wildcard imports cover the doc fragments' references to `LDConfig`,
@@ -65,6 +69,14 @@ import com.launchdarkly.observability.plugin.*
 // don't reach nested types, so it needs an explicit import for the
 // v5-x init body's `AutoEnvAttributes.Enabled` reference.
 import com.launchdarkly.sdk.android.LDConfig.Builder.AutoEnvAttributes
+// The monitoring failure-types fragment matches on unqualified
+// `LDFailure.FailureType` entries in a `when`; Kotlin doesn't resolve
+// enum entries from the subject's type, so import them explicitly.
+import com.launchdarkly.sdk.android.LDFailure.FailureType.*
+// Timber is in the validator project's dependencies; the logging and
+// monitoring doc fragments call `Timber.plant(...)` without showing
+// the import.
+import timber.log.Timber
 
 // File-scope stubs so wrappee bodies that reference caller-supplied
 // helpers (e.g. `applyVariant(variant)`) type-check. Never invoked.
@@ -80,6 +92,37 @@ fun applyVariant(variant: String) {}
 val client: LDClient get() = TODO()
 @Suppress("UNUSED")
 val flagKey: String = ""
+// Unregistration fragments reference a listener the docs assume was
+// created by an earlier registration fragment.
+@Suppress("UNUSED")
+val listener: FeatureFlagChangeListener get() = TODO()
+// Init fragments reference the Application instance as a bare
+// `application` name — the docs assume an Activity host, where that
+// property exists. This scaffold splices bodies into an Application
+// subclass (which has no such property), so provide a file-scope
+// stub. Never read at runtime (the body is unreachable).
+@Suppress("UNUSED")
+val application: Application get() = TODO()
+// Evaluation/init fragments pass an ambient `context` (LDContext) the
+// docs assume an earlier fragment created; identify fragments build an
+// updated context from it.
+@Suppress("UNUSED")
+val context: LDContext get() = TODO()
+// Event fragments pass an ambient `data` payload to
+// `client.trackData(eventName, data)`.
+@Suppress("UNUSED")
+val data: LDValue get() = TODO()
+
+// Stub of the legacy alias API (removed at 4.0) so the v3-era
+// aliasing fragment type-checks against the v5 aar. The ambient
+// `newUser` / `previousUser` names are typed LDContext because the
+// stub only needs self-consistent opaque arguments. Never invoked.
+@Suppress("UNUSED_PARAMETER", "UNUSED")
+fun LDClient.alias(newUser: LDContext, previousUser: LDContext) {}
+@Suppress("UNUSED")
+val newUser: LDContext get() = TODO()
+@Suppress("UNUSED")
+val previousUser: LDContext get() = TODO()
 
 @Suppress("UNUSED_VARIABLE", "UNREACHABLE_CODE")
 class BaseApplication : Application() {

@@ -23,6 +23,10 @@ validation:
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Client;
 using System;
+// Web-proxy fragments construct `NetworkCredential` unqualified while
+// fully qualifying the other System.Net types; the docs assume the
+// using directive is ambient, so provide it here.
+using System.Net;
 using LaunchDarkly.Sdk.Client.Integrations;
 // USING_LIFT_MARKER
 
@@ -41,6 +45,15 @@ namespace LaunchDarklySnippet
         // Some config fragments reference a `context` binding (e.g.
         // LdClient.Init(config, context)); provide it as a stub.
         private static dynamic context = null;
+        // Init fragments pass a `startWaitTime` the docs assume already
+        // exists.
+        private static System.TimeSpan startWaitTime = default;
+        // Test-data fragments reference a `td` the docs assume an
+        // earlier `TestData.DataSource()` call created. Typed as the
+        // real TestData (not dynamic) so lambda arguments to
+        // `VariationFunc(...)`-style builder calls keep compiling --
+        // C# forbids lambdas in dynamically dispatched invocations.
+        private static TestData td = null;
         #pragma warning restore CS8625, CS0414, CS0649
 
         public static void Main(string[] args)

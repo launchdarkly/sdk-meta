@@ -49,6 +49,64 @@ with open(fp, 'w') as f:
 PYEOF
 fi
 
+# If the staged Program.cs contains the TYPE_LIFT_TARGET marker, move any
+# brace-balanced type declarations found between the BODY_BEGIN/BODY_END
+# markers up to the target at namespace scope. C# has no local type
+# declarations, so doc fragments that define a class alongside statements
+# (e.g. a hook implementation plus the configuration that registers it)
+# would otherwise fail to compile inside the scaffold's Wrappee() method.
+# Bodies without type declarations are untouched. Brace counting is
+# line-based and does not see braces in string literals; the doc
+# fragments this serves don't contain such literals.
+if [ -f "$SNIPPET_ENTRYPOINT" ] && grep -q 'TYPE_LIFT_TARGET' "$SNIPPET_ENTRYPOINT"; then
+    python3 - "$SNIPPET_ENTRYPOINT" <<'PYEOF'
+import re
+import sys
+
+fp = sys.argv[1]
+with open(fp) as f:
+    lines = f.read().splitlines()
+
+target_idx = next((i for i, l in enumerate(lines) if 'TYPE_LIFT_TARGET' in l), None)
+begin_idx = next((i for i, l in enumerate(lines) if 'BODY_BEGIN' in l), None)
+end_idx = next((i for i, l in enumerate(lines) if 'BODY_END' in l), None)
+if target_idx is None or begin_idx is None or end_idx is None:
+    sys.exit(0)
+
+decl_re = re.compile(
+    r'^\s*((public|private|protected|internal|static|sealed|abstract|partial)\s+)*'
+    r'(class|interface|enum|struct|record)\s+\w')
+
+lifted = []
+i = begin_idx + 1
+depth = 0
+while i < end_idx:
+    line = lines[i]
+    if depth == 0 and decl_re.match(line):
+        block = []
+        bdepth = 0
+        seen_brace = False
+        while i < end_idx:
+            block.append(lines[i])
+            bdepth += lines[i].count('{') - lines[i].count('}')
+            if '{' in lines[i] or '}' in lines[i]:
+                seen_brace = True
+            lines[i] = ''
+            i += 1
+            if seen_brace and bdepth == 0:
+                break
+        lifted.extend(block)
+        continue
+    depth += line.count('{') - line.count('}')
+    i += 1
+
+if lifted:
+    lines = lines[:target_idx + 1] + lifted + lines[target_idx + 1:]
+with open(fp, 'w') as f:
+    f.write('\n'.join(lines) + '\n')
+PYEOF
+fi
+
 # .NET wants a project file; gonfalon's flow uses Visual Studio's "new
 # console app" wizard which creates one. We synthesize the minimum unless
 # the snippet's scaffold staged its own `.csproj` (e.g. an ASP.NET Core

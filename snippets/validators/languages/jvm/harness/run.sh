@@ -108,6 +108,14 @@ cat > pom.xml <<EOF
       <artifactId>opentelemetry-sdk</artifactId>
       <version>1.40.0</version>
     </dependency>
+    <dependency>
+      <groupId>com.launchdarkly</groupId>
+      <artifactId>launchdarkly-java-server-sdk-redis-store</artifactId>
+      <!-- Store-integration fragments (big segments, persistent feature
+           stores) reference the Redis integration's classes; pinned for
+           the same determinism reason as the SDK itself. -->
+      <version>3.1.1</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
