@@ -1,0 +1,17 @@
+---
+id: flutter-client-sdk/sdk-docs/features/relay-proxy-config/proxy-mode/proxy-mode-v3
+sdk: flutter-client-sdk
+kind: reference
+lang: dart
+description: Proxy mode configuration example for Flutter.
+validation:
+  scaffold: flutter-client-sdk/scaffolds/flutter-syntax-only-v3
+---
+
+```dart
+LDConfig ldConfig = LDConfigBuilder('example-mobile-key', AutoEnvAttributes.Enabled)
+  .streamUri('https://your-relay-proxy.com:8030')
+  .pollUri('https://your-relay-proxy.com:8030')
+  .eventsUri('https://your-relay-proxy.com:8030')
+  .build();
+```

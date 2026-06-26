@@ -101,6 +101,15 @@ struct _AnyClient {
     template <typename... Args> _AnyStatusProvider DataSourceStatus(Args&&...) const { return {}; }
 };
 
+// Lazy-load fragments construct their store source via a placeholder
+// `YourDatabaseIntegration()` standing in for whichever database
+// integration the reader uses. Returns the ISerializedDataReader
+// pointer shape LazyLoadBuilder::Source() expects.
+inline std::shared_ptr<launchdarkly::server_side::integrations::ISerializedDataReader>
+YourDatabaseIntegration() {
+    return nullptr;
+}
+
 // Polymorphic stub for the ambient `config_builder` some doc
 // fragments reference (the docs assume an earlier init fragment
 // declared it). Satisfies both the native member-call shape
@@ -166,6 +175,9 @@ void _wrappee() {
     _AnyConfigBuilder config_builder;
     LDContext context = nullptr;
     LDServerConfig config = nullptr;
+    // Config fragments construct the builder from an ambient `sdk_key`
+    // the docs assume an earlier snippet defined.
+    std::string sdk_key = "";
     // The listener fragments split "create the connection" and "free
     // the connection" across separate code blocks; the free-side body
     // references `connection` as if pre-existing.

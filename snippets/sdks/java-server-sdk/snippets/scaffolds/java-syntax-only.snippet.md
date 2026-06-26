@@ -58,6 +58,18 @@ public class Snippet {
     // docs assume it already exists, so provide it as a stub symbol.
     @SuppressWarnings("unused")
     private static final LDContext context = null;
+    // Persistent-store fragments reference a placeholder
+    // `SomeDatabaseName` integration (standing in for whichever
+    // database package the reader installs) plus an ambient
+    // `storeOptions` value the docs assume already exist.
+    @SuppressWarnings("unused")
+    private static final class SomeDatabaseName {
+        static com.launchdarkly.sdk.server.subsystems.ComponentConfigurer<com.launchdarkly.sdk.server.subsystems.PersistentDataStore> DataStore(Object options) {
+            return null;
+        }
+    }
+    @SuppressWarnings("unused")
+    private static final Object storeOptions = null;
     // Migration fragments reference an ambient migrator and the result
     // of a previous migrationVariation call; the docs assume they
     // already exist, so provide them as stub symbols.

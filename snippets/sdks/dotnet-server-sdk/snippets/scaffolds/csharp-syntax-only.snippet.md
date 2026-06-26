@@ -79,6 +79,11 @@ namespace LaunchDarklySnippet
         // Evaluation fragments pass `myContext` to the variation
         // methods; the docs assume it already exists.
         private static Context myContext = default;
+        // Persistent-store fragments reference a placeholder
+        // `SomeDatabaseName` integration standing in for whichever
+        // database package the reader installs; dynamic so its
+        // `.DataStore()` call resolves without pinning a package.
+        private static dynamic SomeDatabaseName = null;
         // AI metrics fragments call methods on the config's `tracker`
         // and read fields from a provider `response`; both come from
         // surrounding application code in the docs.

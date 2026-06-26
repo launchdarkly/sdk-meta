@@ -50,6 +50,13 @@ static struct LDTestData *td;
 static struct LDUser *newUser;
 static struct LDUser *previousUser;
 
+/* Daemon-mode fragments construct their store backend via a
+ * placeholder `ConstructYourFeatureStoreInterface()` standing in for
+ * whichever database integration the reader uses. */
+static struct LDStoreInterface *ConstructYourFeatureStoreInterface(void) {
+    return (struct LDStoreInterface *)0;
+}
+
 /* Stub of the custom logger that the install-a-custom-logger fragment
  * passes to LDConfigureGlobalLogger; the docs assume the reader
  * defined it in the preceding fragment on the same page. */
