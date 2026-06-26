@@ -28,6 +28,12 @@ description: |
   `EvaluationReason`) are real and version-stable across v4/v5. The
   existing android sdk-docs CI row picks these snippets up with no
   workflow changes.
+
+  Shared `com.launchdarkly.sdk` types (`LDContext`) are real — they
+  ship inside the v5 aar's java-sdk-common dependency and are
+  version-stable across v4/v5. A `getApplication()` stub on the host
+  class mirrors the Activity accessor the init fragments call via
+  `this.getApplication()`.
 inputs:
   body:
     type: string
@@ -46,6 +52,9 @@ import android.app.Application;
 import com.launchdarkly.sdk.LDContext;
 import com.launchdarkly.sdk.EvaluationDetail;
 import com.launchdarkly.sdk.EvaluationReason;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.concurrent.Future;
 
 // Stub of the v4-era android config + client surface. Only the members
 // the doc fragments call are declared; everything returns a stub so the
@@ -59,6 +68,7 @@ class SnippetV4 {
         static class Builder {
             Builder() {}
             Builder mobileKey(String key) { return this; }
+            Builder secondaryMobileKeys(Map<String, String> keys) { return this; }
             Builder offline(boolean offline) { return this; }
             Builder evaluationReasons(boolean evaluationReasons) { return this; }
             Builder events(EventProcessorBuilder eventsConfig) { return this; }
@@ -75,11 +85,15 @@ class SnippetV4 {
         static EventProcessorBuilder sendEvents() { return new EventProcessorBuilder(); }
     }
 
-    // Stub of the v4 android LDClient surface the offline-mode and
-    // evaluation-reasons fragments touch.
+    // Stub of the v4 android LDClient init surface. The blocking overload
+    // takes an Application; the non-blocking overload (no startWaitSeconds)
+    // returns a Future, matching the real v4 signature.
     static class LDClient {
         static LDClient init(Application application, LDConfig config, LDContext context, int startWaitSeconds) {
             return new LDClient();
+        }
+        static Future<LDClient> init(Application application, LDConfig config, LDContext context) {
+            return null;
         }
         void setOffline() {}
         EvaluationDetail<Boolean> boolVariationDetail(String flagKey, boolean fallback) { return null; }

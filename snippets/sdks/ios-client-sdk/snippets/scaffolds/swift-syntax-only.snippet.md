@@ -89,6 +89,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var config = LDConfig(mobileKey: "stub-mobile-key", autoEnvAttributes: .disabled)
     var context = try! LDContextBuilder(key: "stub-context-key").build().get()
 
+    // Multi-environment fragments call methods on an ambient
+    // `coreInstance` (a secondary-environment client an earlier
+    // snippet fetched via `LDClient.get(environment:)`) and pass an
+    // ambient `data` payload to `track(key:data:)`.
+    var coreInstance: LDClient! = nil
+    var data: LDValue = "stub-data"
+
     // Ambient names the legacy aliasing fragment assumes earlier
     // snippets created.
     var newUser = try! LDContextBuilder(key: "stub-new-user-key").build().get()
