@@ -29,8 +29,24 @@ RUN mkdir -p ${ANDROID_HOME}/cmdline-tools \
     && mv ${ANDROID_HOME}/cmdline-tools/cmdline-tools ${ANDROID_HOME}/cmdline-tools/latest \
     && rm /tmp/tools.zip
 
-RUN yes | sdkmanager --licenses >/dev/null \
-    && sdkmanager --install "platforms;android-35" "platform-tools" "build-tools;35.0.0"
+# Installing the platform / platform-tools / build-tools components
+# occasionally fetches a corrupt component archive from Google's
+# repository ("java.util.zip.ZipException: Archive is not a ZIP
+# archive"), which aborts the whole image build. Retry the install a
+# few times, clearing any partial download state between attempts so a
+# single bad fetch doesn't fail the build. License acceptance is cheap
+# and idempotent, so it stays inside the loop too.
+RUN n=0; \
+    until [ "$n" -ge 4 ]; do \
+        yes | sdkmanager --licenses >/dev/null \
+            && sdkmanager --install "platforms;android-35" "platform-tools" "build-tools;35.0.0" \
+            && break; \
+        n=$((n + 1)); \
+        echo "sdkmanager install failed (attempt ${n}/4); clearing partial downloads and retrying..."; \
+        rm -rf "${ANDROID_HOME}/.temp" "${ANDROID_HOME}/.downloadIntermediates"; \
+        sleep 10; \
+    done; \
+    [ "$n" -lt 4 ]
 
 # Pre-bake a hello-android gradle scaffold. We clone the upstream
 # hello-android repo (LD's official getting-started reference) at a
