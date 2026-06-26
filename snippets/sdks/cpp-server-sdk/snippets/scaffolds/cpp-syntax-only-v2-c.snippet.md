@@ -28,11 +28,12 @@ validation:
 
 ```c
 #include <launchdarkly/api.h>
-/* Included at file scope so fragments that reference the test-data or
- * file-data surface without their own include resolve, and so fragments
- * that repeat these includes inside the function body hit the include
- * guard instead of declaring block-scope prototypes — the headers'
+/* Included at file scope so fragments that reference these surfaces
+ * without their own include resolve, and so fragments that repeat
+ * these includes inside the function body hit the include guard
+ * instead of declaring block-scope prototypes — the headers'
  * `static inline` definitions must not land inside a function body. */
+#include <launchdarkly/store/redis.h>
 #include <launchdarkly/integrations/test_data.h>
 #include <launchdarkly/integrations/file_data.h>
 

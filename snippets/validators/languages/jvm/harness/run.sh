@@ -116,6 +116,20 @@ cat > pom.xml <<EOF
            the same determinism reason as the SDK itself. -->
       <version>3.1.1</version>
     </dependency>
+    <dependency>
+      <groupId>com.launchdarkly</groupId>
+      <artifactId>launchdarkly-java-server-sdk-dynamodb-store</artifactId>
+      <!-- Persistent-feature-store fragments reference the DynamoDB
+           integration's classes; pinned for determinism. -->
+      <version>5.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.launchdarkly</groupId>
+      <artifactId>launchdarkly-java-server-sdk-consul-store</artifactId>
+      <!-- Persistent-feature-store fragments reference the Consul
+           integration's classes; pinned for determinism. -->
+      <version>5.0.0</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

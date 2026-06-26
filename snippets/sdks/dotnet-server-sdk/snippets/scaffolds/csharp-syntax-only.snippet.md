@@ -34,6 +34,8 @@ validation:
     LaunchDarkly.ServerSdk.Ai
     LaunchDarkly.ServerSdk.Telemetry
     LaunchDarkly.ServerSdk.Redis
+    LaunchDarkly.ServerSdk.DynamoDB
+    LaunchDarkly.ServerSdk.Consul
 ---
 
 ```csharp
@@ -104,6 +106,8 @@ namespace LaunchDarklySnippet
         // `VariationFunc(...)`-style builder calls keep compiling --
         // C# forbids lambdas in dynamically dispatched invocations.
         private static TestData td = null;
+        // Init fragments pass an `sdkKey` the docs assume already exists.
+        private static string sdkKey = "";
         // The legacy aliasing fragment passes `newUser` /
         // `previousUser`; the docs assume earlier snippets created
         // them.

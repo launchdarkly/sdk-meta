@@ -25,6 +25,8 @@ executable hello-haskell-exe\n\
   build-depends:\n\
     base >= 4.7 && < 5,\n\
     text,\n\
+    hedis,\n\
+    launchdarkly-server-sdk-redis-hedis,\n\
     containers,\n\
     aeson,\n\
     launchdarkly-server-sdk == %s\n\

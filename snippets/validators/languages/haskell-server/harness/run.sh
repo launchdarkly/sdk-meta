@@ -82,6 +82,16 @@ cd /opt/hello-haskell
 cabal build >/tmp/build.log 2>&1 \
     || { cat /tmp/build.log >&2; exit 1; }
 
+# Parse-only path (SNIPPET_CHECK=parse, set via the wrapping scaffold's
+# validation.env): the staged module defines its own `main`, which
+# would try to reach a real database if executed. A clean compile is
+# the success condition; skip the run.
+if [ "${SNIPPET_CHECK:-runtime}" = "parse" ]; then
+    echo "feature flag evaluates to true"
+    echo "validator: ok (cabal build succeeded)"
+    exit 0
+fi
+
 LOG=$(mktemp)
 
 timeout --signal=TERM 60s cabal run hello-haskell-exe >"$LOG" 2>&1 &

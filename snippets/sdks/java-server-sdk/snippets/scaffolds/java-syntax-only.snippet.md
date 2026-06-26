@@ -38,6 +38,8 @@ import com.launchdarkly.sdk.server.integrations.*;
 // Common JDK types config/timeout fragments reference without their own
 // import line (the docs assume it); provide it so they resolve.
 import java.time.Duration;
+import java.net.URI;
+import java.net.URL;
 // OpenTelemetry tracing-hook fragments build singleton hook lists and
 // reference OpenTelemetry SDK types without their own import lines (the
 // docs assume them); provide them so they resolve.
@@ -65,6 +67,12 @@ public class Snippet {
     @SuppressWarnings("unused")
     private static final class SomeDatabaseName {
         static com.launchdarkly.sdk.server.subsystems.ComponentConfigurer<com.launchdarkly.sdk.server.subsystems.PersistentDataStore> DataStore(Object options) {
+            return null;
+        }
+        // The storing-data fragments spell the factory method
+        // `dataStore` (lowercase); the relay-proxy daemon-mode fragment
+        // spells it `DataStore`. Expose both so each resolves.
+        static com.launchdarkly.sdk.server.subsystems.ComponentConfigurer<com.launchdarkly.sdk.server.subsystems.PersistentDataStore> dataStore(Object options) {
             return null;
         }
     }
