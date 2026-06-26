@@ -32,6 +32,7 @@ validation:
     LaunchDarkly.ServerSdk
     LaunchDarkly.Observability
     LaunchDarkly.ServerSdk.Ai
+    LaunchDarkly.ServerSdk.Telemetry
     LaunchDarkly.ServerSdk.Redis
 ---
 
