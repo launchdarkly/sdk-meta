@@ -17,6 +17,42 @@ require_env() {
     done
 }
 
+# run_batch <validate-fn>
+# Drives batch mode: loops over the manifest at $SNIPPET_BATCH (TSV lines
+# of `<relpath>\t<label>`, where relpath is the path under /snippet — or
+# $SNIPPET_DIR for native harnesses — to the snippet's entry file) and
+# invokes <validate-fn> <relpath> <label> for each, inside one warm
+# workspace the harness has already set up. The callback returns 0 on
+# success, non-zero on failure.
+#
+# run_batch tallies results, prints `ok:`/`FAIL:` per snippet and a final
+# `batch: <passed>/<total> passed`, and returns non-zero if any snippet
+# failed (the run continues past failures so one bad fragment doesn't hide
+# the rest). The callback is invoked in an `if`, so POSIX shells suspend
+# `set -e` for its duration — callbacks must check command exit codes
+# explicitly rather than relying on errexit.
+run_batch() {
+    _vb_fn=$1
+    require_env SNIPPET_BATCH
+    _vb_tab=$(printf '\t')
+    _vb_fail=0
+    _vb_total=0
+    _vb_pass=0
+    while IFS="$_vb_tab" read -r _vb_rel _vb_label; do
+        [ -n "$_vb_rel" ] || continue
+        _vb_total=$((_vb_total + 1))
+        if "$_vb_fn" "$_vb_rel" "$_vb_label"; then
+            _vb_pass=$((_vb_pass + 1))
+            echo "ok: $_vb_label"
+        else
+            echo "FAIL: $_vb_label" >&2
+            _vb_fail=1
+        fi
+    done < "$SNIPPET_BATCH"
+    echo "batch: $_vb_pass/$_vb_total passed"
+    return "$_vb_fail"
+}
+
 # await_success_line <log-file> <pid> <deadline-epoch>
 # Returns 0 once the log file contains the EXAM-HELLO success line, or 1
 # when the deadline elapses (or the program exits before matching).
@@ -44,6 +80,17 @@ await_success_line() {
         fi
         sleep 0.2
     done
+    # The process can print the success line and exit between our last grep
+    # and the liveness check — common for syntax-only hellos that print and
+    # return immediately, where the write may not have flushed when we
+    # grepped. Do one final grep before giving up so that race doesn't read
+    # as a failure.
+    if grep -E "feature flag evaluates to [Tt]rue" "$log" >/dev/null 2>&1; then
+        wait "$pid" 2>/dev/null || true
+        grep -E "feature flag evaluates to [Tt]rue" "$log" | head -1
+        echo "validator: ok"
+        return 0
+    fi
     return 1
 }
 

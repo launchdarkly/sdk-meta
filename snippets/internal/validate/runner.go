@@ -28,6 +28,16 @@ type Runner struct {
 	// ImagePrefix is the Docker image-tag prefix used for `mode: docker`.
 	// The full tag is `<image-prefix>:<content-hash>`.
 	ImagePrefix string `yaml:"image-prefix"`
+
+	// Batch opts the validator into batch mode. When true the Go runner
+	// stages every matching snippet at once and invokes the harness a
+	// handful of times (one per worker shard) rather than once per
+	// snippet, handing each invocation a manifest of staged snippets to
+	// loop over inside a single warm workspace. The harness's run.sh must
+	// understand the batch contract (read $SNIPPET_BATCH manifest, loop,
+	// aggregate pass/fail). Validators that haven't been migrated leave
+	// this false and keep the one-invocation-per-snippet path.
+	Batch bool `yaml:"batch"`
 }
 
 func loadRunner(validatorsDir, runtime string) (*Runner, string, error) {

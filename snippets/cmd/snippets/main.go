@@ -201,6 +201,7 @@ func runValidate(args []string) {
 	group := fset.String("group", "", "snippet group to validate (optional; e.g. `sdk-info` or `sdk-docs`)")
 	sdks := fset.String("sdks", "", "path to a sdks/ directory (default: embedded)")
 	validators := fset.String("validators", "./validators", "path to the validators/ directory")
+	jobs := fset.Int("jobs", 0, "max concurrent validator invocations (batch-mode validators only; 0 = NumCPU)")
 	_ = fset.Parse(args)
 
 	if *sdk == "" {
@@ -214,6 +215,7 @@ func runValidate(args []string) {
 		Snippet:       *snippet,
 		SnippetSkip:   *snippetSkip,
 		Group:         *group,
+		Jobs:          *jobs,
 	}); err != nil {
 		fmt.Fprintf(os.Stderr, "validate failed: %v\n", err)
 		os.Exit(1)
