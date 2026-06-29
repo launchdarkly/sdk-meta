@@ -176,6 +176,10 @@ validate_one() {
             CODE_SIGN_IDENTITY="" \
             >"$LOG" 2>&1 || true
         if grep -q "feature flag evaluates to true" "$LOG"; then
+            # Re-emit the matched line on stdout: the verify-hello-app
+            # wrapper greps the command's combined output for it, and the
+            # xcodebuild log went to $LOG, not stdout.
+            grep -E "feature flag evaluates to true" "$LOG" | head -1
             rm -f "$LOG"
             return 0
         fi

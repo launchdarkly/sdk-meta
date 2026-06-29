@@ -33,14 +33,24 @@ func runBatches(cfg Config, units []*resolvedUnit) error {
 	}
 	for _, key := range order {
 		g := groups[key]
-		if g[0].runner.Mode == "docker" {
+		// Native validators run directly on the host (no container
+		// isolation), so concurrent shards would contend on shared state —
+		// the Homebrew download lock, a single iOS Simulator runtime, the
+		// shared SwiftPM/DerivedData caches. Run native groups single-shard;
+		// one warm workspace resolving dependencies once is also the optimal
+		// shape there. Docker groups keep the worker pool (each shard is an
+		// isolated container).
+		effJobs := jobs
+		if g[0].runner.Mode == "native" {
+			effJobs = 1
+		} else {
 			fmt.Printf("--- building %s validator image (%d snippets, %d-way) ---\n",
 				g[0].runtime, len(g), min(jobs, len(g)))
 			if err := buildImage(cfg, g[0].runner, g[0].runnerDir, os.Stdout); err != nil {
 				return err
 			}
 		}
-		if err := runGroup(cfg, g, jobs); err != nil {
+		if err := runGroup(cfg, g, effJobs); err != nil {
 			return err
 		}
 	}
