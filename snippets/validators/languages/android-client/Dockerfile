@@ -107,8 +107,12 @@ RUN mkdir -p app/src/test/java/com/launchdarkly/hello_android
 COPY languages/android-client/test/HelloAppTest.kt \
         app/src/test/java/com/launchdarkly/hello_android/HelloAppTest.kt
 
-# Pre-warm: pull deps, compile, run a placeholder test cycle.
+# Pre-warm: pull deps and compile the baseline scaffold so the gradle
+# build cache + kotlin/java compile outputs are baked into the image.
+# Batch per-validate cycles then reset to this baseline and recompile
+# only the swapped snippet files against the warm cache.
 RUN ./gradlew --no-daemon dependencies --console=plain >/dev/null 2>&1 || true
+RUN ./gradlew --no-daemon compileDebugKotlin compileDebugJavaWithJavac --console=plain >/dev/null 2>&1 || true
 
 WORKDIR /work
 

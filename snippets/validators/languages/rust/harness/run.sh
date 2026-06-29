@@ -1,44 +1,51 @@
 #!/bin/sh
-# Runs the staged Rust snippet against a real LaunchDarkly environment.
-# The harness reproduces gonfalon's `cargo new` + `cargo add` flow:
-# bootstrap a Cargo project, drop the snippet's src/main.rs over the
-# default template, add the SDK + tokio dependencies, and run it.
+# Batch validator for Rust server SDK snippets. Reproduces gonfalon's
+# `cargo new` + `cargo add` + run flow, but ONCE per job rather than once
+# per snippet: the Dockerfile pre-baked /opt/hello-rust with the SDK +
+# tokio + futures + transport dependency tree already compiled, so each
+# snippet only recompiles the binary crate (the swapped src/main.rs) and
+# links against the cached dependency objects.
+#
+# The Go runner stages every matching snippet under the bind-mounted
+# /snippet dir and writes /snippet/manifest.tsv (one `<relpath>\t<label>`
+# line per snippet). We loop over it in the single warm project. Exit
+# non-zero if any snippet fails; the run continues past failures so one
+# bad fragment doesn't hide the rest.
 set -eu
 
 . /harness-shared/lib.sh
-require_env LAUNCHDARKLY_SDK_KEY LAUNCHDARKLY_FLAG_KEY SNIPPET_ENTRYPOINT
+require_env LAUNCHDARKLY_SDK_KEY LAUNCHDARKLY_FLAG_KEY SNIPPET_BATCH
 
-WORK=$(mktemp -d)
-trap 'rm -rf "$WORK"' EXIT
-cd "$WORK"
+cd /opt/hello-rust
 
-cargo new --quiet --bin hello-rust
-cd hello-rust
-
-# Replace the default src/main.rs with the snippet body. The snippet's
-# `file:` is `src/main.rs`, so /snippet/src/main.rs holds it.
-cp "/snippet/$SNIPPET_ENTRYPOINT" "$SNIPPET_ENTRYPOINT"
-
-# Version-pinned scaffolds (e.g. rust-syntax-only-v1) set
-# LD_RUST_SDK_VERSION via validation.env so older-API fragments
-# compile against the SDK major they document. Unset means latest.
-cargo add --quiet "launchdarkly-server-sdk${LD_RUST_SDK_VERSION:+@${LD_RUST_SDK_VERSION}}"
-cargo add --quiet tokio@1 -F rt,macros
-cargo add --quiet futures
-# Web-proxy doc fragments configure the 3.x transport layer directly
-# (HyperTransport); the `hyper` feature gates that type.
-cargo add --quiet launchdarkly-sdk-transport -F hyper
-
-LOG=$(mktemp)
-
-timeout --signal=TERM 300s cargo run --quiet >"$LOG" 2>&1 &
-PID=$!
-
-deadline=$(( $(date +%s) + 290 ))
-if await_success_line "$LOG" "$PID" "$deadline"; then
-    exit 0
+# Version-pinned batch groups (rust-syntax-only-v1, etc.) set
+# LD_RUST_SDK_VERSION via validation.env so older-API fragments compile
+# against the SDK major they document. Re-pin and warm the cache once for
+# the whole shard; the default (unpinned) group reuses the image's
+# pre-built dependency tree untouched, keeping the common path a pure
+# cache hit.
+if [ -n "${LD_RUST_SDK_VERSION:-}" ]; then
+    cargo add --quiet "launchdarkly-server-sdk@${LD_RUST_SDK_VERSION}"
+    cargo build --quiet || true
 fi
 
-kill -TERM "$PID" 2>/dev/null || true
-wait "$PID" 2>/dev/null || true
-fail_with_log "$LOG" "did not see expected line: feature flag evaluates to true"
+validate_one() {
+    relpath=$1
+    cp "/snippet/$relpath" src/main.rs
+
+    LOG=$(mktemp)
+    timeout --signal=TERM 300s cargo run --quiet >"$LOG" 2>&1 &
+    PID=$!
+    deadline=$(( $(date +%s) + 290 ))
+    if await_success_line "$LOG" "$PID" "$deadline"; then
+        rm -f "$LOG"
+        return 0
+    fi
+    kill -TERM "$PID" 2>/dev/null || true
+    wait "$PID" 2>/dev/null || true
+    dump_redacted "$LOG" >&2
+    rm -f "$LOG"
+    return 1
+}
+
+run_batch validate_one

@@ -1,20 +1,24 @@
 #!/bin/sh
-# Parse-and-type-check the staged C file against the stub <launchdarkly/api.h>
-# header. Success = gcc accepts the source (no parse / type errors).
+# Batch parse-and-type-check for legacy v2.x C client SDK fragments. Each
+# snippet is gcc-compiled (parse + type-check only) against the stub
+# <launchdarkly/api.h> baked into the image — no SDK build, no flag eval.
+# Batch mode loops every staged snippet in one container invocation rather
+# than paying a container start per snippet.
 set -eu
 
 . /harness-shared/lib.sh
-require_env SNIPPET_ENTRYPOINT
+require_env SNIPPET_BATCH
 
-WORK=$(mktemp -d)
-trap 'rm -rf "$WORK"' EXIT
-cp "/snippet/$SNIPPET_ENTRYPOINT" "$WORK/main.c"
-cd "$WORK"
+validate_one() {
+    relpath=$1
+    LOG=$(mktemp)
+    if gcc -x c -std=c11 -Wall -c "/snippet/$relpath" -o /dev/null >"$LOG" 2>&1; then
+        rm -f "$LOG"
+        return 0
+    fi
+    cat "$LOG" >&2
+    rm -f "$LOG"
+    return 1
+}
 
-LOG=$(mktemp)
-if gcc -std=c11 -Wall -c main.c -o /dev/null >"$LOG" 2>&1; then
-    echo "feature flag evaluates to true"
-    echo "validator: ok (gcc compile against v2 C SDK stub headers succeeded)"
-    exit 0
-fi
-fail_with_log "$LOG" "c-server v2 SDK parse/type-check failed"
+run_batch validate_one

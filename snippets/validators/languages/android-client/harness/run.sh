@@ -1,69 +1,75 @@
 #!/bin/sh
-# Validates the Android snippet under Robolectric (no emulator). The
-# Dockerfile pre-bakes a hello-android scaffold + Robolectric test;
-# per-validate we just swap the snippet's two Kotlin files in and run
-# the JUnit test.
+# Batch validator for Android snippets under Robolectric / kotlinc (no
+# emulator). The Dockerfile pre-bakes a hello-android scaffold + Robolectric
+# test and warms the gradle build cache; per-snippet we reset the package dir
+# to the baseline scaffold, swap the snippet's Kotlin/Java files in, apply
+# the import/type transforms, and compile (or, in runtime mode, run the
+# Robolectric test).
 #
-# Two checks flow through this same harness, dispatched on the
-# optional `SNIPPET_CHECK` env var (set by the snippet's
-# `validation.env` or by the validate dispatcher):
+# Unlike the old one-invocation-per-snippet path, the Go runner stages every
+# matching snippet under /snippet and writes /snippet/manifest.tsv; run_batch
+# loops over them in a single container. Crucially we let the gradle daemon
+# stay alive across the loop (no --no-daemon), so only the first snippet pays
+# JVM + gradle startup and the rest reuse the warm daemon + build cache —
+# that, not the compile itself, was the dominant per-snippet cost.
 #
-#   - SNIPPET_CHECK unset OR "runtime" (default): full Robolectric run
-#     end-to-end against the LD streaming endpoint. Asserts the
-#     canonical EXAM-HELLO line lands in the activity TextView.
+# Two checks flow through this same harness, dispatched on SNIPPET_CHECK
+# (snippets of one kind share a batch group, so a whole run is one mode):
 #
-#   - SNIPPET_CHECK=parse: parse-and-type-check the staged Kotlin
-#     file against the pre-baked `launchdarkly-android-client-sdk`
-#     aar + AndroidX classpath via `./gradlew compileDebugKotlin`,
-#     then bail out. Used for doc fragments (e.g. the
-#     `sdk-docs/*-kotlin.snippet.md` reference snippets) that
-#     aren't standalone-runnable but should still be checked for
-#     syntactic correctness and type resolution against the real
-#     android-client SDK surface.
+#   - runtime (default): full Robolectric run end-to-end against the LD
+#     streaming endpoint; asserts the canonical EXAM-HELLO line.
+#   - parse: kotlinc + javac against the real android-client SDK aar +
+#     AndroidX classpath via compileDebug{Kotlin,JavaWithJavac}, no run.
 set -eu
 
 . /harness-shared/lib.sh
-require_env LAUNCHDARKLY_FLAG_KEY SNIPPET_ENTRYPOINT
+require_env LAUNCHDARKLY_FLAG_KEY SNIPPET_BATCH
 CHECK="${SNIPPET_CHECK:-runtime}"
 if [ "$CHECK" = "runtime" ]; then
     require_env LAUNCHDARKLY_MOBILE_KEY
 fi
 
-# The snippet declares main-application + main-activity as separate
-# files. Both come through as part of the staging dir — copy whichever
-# .kt files /snippet has into the scaffold's main source tree.
 SCAFFOLD=/opt/hello-android
 PKG_DIR="${SCAFFOLD}/app/src/main/java/com/launchdarkly/hello_android"
 
-for f in /snippet/app/src/main/java/com/launchdarkly/hello_android/*.kt; do
-    [ -f "$f" ] || continue
-    cp "$f" "${PKG_DIR}/$(basename "$f")"
-done
-# Java sources flow through the same path. The gradle project's
-# `src/main/java/` source set accepts both, and `compileDebug*`
-# invocations below cover Kotlin and Java separately.
-for f in /snippet/app/src/main/java/com/launchdarkly/hello_android/*.java; do
-    [ -f "$f" ] || continue
-    cp "$f" "${PKG_DIR}/$(basename "$f")"
-done
+# Snapshot the baseline package dir once. Each snippet may add or replace
+# .kt/.java files; resetting to this baseline before staging the next
+# snippet keeps stale files from a prior fragment out of the next compile.
+BASELINE=/tmp/pkg-baseline
+rm -rf "$BASELINE"
+cp -a "$PKG_DIR" "$BASELINE"
 
-# Two transforms are needed before kotlinc will accept the staged
-# Kotlin file:
-#   1. Lift any `import` statements out of the function body to file
-#      scope (Kotlin only allows imports between `package` and the
-#      first top-level declaration).
+cd "$SCAFFOLD"
+
+# stage_files <unit-dir>: reset the package dir to baseline, then copy the
+# snippet's staged Kotlin/Java files in. The snippet declares its source
+# files under app/src/main/java/com/launchdarkly/hello_android/.
+stage_files() {
+    unit=$1
+    rm -rf "$PKG_DIR"
+    cp -a "$BASELINE" "$PKG_DIR"
+    for f in "$unit"/app/src/main/java/com/launchdarkly/hello_android/*.kt \
+             "$unit"/app/src/main/java/com/launchdarkly/hello_android/*.java; do
+        [ -f "$f" ] || continue
+        cp "$f" "${PKG_DIR}/$(basename "$f")"
+    done
+}
+
+# transform_entry <entry-file>: applies the two source rewrites the staged
+# entry file needs before kotlinc/javac will accept it.
+#   1. Lift `import` statements out of the function body to file scope
+#      (Kotlin/Java only allow imports before the first declaration).
 #   2. In runtime mode only: rewrite the body's `this@BaseApplication`
-#      reference (the gonfalon snippet's literal Application name)
-#      to `this@MainApplication`, which is the class name the init
-#      scaffold produces and the existing HelloAppTest expects via
-#      `@Config(application = MainApplication::class)`. The
-#      kotlin-syntax-only scaffold declares its class as
-#      `BaseApplication` directly so the body's labeled-this
-#      resolves without substitution; skip the rewrite there.
-# Idempotent on files that don't have a misplaced import or the
-# `BaseApplication` token.
-ENTRY_KT="${PKG_DIR}/$(basename "$SNIPPET_ENTRYPOINT")"
-if [ -f "$ENTRY_KT" ]; then
+#      (the gonfalon snippet's literal Application name) to
+#      `this@MainApplication`, the class HelloAppTest's
+#      `@Config(application = MainApplication::class)` expects. The
+#      kotlin-syntax-only scaffold names its class `BaseApplication`
+#      directly, so the parse path skips this rewrite.
+#   3. If the file carries the TYPE_LIFT_TARGET marker, hoist
+#      brace-balanced type declarations out of the body to member scope.
+transform_entry() {
+    ENTRY_KT=$1
+    [ -f "$ENTRY_KT" ] || return 0
     SUBSTITUTE_BASE_APP=1
     if [ "$CHECK" != "runtime" ]; then
         SUBSTITUTE_BASE_APP=0
@@ -133,21 +139,17 @@ if os.environ.get("SUBSTITUTE_BASE_APP") == "1":
 with open(path, "w") as f:
     f.write(new_text)
 PYEOF
-fi
 
-# If the staged file contains the TYPE_LIFT_TARGET marker, move any
-# brace-balanced type declarations found between the BODY_BEGIN/BODY_END
-# markers up to the target at SnippetActivity member scope. Java rejects
-# access modifiers on local classes, so doc fragments that define a
-# `public class` alongside statements (e.g. a hook implementation plus
-# the configuration that registers it) would otherwise fail to compile
-# inside `onCreate()`. As nested member classes they compile, and they
-# shadow any same-named file-scope stub for the statement residue left
-# behind. Bodies without type declarations are untouched. Brace counting
-# is line-based and does not see braces in string literals; the doc
-# fragments this serves don't contain such literals.
-if [ -f "$ENTRY_KT" ] && grep -q 'TYPE_LIFT_TARGET' "$ENTRY_KT"; then
-    python3 - "$ENTRY_KT" <<'PYEOF'
+    # If the staged file contains the TYPE_LIFT_TARGET marker, move any
+    # brace-balanced type declarations found between the BODY_BEGIN/BODY_END
+    # markers up to the target at SnippetActivity member scope. Java rejects
+    # access modifiers on local classes, so doc fragments that define a
+    # `public class` alongside statements would otherwise fail to compile
+    # inside `onCreate()`. As nested member classes they compile, and they
+    # shadow any same-named file-scope stub for the statement residue left
+    # behind.
+    if grep -q 'TYPE_LIFT_TARGET' "$ENTRY_KT"; then
+        python3 - "$ENTRY_KT" <<'PYEOF'
 import re
 import sys
 
@@ -193,39 +195,53 @@ if lifted:
 with open(fp, 'w') as f:
     f.write('\n'.join(lines) + '\n')
 PYEOF
-fi
+    fi
+}
 
-cd "${SCAFFOLD}"
-
-if [ "$CHECK" = "parse" ]; then
-    # Compile-only path: kotlinc + javac against the real
-    # android-client SDK aar + AndroidX runtime, no Robolectric run.
-    # We invoke both `compileDebugKotlin` and `compileDebugJavaWithJavac`
-    # so Kotlin-only and Java-only fragments are both covered. Each
-    # task is cheap (no APK assembly, no lint), and gradle skips any
-    # task whose inputs (the source set) didn't change.
+validate_parse() {
     LOG=$(mktemp)
-    if timeout --signal=TERM 600s ./gradlew --no-daemon \
+    if timeout --signal=TERM 600s ./gradlew \
             compileDebugKotlin compileDebugJavaWithJavac \
             --console=plain >"$LOG" 2>&1; then
         echo "feature flag evaluates to true"
         echo "validator: ok (compileDebug{Kotlin,JavaWithJavac} succeeded)"
-        exit 0
+        rm -f "$LOG"
+        return 0
     fi
-    fail_with_log "$LOG" "android compile failed"
-fi
+    cat "$LOG" >&2
+    rm -f "$LOG"
+    return 1
+}
 
-LOG=$(mktemp)
-timeout --signal=TERM 600s ./gradlew --no-daemon \
-        testDebugUnitTest --tests='*HelloAppTest*' --console=plain \
-        >"$LOG" 2>&1 &
-PID=$!
+validate_runtime() {
+    LOG=$(mktemp)
+    timeout --signal=TERM 600s ./gradlew \
+            testDebugUnitTest --tests='*HelloAppTest*' --console=plain \
+            >"$LOG" 2>&1 &
+    PID=$!
+    deadline=$(( $(date +%s) + 590 ))
+    if await_success_line "$LOG" "$PID" "$deadline"; then
+        rm -f "$LOG"
+        return 0
+    fi
+    kill -TERM "$PID" 2>/dev/null || true
+    wait "$PID" 2>/dev/null || true
+    dump_redacted "$LOG" >&2
+    rm -f "$LOG"
+    return 1
+}
 
-deadline=$(( $(date +%s) + 590 ))
-if await_success_line "$LOG" "$PID" "$deadline"; then
-    exit 0
-fi
+validate_one() {
+    relpath=$1
+    idx=$(printf '%s' "$relpath" | cut -d/ -f1)
+    stage_files "/snippet/$idx"
+    transform_entry "${PKG_DIR}/$(basename "$relpath")"
 
-kill -TERM "$PID" 2>/dev/null || true
-wait "$PID" 2>/dev/null || true
-fail_with_log "$LOG" "did not see expected line: feature flag evaluates to true"
+    if [ "$CHECK" = "parse" ]; then
+        validate_parse
+    else
+        validate_runtime
+    fi
+}
+
+run_batch validate_one

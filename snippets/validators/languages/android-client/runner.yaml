@@ -1,3 +1,4 @@
 mode: docker
 runs-on: ubuntu-latest
 image-prefix: sdk-snippets/android-client-validator
+batch: true

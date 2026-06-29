@@ -1,3 +1,4 @@
 mode: docker
 runs-on: ubuntu-latest
 image-prefix: sdk-snippets/flutter-client-validator
+batch: true
