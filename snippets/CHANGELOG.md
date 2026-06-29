@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.20.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.19.0...snippets/v0.20.0) (2026-06-29)
+
+
+### Features
+
+* **snippets:** add data-saving-mode snippets for the Flutter client SDK ([#525](https://github.com/launchdarkly/sdk-meta/issues/525)) ([96c9155](https://github.com/launchdarkly/sdk-meta/commit/96c9155edc41d875f7fc0471029911fac279899d))
+
+
+### Bug Fixes
+
+* **snippets:** retry android validator sdkmanager install on corrupt download ([#522](https://github.com/launchdarkly/sdk-meta/issues/522)) ([f5df6da](https://github.com/launchdarkly/sdk-meta/commit/f5df6dae9fc74b021160f26ec31fe4afec6755fe))
+
 ## [0.19.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.18.0...snippets/v0.19.0) (2026-06-26)
 
 
