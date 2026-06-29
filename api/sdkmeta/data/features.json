@@ -223,6 +223,11 @@
       "introduced": "0.1",
       "removed": null
     },
+    "fdv2": {
+      "deprecated": null,
+      "introduced": "4.9",
+      "removed": null
+    },
     "flagChanges": {
       "deprecated": null,
       "introduced": "0.1",
@@ -1724,6 +1729,11 @@
       "introduced": "2.9",
       "removed": null
     },
+    "fdv2": {
+      "deprecated": null,
+      "introduced": "4.1.2",
+      "removed": null
+    },
     "flagChanges": {
       "deprecated": null,
       "introduced": "2.9",
@@ -1809,6 +1819,11 @@
     "experimentation": {
       "deprecated": null,
       "introduced": "5.0",
+      "removed": null
+    },
+    "fdv2": {
+      "deprecated": null,
+      "introduced": "10.19",
       "removed": null
     },
     "flagChanges": {
