@@ -1,2 +1,3 @@
 mode: native
 runs-on: macos-latest
+batch: true

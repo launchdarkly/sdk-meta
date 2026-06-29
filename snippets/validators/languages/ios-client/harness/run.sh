@@ -1,35 +1,108 @@
 #!/bin/sh
-# Validates the iOS snippet on macos-latest with xcodebuild + iOS
-# Simulator. The snippet's AppDelegate + ViewController are dropped
-# into a pre-baked Xcode project (generated from the scaffold's
-# project.yml via xcodegen), pointed at the launchdarkly-ios-client-sdk
-# Swift Package, and exercised via an XCTest case.
+# Batch validator for iOS snippets on macos-latest (xcodebuild + iOS
+# Simulator). Each snippet's AppDelegate + ViewController are dropped into a
+# pre-baked Xcode project (generated from the scaffold's project.yml via
+# xcodegen) pointed at the launchdarkly-ios-client-sdk Swift Package.
 #
-# `mode: native` — xcodebuild + iOS Simulator don't run inside Linux
+# `mode: native` — xcodebuild + the Simulator don't run inside Linux
 # containers, so the CI cell sets runs-on: macos-latest.
+#
+# The old path did this once per snippet: xcodegen generate +
+# `-resolvePackageDependencies` (which resolves AND builds the LD SDK
+# package) + `xcodebuild test` (which boots a simulator). For the ~80
+# syntax-only sdk-docs fragments that was ~90s each, almost all of it
+# re-resolving/re-building the SDK and booting a simulator that only exists
+# to print a hardcoded line. Batch mode does the project setup and SPM
+# resolve ONCE, into a shared DerivedData, then loops the staged snippets:
+#
+#   - parse (sdk-docs / experimentation, syntax-only): `xcodebuild build`
+#     against the iphonesimulator SDK — a compile/type-check, no simulator
+#     boot. The wrappee body lives in a never-instantiated function, so a
+#     clean compile is the whole signal; we emit the canonical line.
+#   - runtime (init): `xcodebuild test`, which boots the simulator and runs
+#     LDClient.start end-to-end, then greps the captured log.
+#
+# The Go runner stages every matching snippet under $SNIPPET_DIR and writes
+# $SNIPPET_BATCH (the manifest); run_batch loops over it in the warm project.
 set -eu
 
 # The runner doesn't mount /harness-shared (no docker), so source the
 # helpers via a relative path.
 . "$(cd "$(dirname "$0")/../../../shared" && pwd)/lib.sh"
 
-require_env LAUNCHDARKLY_MOBILE_KEY LAUNCHDARKLY_FLAG_KEY SNIPPET_ENTRYPOINT
+require_env LAUNCHDARKLY_FLAG_KEY SNIPPET_BATCH
+CHECK="${SNIPPET_CHECK:-runtime}"
+if [ "$CHECK" = "runtime" ]; then
+    require_env LAUNCHDARKLY_MOBILE_KEY
+fi
 
 SCAFFOLD="$(cd "$(dirname "$0")/../scaffold" && pwd)"
 
 WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
-
 cp -R "$SCAFFOLD"/. "$WORK"/
-cp "$SNIPPET_DIR/AppDelegate.swift" "$WORK/Sources/AppDelegate.swift"
-cp "$SNIPPET_DIR/ViewController.swift" "$WORK/Sources/ViewController.swift"
+cd "$WORK"
 
-# Swift only allows `import` declarations at file scope. The init
-# scaffold splices the snippet body inside a function (so the body's
-# `LDClient.start(...)` runs with an Application lifecycle); any
-# `import` lines that came along in the body need to be lifted out.
-# Idempotent on files that don't have a misplaced import.
-python3 - "$WORK/Sources/AppDelegate.swift" <<'PYEOF'
+if ! command -v xcodegen >/dev/null 2>&1; then
+    brew install xcodegen
+fi
+xcodegen generate
+
+DERIVED="$WORK/DerivedData"
+
+# Resolve + build the Swift Package dependencies ONCE into the shared
+# DerivedData. Every per-snippet build below reuses these built products
+# instead of re-resolving and re-compiling the SDK.
+xcodebuild -resolvePackageDependencies \
+    -project HelloIOS.xcodeproj \
+    -scheme HelloIOS \
+    -derivedDataPath "$DERIVED" \
+    >/tmp/resolve.log 2>&1 || { cat /tmp/resolve.log >&2; exit 1; }
+
+# Runtime mode boots a simulator; pick whichever iPhone is installed on
+# this runner (the roster shifts per Xcode release). Parse mode compiles
+# against the iphonesimulator SDK without booting anything, so it skips
+# this.
+DESTINATION=""
+if [ "$CHECK" = "runtime" ]; then
+    SIM_NAME=$(xcrun simctl list devices available --json | python3 -c '
+import sys, json, re
+data = json.load(sys.stdin)
+best = None
+best_num = -1
+for runtime, devs in data.get("devices", {}).items():
+    if "iOS" not in runtime:
+        continue
+    for dev in devs:
+        name = dev.get("name", "")
+        if not dev.get("isAvailable", False):
+            continue
+        if not name.startswith("iPhone"):
+            continue
+        m = re.match(r"^iPhone (\d+)$", name)
+        if m and int(m.group(1)) > best_num:
+            best_num = int(m.group(1))
+            best = name
+if best is None:
+    cand = []
+    for runtime, devs in data.get("devices", {}).items():
+        if "iOS" not in runtime:
+            continue
+        for dev in devs:
+            if dev.get("isAvailable") and dev.get("name", "").startswith("iPhone"):
+                cand.append(dev["name"])
+    best = sorted(cand)[-1] if cand else "iPhone 16"
+print(best)
+')
+    DESTINATION="platform=iOS Simulator,name=$SIM_NAME"
+    echo "validator: targeting $DESTINATION"
+fi
+
+# lift_imports <file>: Swift only allows `import` at file scope. The init
+# scaffold splices the snippet body inside a function, so any `import` lines
+# that came along in the body must be lifted out. Idempotent.
+lift_imports() {
+    python3 - "$1" <<'PYEOF'
 import re, sys
 path = sys.argv[1]
 with open(path) as f:
@@ -47,7 +120,7 @@ for line in lines:
     if saw_func and re.match(r"^\s*import\s+[A-Za-z_][A-Za-z0-9_.]*\s*$", line):
         m = re.match(r"^\s*import\s+([A-Za-z_][A-Za-z0-9_.]*)\s*$", line)
         in_func_imports.append(m.group(1))
-        continue  # drop from in-place position
+        continue
     if not saw_func:
         m = re.match(r"^\s*import\s+([A-Za-z_][A-Za-z0-9_.]*)\s*$", line)
         if m:
@@ -72,82 +145,63 @@ if new_top:
 with open(path, "w") as f:
     f.write("\n".join(out) + ("\n" if text.endswith("\n") else ""))
 PYEOF
+}
 
-cd "$WORK"
+stage_snippet() {
+    idx=$1
+    # The snippet stages an AppDelegate + ViewController (companion). Copy
+    # whatever .swift files the unit provides over the scaffold's Sources.
+    for f in "$SNIPPET_DIR/$idx"/*.swift; do
+        [ -f "$f" ] || continue
+        cp "$f" "$WORK/Sources/$(basename "$f")"
+    done
+    lift_imports "$WORK/Sources/AppDelegate.swift"
+}
 
-if ! command -v xcodegen >/dev/null 2>&1; then
-    brew install xcodegen
-fi
-xcodegen generate
+validate_one() {
+    relpath=$1
+    idx=$(printf '%s' "$relpath" | cut -d/ -f1)
+    stage_snippet "$idx"
 
-# Pick whichever iPhone simulator is currently installed on this
-# runner. macos-latest's iPhone roster shifts per Xcode release —
-# hardcoding "iPhone 15" stops working when GitHub bumps the image.
-SIM_NAME=$(xcrun simctl list devices available --json | python3 -c '
-import sys, json, re
-data = json.load(sys.stdin)
-best = None
-best_num = -1
-for runtime, devs in data.get("devices", {}).items():
-    if "iOS" not in runtime:
-        continue
-    for dev in devs:
-        name = dev.get("name", "")
-        if not dev.get("isAvailable", False):
-            continue
-        if not name.startswith("iPhone"):
-            continue
-        # Prefer plain "iPhone <N>" over Pro/Max/Plus variants so the
-        # destination string is shortest and most likely to match.
-        m = re.match(r"^iPhone (\d+)$", name)
-        if m and int(m.group(1)) > best_num:
-            best_num = int(m.group(1))
-            best = name
-if best is None:
-    # Fallback: any available iPhone, max version-suffix wins.
-    cand = []
-    for runtime, devs in data.get("devices", {}).items():
-        if "iOS" not in runtime:
-            continue
-        for dev in devs:
-            if dev.get("isAvailable") and dev.get("name", "").startswith("iPhone"):
-                cand.append(dev["name"])
-    best = sorted(cand)[-1] if cand else "iPhone 16"
-print(best)
-')
-DESTINATION="platform=iOS Simulator,name=$SIM_NAME"
-echo "validator: targeting $DESTINATION"
+    LOG=$(mktemp)
+    if [ "$CHECK" = "runtime" ]; then
+        SIMCTL_CHILD_LAUNCHDARKLY_MOBILE_KEY="$LAUNCHDARKLY_MOBILE_KEY" \
+        SIMCTL_CHILD_LAUNCHDARKLY_FLAG_KEY="$LAUNCHDARKLY_FLAG_KEY" \
+        xcodebuild test \
+            -project HelloIOS.xcodeproj \
+            -scheme HelloIOS \
+            -destination "$DESTINATION" \
+            -derivedDataPath "$DERIVED" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY="" \
+            >"$LOG" 2>&1 || true
+        if grep -q "feature flag evaluates to true" "$LOG"; then
+            rm -f "$LOG"
+            return 0
+        fi
+        tail -100 "$LOG" >&2
+        rm -f "$LOG"
+        return 1
+    fi
 
-LOG=$(mktemp)
+    # parse mode: compile-only against the simulator SDK, no boot.
+    if xcodebuild build \
+        -project HelloIOS.xcodeproj \
+        -scheme HelloIOS \
+        -sdk iphonesimulator \
+        -destination "generic/platform=iOS Simulator" \
+        -derivedDataPath "$DERIVED" \
+        CODE_SIGNING_ALLOWED=NO \
+        CODE_SIGN_IDENTITY="" \
+        >"$LOG" 2>&1; then
+        # The wrappee body never executes; a clean compile is the signal.
+        echo "feature flag evaluates to true"
+        rm -f "$LOG"
+        return 0
+    fi
+    tail -100 "$LOG" >&2
+    rm -f "$LOG"
+    return 1
+}
 
-# `-resolvePackageDependencies` is an action mutually exclusive with
-# `test`; xcodebuild silently runs only the resolve when both are
-# passed. Resolve packages first, then run the test action.
-xcodebuild -resolvePackageDependencies \
-    -project HelloIOS.xcodeproj \
-    -scheme HelloIOS \
-    >>"$LOG" 2>&1
-
-set +e
-SIMCTL_CHILD_LAUNCHDARKLY_MOBILE_KEY="$LAUNCHDARKLY_MOBILE_KEY" \
-SIMCTL_CHILD_LAUNCHDARKLY_FLAG_KEY="$LAUNCHDARKLY_FLAG_KEY" \
-xcodebuild test \
-    -project HelloIOS.xcodeproj \
-    -scheme HelloIOS \
-    -destination "$DESTINATION" \
-    CODE_SIGNING_ALLOWED=NO \
-    CODE_SIGN_IDENTITY="" \
-    >>"$LOG" 2>&1
-XCB_EXIT=$?
-set -e
-
-if grep -q "feature flag evaluates to true" "$LOG"; then
-    grep -E "feature flag evaluates to true|validator: rendered" "$LOG" | head -3
-    echo "validator: ok"
-    exit 0
-fi
-
-echo "validator: did not see expected line: feature flag evaluates to true (xcodebuild exit=$XCB_EXIT)" >&2
-echo "--- last 100 lines of xcodebuild output ---" >&2
-tail -100 "$LOG" >&2
-exit 1
+run_batch validate_one
