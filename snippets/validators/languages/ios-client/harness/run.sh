@@ -43,6 +43,13 @@ trap 'rm -rf "$WORK"' EXIT
 cp -R "$SCAFFOLD"/. "$WORK"/
 cd "$WORK"
 
+# Snapshot the scaffold's baseline Sources so each snippet starts from a
+# clean tree. The project compiles every file under Sources/, so without a
+# reset a differently-named .swift file from an earlier fragment could
+# linger and affect a later compile.
+BASELINE_SOURCES=$(mktemp -d)
+cp -R "$WORK/Sources/." "$BASELINE_SOURCES/"
+
 if ! command -v xcodegen >/dev/null 2>&1; then
     brew install xcodegen
 fi
@@ -149,8 +156,12 @@ PYEOF
 
 stage_snippet() {
     idx=$1
-    # The snippet stages an AppDelegate + ViewController (companion). Copy
-    # whatever .swift files the unit provides over the scaffold's Sources.
+    # Reset Sources to the scaffold baseline so a prior snippet's files don't
+    # leak into this compile, then copy in whatever .swift files the unit
+    # provides (an AppDelegate + its ViewController companion).
+    rm -rf "$WORK/Sources"
+    mkdir -p "$WORK/Sources"
+    cp -R "$BASELINE_SOURCES/." "$WORK/Sources/"
     for f in "$SNIPPET_DIR/$idx"/*.swift; do
         [ -f "$f" ] || continue
         cp "$f" "$WORK/Sources/$(basename "$f")"

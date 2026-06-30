@@ -26,7 +26,13 @@ cd /opt/hello-rust
 # cache hit.
 if [ -n "${LD_RUST_SDK_VERSION:-}" ]; then
     cargo add --quiet "launchdarkly-server-sdk@${LD_RUST_SDK_VERSION}"
-    cargo build --quiet || true
+    # Warm the re-pinned dependency tree once. If it doesn't compile, say so
+    # loudly rather than letting every snippet fail later with a confusing
+    # `cargo run` error; we still continue so each snippet's own result is
+    # reported.
+    if ! cargo build --quiet; then
+        echo "validator: warm build for launchdarkly-server-sdk@${LD_RUST_SDK_VERSION} failed; snippet results below will reflect this" >&2
+    fi
 fi
 
 validate_one() {
