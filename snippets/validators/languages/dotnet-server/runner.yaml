@@ -1,3 +1,4 @@
 mode: docker
 runs-on: ubuntu-latest
 image-prefix: sdk-snippets/dotnet-server-validator
+batch: true

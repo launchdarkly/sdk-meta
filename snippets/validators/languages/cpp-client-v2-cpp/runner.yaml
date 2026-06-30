@@ -1,3 +1,4 @@
 mode: docker
 runs-on: ubuntu-latest
 image-prefix: sdk-snippets/cpp-client-v2-cpp-validator
+batch: true

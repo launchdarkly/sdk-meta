@@ -24,6 +24,7 @@ type Config struct {
 	Snippet       string // snippet id to validate (empty = all in the SDK)
 	SnippetSkip   string // comma-separated snippet ids to skip (empty = none)
 	Group         string // snippet group to validate (empty = all; e.g. "sdk-info" or "sdk-docs")
+	Jobs          int    // max concurrent batch-harness invocations (0 = NumCPU); batch-mode validators only
 }
 
 // envInputs holds the environment-derived input values that get substituted
@@ -74,7 +75,11 @@ func Run(cfg Config) error {
 		return err
 	}
 
-	any := false
+	// Resolve every (snippet, check) into a unit (runtime + runner +
+	// assembled env) up front. Batch-capable runtimes are then grouped and
+	// run a handful of times in warm workspaces; everything else keeps the
+	// historical one-invocation-per-snippet path.
+	var units []*resolvedUnit
 	for _, id := range model.SortedIDs(snippets) {
 		s := snippets[id]
 		if cfg.SDK != "" && s.Frontmatter.SDK != cfg.SDK {
@@ -98,13 +103,35 @@ func Run(cfg Config) error {
 		if !isValidatable(s) {
 			continue
 		}
-		any = true
-		if err := runOne(cfg, s, snippets, env); err != nil {
-			return fmt.Errorf("validate %s: %w", id, err)
+		checks := s.Frontmatter.Validation.EffectiveChecks()
+		for i, check := range checks {
+			u, err := resolveCheck(cfg, s, snippets, env, check, i, len(checks))
+			if err != nil {
+				return fmt.Errorf("validate %s: %w", id, err)
+			}
+			units = append(units, u)
 		}
 	}
-	if !any {
+	if len(units) == 0 {
 		return fmt.Errorf("no validatable snippets found (sdk=%q, snippet=%q)", cfg.SDK, cfg.Snippet)
+	}
+
+	var batchUnits []*resolvedUnit
+	for _, u := range units {
+		if u.runner.Batch {
+			batchUnits = append(batchUnits, u)
+			continue
+		}
+		// Non-batch validator: stage and dispatch one snippet at a time,
+		// exactly as before.
+		if err := u.dispatch(); err != nil {
+			return fmt.Errorf("validate %s: %w", u.snippet.Frontmatter.ID, err)
+		}
+	}
+	if len(batchUnits) > 0 {
+		if err := runBatches(cfg, batchUnits); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -144,24 +171,35 @@ func effectiveScaffold(s *model.Snippet, scaffoldID string, all map[string]*mode
 	return sc, nil
 }
 
-func runOne(cfg Config, s *model.Snippet, all map[string]*model.Snippet, env envInputs) error {
-	checks := s.Frontmatter.Validation.EffectiveChecks()
-	for i, check := range checks {
-		if err := runOneCheck(cfg, s, all, env, check, i, len(checks)); err != nil {
-			return err
-		}
-	}
-	return nil
+// resolvedUnit is a single (snippet, check) with its runtime, runner, and
+// run-time env resolved, ready to stage and validate. Staging is deferred
+// (see stage) so batch mode can stage many units into one batch directory
+// before invoking the harness once over the whole set.
+type resolvedUnit struct {
+	cfg        Config
+	snippet    *model.Snippet
+	all        map[string]*model.Snippet
+	env        envInputs
+	check      model.Check
+	scaffold   *model.Snippet // nil when the snippet renders itself
+	runtime    string
+	runner     *Runner
+	runnerDir  string
+	entrypoint string            // path under the stage dir to the entry file
+	extraEnv   map[string]string // build/dispatch env forwarded to the harness
+	label      string            // "<id>" plus a check suffix, for log headers
 }
 
-// runOneCheck executes one Check against the snippet. Each Check carries
-// its own (possibly inherited from parent Validation) scaffold, runtime,
-// env, and placeholders, so a snippet with multiple checks can route each
-// through a different harness branch.
-func runOneCheck(cfg Config, s *model.Snippet, all map[string]*model.Snippet, env envInputs, check model.Check, checkIdx, checkTotal int) error {
+// resolveCheck resolves one Check against the snippet into a resolvedUnit:
+// it determines the runtime, loads the runner, enforces the env-input
+// contract for runtime checks, and assembles the harness env. It performs
+// no staging and runs no harness. Each Check carries its own (possibly
+// inherited) scaffold, runtime, env, and placeholders, so a snippet with
+// multiple checks can route each through a different harness branch.
+func resolveCheck(cfg Config, s *model.Snippet, all map[string]*model.Snippet, env envInputs, check model.Check, checkIdx, checkTotal int) (*resolvedUnit, error) {
 	scaffold, err := effectiveScaffold(s, check.Scaffold, all)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// `eff` is the snippet whose frontmatter contributes file/inputs/
@@ -185,12 +223,12 @@ func runOneCheck(cfg Config, s *model.Snippet, all map[string]*model.Snippet, en
 		runtime = eff.Frontmatter.Lang
 	}
 	if runtime == "" {
-		return fmt.Errorf("snippet %q (check %s): cannot determine validator runtime", s.Frontmatter.ID, check.Kind)
+		return nil, fmt.Errorf("snippet %q (check %s): cannot determine validator runtime", s.Frontmatter.ID, check.Kind)
 	}
 
 	runner, runnerDir, err := loadRunner(cfg.ValidatorsDir, runtime)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Parse and typecheck modes don't need real LD credentials — the
@@ -202,20 +240,14 @@ func runOneCheck(cfg Config, s *model.Snippet, all map[string]*model.Snippet, en
 		// the final body, so each one's typed inputs need their env values
 		// satisfied. Companions are checked inside requireEnvForInputs.
 		if err := requireEnvForInputs(s, all, env); err != nil {
-			return err
+			return nil, err
 		}
 		if eff != s {
 			if err := requireEnvForInputs(eff, all, env); err != nil {
-				return err
+				return nil, err
 			}
 		}
 	}
-
-	stageDir, err := stageSnippetForCheck(s, all, env, check, scaffold)
-	if err != nil {
-		return err
-	}
-	defer os.RemoveAll(stageDir)
 
 	entrypoint := check.Entrypoint
 	if entrypoint == "" {
@@ -231,12 +263,6 @@ func runOneCheck(cfg Config, s *model.Snippet, all map[string]*model.Snippet, en
 		checkSuffix = fmt.Sprintf(" check=%s [%d/%d]", kindLabel, checkIdx+1, checkTotal)
 	} else if check.Kind != "" && check.Kind != "runtime" {
 		checkSuffix = fmt.Sprintf(" check=%s", kindLabel)
-	}
-	if scaffold == nil {
-		fmt.Printf("--- validate %s (runtime=%s, entrypoint=%s)%s ---\n", s.Frontmatter.ID, runtime, entrypoint, checkSuffix)
-	} else {
-		fmt.Printf("--- validate %s (scaffold=%s, runtime=%s, entrypoint=%s)%s ---\n",
-			s.Frontmatter.ID, scaffold.Frontmatter.ID, runtime, entrypoint, checkSuffix)
 	}
 
 	// Forward per-snippet env, scaffold-supplied env, and the Check's own
@@ -262,13 +288,58 @@ func runOneCheck(cfg Config, s *model.Snippet, all map[string]*model.Snippet, en
 		extraEnv["SNIPPET_CHECK"] = kindLabel
 	}
 
-	switch runner.Mode {
+	return &resolvedUnit{
+		cfg:        cfg,
+		snippet:    s,
+		all:        all,
+		env:        env,
+		check:      check,
+		scaffold:   scaffold,
+		runtime:    runtime,
+		runner:     runner,
+		runnerDir:  runnerDir,
+		entrypoint: entrypoint,
+		extraEnv:   extraEnv,
+		label:      s.Frontmatter.ID + checkSuffix,
+	}, nil
+}
+
+// stage writes the unit's composed body (and companions/requirements) into
+// a fresh temp directory and returns its path. The caller owns cleanup.
+func (u *resolvedUnit) stage() (string, error) {
+	return stageSnippetForCheck(u.snippet, u.all, u.env, u.check, u.scaffold)
+}
+
+// dispatch stages and validates a single non-batch unit, mirroring the
+// historical one-invocation-per-snippet behavior.
+func (u *resolvedUnit) dispatch() error {
+	stageDir, err := u.stage()
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(stageDir)
+
+	if u.scaffold == nil {
+		fmt.Printf("--- validate %s (runtime=%s, entrypoint=%s) ---\n", u.label, u.runtime, u.entrypoint)
+	} else {
+		fmt.Printf("--- validate %s (scaffold=%s, runtime=%s, entrypoint=%s) ---\n",
+			u.label, u.scaffold.Frontmatter.ID, u.runtime, u.entrypoint)
+	}
+
+	switch u.runner.Mode {
 	case "docker":
-		return runDocker(cfg, runner, runnerDir, stageDir, entrypoint, env, extraEnv)
+		if err := buildImage(u.cfg, u.runner, u.runnerDir, os.Stdout); err != nil {
+			return err
+		}
+		tag, err := validatorImageTag(u.cfg.ValidatorsDir, u.runnerDir, u.runner.ImagePrefix)
+		if err != nil {
+			return err
+		}
+		return runContainer(tag, stageDir, u.entrypoint, u.env, u.extraEnv, os.Stdout)
 	case "native":
-		return runNative(runnerDir, stageDir, entrypoint, env, extraEnv)
+		return runNative(u.runnerDir, stageDir, u.entrypoint, u.env, u.extraEnv, os.Stdout)
 	default:
-		return fmt.Errorf("validator runtime %q: unknown mode %q", runtime, runner.Mode)
+		return fmt.Errorf("validator runtime %q: unknown mode %q", u.runtime, u.runner.Mode)
 	}
 }
 
@@ -513,13 +584,12 @@ func checkStagePath(rel string) error {
 	return nil
 }
 
-// runDocker builds the validator's Dockerfile and runs harness/run.sh inside
-// the resulting container with the staged snippet bind-mounted at /snippet.
-//
-// Build context is the entire `validators/` tree so each Dockerfile can pull
-// from `shared/` (the shared harness library) as well as its own
-// `languages/<runtime>/` subtree.
-func runDocker(cfg Config, runner *Runner, runnerDir, stageDir, entrypoint string, env envInputs, extraEnv map[string]string) error {
+// buildImage builds the validator's Dockerfile, tagged with a content hash
+// of the shared lib + runner dir so concurrent and repeat builds share the
+// cached image. Idempotent: a second call with the same inputs is a cache
+// hit. Build context is the entire `validators/` tree so each Dockerfile can
+// pull from `shared/` as well as its own `languages/<runtime>/` subtree.
+func buildImage(cfg Config, runner *Runner, runnerDir string, out io.Writer) error {
 	dockerfile := filepath.Join(runnerDir, "Dockerfile")
 	if _, err := os.Stat(dockerfile); err != nil {
 		return fmt.Errorf("validator Dockerfile not found at %s: %w", runnerDir, err)
@@ -537,11 +607,18 @@ func runDocker(cfg Config, runner *Runner, runnerDir, stageDir, entrypoint strin
 		"-t", tag,
 		cfg.ValidatorsDir,
 	)
-	build.Stdout = os.Stdout
-	build.Stderr = os.Stderr
+	build.Stdout = out
+	build.Stderr = out
 	if err := build.Run(); err != nil {
 		return fmt.Errorf("docker build failed: %w", err)
 	}
+	return nil
+}
+
+// runContainer runs harness/run.sh inside the validator image with the
+// staged snippet (single-snippet stage dir, or a batch dir) bind-mounted at
+// /snippet. The image must already be built (see buildImage).
+func runContainer(tag, stageDir, entrypoint string, env envInputs, extraEnv map[string]string, out io.Writer) error {
 	args := []string{"run", "--rm",
 		"-v", stageDir + ":/snippet:ro",
 		"-e", "SNIPPET_ENTRYPOINT=" + entrypoint,
@@ -554,8 +631,8 @@ func runDocker(cfg Config, runner *Runner, runnerDir, stageDir, entrypoint strin
 	}
 	args = append(args, tag)
 	run := exec.Command("docker", args...)
-	run.Stdout = os.Stdout
-	run.Stderr = os.Stderr
+	run.Stdout = out
+	run.Stderr = out
 	if err := run.Run(); err != nil {
 		return fmt.Errorf("snippet runtime validation failed: %w", err)
 	}
@@ -566,14 +643,14 @@ func runDocker(cfg Config, runner *Runner, runnerDir, stageDir, entrypoint strin
 // path passed as $SNIPPET_DIR. Used for runtimes whose toolchains can't run
 // in a Linux container (iOS / xcodebuild) or are too heavy to dockerize for
 // CI (Android emulator, Flutter).
-func runNative(runnerDir, stageDir, entrypoint string, env envInputs, extraEnv map[string]string) error {
+func runNative(runnerDir, stageDir, entrypoint string, env envInputs, extraEnv map[string]string, out io.Writer) error {
 	script := filepath.Join(runnerDir, "harness", "run.sh")
 	if _, err := os.Stat(script); err != nil {
 		return fmt.Errorf("native validator run.sh not found at %s: %w", script, err)
 	}
 	cmd := exec.Command("/bin/sh", script)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	cmd.Stdout = out
+	cmd.Stderr = out
 	cmd.Env = append(os.Environ(),
 		"SNIPPET_DIR="+stageDir,
 		"SNIPPET_ENTRYPOINT="+entrypoint,

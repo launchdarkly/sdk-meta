@@ -28,6 +28,12 @@ validation:
   entrypoint: AppDelegate.swift
   companions:
     - ios-client-sdk/scaffolds/swift-syntax-only-viewcontroller
+  # Syntax-only fragments are compiled, not run: the batch ios-client
+  # harness builds them for the simulator SDK (no boot) rather than
+  # running an `xcodebuild test`. init-runner snippets carry no
+  # SNIPPET_CHECK and default to the runtime (simulator) path.
+  env:
+    SNIPPET_CHECK: parse
 ---
 
 ```swift

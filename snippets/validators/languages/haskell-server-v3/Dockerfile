@@ -41,6 +41,10 @@ RUN cabal update && cabal build --only-dependencies && cabal build
 WORKDIR /work
 
 COPY shared /harness-shared
+# Reuse the haskell-server harness verbatim — it's version-agnostic (the only
+# v3 difference is the SDK version pinned in the cabal file above), and it's
+# batch-aware, so this runner sets `batch: true` like haskell-server. There is
+# intentionally no languages/haskell-server-v3/harness.
 COPY languages/haskell-server/harness /harness
 
 ENTRYPOINT ["/harness/run.sh"]
