@@ -62,14 +62,13 @@ jobs:
           # Mobile-key SDKs.
           - { sdk: dotnet-client-sdk, runs-on: ubuntu-latest, key-type: mobile }
 
-          # SDKs whose only validatable surface is the shell-install
-          # snippets — no init/flagEval bindings yet. The shell-install
-          # validator sniffs the body's leading token
-          # (npm/pnpm/yarn/pip/go/bower) and runs the real package
-          # manager in a clean working dir; no LaunchDarkly key is
-          # needed. We pass `key-type: server` so the verify-hello-app
-          # action injects an unused server key rather than failing on
-          # no-key-set.
+          # dotnet-server-sdk's validatable surface is the shell-install
+          # snippets (the shell-install validator sniffs the body's
+          # leading token — npm/pnpm/yarn/pip/go/bower/dotnet — and runs
+          # the real package manager in a clean working dir) plus the
+          # OpenFeature provider snippets, whose runners connect to the
+          # LD sandbox and assert a flag evaluation. The `key-type: server`
+          # supplies the SDK key those runners need.
           - { sdk: dotnet-server-sdk,       runs-on: ubuntu-latest, key-type: server }
 
           # Client/mobile-key SDKs with end-to-end init bindings.

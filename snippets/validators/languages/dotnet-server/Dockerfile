@@ -37,6 +37,8 @@ RUN printf '%s\n' \
     && dotnet add package LaunchDarkly.ServerSdk.Telemetry \
     && dotnet add package LaunchDarkly.ServerSdk.Consul \
     && dotnet add package LaunchDarkly.ServerSdk.DynamoDB \
+    && dotnet add package OpenFeature \
+    && dotnet add package LaunchDarkly.OpenFeature.ServerProvider \
     && dotnet build -c Debug \
     && cp HelloDotNet.csproj /opt/baseline.csproj
 
