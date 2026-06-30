@@ -33,6 +33,8 @@ RUN printf '%s\n' \
     '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-java-server-sdk-redis-store</artifactId><version>3.1.1</version></dependency>' \
     '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-java-server-sdk-dynamodb-store</artifactId><version>5.0.0</version></dependency>' \
     '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-java-server-sdk-consul-store</artifactId><version>5.0.0</version></dependency>' \
+    '    <dependency><groupId>dev.openfeature</groupId><artifactId>sdk</artifactId><version>1.7.0</version></dependency>' \
+    '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-openfeature-serverprovider</artifactId><version>1.0.0</version></dependency>' \
     '  </dependencies>' \
     '  <build><plugins>' \
     '    <plugin><groupId>org.codehaus.mojo</groupId><artifactId>exec-maven-plugin</artifactId><version>3.1.1</version></plugin>' \
