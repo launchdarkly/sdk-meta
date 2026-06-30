@@ -25,6 +25,16 @@ type Config struct {
 	SnippetSkip   string // comma-separated snippet ids to skip (empty = none)
 	Group         string // snippet group to validate (empty = all; e.g. "sdk-info" or "sdk-docs")
 	Jobs          int    // max concurrent batch-harness invocations (0 = NumCPU); batch-mode validators only
+
+	// ImageCache turns on cross-run Docker layer caching for `mode: docker`
+	// validators. Empty (the default) keeps a plain `docker build`, which is
+	// what local runs and fork CI use — no buildx, no external cache. When
+	// set, the build runs through `docker buildx build` with a per-runtime
+	// layer cache:
+	//   "gha"                     — GitHub Actions cache (type=gha)
+	//   "<registry>/<repo>/<img>" — a registry cache ref (type=registry)
+	// CI sets this only on non-fork builds; see snippets-validate.yml.
+	ImageCache string
 }
 
 // envInputs holds the environment-derived input values that get substituted
@@ -602,17 +612,74 @@ func buildImage(cfg Config, runner *Runner, runnerDir string, out io.Writer) err
 	// rather than the interactive multi-line redraws) while leaving
 	// failure output visible — important for diagnosing apt/network
 	// failures inside the build that --quiet would otherwise swallow.
-	build := exec.Command("docker", "build", "--progress=plain",
-		"-f", dockerfile,
-		"-t", tag,
-		cfg.ValidatorsDir,
-	)
+	var build *exec.Cmd
+	if cfg.ImageCache == "" {
+		build = exec.Command("docker", "build", "--progress=plain",
+			"-f", dockerfile,
+			"-t", tag,
+			cfg.ValidatorsDir,
+		)
+	} else {
+		// buildx with a per-runtime layer cache. `--load` puts the built
+		// image into the local daemon so the subsequent `docker run` finds
+		// it. mode=min exports the final image's layers — these are
+		// single-stage Dockerfiles, so the layer that does the expensive
+		// work (compile the SDK, restore deps, warm the project) is part of
+		// the final image and gets cached. A buildx builder that supports
+		// cache export must already be configured (CI does this via
+		// docker/setup-buildx-action).
+		args := []string{"buildx", "build", "--progress=plain",
+			"-f", dockerfile,
+			"-t", tag,
+			"--load",
+		}
+		args = append(args, cacheArgs(cfg.ImageCache, cacheScope(runnerDir))...)
+		args = append(args, cfg.ValidatorsDir)
+		build = exec.Command("docker", args...)
+	}
 	build.Stdout = out
 	build.Stderr = out
 	if err := build.Run(); err != nil {
 		return fmt.Errorf("docker build failed: %w", err)
 	}
 	return nil
+}
+
+// cacheScope derives a stable per-runtime cache key from the runner
+// directory (e.g. validators/languages/cpp-client -> "cpp-client"). Each
+// validator gets its own cache so an edit to one doesn't invalidate the
+// others. The result is lowercased and stripped to [a-z0-9._-] so it's a
+// valid registry tag as well as a gha scope.
+func cacheScope(runnerDir string) string {
+	base := strings.ToLower(filepath.Base(runnerDir))
+	var b strings.Builder
+	for _, r := range base {
+		switch {
+		case r >= 'a' && r <= 'z', r >= '0' && r <= '9', r == '.', r == '_', r == '-':
+			b.WriteRune(r)
+		default:
+			b.WriteByte('-')
+		}
+	}
+	return b.String()
+}
+
+// cacheArgs returns the --cache-from/--cache-to flags for buildx given the
+// configured cache backend and a per-runtime scope. "gha" selects the
+// GitHub Actions cache; anything else is treated as a registry ref prefix
+// and the scope becomes the tag.
+func cacheArgs(backend, scope string) []string {
+	if backend == "gha" {
+		return []string{
+			"--cache-from", "type=gha,scope=" + scope,
+			"--cache-to", "type=gha,scope=" + scope + ",mode=min",
+		}
+	}
+	ref := backend + ":" + scope
+	return []string{
+		"--cache-from", "type=registry,ref=" + ref,
+		"--cache-to", "type=registry,ref=" + ref + ",mode=min",
+	}
 }
 
 // runContainer runs harness/run.sh inside the validator image with the

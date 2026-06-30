@@ -202,6 +202,7 @@ func runValidate(args []string) {
 	sdks := fset.String("sdks", "", "path to a sdks/ directory (default: embedded)")
 	validators := fset.String("validators", "./validators", "path to the validators/ directory")
 	jobs := fset.Int("jobs", 0, "max concurrent validator invocations (batch-mode validators only; 0 = NumCPU)")
+	imageCache := fset.String("image-cache", "", "cross-run Docker layer cache for docker validators: `gha` or a registry ref prefix; empty = plain docker build (default)")
 	_ = fset.Parse(args)
 
 	if *sdk == "" {
@@ -216,6 +217,7 @@ func runValidate(args []string) {
 		SnippetSkip:   *snippetSkip,
 		Group:         *group,
 		Jobs:          *jobs,
+		ImageCache:    *imageCache,
 	}); err != nil {
 		fmt.Fprintf(os.Stderr, "validate failed: %v\n", err)
 		os.Exit(1)

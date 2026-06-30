@@ -39,6 +39,15 @@ jobs:
   validate:
     name: ${{ matrix.label || matrix.sdk }}
     runs-on: ${{ matrix.runs-on }}
+    env:
+      # Cross-run Docker layer caching for the `mode: docker` validators,
+      # keyed per runtime. Enabled only on non-fork builds: a fork PR runs
+      # with a restricted token and must not be able to populate (or poison)
+      # the shared cache, and the gha cache backend needs the Actions runtime
+      # token that forks don't get. Empty disables caching entirely — the Go
+      # runner falls back to a plain `docker build` (also the local-dev path).
+      # `workflow_dispatch` and same-repo PRs are non-fork; fork PRs are not.
+      IMAGE_CACHE: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && 'gha' || '' }}
     strategy:
       fail-fast: false
       matrix:
@@ -213,6 +222,20 @@ jobs:
         with:
           go-version: '1.24'
 
+      # Docker layer cache plumbing, only when IMAGE_CACHE is on (non-fork)
+      # and the validator builds images (the iOS rows run natively on macOS
+      # with no Docker). ghaction-github-runtime exports ACTIONS_RUNTIME_TOKEN
+      # + ACTIONS_CACHE_URL into the job env so `docker buildx` can reach the
+      # gha cache from inside the validate command; setup-buildx-action
+      # provisions a builder whose driver supports `--cache-to`.
+      - name: Export Actions cache runtime (non-fork)
+        if: env.IMAGE_CACHE != '' && matrix.runs-on != 'macos-latest'
+        uses: crazy-max/ghaction-github-runtime@v3
+
+      - name: Set up Docker Buildx (non-fork)
+        if: env.IMAGE_CACHE != '' && matrix.runs-on != 'macos-latest'
+        uses: docker/setup-buildx-action@v3
+
       - name: Install iOS toolchain (macos only)
         if: matrix.runs-on == 'macos-latest'
         run: |
@@ -254,6 +277,7 @@ jobs:
           MATRIX_SNIPPET: ${{ matrix.snippet }}
           MATRIX_SNIPPET_SKIP: ${{ matrix.snippet_skip }}
           MATRIX_GROUP: ${{ matrix.group }}
+          MATRIX_IMAGE_CACHE: ${{ env.IMAGE_CACHE }}
         with:
           use_server_key: ${{ matrix.key-type == 'server' }}
           use_client_key: ${{ matrix.key-type == 'client' }}
@@ -266,6 +290,7 @@ jobs:
             [ -n "$MATRIX_SNIPPET" ] && args="$args --snippet=$MATRIX_SNIPPET"
             [ -n "$MATRIX_SNIPPET_SKIP" ] && args="$args --snippet-skip=$MATRIX_SNIPPET_SKIP"
             [ -n "$MATRIX_GROUP" ] && args="$args --group=$MATRIX_GROUP"
+            [ -n "$MATRIX_IMAGE_CACHE" ] && args="$args --image-cache=$MATRIX_IMAGE_CACHE"
             go run ./cmd/snippets validate $args \
               --sdks=./sdks --validators=./validators 2>&1 | tee /tmp/validate.log
 
@@ -277,6 +302,7 @@ jobs:
           MATRIX_SNIPPET: ${{ matrix.snippet }}
           MATRIX_SNIPPET_SKIP: ${{ matrix.snippet_skip }}
           MATRIX_GROUP: ${{ matrix.group }}
+          MATRIX_IMAGE_CACHE: ${{ env.IMAGE_CACHE }}
         run: |
           set -o pipefail
           cd snippets
@@ -284,6 +310,7 @@ jobs:
           [ -n "$MATRIX_SNIPPET" ] && args="$args --snippet=$MATRIX_SNIPPET"
           [ -n "$MATRIX_SNIPPET_SKIP" ] && args="$args --snippet-skip=$MATRIX_SNIPPET_SKIP"
           [ -n "$MATRIX_GROUP" ] && args="$args --group=$MATRIX_GROUP"
+          [ -n "$MATRIX_IMAGE_CACHE" ] && args="$args --image-cache=$MATRIX_IMAGE_CACHE"
           go run ./cmd/snippets validate $args \
             --sdks=./sdks --validators=./validators 2>&1 | tee /tmp/validate.log
 

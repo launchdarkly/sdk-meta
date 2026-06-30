@@ -293,6 +293,8 @@ Stages snippet bodies, builds the per-language validator (Docker or native), run
 | `--group` | Optional. Filters on the middle segment of the snippet id (`sdk-info`, `sdk-docs`, ...). |
 | `--sdks` | Path to a working `sdks/` tree. Default: embedded snapshot. |
 | `--validators` | Path to the `validators/` directory. Default: `./validators`. Must be on disk (Docker `COPY` reads from it). |
+| `--jobs` | Max concurrent batch-harness invocations (batch-mode validators only). Default `0` = `NumCPU`. |
+| `--image-cache` | Cross-run Docker layer cache for `mode: docker` validators: `gha` (GitHub Actions cache) or a registry ref prefix (`type=registry`). Empty (default) = plain `docker build`, no buildx. CI sets it only on non-fork builds. |
 
 Behavior:
 
