@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.20.0...snippets/v0.20.1) (2026-06-30)
+
+
+### Performance Improvements
+
+* **snippets:** batch slow validators to cut snippet-validation CI wall time ([#526](https://github.com/launchdarkly/sdk-meta/issues/526)) ([1e0cafd](https://github.com/launchdarkly/sdk-meta/commit/1e0cafd5e5cc85c489b143dd57dd21706d7ec133))
+
 ## [0.20.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.19.0...snippets/v0.20.0) (2026-06-29)
 
 
