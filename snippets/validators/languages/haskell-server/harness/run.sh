@@ -1,25 +1,31 @@
 #!/bin/sh
-# Runs the staged Haskell snippet against a real LaunchDarkly environment.
-# The Dockerfile pre-bootstrapped a cabal project at /opt/hello-haskell
-# with launchdarkly-server-sdk + text already compiled. Per-validate just
-# swaps in the user's Main.hs and does an incremental rebuild.
+# Batch validator for Haskell server SDK snippets. The Dockerfile
+# pre-bootstrapped a cabal project at /opt/hello-haskell with
+# launchdarkly-server-sdk + deps already compiled; per-snippet just swaps
+# in the user's Main.hs and does an incremental rebuild.
+#
+# The Go runner stages every matching snippet under /snippet and writes
+# /snippet/manifest.tsv; run_batch loops over them in the single warm
+# project (one container instead of one per snippet). Dispatch on
+# SNIPPET_CHECK (snippets of one kind share a batch group):
+#   - parse: a clean `cabal build` is the success condition (the module
+#     defines its own main that would reach a real database if run).
+#   - runtime: build then `cabal run` and await the success line.
 set -eu
 
 . /harness-shared/lib.sh
-require_env LAUNCHDARKLY_SDK_KEY LAUNCHDARKLY_FLAG_KEY SNIPPET_ENTRYPOINT
+require_env LAUNCHDARKLY_SDK_KEY LAUNCHDARKLY_FLAG_KEY SNIPPET_BATCH
+CHECK="${SNIPPET_CHECK:-runtime}"
 
-cp "/snippet/$SNIPPET_ENTRYPOINT" /opt/hello-haskell/app/Main.hs
+cd /opt/hello-haskell
 
-# If the staged Main.hs uses the haskell-syntax-only scaffold's body
-# marker pair, lift top-level constructs out of the body region. The
-# scaffold places the body inside a `_wrappee = do` block, so any
-# body line at column 0 that is `import`/`data`/`type`/`newtype`/
-# `class`/`instance` or matches a `name :: ...` / `name = ...`
-# top-level binding shape gets relocated to the TOP_LIFT_TARGET marker
-# at module scope. Body lines that aren't top-level shape stay in
-# place but get indented two spaces so they sit inside the do-block.
-# The scaffold's own bindings live above BODY_BEGIN and aren't touched.
-if grep -qF -- '--TOP_LIFT_TARGET--' /opt/hello-haskell/app/Main.hs; then
+# lift_main <Main.hs>: if the staged module uses the haskell-syntax-only
+# scaffold's body marker pair, lift top-level constructs (import/data/type/
+# class/instance and `name ::`/`name =` bindings) out of the `_wrappee = do`
+# block up to the TOP_LIFT_TARGET marker at module scope, indenting the
+# remaining body lines to sit inside the do-block.
+lift_main() {
+    grep -qF -- '--TOP_LIFT_TARGET--' "$1" || return 0
     awk '
     BEGIN { in_body = 0; target_seen = 0; body_done = 0; }
     /^--TOP_LIFT_TARGET--$/ {
@@ -28,27 +34,14 @@ if grep -qF -- '--TOP_LIFT_TARGET--' /opt/hello-haskell/app/Main.hs; then
         target_index = npre;
         next;
     }
-    /^--BODY_BEGIN--$/ {
-        in_body = 1;
-        next;
-    }
-    /^--BODY_END--$/ {
-        in_body = 0;
-        body_done = 1;
-        next;
-    }
+    /^--BODY_BEGIN--$/ { in_body = 1; next; }
+    /^--BODY_END--$/ { in_body = 0; body_done = 1; next; }
     {
         if (in_body) {
             if ($0 ~ /^(import |data |type |newtype |class |instance )/ ||
                 $0 ~ /^[A-Za-z_][A-Za-z0-9_'\'']*[ \t]+(::|=)/) {
                 lift[++nlift] = $0;
             } else if ($0 ~ /^[)\]}]/) {
-                # A closing bracket at column 0 continues the previous
-                # statement. Indenting it by the same two spaces as the
-                # statement itself would land it on the do-block layout
-                # column, where the layout algorithm inserts a statement
-                # separator and breaks the enclosing expression. Indent
-                # it deeper so it stays a continuation line.
                 rest[++nrest] = "    " $0;
             } else if ($0 ~ /^[^ \t]/ && length($0) > 0) {
                 rest[++nrest] = "  " $0;
@@ -74,34 +67,41 @@ if grep -qF -- '--TOP_LIFT_TARGET--' /opt/hello-haskell/app/Main.hs; then
         for (i = 1; i <= nrest; i++) print rest[i];
         for (i = 1; i <= npost; i++) print post[i];
     }
-    ' /opt/hello-haskell/app/Main.hs > /tmp/Main.hs.lifted
-    mv /tmp/Main.hs.lifted /opt/hello-haskell/app/Main.hs
-fi
+    ' "$1" > "$1.lifted"
+    mv "$1.lifted" "$1"
+}
 
-cd /opt/hello-haskell
-cabal build >/tmp/build.log 2>&1 \
-    || { cat /tmp/build.log >&2; exit 1; }
+validate_one() {
+    relpath=$1
+    cp "/snippet/$relpath" app/Main.hs
+    lift_main app/Main.hs
 
-# Parse-only path (SNIPPET_CHECK=parse, set via the wrapping scaffold's
-# validation.env): the staged module defines its own `main`, which
-# would try to reach a real database if executed. A clean compile is
-# the success condition; skip the run.
-if [ "${SNIPPET_CHECK:-runtime}" = "parse" ]; then
-    echo "feature flag evaluates to true"
-    echo "validator: ok (cabal build succeeded)"
-    exit 0
-fi
+    BUILD_LOG=$(mktemp)
+    if ! cabal build >"$BUILD_LOG" 2>&1; then
+        cat "$BUILD_LOG" >&2
+        rm -f "$BUILD_LOG"
+        return 1
+    fi
+    rm -f "$BUILD_LOG"
 
-LOG=$(mktemp)
+    if [ "$CHECK" = "parse" ]; then
+        echo "feature flag evaluates to true"
+        return 0
+    fi
 
-timeout --signal=TERM 60s cabal run hello-haskell-exe >"$LOG" 2>&1 &
-PID=$!
+    LOG=$(mktemp)
+    timeout --signal=TERM 60s cabal run hello-haskell-exe >"$LOG" 2>&1 &
+    PID=$!
+    deadline=$(( $(date +%s) + 55 ))
+    if await_success_line "$LOG" "$PID" "$deadline"; then
+        rm -f "$LOG"
+        return 0
+    fi
+    kill -TERM "$PID" 2>/dev/null || true
+    wait "$PID" 2>/dev/null || true
+    dump_redacted "$LOG" >&2
+    rm -f "$LOG"
+    return 1
+}
 
-deadline=$(( $(date +%s) + 55 ))
-if await_success_line "$LOG" "$PID" "$deadline"; then
-    exit 0
-fi
-
-kill -TERM "$PID" 2>/dev/null || true
-wait "$PID" 2>/dev/null || true
-fail_with_log "$LOG" "did not see expected line: feature flag evaluates to true"
+run_batch validate_one
