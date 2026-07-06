@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.21.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.20.0...snippets/v0.21.0) (2026-07-06)
+
+
+### Features
+
+* Port edge SDK docs section to canonical snippets ([#532](https://github.com/launchdarkly/sdk-meta/issues/532)) ([c2b266c](https://github.com/launchdarkly/sdk-meta/commit/c2b266c2148a63e5de20ad7a26a460d75a1556ef))
+* Port OpenFeature SDK docs section to canonical snippets ([#531](https://github.com/launchdarkly/sdk-meta/issues/531)) ([75f684b](https://github.com/launchdarkly/sdk-meta/commit/75f684ba995bae51be43b2273e39d50888c1b504))
+
+
+### Performance Improvements
+
+* **snippets:** batch slow validators to cut snippet-validation CI wall time ([#526](https://github.com/launchdarkly/sdk-meta/issues/526)) ([1e0cafd](https://github.com/launchdarkly/sdk-meta/commit/1e0cafd5e5cc85c489b143dd57dd21706d7ec133))
+
 ## [0.20.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.19.0...snippets/v0.20.0) (2026-06-29)
 
 
