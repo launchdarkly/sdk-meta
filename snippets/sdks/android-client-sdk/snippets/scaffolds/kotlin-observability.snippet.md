@@ -77,6 +77,9 @@ val url: String = ""
 // assignment; provide the target so they type-check against the real type.
 @Suppress("UNUSED")
 var privacyProfile: PrivacyProfile? = null
+// Stand-in for the application work the tracing fragments wrap in a span.
+@Suppress("UNUSED")
+fun performDatabaseQuery() {}
 
 @Suppress("UNUSED_VARIABLE", "UNREACHABLE_CODE", "UNUSED_EXPRESSION")
 class BaseApplication : Application() {

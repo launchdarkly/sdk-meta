@@ -13,7 +13,7 @@ validation:
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 
-Span parentSpan = LDObserve.Companion.startSpan("parentSpan", Attributes.empty());
+Span parentSpan = LDObserve.Companion.startSpan("parentSpan", new HashMap<>());
 try (Scope parentScope = parentSpan.makeCurrent()) {
     // Now parentSpan is active in Context.current()
     Context ctx = Context.current();
@@ -21,7 +21,7 @@ try (Scope parentScope = parentSpan.makeCurrent()) {
     // Later, in another thread, restore the context
     executor.execute(() -> {
         try (Scope scope = ctx.makeCurrent()) {
-            Span nestedSpan = LDObserve.Companion.startSpan("nestedSpan", Attributes.empty());
+            Span nestedSpan = LDObserve.Companion.startSpan("nestedSpan", new HashMap<>());
             // do work — nestedSpan is a child of parentSpan
             nestedSpan.end();
         }

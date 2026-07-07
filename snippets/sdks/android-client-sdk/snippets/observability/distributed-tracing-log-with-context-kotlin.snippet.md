@@ -12,7 +12,7 @@ validation:
 ```kotlin
 import io.opentelemetry.context.Context
 
-val parentSpan = LDObserve.startSpan("parentSpan", Attributes.empty())
+val parentSpan = LDObserve.startSpan("parentSpan")
 
 // Capture the current context, which includes the active span
 val context = Context.current()
@@ -20,9 +20,7 @@ val context = Context.current()
 launch(Dispatchers.IO) {
     val span = LDObserve.startSpan(
         name = "log-context-demo",
-        attributes = Attributes.of(
-            AttributeKey.stringKey("demo"), "log-with-context"
-        )
+        properties = mapOf("demo" to "log-with-context")
     )
     // Capture span context while still on the originating thread.
     val capturedContext = span.makeCurrent().use { span.spanContext }
@@ -31,15 +29,13 @@ launch(Dispatchers.IO) {
     // Span.current() here returns INVALID, so we pass the captured context explicitly.
     Thread {
         Span.wrap(capturedContext).makeCurrent().use {
-            val childSpan = LDObserve.startSpan("child of log-context-demo", Attributes.empty())
+            val childSpan = LDObserve.startSpan("child of log-context-demo")
             childSpan.end()
         }
         LDObserve.recordLog(
             message = text,
             severity = Severity.WARN,
-            attributes = Attributes.of(
-                AttributeKey.stringKey("source"), "detached-thread-demo"
-            ),
+            properties = mapOf("source" to "detached-thread-demo"),
             spanContext = capturedContext
         )
     }.start()

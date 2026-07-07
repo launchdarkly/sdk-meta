@@ -1,8 +1,36 @@
 # Android observability plugin port notes
 
 Source: `ld-docs-private/fern/topics/sdk/observability/android.mdx` — the
-LaunchDarkly Android observability plugin (EAP) reference page, 29 code
+LaunchDarkly Android observability plugin (EAP) reference page, 38 code
 blocks. Snippets live in `android-client-sdk/snippets/observability/`.
+
+## Coverage expansion (current-doc reconciliation)
+
+The doc grew past the original 29-block port: it added a "Configure product
+analytics event collection" section (`ObservabilityOptions.Analytics`) and a
+"Manual instrumentation" section (record logs, record traces, `track`,
+`trackScreenView`), and rewrote the distributed-tracing blocks to the
+plugin's map-based API (`startSpan(name, properties = mapOf(...))`,
+`recordLog(..., properties = ...)`, 1-arg `startSpan(name)`). All of these
+are valid against 0.60.0 (the map/`properties` overloads are interface
+default methods on `Observe`; `Analytics`, `track`, and `trackScreenView`
+all ship in 0.60.0). Snippets were updated/added to match:
+
+- Tracing snippets now use the map-based style. Java keeps the compilable
+  `LDObserve.Companion.startSpan(name, new HashMap<>())` form (no `@JvmStatic`
+  on the companion), where the doc's hand-written Java dropped `.Companion`
+  and would not compile.
+- New snippets: `import-java`/`import-kotlin`,
+  `configure-product-analytics-kotlin`, `record-logs[-typed]-kotlin`,
+  `record-traces[-typed]-kotlin`, `track-event-kotlin`,
+  `track-screen-view-kotlin`.
+- `ObservabilityOptions.Analytics` has no `pageViews` field on 0.60.0 or
+  plugin `main`; the doc's Analytics block and its option list reference one,
+  so the canonical snippet omits it (fields: `taps`, `trackEvents`,
+  `screenViews`, `appLifecycle`, `appLaunch`).
+- Scaffolds gained a `performDatabaseQuery()` stub (the record-traces
+  fragments call it) and `java.util.HashMap`/`Map` imports (the Java tracing
+  fragments construct `new HashMap<>()`).
 
 ## Validation
 

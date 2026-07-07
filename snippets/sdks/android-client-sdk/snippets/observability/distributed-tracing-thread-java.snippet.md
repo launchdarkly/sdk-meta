@@ -13,13 +13,13 @@ validation:
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 
-Span parentSpan = LDObserve.Companion.startSpan("parentSpan", Attributes.empty());
+Span parentSpan = LDObserve.Companion.startSpan("parentSpan", new HashMap<>());
 try (Scope parentScope = parentSpan.makeCurrent()) {
     Context context = Context.current();
 
     new Thread(() -> {
         try (Scope childScope = context.makeCurrent()) {
-            Span childSpan = LDObserve.Companion.startSpan("childSpan", Attributes.empty());
+            Span childSpan = LDObserve.Companion.startSpan("childSpan", new HashMap<>());
             // do work
             childSpan.end();
         }

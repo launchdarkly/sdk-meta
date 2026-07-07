@@ -17,7 +17,7 @@ val ctx = Context.current()
 
 // Later, in another scope, restore the context
 ctx.makeCurrent().use {
-    val span = LDObserve.startSpan("nestedSpan", Attributes.empty())
+    val span = LDObserve.startSpan("nestedSpan")
     // do work
     span.end()
 }
