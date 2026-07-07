@@ -14,7 +14,7 @@ LDConfig ldConfig = new LDConfig.Builder(AutoEnvAttributes.Enabled)
     // optional observability plugin, requires LaunchDarkly Android Client SDK v5.9+
     .plugins(Components.plugins().setPlugins(
       Collections.<Plugin>singletonList(
-        new Observability(this.getApplication(), "example-mobile-key", ObservabilityOptions.builder().build())
+        new Observability(this.getApplication(), "example-mobile-key", ObservabilityOptions.builder().build(), null)
       )
     ))
     // other options
