@@ -2548,9 +2548,15 @@
   "node-server": [
     {
       "major": 9,
+      "minor": 12,
+      "date": "2026-07-07T14:32:17Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 11,
       "date": "2026-05-21T16:10:14Z",
-      "eol": null
+      "eol": "2027-07-07T00:00:00Z"
     },
     {
       "major": 9,
@@ -4528,9 +4534,15 @@
   "server-ai": [
     {
       "major": 1,
+      "minor": 2,
+      "date": "2026-07-07T14:32:23Z",
+      "eol": null
+    },
+    {
+      "major": 1,
       "minor": 1,
       "date": "2026-06-05T21:04:20Z",
-      "eol": null
+      "eol": "2027-07-07T00:00:00Z"
     },
     {
       "major": 1,
