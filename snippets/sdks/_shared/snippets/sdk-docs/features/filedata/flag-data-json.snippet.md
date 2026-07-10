@@ -17,7 +17,7 @@ description: Example full-format flag data file with flags and segments.
   "segments": {
     "segment-key-1": {
       "key": "segment-key-1",
-      "includes": [ "context-key-1" ]
+      "included": [ "context-key-1" ]
     }
   }
 }
