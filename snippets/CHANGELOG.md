@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.21.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.21.0...snippets/v0.21.1) (2026-07-10)
+
+
+### Bug Fixes
+
+* segment key in file-data example (includes → included) ([e78e44f](https://github.com/launchdarkly/sdk-meta/commit/e78e44fe6b2dac3d717b61ef6b30679ab8f74fae))
+
 ## [0.21.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.20.0...snippets/v0.21.0) (2026-07-06)
 
 
