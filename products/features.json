@@ -1092,6 +1092,11 @@
       "introduced": "5.5",
       "removed": null
     },
+    "fdv2": {
+      "deprecated": null,
+      "introduced": "7.11",
+      "removed": null
+    },
     "fileDataSource": {
       "deprecated": null,
       "introduced": "4.5",
