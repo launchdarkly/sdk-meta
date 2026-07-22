@@ -878,9 +878,15 @@
   "dotnet-server-sdk": [
     {
       "major": 8,
+      "minor": 15,
+      "date": "2026-07-21T18:34:55Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 14,
       "date": "2026-05-28T15:04:14Z",
-      "eol": null
+      "eol": "2027-07-21T00:00:00Z"
     },
     {
       "major": 8,
@@ -1844,9 +1850,15 @@
   "java-server-sdk": [
     {
       "major": 7,
+      "minor": 15,
+      "date": "2026-07-21T15:53:03Z",
+      "eol": null
+    },
+    {
+      "major": 7,
       "minor": 14,
       "date": "2026-05-28T15:24:22Z",
-      "eol": null
+      "eol": "2027-07-21T00:00:00Z"
     },
     {
       "major": 7,
