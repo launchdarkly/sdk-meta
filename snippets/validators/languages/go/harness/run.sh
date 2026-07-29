@@ -19,8 +19,18 @@ trap 'rm -rf "$WORK"' EXIT
 cp -r /snippet/. "$WORK/"
 cd "$WORK"
 
-go mod init example/hello-go >/dev/null 2>&1
-go mod tidy >/dev/null 2>&1
+# Keep module setup quiet on success, but surface the reason on failure.
+# Discarding stderr here hid every module-resolution error behind a bare
+# `exit status 1` from `set -e` -- no validator line, no snippet output, so
+# a transient proxy failure and a genuinely unresolvable import looked
+# identical from the CI log.
+MODLOG=$(mktemp)
+if ! go mod init example/hello-go >"$MODLOG" 2>&1; then
+    fail_with_log "$MODLOG" "go mod init failed"
+fi
+if ! go mod tidy >"$MODLOG" 2>&1; then
+    fail_with_log "$MODLOG" "go mod tidy failed to resolve the snippet's imports"
+fi
 
 LOG=$(mktemp)
 
