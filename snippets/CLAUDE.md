@@ -170,9 +170,9 @@ image-prefix: sdk-snippets/python-validator   # docker mode only
 
 ### Dockerfile pattern
 
-1. `FROM` a runtime-appropriate base (`python:3.11-slim`, `node:20-bookworm-slim`, `node:22-bookworm`, `mcr.microsoft.com/playwright:v1.59.1-noble`, `eclipse-temurin:17-jdk-noble`).
+1. `FROM` a runtime-appropriate base (`python:3.11-slim`, `node:20-bookworm-slim`, `node:22-bookworm-slim`, `node:22-bookworm`, `mcr.microsoft.com/playwright:v1.59.1-noble`, `eclipse-temurin:17-jdk-noble`).
 2. Install OS packages: `apt-get update ... && apt-get install ... && rm -rf /var/lib/apt/lists/*`. `android-client` uses `Acquire::Retries=5` and curl `--retry 3` for flaky noble mirrors.
-3. Layer additional toolchains as needed. `shell-install` adds Go via the upstream tarball, pip via `python3-pip`, and `corepack prepare pnpm@9 --activate` + a `yarn@1` pin compatible with Node 20.
+3. Layer additional toolchains as needed. `shell-install` builds on `node:22-bookworm-slim` and adds Go via the upstream tarball, pip via `python3-pip`, and `corepack prepare pnpm@9 --activate` + a `yarn@1` pin. The 22 line is deliberate: it still bundles corepack (Node 25 drops it), and Node 20 is below the `engines.node` floor that `@napi-rs/lzma` — pulled in transitively by the Fastly SDK — enforces on yarn installs. pnpm 9 is now a hold for continuity rather than a ceiling; Node 22 would also satisfy pnpm 11's `node:sqlite` requirement.
 4. Pre-bake a project dir with the SDK and dev deps pre-installed so per-validate cycles stay fast. Examples:
    - `js-client` writes `package.json` / `tsdown.config.ts` / `tsconfig.json` / placeholder `src/app.ts` + `index.html` under `/opt/hello-js`, then `npm install` and a pre-warm `npm run build`.
    - `react-native-client` writes `package.json` / `babel.config.js` / `jest.setup.js` / `tsconfig.json` + placeholder `App.tsx` and `src/welcome.tsx` under `/opt/hello-react-native` and runs `npm install`.
