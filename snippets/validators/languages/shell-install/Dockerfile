@@ -39,8 +39,12 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 # Install Go. Pinning here so the image is reproducible; bump when the
-# go-server-sdk's stated minimum moves.
-ENV GO_VERSION=1.24.3
+# go-server-sdk's stated minimum moves -- v7.15.5 declares `go >= 1.25.0`.
+# Unlike the `go` validator's official golang base (GOTOOLCHAIN=local), a
+# tarball install leaves GOTOOLCHAIN at its `auto` default, so an under-spec
+# pin here self-upgrades mid-run instead of failing. Keeping the pin at or
+# above the SDK minimum avoids paying for that download on every validate.
+ENV GO_VERSION=1.25.12
 RUN curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" \
         -o /tmp/go.tgz \
  && tar -C /usr/local -xzf /tmp/go.tgz \
