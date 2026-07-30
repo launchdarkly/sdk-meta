@@ -371,3 +371,33 @@ in `internal/adapters/rawfiles/rawfiles.go` (`renderBody`).
 **Recommended action**: None. Documented here so future readers don't
 chase a phantom drift if a `.snippet.md` body ends with multiple blank
 lines and the rendered output normalizes to one.
+
+>## Type-aware flagEval variants
+
+**Severity**: informational
+
+**SDKs affected**: the six with a `sdk-info/flagEval` snippet —
+dotnet-client, java-server, js-client, node-server, python-server,
+react-client.
+
+**What we observed**: `flagEval` only ever showed a boolean evaluation,
+so gonfalon hand-maintained string / number / JSON copies in
+`packages/sdk-info/src/typeAwareFlagEvalSnippets.ts`, guarded by a drift
+test. Those belong here.
+
+**What we did**: Added `flagEval-string` / `-number` / `-json` beside
+each `flagEval`. Only the evaluation call and the comparison differ from
+the boolean sibling — imports, context setup, and the flag-key
+placeholder are untouched — and each variant reuses the boolean's
+`validation.scaffold`. The three SDKs with a single generic `variation`
+signal the type through the default value rather than the method name.
+No CI change needed; every affected SDK already has an unfiltered row.
+
+One caveat before trusting a green run: only java (typed `client` stub)
+and react (real end-to-end) actually check the evaluation call. dotnet's
+`client` is `dynamic` and the other three are parse-only, so a
+misspelled method name there would still pass.
+
+**Recommended action**: Add the eighteen new ids to gonfalon's
+`packages/sdk-info/extract.yaml`, then delete
+`typeAwareFlagEvalSnippets.ts` and its drift test.
