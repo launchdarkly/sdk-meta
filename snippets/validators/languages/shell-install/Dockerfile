@@ -7,9 +7,13 @@
 # body's leading token and runs the appropriate package manager. Image is
 # intentionally fat (~2 GB) — a CI-only artifact, cached per matrix cell
 # after the first build, so the size pays for itself quickly.
-FROM node:20-bookworm-slim
+# Node 22 (not 20): the fastly-server-sdk pulls `@napi-rs/lzma`, which
+# declares `engines.node: ^22.20 || ^24.12 || >=25`. yarn enforces engines
+# and hard-fails the install on Node 20. Staying on the 22 line keeps
+# corepack bundled (Node 25 drops it) so the pnpm/yarn pins below still work.
+FROM node:22-bookworm-slim
 
-# pnpm + yarn come via corepack (node 20 ships it). Python provides the
+# pnpm + yarn come via corepack (the 22 line ships it). Python provides the
 # pip path. Go provides `go get`. Ruby provides the `gem install` path
 # used by ruby-server-sdk install snippets.
 #
@@ -35,8 +39,12 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 # Install Go. Pinning here so the image is reproducible; bump when the
-# go-server-sdk's stated minimum moves.
-ENV GO_VERSION=1.24.3
+# go-server-sdk's stated minimum moves -- v7.15.5 declares `go >= 1.25.0`.
+# Unlike the `go` validator's official golang base (GOTOOLCHAIN=local), a
+# tarball install leaves GOTOOLCHAIN at its `auto` default, so an under-spec
+# pin here self-upgrades mid-run instead of failing. Keeping the pin at or
+# above the SDK minimum avoids paying for that download on every validate.
+ENV GO_VERSION=1.25.12
 RUN curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" \
         -o /tmp/go.tgz \
  && tar -C /usr/local -xzf /tmp/go.tgz \
@@ -44,13 +52,12 @@ RUN curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" \
 ENV PATH=/usr/local/go/bin:/root/go/bin:$PATH
 ENV GOFLAGS=-mod=mod
 
-# Enable corepack-shipped package managers without prompting. Pin pnpm and
-# yarn to versions compatible with the Node 20 base above; without an
-# explicit pin, corepack auto-fetches `latest` on first invocation, and pnpm
-# 11+ requires Node 22.13+ (uses the `node:sqlite` builtin) which crashes
-# the harness with `ERR_UNKNOWN_BUILTIN_MODULE`. pnpm 9 is the last major
-# that supports Node 20; yarn 1 is the classic line that every install
-# snippet uses.
+# Enable corepack-shipped package managers without prompting. Pin both, or
+# corepack auto-fetches `latest` on first invocation and the image stops
+# being reproducible. pnpm 9 is kept for continuity — the Node 22 base would
+# also satisfy pnpm 11's `node:sqlite` requirement, so this pin is now a
+# deliberate hold rather than a floor. yarn 1 is the classic line that every
+# install snippet uses.
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 RUN corepack enable \
  && corepack prepare pnpm@9 --activate \
