@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.21.2](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.21.1...snippets/v0.21.2) (2026-07-31)
+
+
+### Bug Fixes
+
+* **snippets:** bump validator Go and Node toolchains ([#550](https://github.com/launchdarkly/sdk-meta/issues/550)) ([1c4274a](https://github.com/launchdarkly/sdk-meta/commit/1c4274aaf9a7d82c1357b8a28750a75dc23353c4))
+
 ## [0.21.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.21.0...snippets/v0.21.1) (2026-07-10)
 
 
