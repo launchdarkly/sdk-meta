@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.21.3](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.21.2...snippets/v0.21.3) (2026-08-05)
+
+
+### Bug Fixes
+
+* **snippets:** add node-client-sdk v4 snippets ([#553](https://github.com/launchdarkly/sdk-meta/issues/553)) ([593c013](https://github.com/launchdarkly/sdk-meta/commit/593c013a8c50776003289edcf766bae85e38a83b))
+
 ## [0.21.2](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.21.1...snippets/v0.21.2) (2026-07-31)
 
 
