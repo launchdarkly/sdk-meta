@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://launchdarkly.com/sdk-meta/harness_signals.json",
+  "title": "SDK Test Harness Signals",
+  "description": "Per-SDK signals derived from the sdk-test-harness repo and each SDK's testharness-suppressions files.",
+  "type": "object",
+  "required": ["harness", "sdks"],
+  "properties": {
+    "generated_at": { "type": "string", "format": "date-time" },
+    "harness": {
+      "type": "object",
+      "required": ["commit", "capabilities", "test_groups"],
+      "properties": {
+        "commit": {
+          "type": "string",
+          "description": "git rev-parse HEAD of the sdk-test-harness repo at generation time.",
+          "pattern": "^[0-9a-f]{7,40}$"
+        },
+        "capabilities": {
+          "type": "array",
+          "description": "Capability constants extracted from sdk-test-harness/servicedef.",
+          "items": {
+            "type": "object",
+            "required": ["name", "value"],
+            "properties": {
+              "name": { "type": "string", "description": "Go constant name, e.g. CapabilityEvaluationHooks." },
+              "value": { "type": "string", "description": "Capability string value reported by SDK test services, e.g. 'evaluation-hooks'." },
+              "doc": { "type": "string", "description": "Doc comment from the Go source, if any." }
+            }
+          }
+        },
+        "test_groups": {
+          "type": "object",
+          "description": "Top-level test groups registered in sdktests/testsuite_entry_point.go, keyed by SDK kind.",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "func"],
+              "properties": {
+                "name": { "type": "string", "description": "Display name passed to t.Run()." },
+                "func": { "type": "string", "description": "Go function or expression passed to t.Run()." }
+              }
+            }
+          }
+        }
+      }
+    },
+    "sdks": {
+      "type": "object",
+      "description": "Per-SDK harness participation and suppressions.",
+      "additionalProperties": { "$ref": "#/$defs/SDKHarnessSignal" }
+    }
+  },
+  "$defs": {
+    "SDKHarnessSignal": {
+      "type": "object",
+      "required": ["participates"],
+      "properties": {
+        "participates": {
+          "type": "boolean",
+          "description": "True if any contract-tests directory or testharness-suppressions file was found in the SDK repo."
+        },
+        "repo": {
+          "type": "string",
+          "description": "GitHub repo (org/name) for this SDK, copied from products/repos.json."
+        },
+        "repo_commit": {
+          "type": ["string", "null"],
+          "description": "git rev-parse HEAD of the SDK repo at generation time, or null if the repo is missing locally.",
+          "pattern": "^[0-9a-f]{7,40}$"
+        },
+        "current_ref": {
+          "type": ["string", "null"],
+          "description": "Branch or tag name the local checkout is on, if not the default branch."
+        },
+        "suppressions_files": {
+          "type": "array",
+          "description": "Discovered testharness-suppressions*.txt files, paths relative to the SDK repo root.",
+          "items": {
+            "type": "object",
+            "required": ["path", "lines", "comments"],
+            "properties": {
+              "path": { "type": "string" },
+              "variant": { "type": ["string", "null"], "description": "Variant suffix parsed from filename (e.g. 'fdv2'), or null for the canonical file." },
+              "lines": {
+                "type": "array",
+                "description": "Suppression entries, with comments and blank lines stripped.",
+                "items": { "type": "string" }
+              },
+              "comments": {
+                "type": "array",
+                "description": "Inline '#' comments preserved with their surrounding context.",
+                "items": {
+                  "type": "object",
+                  "required": ["comment"],
+                  "properties": {
+                    "comment": { "type": "string" },
+                    "applies_to": {
+                      "type": "array",
+                      "description": "Suppression entries that immediately follow this comment block.",
+                      "items": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "suppressions_by_top_group": {
+          "type": "object",
+          "description": "Count of suppression entries bucketed by top-level test group (first slash-segment of the test path).",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        }
+      }
+    }
+  }
+}

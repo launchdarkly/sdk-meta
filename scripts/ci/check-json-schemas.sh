@@ -28,3 +28,6 @@ runTest ./schemas/releases.json ./products/releases.json
 runTest ./schemas/features.json ./products/features.json
 runTest ./schemas/feature_info.json ./products/feature_info.json
 runTest ./schemas/popularity.json ./products/popularity.json
+runTest ./schemas/specs.json ./products/specs.json
+runTest ./schemas/harness_signals.json ./products/harness_signals.json
+runTest ./schemas/spec_support.json ./products/spec_support.json
