@@ -4569,10 +4569,16 @@
   ],
   "server-ai": [
     {
+      "major": 2,
+      "minor": 0,
+      "date": "2026-08-04T14:59:29Z",
+      "eol": null
+    },
+    {
       "major": 1,
       "minor": 3,
       "date": "2026-07-23T14:06:56Z",
-      "eol": null
+      "eol": "2027-08-04T00:00:00Z"
     },
     {
       "major": 1,
