@@ -162,6 +162,19 @@ jobs:
             label: android-client-sdk (sdk-docs)
             group: sdk-docs
 
+          # Android observability plugin fragments. Kotlin/Java blocks
+          # compile against the real launchdarkly-observability-android aar
+          # via the android-client validator (parse mode); the Compose /
+          # View masking blocks compile via the dedicated android-compose
+          # validator (Kotlin 2.0 + Compose). One group row drives both
+          # validators. key-type: mobile matches the sdk-docs row (the
+          # android-client harness require_env's LAUNCHDARKLY_FLAG_KEY).
+          - sdk: android-client-sdk
+            runs-on: ubuntu-latest
+            key-type: mobile
+            label: android-client-sdk (observability)
+            group: observability
+
           # SDKs whose sdk-docs slice picked up bound syntax-only
           # validators in the docs-validation pass (PR
           # rlamb/sdk-docs-validation). Each matrix row builds the

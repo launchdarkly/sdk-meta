@@ -1,20 +1,22 @@
 ---
-id: android-client-sdk/sdk-docs/initialize-the-client-android-sdk-v5-x-java
+id: android-client-sdk/observability/initialize-the-client-java
 sdk: android-client-sdk
 kind: reference
 lang: java
-description: "Android SDK v5.x (Java) in section \"Initialize the client\""
+file: app/src/main/java/com/launchdarkly/hello_android/SnippetObsJava.java
+description: "Android observability plugin: Initialize the client (Java)"
 validation:
-  scaffold: android-client-sdk/scaffolds/java-syntax-only
+  scaffold: android-client-sdk/scaffolds/java-observability
 ---
 
 ```java
+String mobileKey = "example-mobile-key";
+
 LDConfig ldConfig = new LDConfig.Builder(AutoEnvAttributes.Enabled)
-    .mobileKey("example-mobile-key")
-    // optional observability plugin, requires LaunchDarkly Android Client SDK v5.9+
+    .mobileKey(mobileKey)
     .plugins(Components.plugins().setPlugins(
       Collections.<Plugin>singletonList(
-        new Observability(this.getApplication(), "example-mobile-key", ObservabilityOptions.builder().build(), null)
+        new Observability(this.getApplication(), mobileKey, ObservabilityOptions.builder().build(), null)
       )
     ))
     // other options
