@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "sdks": {
+    "node-client-sdk": {
+      "releases": {
+        "tag-prefix": ""
+      }
+    }
+  }
+}
