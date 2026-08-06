@@ -16,10 +16,16 @@ class MetricsHook: Hook {
 }
 
 class ObservabilityHook: Hook {
-    /// Observes an evaluation at most once per minute per unique result,
-    /// tracking at most 2000 results at a time
+    /// Observes an evaluation at most once per 10 minutes per unique result,
+    /// tracking at most 2000 results at a time: the defaults
     let evaluationExposureDeduper: EvaluationExposureDeduper? =
-        EvaluationExposureDeduper(window: 60, maxSize: 2_000)
+        EvaluationExposureDeduper()
+}
+
+class TelemetryHook: Hook {
+    /// The same, with a one minute window over at most 5000 results
+    let evaluationExposureDeduper: EvaluationExposureDeduper? =
+        EvaluationExposureDeduper(window: 60, maxSize: 5_000)
 }
 
 class AuditHook: Hook {
@@ -31,5 +37,5 @@ var config = LDConfig(
   mobileKey: "example-mobile-key",
   autoEnvAttributes: .enabled
 )
-config.hooks = [MetricsHook(), ObservabilityHook(), AuditHook()]
+config.hooks = [MetricsHook(), ObservabilityHook(), TelemetryHook(), AuditHook()]
 ```
