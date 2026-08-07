@@ -17,15 +17,15 @@ class MetricsHook: Hook {
 
 class ObservabilityHook: Hook {
     /// Observes a flag when its result changes, and at most once per 10
-    /// minutes while it stays the same, for up to 2000 flags: the defaults
+    /// minutes while it stays the same: the default window
     let evaluationExposureDeduper: EvaluationExposureDeduper? =
         EvaluationExposureDeduper()
 }
 
 class TelemetryHook: Hook {
-    /// The same, with a one minute window over at most 5000 flags
+    /// The same, with a one minute window
     let evaluationExposureDeduper: EvaluationExposureDeduper? =
-        EvaluationExposureDeduper(window: 60, maxSize: 5_000)
+        EvaluationExposureDeduper(window: 60)
 }
 
 class AuditHook: Hook {

@@ -16,12 +16,12 @@ LDConfig ldConfig = new LDConfig.Builder(AutoEnvAttributes.Enabled)
         // Observes every evaluation, because it has no deduper
         .addHook(new ExampleHook("Metrics hook"))
         // Observes a flag when its result changes, and at most once per 10
-        // minutes while it stays the same, for up to 2000 flags: the defaults
+        // minutes while it stays the same: the default window
         .addHook(new ExampleHook("Observability hook")
             .evaluationExposureDeduper())
-        // The same, with a one minute window over at most 5000 flags
+        // The same, with a one minute window
         .addHook(new ExampleHook("Telemetry hook")
-            .evaluationExposureDeduper(60_000, 5_000))
+            .evaluationExposureDeduper(60_000))
         // Observes every evaluation, stated explicitly
         .addHook(new ExampleHook("Audit hook")
             .evaluationExposureDeduper(EvaluationExposureDeduper.disabled()))
