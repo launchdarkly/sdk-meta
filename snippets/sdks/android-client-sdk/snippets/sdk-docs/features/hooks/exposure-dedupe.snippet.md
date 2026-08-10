@@ -13,18 +13,16 @@ LDConfig ldConfig = new LDConfig.Builder(AutoEnvAttributes.Enabled)
     .mobileKey("example-mobile-key")
     .hooks(
       Components.hooks()
-        // Observes every evaluation, because it has no deduper
+        // Observes every evaluation, because it is registered unwrapped
         .addHook(new ExampleHook("Metrics hook"))
         // Observes a flag when its result changes, and at most once per 10
         // minutes while it stays the same: the default window
-        .addHook(new ExampleHook("Observability hook")
-            .evaluationExposureDeduper())
+        .addHook(new DedupingHook(new ExampleHook("Observability hook")))
         // The same, with a one minute window
-        .addHook(new ExampleHook("Telemetry hook")
-            .evaluationExposureDeduper(60_000))
-        // Observes every evaluation, stated explicitly
-        .addHook(new ExampleHook("Audit hook")
-            .evaluationExposureDeduper(EvaluationExposureDeduper.disabled()))
+        .addHook(new DedupingHook(new ExampleHook("Telemetry hook"), 60_000))
+        // Deciding for itself which evaluations reach the hook
+        .addHook(new DedupingHook(new ExampleHook("Experiment hook"),
+            new EvaluationExposureDeduper(30_000)))
     )
     .build();
 ```
