@@ -45,7 +45,8 @@ RUN apt-get update \
 # pin here self-upgrades mid-run instead of failing. Keeping the pin at or
 # above the SDK minimum avoids paying for that download on every validate.
 ENV GO_VERSION=1.25.12
-RUN curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" \
+RUN curl -fsSL --retry 5 --retry-all-errors --retry-delay 5 \
+        "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" \
         -o /tmp/go.tgz \
  && tar -C /usr/local -xzf /tmp/go.tgz \
  && rm /tmp/go.tgz
@@ -69,7 +70,7 @@ RUN corepack enable \
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
-RUN curl -fsSL https://sh.rustup.rs \
+RUN curl -fsSL --retry 5 --retry-all-errors --retry-delay 5 https://sh.rustup.rs \
         | sh -s -- -y --default-toolchain stable --profile minimal --no-modify-path
 
 # PHP + composer.phar for `php composer.phar require …` install snippets.
@@ -84,12 +85,14 @@ RUN apt-get update \
         php-mbstring \
         unzip \
  && rm -rf /var/lib/apt/lists/*
-RUN curl -fsSL https://getcomposer.org/download/latest-stable/composer.phar -o /opt/composer.phar \
+RUN curl -fsSL --retry 5 --retry-all-errors --retry-delay 5 \
+        https://getcomposer.org/download/latest-stable/composer.phar -o /opt/composer.phar \
  && chmod +x /opt/composer.phar
 
 # .NET SDK for `dotnet add package` install snippets. The Microsoft apt
 # feed serves a .deb that wires up the package source for us.
-RUN curl -fsSL https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb \
+RUN curl -fsSL --retry 5 --retry-all-errors --retry-delay 5 \
+        https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb \
         -o /tmp/packages-microsoft-prod.deb \
  && dpkg -i /tmp/packages-microsoft-prod.deb \
  && rm /tmp/packages-microsoft-prod.deb \
@@ -105,7 +108,8 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends openjdk-17-jdk-headless \
  && rm -rf /var/lib/apt/lists/*
 ENV GRADLE_VERSION=8.10.2
-RUN curl -fsSL "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
+RUN curl -fsSL --retry 5 --retry-all-errors --retry-delay 5 \
+        "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
         -o /tmp/gradle.zip \
  && unzip -q /tmp/gradle.zip -d /opt \
  && ln -s "/opt/gradle-${GRADLE_VERSION}/bin/gradle" /usr/local/bin/gradle \
