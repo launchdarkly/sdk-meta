@@ -56,13 +56,13 @@ ARG HELLO_ANDROID_REF=main
 # 5.13.0 introduced the EAP data system surface (Components.dataSystem(),
 # DataSystemBuilder, AutomaticModeSwitchingConfig) that the
 # data-saving-mode doc fragments compile against.
-ARG LD_ANDROID_SDK_VERSION=5.13.1
+ARG LD_ANDROID_SDK_VERSION=5.13.3
 ARG ROBOLECTRIC_VERSION=4.12.2
 # Optional observability plugin AAR. Doc fragments under
 # initialize-the-client-android-sdk-v5-x-* show the v5.9+ pattern
 # `Components.plugins().setPlugins(listOf(Observability(this@…)))`,
 # which references the launchdarkly-observability-android package.
-ARG LD_ANDROID_OBSERVABILITY_VERSION=0.54.0
+ARG LD_ANDROID_OBSERVABILITY_VERSION=0.64.0
 
 RUN git clone --depth 1 --branch "${HELLO_ANDROID_REF}" \
         https://github.com/launchdarkly/hello-android.git /opt/hello-android
