@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.22.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.21.3...snippets/v0.22.0) (2026-08-12)
+
+
+### Features
+
+* **snippets:** Add C++ server-side DynamoDB and Big Segments snippets ([#558](https://github.com/launchdarkly/sdk-meta/issues/558)) ([89b387b](https://github.com/launchdarkly/sdk-meta/commit/89b387b36c15a551c7dd86f98e7de8f9d872f8a4))
+
 ## [0.21.3](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.21.2...snippets/v0.21.3) (2026-08-05)
 
 
