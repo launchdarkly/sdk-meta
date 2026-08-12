@@ -3,10 +3,10 @@ FROM mcr.microsoft.com/playwright:v1.59.1-noble
 # Pre-bake a minimal tsdown project with the LD JavaScript browser SDK
 # installed. Per-validate cycles drop src/app.ts and index.html from the
 # snippet into the project and re-run tsdown.
-ARG LD_JS_CLIENT_SDK_VERSION=4.6.3
-ARG LD_JS_CLIENT_LEGACY_SDK_VERSION=3.8.0
-ARG LD_OBSERVABILITY_VERSION=1.1.8
-ARG LD_SESSION_REPLAY_VERSION=1.1.8
+ARG LD_JS_CLIENT_SDK_VERSION=4.9.4
+ARG LD_JS_CLIENT_LEGACY_SDK_VERSION=3.9.5
+ARG LD_OBSERVABILITY_VERSION=1.1.18
+ARG LD_SESSION_REPLAY_VERSION=1.1.18
 ARG TSDOWN_VERSION=0.17.0-beta.4
 ARG TYPESCRIPT_VERSION=5.9.3
 
