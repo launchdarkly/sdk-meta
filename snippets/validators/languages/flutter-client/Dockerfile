@@ -27,7 +27,7 @@ RUN curl -fsSL "https://storage.googleapis.com/flutter_infra_release/releases/st
 # deps already pinned. Per-validate cycles overwrite lib/main.dart and
 # re-run `flutter build linux --debug` against the warmed pub cache + dart
 # kernel cache + the pre-built desktop embedder.
-ARG LD_FLUTTER_SDK_VERSION=4.20.0
+ARG LD_FLUTTER_SDK_VERSION=4.20.2
 ARG PROVIDER_VERSION=6.1.2
 
 RUN flutter create --platforms=linux --org com.launchdarkly /opt/hello_flutter
