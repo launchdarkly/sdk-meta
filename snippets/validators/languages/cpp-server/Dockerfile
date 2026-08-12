@@ -14,7 +14,7 @@ ENV PATH="/usr/lib/ccache:${PATH}"
 # Pre-clone cpp-sdks. The snippet's CMakeLists references this via
 # `add_subdirectory(cpp-sdks)` from the project root, so we symlink it
 # into the project dir at build time rather than committing the tree.
-ARG CPP_SDKS_REF=launchdarkly-cpp-server-v3.10.1
+ARG CPP_SDKS_REF=launchdarkly-cpp-server-v3.13.1
 RUN git clone --depth 1 --branch "${CPP_SDKS_REF}" \
         https://github.com/launchdarkly/cpp-sdks.git /opt/cpp-sdks
 
@@ -30,6 +30,13 @@ RUN git clone --depth 1 --branch "${CPP_SDKS_REF}" \
 # fragments. Both share one CMakeLists that links the redis source library
 # only when LD_BUILD_REDIS_SUPPORT is set, so the variant is selected purely
 # by the configure-time -D flag.
+#
+# DynamoDB fragments need no third variant. The DynamoDB source library's
+# public headers are AWS-clean, and the fragment bodies live in a
+# never-instantiated template, so no DynamoDB or AWS symbols are ODR-used.
+# Both projects put the library's include dir on the compile path (see the
+# CMakeLists below) WITHOUT LD_BUILD_DYNAMODB_SUPPORT -- which would
+# otherwise FetchContent-build the (very heavy) AWS C++ SDK from source.
 RUN for proj in /opt/hello-cpp /opt/hello-cpp-redis; do \
         mkdir -p "$proj" && cd "$proj" && ln -s /opt/cpp-sdks cpp-sdks && \
         printf '%s\n' \
@@ -46,6 +53,7 @@ RUN for proj in /opt/hello-cpp /opt/hello-cpp-redis; do \
             '  set(LD_EXTRA_LIBS launchdarkly::server_redis_source)' \
             'endif()' \
             'target_link_libraries(hello PRIVATE launchdarkly::server ${LD_EXTRA_LIBS} Threads::Threads)' \
+            'target_include_directories(hello PRIVATE cpp-sdks/libs/server-sdk-dynamodb-source/include)' \
             > CMakeLists.txt && \
         printf 'int main() { return 0; }\n' > main.cpp; \
     done && \
