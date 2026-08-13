@@ -4,10 +4,10 @@ FROM mcr.microsoft.com/playwright:v1.59.1-noble
 # SDK installed. Per-validate cycles drop the snippet's entrypoint
 # (src/index.tsx for legacy, src/main.tsx for createApp) plus its App.tsx
 # companion into src/ and re-run vite build.
-ARG LD_REACT_SDK_VERSION=4.0.0
-ARG LD_REACT_LEGACY_SDK_VERSION=3.9.1
-ARG LD_OBSERVABILITY_VERSION=1.1.8
-ARG LD_SESSION_REPLAY_VERSION=1.1.8
+ARG LD_REACT_SDK_VERSION=4.1.12
+ARG LD_REACT_LEGACY_SDK_VERSION=3.9.4
+ARG LD_OBSERVABILITY_VERSION=1.1.18
+ARG LD_SESSION_REPLAY_VERSION=1.1.18
 ARG REACT_VERSION=19.2.5
 ARG VITE_VERSION=8.0.10
 ARG VITE_PLUGIN_REACT_VERSION=6.0.1
