@@ -70,10 +70,8 @@ RUN corepack enable \
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
-RUN curl -fsSL --retry 5 --retry-all-errors --retry-delay 5 https://sh.rustup.rs \
-        -o /tmp/rustup-init.sh \
- && sh /tmp/rustup-init.sh -y --default-toolchain stable --profile minimal --no-modify-path \
- && rm /tmp/rustup-init.sh
+RUN curl -fsSL https://sh.rustup.rs \
+        | sh -s -- -y --default-toolchain stable --profile minimal --no-modify-path
 
 # PHP + composer.phar for `php composer.phar require …` install snippets.
 # composer.phar lands at /opt/composer.phar; the harness symlinks it into
