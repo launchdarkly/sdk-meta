@@ -19,10 +19,6 @@ ldclient.set_config(
     Config(
         "YOUR_SDK_KEY",
         datasystem_config=datasystem.custom()
-            .initializers([
-                datasystem.polling_ds_builder().base_uri(relay_uri),
-                datasystem.polling_ds_builder(),
-            ])
             .synchronizers(
                 datasystem.streaming_ds_builder().base_uri(relay_uri),
                 datasystem.streaming_ds_builder(),

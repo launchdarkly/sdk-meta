@@ -19,10 +19,6 @@ var config ld.Config
 relayURI := "http://my-relay-proxy:8030"
 
 config.DataSystem = ldcomponents.DataSystem().Custom().
-    Initializers(
-        ldcomponents.PollingDataSourceV2().BaseURI(relayURI).AsInitializer(),
-        ldcomponents.PollingDataSourceV2().AsInitializer(),
-    ).
     Synchronizers(
         ldcomponents.StreamingDataSourceV2().BaseURI(relayURI),
         ldcomponents.StreamingDataSourceV2(),

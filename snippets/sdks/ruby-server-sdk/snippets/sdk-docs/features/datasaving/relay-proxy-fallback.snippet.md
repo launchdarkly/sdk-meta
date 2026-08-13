@@ -15,10 +15,6 @@ relay_uri = "http://my-relay-proxy:8030"
 
 config = LaunchDarkly::Config.new(
   data_system_config: LaunchDarkly::DataSystem.custom
-    .initializers([
-      LaunchDarkly::DataSystem.polling_ds_builder.base_uri(relay_uri),
-      LaunchDarkly::DataSystem.polling_ds_builder,
-    ])
     .synchronizers([
       LaunchDarkly::DataSystem.streaming_ds_builder.base_uri(relay_uri),
       LaunchDarkly::DataSystem.streaming_ds_builder,
