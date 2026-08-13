@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # The snippet's stack.yaml/package.yaml fragments aren't exercised by the
 # validator (they're just rendered into ld-application's get-started
 # instructions); we build the equivalent cabal project here directly.
-ARG LD_HASKELL_VERSION=4.5.1
+ARG LD_HASKELL_VERSION=4.6.0
 RUN mkdir -p /opt/hello-haskell/app
 WORKDIR /opt/hello-haskell
 
