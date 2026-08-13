@@ -29,7 +29,7 @@ RUN git clone --depth 1 --branch "${CPP_SDKS_REF}" \
 ENV LD_LIBRARY_PATH=/opt/cpp-sdks/install/lib
 
 # Install the Lua server SDK rock against the built C++ shared lib.
-ARG LUA_SDK_VERSION=2.1.3-0
+ARG LUA_SDK_VERSION=2.2.0-0
 RUN luarocks install --tree=/opt/lua-rocks \
         launchdarkly-server-sdk ${LUA_SDK_VERSION} \
         LD_DIR=/opt/cpp-sdks/install
