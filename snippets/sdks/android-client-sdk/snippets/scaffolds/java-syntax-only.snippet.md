@@ -75,7 +75,7 @@ import com.launchdarkly.sdk.android.LDConfig.Builder.AutoEnvAttributes;
 // Observability plugin surfaces for the v5.x init / import fragments:
 // `Plugin` (integrations), the `Observability` plugin, and its
 // `ObservabilityOptions` (with the Java-friendly builder added in
-// launchdarkly-observability-android 0.54.0). `java.util.Collections`
+// launchdarkly-observability-android 0.64.0). `java.util.Collections`
 // covers the `Collections.<Plugin>singletonList(...)` plugin list.
 import com.launchdarkly.sdk.android.integrations.*;
 import com.launchdarkly.observability.plugin.*;
