@@ -15,7 +15,7 @@ description: "Elixir in section \"Get started\""
 ```erlang
 defp deps do
   [
-    {:ldclient, "~> 3.0.0", hex: :launchdarkly_server_sdk}
+    {:ldclient, "~> 3.11.2", hex: :launchdarkly_server_sdk}
   ]
 end
 ```

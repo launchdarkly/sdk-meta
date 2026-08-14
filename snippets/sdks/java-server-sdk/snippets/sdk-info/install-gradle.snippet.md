@@ -8,5 +8,5 @@ description: Install command for java-server-sdk (gradle).
 ---
 
 ```gradle
-implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.0.0'
+implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.15.0'
 ```

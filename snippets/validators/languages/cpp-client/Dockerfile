@@ -14,7 +14,7 @@ ENV PATH="/usr/lib/ccache:${PATH}"
 # Pre-clone cpp-sdks. The snippet's CMakeLists references this via
 # `add_subdirectory(cpp-sdks)` from the project root, so we symlink it
 # into the project dir at build time rather than committing the tree.
-ARG CPP_SDKS_REF=launchdarkly-cpp-client-v3.11.1
+ARG CPP_SDKS_REF=launchdarkly-cpp-client-v3.11.4
 RUN git clone --depth 1 --branch "${CPP_SDKS_REF}" \
         https://github.com/launchdarkly/cpp-sdks.git /opt/cpp-sdks
 

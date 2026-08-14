@@ -15,7 +15,7 @@ FROM erlang:26
 # point — gonfalon's flow expects the user to drop into rebar3 shell
 # and call manually. We synthesize the equivalent at validate time.
 
-ARG LD_ERLANG_VERSION=3.9.0
+ARG LD_ERLANG_VERSION=3.11.2
 
 WORKDIR /opt/hello_erlang
 

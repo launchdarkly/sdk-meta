@@ -6,15 +6,18 @@ lang: cpp
 file: main.cpp
 description: |
   Parse-only validator for C++ server SDK doc fragments that reference
-  the Redis integration (`launchdarkly::server_redis_source`).
+  the Redis integration (`launchdarkly::server_redis_source`) -- both
+  the Lazy Load persistent store (`RedisDataSource`) and the Big
+  Segments store (`RedisBigSegmentStore`).
 
   Same shape as `cpp-syntax-only`, with two additions:
 
-  - The Redis source headers (native + C binding) are pre-included at
-    file scope. Doc fragments carry their own `#include` of
-    `redis_source.hpp` inside the wrappee body; the header's include
-    guard makes that inner include a no-op, so the body stays verbatim
-    while the declarations land at file scope where they belong.
+  - The Redis integration headers (native + C binding) are pre-included
+    at file scope: the Lazy Load source, the Big Segments store, and the
+    core Big Segments builder. Doc fragments carry their own `#include`
+    inside the wrappee body; the headers' include guards make those
+    inner includes a no-op, so the body stays verbatim while the
+    declarations land at file scope where they belong.
   - `validation.env` sets `CPP_REDIS=1`, which tells the cpp-server
     harness to configure cpp-sdks with `-DLD_BUILD_REDIS_SUPPORT=ON`
     and link `launchdarkly::server_redis_source`.
@@ -50,6 +53,13 @@ validation:
 // native header themselves hit the include guard and stay verbatim.
 #include <launchdarkly/server_side/integrations/redis/redis_source.hpp>
 #include <launchdarkly/server_side/bindings/c/integrations/redis/redis_source.h>
+// Redis Big Segments store headers (native + C binding) plus the core
+// Big Segments builder the store is handed to. Same include-guard
+// reasoning as the source headers above.
+#include <launchdarkly/server_side/integrations/redis/redis_big_segment_store.hpp>
+#include <launchdarkly/server_side/bindings/c/integrations/redis/redis_big_segment_store.h>
+#include <launchdarkly/server_side/config/builders/big_segments_builder.hpp>
+#include <launchdarkly/server_side/bindings/c/config/big_segments_builder/big_segments_builder.h>
 
 // Wrappee is a never-instantiated template — body is parsed but
 // most type-checks are deferred to instantiation (which never

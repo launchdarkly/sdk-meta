@@ -60,9 +60,15 @@
   "android": [
     {
       "major": 5,
+      "minor": 14,
+      "date": "2026-08-12T20:01:01Z",
+      "eol": null
+    },
+    {
+      "major": 5,
       "minor": 13,
       "date": "2026-06-08T15:05:02Z",
-      "eol": null
+      "eol": "2027-08-12T00:00:00Z"
     },
     {
       "major": 5,
@@ -2454,9 +2460,15 @@
   "lua-server-sdk": [
     {
       "major": 2,
+      "minor": 2,
+      "date": "2026-08-10T23:38:23Z",
+      "eol": null
+    },
+    {
+      "major": 2,
       "minor": 1,
       "date": "2024-03-11T23:37:23Z",
-      "eol": null
+      "eol": "2027-08-10T00:00:00Z"
     },
     {
       "major": 2,
@@ -2485,10 +2497,16 @@
   ],
   "node-client-sdk": [
     {
+      "major": 4,
+      "minor": 0,
+      "date": "2026-08-04T19:37:25Z",
+      "eol": null
+    },
+    {
       "major": 3,
       "minor": 4,
       "date": "2026-05-26T20:11:57Z",
-      "eol": null
+      "eol": "2027-08-04T00:00:00Z"
     },
     {
       "major": 3,
@@ -4502,9 +4520,15 @@
   "rust-server-sdk": [
     {
       "major": 3,
+      "minor": 2,
+      "date": "2026-08-11T17:04:04Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 1,
       "date": "2026-05-29T20:52:36Z",
-      "eol": null
+      "eol": "2027-08-11T00:00:00Z"
     },
     {
       "major": 3,
@@ -4569,10 +4593,16 @@
   ],
   "server-ai": [
     {
+      "major": 2,
+      "minor": 0,
+      "date": "2026-08-04T14:59:29Z",
+      "eol": null
+    },
+    {
       "major": 1,
       "minor": 3,
       "date": "2026-07-23T14:06:56Z",
-      "eol": null
+      "eol": "2027-08-04T00:00:00Z"
     },
     {
       "major": 1,

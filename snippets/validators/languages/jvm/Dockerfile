@@ -27,7 +27,7 @@ RUN printf '%s\n' \
     '    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>' \
     '  </properties>' \
     '  <dependencies>' \
-    '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-java-server-sdk</artifactId><version>7.13.4</version></dependency>' \
+    '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-java-server-sdk</artifactId><version>7.15.0</version></dependency>' \
     '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-java-server-sdk-otel</artifactId><version>0.2.0</version></dependency>' \
     '    <dependency><groupId>io.opentelemetry</groupId><artifactId>opentelemetry-sdk</artifactId><version>1.40.0</version></dependency>' \
     '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-java-server-sdk-redis-store</artifactId><version>3.1.1</version></dependency>' \

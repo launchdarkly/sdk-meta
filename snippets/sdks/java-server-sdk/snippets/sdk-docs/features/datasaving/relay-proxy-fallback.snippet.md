@@ -20,11 +20,6 @@ ServiceEndpointsBuilder relayEndpoints = Components.serviceEndpoints().relayProx
 LDConfig config = new LDConfig.Builder()
     .dataSystem(
         Components.dataSystem().custom()
-            .initializers(
-                DataSystemComponents.pollingInitializer()
-                    .serviceEndpointsOverride(relayEndpoints),
-                DataSystemComponents.pollingInitializer()
-            )
             .synchronizers(
                 DataSystemComponents.streamingSynchronizer()
                     .serviceEndpointsOverride(relayEndpoints),

@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.22.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.22.0...snippets/v0.22.1) (2026-08-13)
+
+
+### Bug Fixes
+
+* **snippets:** Remove polling initializer recommendation from relay proxy fallback ([#573](https://github.com/launchdarkly/sdk-meta/issues/573)) ([96c9c7e](https://github.com/launchdarkly/sdk-meta/commit/96c9c7e549ce8f328feb0c995ee43a1d8c0e44bb))
+
+## [0.22.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.21.3...snippets/v0.22.0) (2026-08-12)
+
+
+### Features
+
+* **snippets:** Add C++ server-side DynamoDB and Big Segments snippets ([#558](https://github.com/launchdarkly/sdk-meta/issues/558)) ([89b387b](https://github.com/launchdarkly/sdk-meta/commit/89b387b36c15a551c7dd86f98e7de8f9d872f8a4))
+
 ## [0.21.3](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.21.2...snippets/v0.21.3) (2026-08-05)
 
 

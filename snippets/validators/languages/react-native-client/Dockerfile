@@ -4,8 +4,8 @@ FROM node:22-bookworm
 # pre-bake them so per-validate cycles only re-run jest with the
 # snippet's two .tsx files.
 
-ARG LD_RN_SDK_VERSION=10.17.2
-ARG LD_OBSERVABILITY_RN_VERSION=0.9.1
+ARG LD_RN_SDK_VERSION=10.19.4
+ARG LD_OBSERVABILITY_RN_VERSION=0.18.0
 ARG REACT_NATIVE_VERSION=0.85.2
 ARG REACT_VERSION=19.2.5
 ARG TESTING_LIBRARY_VERSION=13.3.3
@@ -47,7 +47,7 @@ RUN cat > package.json <<EOF
   "jest": {
     "preset": "@react-native/jest-preset",
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|@react-native|@launchdarkly)/)"
+      "node_modules/(?!(react-native|react-native-url-polyfill|@react-native|@launchdarkly)/)"
     ],
     "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json"],
     "testMatch": ["<rootDir>/__tests__/**/*.test.tsx"],

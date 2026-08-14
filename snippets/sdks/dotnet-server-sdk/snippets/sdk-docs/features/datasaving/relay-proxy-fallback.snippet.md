@@ -18,11 +18,6 @@ var relayEndpoints = Components.ServiceEndpoints().RelayProxy(relayUri);
 var config = Configuration.Builder("YOUR_SDK_KEY")
     .DataSystem(
         Components.DataSystem().Custom()
-            .Initializers(
-                DataSystemComponents.Polling()
-                    .ServiceEndpointsOverride(relayEndpoints),
-                DataSystemComponents.Polling()
-            )
             .Synchronizers(
                 DataSystemComponents.Streaming()
                     .ServiceEndpointsOverride(relayEndpoints),
