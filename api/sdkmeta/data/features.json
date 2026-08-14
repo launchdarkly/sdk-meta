@@ -384,6 +384,11 @@
       "introduced": "3.0",
       "removed": null
     },
+    "bigSegments": {
+      "deprecated": null,
+      "introduced": "3.13",
+      "removed": null
+    },
     "contexts": {
       "deprecated": null,
       "introduced": "3.0",
@@ -392,6 +397,11 @@
     "experimentation": {
       "deprecated": null,
       "introduced": "2.4",
+      "removed": null
+    },
+    "fdv2": {
+      "deprecated": null,
+      "introduced": "3.12",
       "removed": null
     },
     "fileDataSource": {
@@ -432,6 +442,11 @@
     "storingData": {
       "deprecated": null,
       "introduced": "1.2",
+      "removed": null
+    },
+    "storingDataDynamodb": {
+      "deprecated": null,
+      "introduced": "3.13",
       "removed": null
     },
     "storingDataRedis": {
@@ -764,6 +779,11 @@
     "experimentation": {
       "deprecated": null,
       "introduced": "1.0",
+      "removed": null
+    },
+    "fdv2": {
+      "deprecated": null,
+      "introduced": "4.20",
       "removed": null
     },
     "flagChanges": {
@@ -1281,14 +1301,54 @@
       "introduced": "3.0",
       "removed": null
     },
+    "eventCompression": {
+      "deprecated": null,
+      "introduced": "4.0",
+      "removed": null
+    },
     "experimentation": {
       "deprecated": null,
       "introduced": "1.1",
       "removed": null
     },
+    "fdv2": {
+      "deprecated": null,
+      "introduced": "4.0",
+      "removed": null
+    },
     "flagChanges": {
       "deprecated": null,
       "introduced": "1.0",
+      "removed": null
+    },
+    "hooks": {
+      "deprecated": null,
+      "introduced": "3.4",
+      "removed": null
+    },
+    "inlineContextCustomEvents": {
+      "deprecated": null,
+      "introduced": "3.4",
+      "removed": null
+    },
+    "offlineMode": {
+      "deprecated": null,
+      "introduced": "4.0",
+      "removed": null
+    },
+    "perContextSummaryEvents": {
+      "deprecated": null,
+      "introduced": "3.4",
+      "removed": null
+    },
+    "pluginSupport": {
+      "deprecated": null,
+      "introduced": "3.4",
+      "removed": null
+    },
+    "pollingResponseCompression": {
+      "deprecated": null,
+      "introduced": "4.0",
       "removed": null
     },
     "privateAttrs": {
