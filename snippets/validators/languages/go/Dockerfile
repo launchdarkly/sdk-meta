@@ -5,7 +5,8 @@
 # The official golang images set GOTOOLCHAIN=local, so an under-spec base
 # does not silently self-upgrade -- `go mod tidy` fails outright with
 # "toolchain upgrade needed". Bump this when the SDK's minimum moves.
-FROM golang:1.25
+ARG GO_IMAGE
+FROM ${GO_IMAGE}
 
 WORKDIR /work
 

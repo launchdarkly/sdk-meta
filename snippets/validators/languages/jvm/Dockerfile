@@ -1,4 +1,5 @@
-FROM maven:3.9-eclipse-temurin-17
+ARG JVM_IMAGE
+FROM ${JVM_IMAGE}
 
 # python3 is used by the harness's import-lift pre-step (see run.sh)
 # to hoist `import …;` lines out of the doc-fragment body before

@@ -1,4 +1,5 @@
-FROM debian:bookworm-slim
+ARG DEBIAN_BOOKWORM_SLIM_IMAGE
+FROM ${DEBIAN_BOOKWORM_SLIM_IMAGE}
 
 # Parse-and-type-check validator for the legacy v2.x C++ binding of
 # the cpp-client SDK (the `LDClientCPP::Init` / `client->boolVariation`

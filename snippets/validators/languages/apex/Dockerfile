@@ -11,9 +11,11 @@
 #
 # prettier-plugin-apex ships its parser as a bundled JVM tool
 # (apex-ast-serializer), so the image needs both Node and a JRE.
-FROM node:22-bookworm-slim
+ARG NODE_BOOKWORM_SLIM_IMAGE
+FROM ${NODE_BOOKWORM_SLIM_IMAGE}
 
-RUN npm install -g npm@12 \
+COPY shared/versions/npm.env /versions/npm.env
+RUN . /versions/npm.env && npm install -g npm@"$NPM_VERSION" \
  && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
 
 # prettier-plugin-apex's apex-ast-serializer requires Java 11+. The
@@ -25,8 +27,8 @@ RUN apt-get update \
 # Pin both so the validator is reproducible; bump when we want newer
 # Apex language-feature support. prettier 3.x is the line
 # prettier-plugin-apex 2.x targets.
-ARG PRETTIER_VERSION=3.4.2
-ARG PRETTIER_PLUGIN_APEX_VERSION=2.2.6
+ARG PRETTIER_VERSION
+ARG PRETTIER_PLUGIN_APEX_VERSION
 
 # Pre-bake the install under /opt/apex so per-validate cycles skip the
 # npm fetch. The harness invokes prettier from here.

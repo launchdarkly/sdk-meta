@@ -1,4 +1,5 @@
-FROM haskell:9.6.7-bullseye
+ARG HASKELL_IMAGE
+FROM ${HASKELL_IMAGE}
 
 # launchdarkly-server-sdk's transitive deps need libpcre + zlib + openssl.
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -11,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # The snippet's stack.yaml/package.yaml fragments aren't exercised by the
 # validator (they're just rendered into ld-application's get-started
 # instructions); we build the equivalent cabal project here directly.
-ARG LD_HASKELL_VERSION=4.6.0
+ARG LD_HASKELL_VERSION
 RUN mkdir -p /opt/hello-haskell/app
 WORKDIR /opt/hello-haskell
 
