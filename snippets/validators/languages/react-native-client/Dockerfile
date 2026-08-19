@@ -1,5 +1,8 @@
 FROM node:22-bookworm
 
+RUN npm install -g npm@12 \
+ && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
+
 # React Native's jest setup pulls in a long tail of transitive deps;
 # pre-bake them so per-validate cycles only re-run jest with the
 # snippet's two .tsx files.

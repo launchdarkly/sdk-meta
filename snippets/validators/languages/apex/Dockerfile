@@ -11,7 +11,10 @@
 #
 # prettier-plugin-apex ships its parser as a bundled JVM tool
 # (apex-ast-serializer), so the image needs both Node and a JRE.
-FROM node:20-bookworm-slim
+FROM node:22-bookworm-slim
+
+RUN npm install -g npm@12 \
+ && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
 
 # prettier-plugin-apex's apex-ast-serializer requires Java 11+. The
 # bookworm default JRE is 17, which it runs under cleanly.

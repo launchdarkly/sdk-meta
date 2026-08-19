@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.59.1-noble
+FROM mcr.microsoft.com/playwright:v1.60.0-noble
 
 # Version-pinned counterpart to the current flutter-client validator.
 # Pins `launchdarkly_flutter_client_sdk` to a 3.x release so v3.x doc

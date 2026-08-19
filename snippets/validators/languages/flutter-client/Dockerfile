@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.59.1-noble
+FROM mcr.microsoft.com/playwright:v1.60.0-noble
 
 # Flutter SDK + the Linux desktop build toolchain. The snippets are
 # validated with `flutter build linux --debug` (a real Dart front-end

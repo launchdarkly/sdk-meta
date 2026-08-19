@@ -8,7 +8,10 @@
 # Node-based parser/lexer that fills the gap for syntax validation.
 # It accepts both classic BrightScript (`.brs`) and the BrighterScript
 # superset.
-FROM node:20-bookworm-slim
+FROM node:22-bookworm-slim
+
+RUN npm install -g npm@12 \
+ && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
 
 # Pin to the latest stable release so the validator is reproducible;
 # bump when we want newer language-feature support.
