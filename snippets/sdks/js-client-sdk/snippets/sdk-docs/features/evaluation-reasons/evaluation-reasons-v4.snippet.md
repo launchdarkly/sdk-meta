@@ -10,7 +10,7 @@ validation:
 ---
 
 ```typescript
-const options = { evaluationReasons: true };
+const options = { withReasons: true };
 const client = createClient('example-client-side-id', context, options);
 client.start();
 
