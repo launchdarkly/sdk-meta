@@ -60,9 +60,15 @@
   "android": [
     {
       "major": 5,
+      "minor": 15,
+      "date": "2026-08-17T19:53:19Z",
+      "eol": null
+    },
+    {
+      "major": 5,
       "minor": 14,
       "date": "2026-08-12T20:01:01Z",
-      "eol": null
+      "eol": "2027-08-17T00:00:00Z"
     },
     {
       "major": 5,
