@@ -44,7 +44,6 @@
 set -eu
 
 . /harness-shared/lib.sh
-. /versions/npm.env
 require_env SNIPPET_ENTRYPOINT
 
 WORK=$(mktemp -d)
@@ -194,7 +193,7 @@ case "$LEAD" in
         # Install bower locally so the snippet body's `bower install …` finds
         # the binary on PATH without us editing the body.
         npm init -y >/dev/null
-        npm install --silent --no-audit --no-fund --no-progress "$BOWER_PACKAGE" >/dev/null
+        npm install --silent --no-audit --no-fund --no-progress bower >/dev/null
         PATH="$WORK/node_modules/.bin:$PATH" run_in_log
         if [ -d bower_components ]; then
             echo "validator: ok — bower_components present"

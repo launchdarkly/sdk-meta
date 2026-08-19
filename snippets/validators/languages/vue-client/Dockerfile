@@ -5,7 +5,6 @@ COPY shared/versions/npm.env /versions/npm.env
 RUN . /versions/npm.env && npm install -g npm@"$NPM_VERSION" \
  && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
 
-# PLAYWRIGHT_IMAGE and PLAYWRIGHT_VERSION move together.
 # Pre-bake a minimal Vue 3 + Vite project with the LD Vue SDK and a stable
 # index.html. Per-validate cycles drop the snippet's main.js + App.vue
 # into src/ and re-run vite build; the SDK + Vue + Vite are already cached.

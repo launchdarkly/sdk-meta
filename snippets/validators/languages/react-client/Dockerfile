@@ -5,7 +5,6 @@ COPY shared/versions/npm.env /versions/npm.env
 RUN . /versions/npm.env && npm install -g npm@"$NPM_VERSION" \
  && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
 
-# PLAYWRIGHT_IMAGE and PLAYWRIGHT_VERSION move together.
 # Pre-bake a minimal Vite + React + TypeScript project with the LD React
 # SDK installed. Per-validate cycles drop the snippet's entrypoint
 # (src/index.tsx for legacy, src/main.tsx for createApp) plus its App.tsx
