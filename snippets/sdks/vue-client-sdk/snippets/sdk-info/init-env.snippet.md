@@ -4,9 +4,12 @@ sdk: vue-client-sdk
 kind: init
 lang: javascript
 file: vue-client-sdk/init-env.txt
-description: Client initialization snippet for vue-client-sdk reading the client-side ID from an environment variable.
-validation:
-  scaffold: vue-client-sdk/scaffolds/vue-syntax-only
+description: |
+  Client initialization snippet for vue-client-sdk reading the client-side ID
+  from an environment variable. Not validated: the browser bundle leaves
+  process.env.LAUNCHDARKLY_CLIENT_SIDE_ID undefined, and LDPlugin throws
+  synchronously on a missing clientSideID during `app.use(...)` — before
+  `app.mount(...)` — so even vue-syntax-only's App.vue sentinel never renders.
 ---
 
 ```javascript
