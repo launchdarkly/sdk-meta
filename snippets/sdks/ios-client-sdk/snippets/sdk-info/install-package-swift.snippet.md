@@ -14,7 +14,7 @@ validation:
 ```swift
 //...
     dependencies: [
-        .package(url: "https://github.com/launchdarkly/ios-client-sdk.git", .upToNextMajor(from: "9.15.0")),
+        .package(url: "https://github.com/launchdarkly/ios-client-sdk.git", .upToNextMajor(from: "11.3.1")),
    ],
     targets: [
         .target(
