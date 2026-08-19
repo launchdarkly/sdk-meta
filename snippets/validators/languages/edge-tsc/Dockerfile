@@ -10,7 +10,10 @@
 # run in edge runtimes (Workers, Compute@Edge, EdgeWorkers, Vercel Edge)
 # that can't execute against a live LD environment in CI, so type-checking
 # against the real published types is the strongest validation available.
-FROM node:20-bookworm-slim
+FROM node:22-bookworm-slim
+
+RUN npm install -g npm@12 \
+ && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
 
 # Pin so the validator is reproducible; bump for newer TS syntax support.
 ARG TYPESCRIPT_VERSION=5.7.2

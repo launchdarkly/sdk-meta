@@ -54,13 +54,16 @@ ENV GOFLAGS=-mod=mod
 
 # Enable corepack-shipped package managers without prompting. Pin both, or
 # corepack auto-fetches `latest` on first invocation and the image stops
-# being reproducible. pnpm 9 is kept for continuity — the Node 22 base would
-# also satisfy pnpm 11's `node:sqlite` requirement, so this pin is now a
-# deliberate hold rather than a floor. yarn 1 is the classic line that every
-# install snippet uses.
+# being reproducible. pnpm >=10.16 provides minimumReleaseAge and its
+# exclude setting; pin pnpm 11 for the documented config.yaml location.
+# yarn 1 is the classic line that every install snippet uses.
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+RUN npm install -g npm@12 \
+ && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
+RUN mkdir -p /root/.config/pnpm \
+ && printf "minimumReleaseAge: 4320\nminimumReleaseAgeExclude:\n  - '@launchdarkly/*'\n  - 'launchdarkly-*'\n" > /root/.config/pnpm/config.yaml
 RUN corepack enable \
- && corepack prepare pnpm@9 --activate \
+ && corepack prepare pnpm@11 --activate \
  && corepack prepare yarn@1 --activate
 
 # Rust toolchain for `cargo add` / `cargo init` install snippets. Use the

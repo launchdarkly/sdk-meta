@@ -1,4 +1,7 @@
-FROM mcr.microsoft.com/playwright:v1.59.1-noble
+FROM mcr.microsoft.com/playwright:v1.60.0-noble
+
+RUN npm install -g npm@12 \
+ && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
 
 # Pre-bake a minimal Vue 3 + Vite project with the LD Vue SDK and a stable
 # index.html. Per-validate cycles drop the snippet's main.js + App.vue
@@ -66,6 +69,6 @@ WORKDIR /work
 COPY shared /harness-shared
 COPY languages/vue-client/harness /harness
 
-RUN cd /harness && npm install --silent --no-audit --no-fund --no-progress playwright@1.59.1
+RUN cd /harness && npm install --silent --no-audit --no-fund --no-progress playwright@1.60.0
 
 ENTRYPOINT ["/harness/run.sh"]
