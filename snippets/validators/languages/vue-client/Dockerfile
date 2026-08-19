@@ -4,8 +4,8 @@ FROM mcr.microsoft.com/playwright:v1.59.1-noble
 # index.html. Per-validate cycles drop the snippet's main.js + App.vue
 # into src/ and re-run vite build; the SDK + Vue + Vite are already cached.
 ARG LD_VUE_SDK_VERSION=2.5.2
-ARG LD_OBSERVABILITY_VERSION=1.1.18
-ARG LD_SESSION_REPLAY_VERSION=1.1.18
+ARG LD_OBSERVABILITY_VERSION=1.1.19
+ARG LD_SESSION_REPLAY_VERSION=1.1.19
 ARG VUE_VERSION=3.5.33
 ARG VITE_VERSION=8.0.10
 ARG VITE_PLUGIN_VUE_VERSION=6.0.6
