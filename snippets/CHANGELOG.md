@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.22.1...snippets/v0.23.0) (2026-08-20)
+
+
+### Features
+
+* **snippets:** add sdk-info init-env variants for env-var-based initialization ([#589](https://github.com/launchdarkly/sdk-meta/issues/589)) ([3838fbf](https://github.com/launchdarkly/sdk-meta/commit/3838fbf9c7aab05ff5f1ba132e37dd7fface554f))
+
 ## [0.22.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.22.0...snippets/v0.22.1) (2026-08-13)
 
 
