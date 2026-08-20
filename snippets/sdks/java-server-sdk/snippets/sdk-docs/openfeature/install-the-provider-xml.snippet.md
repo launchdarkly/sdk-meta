@@ -13,6 +13,6 @@ validation:
 <dependency>
   <groupId>com.launchdarkly</groupId>
   <artifactId>launchdarkly-openfeature-serverprovider</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.3</version>
 </dependency>
 ```
