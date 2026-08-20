@@ -1,17 +1,19 @@
-FROM mcr.microsoft.com/playwright:v1.60.0-noble
+ARG PLAYWRIGHT_IMAGE
+FROM ${PLAYWRIGHT_IMAGE}
 
-RUN npm install -g npm@12 \
+COPY shared/versions/npm.env /versions/npm.env
+RUN . /versions/npm.env && npm install -g npm@"$NPM_VERSION" \
  && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
 
 # Pre-bake a minimal tsdown project with the LD JavaScript browser SDK
 # installed. Per-validate cycles drop src/app.ts and index.html from the
 # snippet into the project and re-run tsdown.
-ARG LD_JS_CLIENT_SDK_VERSION=4.9.4
-ARG LD_JS_CLIENT_LEGACY_SDK_VERSION=3.9.5
-ARG LD_OBSERVABILITY_VERSION=1.1.18
-ARG LD_SESSION_REPLAY_VERSION=1.1.18
-ARG TSDOWN_VERSION=0.17.0-beta.4
-ARG TYPESCRIPT_VERSION=5.9.3
+ARG LD_JS_CLIENT_SDK_VERSION
+ARG LD_JS_CLIENT_LEGACY_SDK_VERSION
+ARG LD_JS_OBSERVABILITY_VERSION
+ARG LD_JS_SESSION_REPLAY_VERSION
+ARG TSDOWN_VERSION
+ARG JS_TYPESCRIPT_VERSION
 
 RUN mkdir -p /opt/hello-js/src
 WORKDIR /opt/hello-js
@@ -36,8 +38,8 @@ RUN printf '{\n\
   }\n\
 }\n' \
     "${LD_JS_CLIENT_SDK_VERSION}" "${LD_JS_CLIENT_LEGACY_SDK_VERSION}" \
-    "${LD_OBSERVABILITY_VERSION}" "${LD_SESSION_REPLAY_VERSION}" \
-    "${TSDOWN_VERSION}" "${TYPESCRIPT_VERSION}" > package.json
+    "${LD_JS_OBSERVABILITY_VERSION}" "${LD_JS_SESSION_REPLAY_VERSION}" \
+    "${TSDOWN_VERSION}" "${JS_TYPESCRIPT_VERSION}" > package.json
 
 RUN printf "import { defineConfig } from 'tsdown';\n\
 \n\
@@ -86,6 +88,6 @@ WORKDIR /work
 COPY shared /harness-shared
 COPY languages/js-client/harness /harness
 
-RUN cd /harness && npm install --silent --no-audit --no-fund --no-progress playwright@1.60.0
+RUN . /versions/npm.env && cd /harness && npm install --silent --no-audit --no-fund --no-progress playwright@"$PLAYWRIGHT_VERSION"
 
 ENTRYPOINT ["/harness/run.sh"]

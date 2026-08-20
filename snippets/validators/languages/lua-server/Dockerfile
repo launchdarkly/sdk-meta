@@ -1,4 +1,5 @@
-FROM ubuntu:24.04
+ARG UBUNTU_IMAGE
+FROM ${UBUNTU_IMAGE}
 
 # The Lua server SDK is a thin Lua wrapper over the C++ Server SDK's C
 # binding, so the validator image needs the C++ toolchain + the SDK's
@@ -13,8 +14,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Build the C++ Server SDK as a shared library and install to a known
 # prefix; the lua rockspec's external_dependencies look up the C header
 # and shared lib from $LD_DIR/include and $LD_DIR/lib respectively.
-ARG CPP_SDKS_REF=launchdarkly-cpp-server-v3.10.1
-RUN git clone --depth 1 --branch "${CPP_SDKS_REF}" \
+ARG CPP_LUA_SDKS_REF
+RUN git clone --depth 1 --branch "${CPP_LUA_SDKS_REF}" \
         https://github.com/launchdarkly/cpp-sdks.git /opt/cpp-sdks \
     && mkdir /opt/cpp-sdks/build && cd /opt/cpp-sdks/build \
     && cmake -G Ninja \
@@ -29,7 +30,7 @@ RUN git clone --depth 1 --branch "${CPP_SDKS_REF}" \
 ENV LD_LIBRARY_PATH=/opt/cpp-sdks/install/lib
 
 # Install the Lua server SDK rock against the built C++ shared lib.
-ARG LUA_SDK_VERSION=2.2.0-0
+ARG LUA_SDK_VERSION
 RUN luarocks install --tree=/opt/lua-rocks \
         launchdarkly-server-sdk ${LUA_SDK_VERSION} \
         LD_DIR=/opt/cpp-sdks/install

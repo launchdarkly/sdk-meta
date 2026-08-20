@@ -1,6 +1,7 @@
 package validate
 
 import (
+	"bufio"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
@@ -594,6 +595,14 @@ func buildImage(cfg Config, runner *Runner, runnerDir string, out io.Writer) err
 	if _, err := os.Stat(dockerfile); err != nil {
 		return fmt.Errorf("validator Dockerfile not found at %s: %w", runnerDir, err)
 	}
+	versions, err := loadValidatorVersions(cfg.ValidatorsDir)
+	if err != nil {
+		return err
+	}
+	argNames, err := dockerfileArgs(dockerfile)
+	if err != nil {
+		return err
+	}
 	tag, err := validatorImageTag(cfg.ValidatorsDir, runnerDir, runner.ImagePrefix)
 	if err != nil {
 		return err
@@ -602,17 +611,100 @@ func buildImage(cfg Config, runner *Runner, runnerDir string, out io.Writer) err
 	// rather than the interactive multi-line redraws) while leaving
 	// failure output visible — important for diagnosing apt/network
 	// failures inside the build that --quiet would otherwise swallow.
-	build := exec.Command("docker", "build", "--progress=plain",
-		"-f", dockerfile,
-		"-t", tag,
-		cfg.ValidatorsDir,
-	)
+	args := []string{"build", "--progress=plain"}
+	for _, name := range argNames {
+		value, ok := versions[name]
+		if !ok {
+			return fmt.Errorf("validator Dockerfile %s declares ARG %s but no version entry exists", dockerfile, name)
+		}
+		args = append(args, "--build-arg", name+"="+value)
+	}
+	args = append(args, "-f", dockerfile, "-t", tag, cfg.ValidatorsDir)
+	build := exec.Command("docker", args...)
 	build.Stdout = out
 	build.Stderr = out
 	if err := build.Run(); err != nil {
 		return fmt.Errorf("docker build failed: %w", err)
 	}
 	return nil
+}
+
+// loadValidatorVersions reads the three version categories used by validator
+// Dockerfiles. Values are kept as strings because some package constraints
+// intentionally contain a range, such as "^5.6.0".
+func loadValidatorVersions(validatorsDir string) (map[string]string, error) {
+	versions := make(map[string]string)
+	for _, name := range []string{
+		"shared/versions/images.env",
+		"shared/versions/npm.env",
+		"shared/versions/toolchains.env",
+	} {
+		path := filepath.Join(validatorsDir, name)
+		file, err := os.Open(path)
+		if err != nil {
+			return nil, fmt.Errorf("open validator versions file %s: %w", path, err)
+		}
+		scanner := bufio.NewScanner(file)
+		lineNo := 0
+		for scanner.Scan() {
+			lineNo++
+			line := strings.TrimSpace(scanner.Text())
+			if line == "" || strings.HasPrefix(line, "#") {
+				continue
+			}
+			parts := strings.SplitN(line, "=", 2)
+			if len(parts) != 2 || strings.TrimSpace(parts[0]) == "" {
+				file.Close()
+				return nil, fmt.Errorf("invalid entry in validator versions file %s line %d", path, lineNo)
+			}
+			key := strings.TrimSpace(parts[0])
+			value := strings.TrimSpace(parts[1])
+			if _, exists := versions[key]; exists {
+				file.Close()
+				return nil, fmt.Errorf("duplicate validator version key %q in %s", key, path)
+			}
+			versions[key] = value
+		}
+		if err := scanner.Err(); err != nil {
+			file.Close()
+			return nil, fmt.Errorf("read validator versions file %s: %w", path, err)
+		}
+		if err := file.Close(); err != nil {
+			return nil, fmt.Errorf("close validator versions file %s: %w", path, err)
+		}
+	}
+	return versions, nil
+}
+
+// dockerfileArgs returns each ARG declared by a Dockerfile in declaration
+// order. Inline defaults are accepted for parsing, though validator
+// Dockerfiles should keep their values in the shared version files.
+func dockerfileArgs(dockerfile string) ([]string, error) {
+	data, err := os.ReadFile(dockerfile)
+	if err != nil {
+		return nil, fmt.Errorf("read validator Dockerfile %s: %w", dockerfile, err)
+	}
+	seen := make(map[string]struct{})
+	var names []string
+	for lineNo, line := range strings.Split(string(data), "\n") {
+		line = strings.TrimSpace(line)
+		if !strings.HasPrefix(line, "ARG ") {
+			continue
+		}
+		name := strings.TrimSpace(strings.TrimPrefix(line, "ARG "))
+		if before, _, ok := strings.Cut(name, "="); ok {
+			name = strings.TrimSpace(before)
+		}
+		if name == "" {
+			return nil, fmt.Errorf("invalid ARG declaration in validator Dockerfile %s line %d", dockerfile, lineNo+1)
+		}
+		if _, ok := seen[name]; ok {
+			continue
+		}
+		seen[name] = struct{}{}
+		names = append(names, name)
+	}
+	return names, nil
 }
 
 // runContainer runs harness/run.sh inside the validator image with the

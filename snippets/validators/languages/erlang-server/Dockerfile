@@ -1,4 +1,5 @@
-FROM erlang:26
+ARG ERLANG_IMAGE
+FROM ${ERLANG_IMAGE}
 
 # rebar3 ships with the official erlang image.
 #
@@ -15,7 +16,7 @@ FROM erlang:26
 # point — gonfalon's flow expects the user to drop into rebar3 shell
 # and call manually. We synthesize the equivalent at validate time.
 
-ARG LD_ERLANG_VERSION=3.11.2
+ARG LD_ERLANG_VERSION
 
 WORKDIR /opt/hello_erlang
 

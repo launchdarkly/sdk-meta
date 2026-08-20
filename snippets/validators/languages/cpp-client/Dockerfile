@@ -1,4 +1,5 @@
-FROM ubuntu:24.04
+ARG UBUNTU_IMAGE
+FROM ${UBUNTU_IMAGE}
 
 # Build chain for the LD C++ Client SDK (cmake, ninja, boost, openssl,
 # git for cloning cpp-sdks, ccache to keep per-validate rebuilds cheap).
@@ -14,8 +15,8 @@ ENV PATH="/usr/lib/ccache:${PATH}"
 # Pre-clone cpp-sdks. The snippet's CMakeLists references this via
 # `add_subdirectory(cpp-sdks)` from the project root, so we symlink it
 # into the project dir at build time rather than committing the tree.
-ARG CPP_SDKS_REF=launchdarkly-cpp-client-v3.11.4
-RUN git clone --depth 1 --branch "${CPP_SDKS_REF}" \
+ARG CPP_CLIENT_SDKS_REF
+RUN git clone --depth 1 --branch "${CPP_CLIENT_SDKS_REF}" \
         https://github.com/launchdarkly/cpp-sdks.git /opt/cpp-sdks
 
 # Pre-bake a CONFIGURED project so batch-mode per-validate cycles skip the

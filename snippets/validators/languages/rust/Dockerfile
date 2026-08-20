@@ -2,7 +2,8 @@
 # picks the newest launchdarkly-server-sdk whose rust-version the
 # toolchain supports, and the 3.x line (flush_blocking, etc.)
 # requires 1.94.
-FROM rust:1.94
+ARG RUST_IMAGE
+FROM ${RUST_IMAGE}
 
 # Pre-bake a warm cargo project: the SDK + tokio + futures + transport
 # dependency tree is added and compiled once at image-build time. Per-validate

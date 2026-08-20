@@ -1,17 +1,19 @@
-FROM mcr.microsoft.com/playwright:v1.60.0-noble
+ARG PLAYWRIGHT_IMAGE
+FROM ${PLAYWRIGHT_IMAGE}
 
-RUN npm install -g npm@12 \
+COPY shared/versions/npm.env /versions/npm.env
+RUN . /versions/npm.env && npm install -g npm@"$NPM_VERSION" \
  && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
 
 # Pre-bake a minimal Vue 3 + Vite project with the LD Vue SDK and a stable
 # index.html. Per-validate cycles drop the snippet's main.js + App.vue
 # into src/ and re-run vite build; the SDK + Vue + Vite are already cached.
-ARG LD_VUE_SDK_VERSION=2.5.2
-ARG LD_OBSERVABILITY_VERSION=1.1.18
-ARG LD_SESSION_REPLAY_VERSION=1.1.18
-ARG VUE_VERSION=3.5.33
-ARG VITE_VERSION=8.0.10
-ARG VITE_PLUGIN_VUE_VERSION=6.0.6
+ARG LD_VUE_SDK_VERSION
+ARG LD_VUE_OBSERVABILITY_VERSION
+ARG LD_VUE_SESSION_REPLAY_VERSION
+ARG VUE_VERSION
+ARG VITE_VERSION
+ARG VITE_PLUGIN_VUE_VERSION
 
 RUN mkdir -p /opt/hello-vue/src
 WORKDIR /opt/hello-vue
@@ -36,7 +38,7 @@ RUN printf '{\n\
     "@vitejs/plugin-vue": "%s",\n\
     "vite": "%s"\n\
   }\n\
-}\n' "${LD_VUE_SDK_VERSION}" "${LD_OBSERVABILITY_VERSION}" "${LD_SESSION_REPLAY_VERSION}" \
+}\n' "${LD_VUE_SDK_VERSION}" "${LD_VUE_OBSERVABILITY_VERSION}" "${LD_VUE_SESSION_REPLAY_VERSION}" \
      "${VUE_VERSION}" "${VITE_PLUGIN_VUE_VERSION}" "${VITE_VERSION}" > package.json
 
 RUN printf "import { defineConfig } from 'vite'\n\
@@ -69,6 +71,6 @@ WORKDIR /work
 COPY shared /harness-shared
 COPY languages/vue-client/harness /harness
 
-RUN cd /harness && npm install --silent --no-audit --no-fund --no-progress playwright@1.60.0
+RUN . /versions/npm.env && cd /harness && npm install --silent --no-audit --no-fund --no-progress playwright@"$PLAYWRIGHT_VERSION"
 
 ENTRYPOINT ["/harness/run.sh"]

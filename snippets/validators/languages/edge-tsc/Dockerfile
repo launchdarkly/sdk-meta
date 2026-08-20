@@ -10,13 +10,15 @@
 # run in edge runtimes (Workers, Compute@Edge, EdgeWorkers, Vercel Edge)
 # that can't execute against a live LD environment in CI, so type-checking
 # against the real published types is the strongest validation available.
-FROM node:22-bookworm-slim
+ARG NODE_BOOKWORM_SLIM_IMAGE
+FROM ${NODE_BOOKWORM_SLIM_IMAGE}
 
-RUN npm install -g npm@12 \
+COPY shared/versions/npm.env /versions/npm.env
+RUN . /versions/npm.env && npm install -g npm@"$NPM_VERSION" \
  && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
 
 # Pin so the validator is reproducible; bump for newer TS syntax support.
-ARG TYPESCRIPT_VERSION=5.7.2
+ARG EDGE_TSC_TYPESCRIPT_VERSION
 
 WORKDIR /opt/edge-tsc
 # --legacy-peer-deps: the four edge SDKs pin overlapping ranges of the
@@ -25,7 +27,7 @@ WORKDIR /opt/edge-tsc
 # lenient install is fine.
 RUN npm init -y >/dev/null 2>&1 \
     && npm install --no-audit --no-fund --no-progress --legacy-peer-deps \
-        typescript@${TYPESCRIPT_VERSION} \
+        typescript@${EDGE_TSC_TYPESCRIPT_VERSION} \
         @launchdarkly/akamai-server-edgekv-sdk \
         @launchdarkly/cloudflare-server-sdk \
         @launchdarkly/fastly-server-sdk \

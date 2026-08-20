@@ -6,7 +6,8 @@
 # exits non-zero on any syntax error. Parse-only: no schema or DTD
 # validation -- doc fragments reference vendor component types we don't
 # ship -- and no LD env.
-FROM debian:bookworm-slim
+ARG DEBIAN_BOOKWORM_SLIM_IMAGE
+FROM ${DEBIAN_BOOKWORM_SLIM_IMAGE}
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         libxml2-utils \

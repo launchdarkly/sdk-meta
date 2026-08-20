@@ -1,4 +1,5 @@
-FROM haskell:9.6.7-bullseye
+ARG HASKELL_IMAGE
+FROM ${HASKELL_IMAGE}
 
 # launchdarkly-server-sdk's transitive deps need libpcre + zlib + openssl.
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -11,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # The snippet's stack.yaml/package.yaml fragments aren't exercised by the
 # validator (they're just rendered into ld-application's get-started
 # instructions); we build the equivalent cabal project here directly.
-ARG LD_HASKELL_VERSION=3.1.1
+ARG LD_HASKELL_V3_VERSION
 RUN mkdir -p /opt/hello-haskell/app
 WORKDIR /opt/hello-haskell
 
@@ -30,7 +31,7 @@ executable hello-haskell-exe\n\
     launchdarkly-server-sdk == %s\n\
   default-language: Haskell2010\n\
   ghc-options: -threaded -rtsopts -with-rtsopts=-N\n' \
-        "${LD_HASKELL_VERSION}" > hello-haskell.cabal
+        "${LD_HASKELL_V3_VERSION}" > hello-haskell.cabal
 
 # Placeholder Main.hs — replaced per-validate. We need *some* file here
 # so `cabal build` succeeds and primes the dependency cache.

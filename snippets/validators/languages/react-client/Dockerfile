@@ -1,19 +1,24 @@
-FROM mcr.microsoft.com/playwright:v1.60.0-noble
+ARG PLAYWRIGHT_IMAGE
+FROM ${PLAYWRIGHT_IMAGE}
 
-RUN npm install -g npm@12 \
+COPY shared/versions/npm.env /versions/npm.env
+RUN . /versions/npm.env && npm install -g npm@"$NPM_VERSION" \
  && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
 
 # Pre-bake a minimal Vite + React + TypeScript project with the LD React
 # SDK installed. Per-validate cycles drop the snippet's entrypoint
 # (src/index.tsx for legacy, src/main.tsx for createApp) plus its App.tsx
 # companion into src/ and re-run vite build.
-ARG LD_REACT_SDK_VERSION=4.1.12
-ARG LD_REACT_LEGACY_SDK_VERSION=3.9.4
-ARG LD_OBSERVABILITY_VERSION=1.1.18
-ARG LD_SESSION_REPLAY_VERSION=1.1.18
-ARG REACT_VERSION=19.2.5
-ARG VITE_VERSION=8.0.10
-ARG VITE_PLUGIN_REACT_VERSION=6.0.1
+ARG LD_REACT_SDK_VERSION
+ARG LD_REACT_LEGACY_SDK_VERSION
+ARG LD_REACT_OBSERVABILITY_VERSION
+ARG LD_REACT_SESSION_REPLAY_VERSION
+ARG REACT_VERSION
+ARG VITE_VERSION
+ARG VITE_PLUGIN_REACT_VERSION
+ARG REACT_TYPES_VERSION
+ARG REACT_DOM_TYPES_VERSION
+ARG REACT_TYPESCRIPT_VERSION
 
 RUN mkdir -p /opt/hello-react/src
 WORKDIR /opt/hello-react
@@ -36,17 +41,19 @@ RUN printf '{\n\
     "react-dom": "%s"\n\
   },\n\
   "devDependencies": {\n\
-    "@types/react": "19.2.5",\n\
-    "@types/react-dom": "19.2.3",\n\
+    "@types/react": "%s",\n\
+    "@types/react-dom": "%s",\n\
     "@vitejs/plugin-react": "%s",\n\
-    "typescript": "5.6.3",\n\
+    "typescript": "%s",\n\
     "vite": "%s"\n\
   }\n\
 }\n' \
     "${LD_REACT_SDK_VERSION}" "${LD_REACT_LEGACY_SDK_VERSION}" \
-    "${LD_OBSERVABILITY_VERSION}" "${LD_SESSION_REPLAY_VERSION}" \
+    "${LD_REACT_OBSERVABILITY_VERSION}" "${LD_REACT_SESSION_REPLAY_VERSION}" \
     "${REACT_VERSION}" "${REACT_VERSION}" \
-    "${VITE_PLUGIN_REACT_VERSION}" "${VITE_VERSION}" > package.json
+    "${REACT_TYPES_VERSION}" "${REACT_DOM_TYPES_VERSION}" \
+    "${VITE_PLUGIN_REACT_VERSION}" "${REACT_TYPESCRIPT_VERSION}" \
+    "${VITE_VERSION}" > package.json
 
 RUN printf "import { defineConfig } from 'vite'\n\
 import react from '@vitejs/plugin-react'\n\
@@ -106,6 +113,6 @@ WORKDIR /work
 COPY shared /harness-shared
 COPY languages/react-client/harness /harness
 
-RUN cd /harness && npm install --silent --no-audit --no-fund --no-progress playwright@1.60.0
+RUN . /versions/npm.env && cd /harness && npm install --silent --no-audit --no-fund --no-progress playwright@"$PLAYWRIGHT_VERSION"
 
 ENTRYPOINT ["/harness/run.sh"]
