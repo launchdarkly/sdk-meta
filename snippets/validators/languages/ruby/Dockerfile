@@ -1,4 +1,5 @@
-FROM ruby:3.3
+ARG RUBY_IMAGE
+FROM ${RUBY_IMAGE}
 
 WORKDIR /work
 

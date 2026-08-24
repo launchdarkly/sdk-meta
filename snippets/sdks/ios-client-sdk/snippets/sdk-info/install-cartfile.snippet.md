@@ -12,5 +12,5 @@ validation:
 ---
 
 ```text
-github "launchdarkly/ios-client-sdk" ~> 9.15
+github "launchdarkly/ios-client-sdk" ~> 11.3
 ```

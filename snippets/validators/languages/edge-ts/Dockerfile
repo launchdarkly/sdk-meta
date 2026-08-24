@@ -9,12 +9,17 @@
 # reference ambient globals (env, process) and parse cleanly without
 # those packages installed — exactly the parse-only guarantee the other
 # syntax-only validators give for their languages.
-FROM node:20-bookworm-slim
+ARG NODE_BOOKWORM_SLIM_IMAGE
+FROM ${NODE_BOOKWORM_SLIM_IMAGE}
+
+COPY shared/versions/npm.env /versions/npm.env
+RUN . /versions/npm.env && npm install -g npm@"$NPM_VERSION" \
+ && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
 
 # Pin so the validator is reproducible; bump for newer TS syntax support.
-ARG TYPESCRIPT_VERSION=5.7.2
+ARG EDGE_TYPESCRIPT_VERSION
 WORKDIR /opt/edge-ts
-RUN npm install --no-audit --no-fund typescript@${TYPESCRIPT_VERSION}
+RUN npm install --no-audit --no-fund typescript@${EDGE_TYPESCRIPT_VERSION}
 
 WORKDIR /work
 COPY shared /harness-shared

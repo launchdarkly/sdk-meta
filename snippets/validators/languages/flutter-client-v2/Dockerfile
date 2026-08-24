@@ -1,4 +1,5 @@
-FROM mcr.microsoft.com/playwright:v1.59.1-noble
+ARG PLAYWRIGHT_IMAGE
+FROM ${PLAYWRIGHT_IMAGE}
 
 # Version-pinned counterpart to the current flutter-client validator.
 # Pins `launchdarkly_flutter_client_sdk` to a 2.x release so doc
@@ -8,7 +9,7 @@ FROM mcr.microsoft.com/playwright:v1.59.1-noble
 # surface the docs cover. The current-version flutter-client
 # validator builds against 4.x and would fail these fragments.
 
-ARG FLUTTER_VERSION=3.27.4
+ARG FLUTTER_VERSION
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         curl xz-utils git unzip ca-certificates \
@@ -25,14 +26,14 @@ RUN curl -fsSL "https://storage.googleapis.com/flutter_infra_release/releases/st
     && git config --global --add safe.directory /opt/flutter \
     && flutter config --no-analytics --enable-linux-desktop
 
-ARG LD_FLUTTER_SDK_VERSION=2.1.0
-ARG PROVIDER_VERSION=6.1.2
+ARG LD_FLUTTER_V2_SDK_VERSION
+ARG PROVIDER_VERSION
 
 RUN flutter create --platforms=linux --org com.launchdarkly /opt/hello_flutter
 WORKDIR /opt/hello_flutter
 
 RUN sed -i "/^dependencies:/,/^[a-z]/{/^  cupertino_icons/d}" pubspec.yaml \
-    && sed -i "/^dependencies:/a\\  launchdarkly_flutter_client_sdk: ${LD_FLUTTER_SDK_VERSION}\\n  provider: ${PROVIDER_VERSION}" pubspec.yaml \
+    && sed -i "/^dependencies:/a\\  launchdarkly_flutter_client_sdk: ${LD_FLUTTER_V2_SDK_VERSION}\\n  provider: ${PROVIDER_VERSION}" pubspec.yaml \
     && flutter pub get
 
 RUN flutter build linux --debug

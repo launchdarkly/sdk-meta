@@ -1,14 +1,26 @@
-FROM node:22-bookworm
+ARG NODE_BOOKWORM_IMAGE
+FROM ${NODE_BOOKWORM_IMAGE}
+
+COPY shared/versions/npm.env /versions/npm.env
+RUN . /versions/npm.env && npm install -g npm@"$NPM_VERSION" \
+ && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
 
 # React Native's jest setup pulls in a long tail of transitive deps;
 # pre-bake them so per-validate cycles only re-run jest with the
 # snippet's two .tsx files.
 
-ARG LD_RN_SDK_VERSION=10.19.4
-ARG LD_OBSERVABILITY_RN_VERSION=0.18.0
-ARG REACT_NATIVE_VERSION=0.85.2
-ARG REACT_VERSION=19.2.5
-ARG TESTING_LIBRARY_VERSION=13.3.3
+ARG LD_RN_SDK_VERSION
+ARG LD_OBSERVABILITY_RN_VERSION
+ARG REACT_NATIVE_VERSION
+ARG REACT_VERSION
+ARG TESTING_LIBRARY_VERSION
+ARG RN_ASYNC_STORAGE_VERSION
+ARG RN_BABEL_CORE_VERSION
+ARG RN_BABEL_PRESET_ENV_VERSION
+ARG RN_TYPES_REACT_TEST_RENDERER_VERSION
+ARG RN_JEST_VERSION
+ARG RN_TS_JEST_VERSION
+ARG RN_TYPESCRIPT_VERSION
 
 WORKDIR /opt/hello-react-native
 
@@ -27,22 +39,22 @@ RUN cat > package.json <<EOF
   "dependencies": {
     "@launchdarkly/react-native-client-sdk": "${LD_RN_SDK_VERSION}",
     "@launchdarkly/observability-react-native": "${LD_OBSERVABILITY_RN_VERSION}",
-    "@react-native-async-storage/async-storage": "^1.23.1",
+    "@react-native-async-storage/async-storage": "${RN_ASYNC_STORAGE_VERSION}",
     "react": "${REACT_VERSION}",
     "react-native": "${REACT_NATIVE_VERSION}"
   },
   "devDependencies": {
-    "@babel/core": "^7.25.2",
-    "@babel/preset-env": "^7.25.3",
+    "@babel/core": "${RN_BABEL_CORE_VERSION}",
+    "@babel/preset-env": "${RN_BABEL_PRESET_ENV_VERSION}",
     "@react-native/babel-preset": "${REACT_NATIVE_VERSION}",
     "@react-native/jest-preset": "${REACT_NATIVE_VERSION}",
     "@testing-library/react-native": "${TESTING_LIBRARY_VERSION}",
     "@types/react": "${REACT_VERSION}",
-    "@types/react-test-renderer": "19.1.0",
-    "jest": "^29.7.0",
+    "@types/react-test-renderer": "${RN_TYPES_REACT_TEST_RENDERER_VERSION}",
+    "jest": "${RN_JEST_VERSION}",
     "react-test-renderer": "${REACT_VERSION}",
-    "ts-jest": "^29.2.5",
-    "typescript": "^5.6.0"
+    "ts-jest": "${RN_TS_JEST_VERSION}",
+    "typescript": "${RN_TYPESCRIPT_VERSION}"
   },
   "jest": {
     "preset": "@react-native/jest-preset",

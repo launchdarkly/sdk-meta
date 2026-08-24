@@ -1,4 +1,5 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0
+ARG DOTNET_IMAGE
+FROM ${DOTNET_IMAGE}
 
 # python3 is used by the harness's USING_LIFT_MARKER pre-step
 # (see run.sh) to hoist `using …;` lines out of doc-fragment method

@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.24.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.23.0...snippets/v0.24.0) (2026-08-21)
+
+
+### Features
+
+* **snippets:** Add web proxy snippets for the C++ client SDK 3.11+ ([#588](https://github.com/launchdarkly/sdk-meta/issues/588)) ([cabba80](https://github.com/launchdarkly/sdk-meta/commit/cabba80b4323cd1cec8a3c70f74cae8fc459c87c))
+
+## [0.23.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.22.1...snippets/v0.23.0) (2026-08-20)
+
+
+### Features
+
+* **snippets:** add sdk-info init-env variants for env-var-based initialization ([#589](https://github.com/launchdarkly/sdk-meta/issues/589)) ([3838fbf](https://github.com/launchdarkly/sdk-meta/commit/3838fbf9c7aab05ff5f1ba132e37dd7fface554f))
+
 ## [0.22.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.22.0...snippets/v0.22.1) (2026-08-13)
 
 

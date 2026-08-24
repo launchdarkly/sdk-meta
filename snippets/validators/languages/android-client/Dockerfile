@@ -1,4 +1,5 @@
-FROM eclipse-temurin:17-jdk-noble
+ARG ANDROID_IMAGE
+FROM ${ANDROID_IMAGE}
 
 # Android SDK command-line tools + the build-tools / platforms versions
 # the snippet needs. We *don't* install the emulator: Robolectric runs
@@ -22,7 +23,7 @@ ENV ANDROID_SDK_ROOT=${ANDROID_HOME}
 ENV PATH="${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${PATH}"
 
 # Pin a specific cmdline-tools build to avoid surprise upgrades.
-ARG CMDLINE_TOOLS_VERSION=11076708
+ARG CMDLINE_TOOLS_VERSION
 RUN mkdir -p ${ANDROID_HOME}/cmdline-tools \
     && curl -fsSL --retry 3 --retry-delay 5 --max-time 600 "https://dl.google.com/android/repository/commandlinetools-linux-${CMDLINE_TOOLS_VERSION}_latest.zip" -o /tmp/tools.zip \
     && unzip -q /tmp/tools.zip -d ${ANDROID_HOME}/cmdline-tools \
@@ -52,17 +53,17 @@ RUN n=0; \
 # hello-android repo (LD's official getting-started reference) at a
 # pinned ref, then patch app/build.gradle to use the latest SDK +
 # Robolectric (so the validator runs in a pure JVM, no emulator).
-ARG HELLO_ANDROID_REF=main
+ARG HELLO_ANDROID_REF
 # 5.13.0 introduced the EAP data system surface (Components.dataSystem(),
 # DataSystemBuilder, AutomaticModeSwitchingConfig) that the
 # data-saving-mode doc fragments compile against.
-ARG LD_ANDROID_SDK_VERSION=5.13.3
-ARG ROBOLECTRIC_VERSION=4.12.2
+ARG LD_ANDROID_SDK_VERSION
+ARG ROBOLECTRIC_VERSION
 # Optional observability plugin AAR. Doc fragments under
 # initialize-the-client-android-sdk-v5-x-* show the v5.9+ pattern
 # `Components.plugins().setPlugins(listOf(Observability(this@…)))`,
 # which references the launchdarkly-observability-android package.
-ARG LD_ANDROID_OBSERVABILITY_VERSION=0.64.0
+ARG LD_ANDROID_OBSERVABILITY_VERSION
 
 RUN git clone --depth 1 --branch "${HELLO_ANDROID_REF}" \
         https://github.com/launchdarkly/hello-android.git /opt/hello-android

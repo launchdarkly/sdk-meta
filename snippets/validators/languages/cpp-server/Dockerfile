@@ -1,4 +1,5 @@
-FROM ubuntu:24.04
+ARG UBUNTU_IMAGE
+FROM ${UBUNTU_IMAGE}
 
 # Build chain for the LD C++ Server SDK (cmake, ninja, boost, openssl,
 # git for cloning cpp-sdks, ccache to keep per-validate rebuilds cheap).
@@ -14,8 +15,8 @@ ENV PATH="/usr/lib/ccache:${PATH}"
 # Pre-clone cpp-sdks. The snippet's CMakeLists references this via
 # `add_subdirectory(cpp-sdks)` from the project root, so we symlink it
 # into the project dir at build time rather than committing the tree.
-ARG CPP_SDKS_REF=launchdarkly-cpp-server-v3.13.1
-RUN git clone --depth 1 --branch "${CPP_SDKS_REF}" \
+ARG CPP_SERVER_SDKS_REF
+RUN git clone --depth 1 --branch "${CPP_SERVER_SDKS_REF}" \
         https://github.com/launchdarkly/cpp-sdks.git /opt/cpp-sdks
 
 # Pre-bake CONFIGURED projects so batch-mode per-validate cycles skip the

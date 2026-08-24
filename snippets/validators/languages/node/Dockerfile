@@ -1,4 +1,9 @@
-FROM node:20
+ARG NODE_IMAGE
+FROM ${NODE_IMAGE}
+
+COPY shared/versions/npm.env /versions/npm.env
+RUN . /versions/npm.env && npm install -g npm@"$NPM_VERSION" \
+ && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
 
 WORKDIR /work
 

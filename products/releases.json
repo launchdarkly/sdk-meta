@@ -60,9 +60,15 @@
   "android": [
     {
       "major": 5,
+      "minor": 15,
+      "date": "2026-08-17T19:53:19Z",
+      "eol": null
+    },
+    {
+      "major": 5,
       "minor": 14,
       "date": "2026-08-12T20:01:01Z",
-      "eol": null
+      "eol": "2027-08-17T00:00:00Z"
     },
     {
       "major": 5,
@@ -3854,9 +3860,15 @@
   "relay-proxy": [
     {
       "major": 8,
+      "minor": 21,
+      "date": "2026-08-20T23:08:44Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 20,
       "date": "2026-08-03T20:10:16Z",
-      "eol": null
+      "eol": "2027-08-20T00:00:00Z"
     },
     {
       "major": 8,
@@ -4272,9 +4284,15 @@
   "ruby-server-sdk": [
     {
       "major": 8,
+      "minor": 15,
+      "date": "2026-08-20T21:44:00Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 14,
       "date": "2026-06-01T19:56:07Z",
-      "eol": null
+      "eol": "2027-08-20T00:00:00Z"
     },
     {
       "major": 8,

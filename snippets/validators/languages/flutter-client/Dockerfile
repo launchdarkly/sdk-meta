@@ -1,10 +1,11 @@
-FROM mcr.microsoft.com/playwright:v1.59.1-noble
+ARG PLAYWRIGHT_IMAGE
+FROM ${PLAYWRIGHT_IMAGE}
 
 # Flutter SDK + the Linux desktop build toolchain. The snippets are
 # validated with `flutter build linux --debug` (a real Dart front-end
 # compile that stops before dart2js/AOT — see harness/run.sh), so the
 # image needs the desktop build deps: clang + cmake + ninja + GTK headers.
-ARG FLUTTER_VERSION=3.27.4
+ARG FLUTTER_VERSION
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         curl xz-utils git unzip ca-certificates \
@@ -27,8 +28,8 @@ RUN curl -fsSL "https://storage.googleapis.com/flutter_infra_release/releases/st
 # deps already pinned. Per-validate cycles overwrite lib/main.dart and
 # re-run `flutter build linux --debug` against the warmed pub cache + dart
 # kernel cache + the pre-built desktop embedder.
-ARG LD_FLUTTER_SDK_VERSION=4.20.2
-ARG PROVIDER_VERSION=6.1.2
+ARG LD_FLUTTER_SDK_VERSION
+ARG PROVIDER_VERSION
 
 RUN flutter create --platforms=linux --org com.launchdarkly /opt/hello_flutter
 WORKDIR /opt/hello_flutter

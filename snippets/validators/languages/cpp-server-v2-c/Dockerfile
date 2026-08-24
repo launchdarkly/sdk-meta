@@ -1,4 +1,5 @@
-FROM debian:bookworm-slim
+ARG DEBIAN_BOOKWORM_SLIM_IMAGE
+FROM ${DEBIAN_BOOKWORM_SLIM_IMAGE}
 
 # Parse-and-type-check validator for the legacy v2.x C server SDK
 # (launchdarkly/c-server-sdk). The v2 C API surface (LDUserNew,

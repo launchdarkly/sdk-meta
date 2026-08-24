@@ -11,7 +11,8 @@
 # declares `engines.node: ^22.20 || ^24.12 || >=25`. yarn enforces engines
 # and hard-fails the install on Node 20. Staying on the 22 line keeps
 # corepack bundled (Node 25 drops it) so the pnpm/yarn pins below still work.
-FROM node:22-bookworm-slim
+ARG NODE_BOOKWORM_SLIM_IMAGE
+FROM ${NODE_BOOKWORM_SLIM_IMAGE}
 
 # pnpm + yarn come via corepack (the 22 line ships it). Python provides the
 # pip path. Go provides `go get`. Ruby provides the `gem install` path
@@ -44,8 +45,10 @@ RUN apt-get update \
 # tarball install leaves GOTOOLCHAIN at its `auto` default, so an under-spec
 # pin here self-upgrades mid-run instead of failing. Keeping the pin at or
 # above the SDK minimum avoids paying for that download on every validate.
-ENV GO_VERSION=1.25.12
-RUN curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" \
+COPY shared/versions/npm.env /versions/npm.env
+COPY shared/versions/toolchains.env /versions/toolchains.env
+RUN . /versions/toolchains.env && curl -fsSL --retry 5 --retry-all-errors --retry-delay 5 \
+        "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" \
         -o /tmp/go.tgz \
  && tar -C /usr/local -xzf /tmp/go.tgz \
  && rm /tmp/go.tgz
@@ -54,14 +57,17 @@ ENV GOFLAGS=-mod=mod
 
 # Enable corepack-shipped package managers without prompting. Pin both, or
 # corepack auto-fetches `latest` on first invocation and the image stops
-# being reproducible. pnpm 9 is kept for continuity — the Node 22 base would
-# also satisfy pnpm 11's `node:sqlite` requirement, so this pin is now a
-# deliberate hold rather than a floor. yarn 1 is the classic line that every
-# install snippet uses.
+# being reproducible. pnpm >=10.16 provides minimumReleaseAge and its
+# exclude setting; pin pnpm 11 for the documented config.yaml location.
+# yarn 1 is the classic line that every install snippet uses.
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-RUN corepack enable \
- && corepack prepare pnpm@9 --activate \
- && corepack prepare yarn@1 --activate
+RUN . /versions/npm.env && npm install -g npm@"$NPM_VERSION" \
+ && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
+RUN mkdir -p /root/.config/pnpm \
+ && printf "minimumReleaseAge: 4320\nminimumReleaseAgeExclude:\n  - '@launchdarkly/*'\n  - 'launchdarkly-*'\n" > /root/.config/pnpm/config.yaml
+RUN . /versions/npm.env && corepack enable \
+ && corepack prepare pnpm@"$PNPM_VERSION" --activate \
+ && corepack prepare yarn@"$YARN_VERSION" --activate
 
 # Rust toolchain for `cargo add` / `cargo init` install snippets. Use the
 # rustup minimal profile to avoid pulling docs and component metadata we
@@ -69,8 +75,10 @@ RUN corepack enable \
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
-RUN curl -fsSL https://sh.rustup.rs \
-        | sh -s -- -y --default-toolchain stable --profile minimal --no-modify-path
+RUN curl -fsSL --retry 5 --retry-all-errors --retry-delay 5 https://sh.rustup.rs \
+        -o /tmp/rustup-init.sh \
+ && sh /tmp/rustup-init.sh -y --default-toolchain stable --profile minimal --no-modify-path \
+ && rm /tmp/rustup-init.sh
 
 # PHP + composer.phar for `php composer.phar require …` install snippets.
 # composer.phar lands at /opt/composer.phar; the harness symlinks it into
@@ -84,12 +92,14 @@ RUN apt-get update \
         php-mbstring \
         unzip \
  && rm -rf /var/lib/apt/lists/*
-RUN curl -fsSL https://getcomposer.org/download/latest-stable/composer.phar -o /opt/composer.phar \
+RUN curl -fsSL --retry 5 --retry-all-errors --retry-delay 5 \
+        https://getcomposer.org/download/latest-stable/composer.phar -o /opt/composer.phar \
  && chmod +x /opt/composer.phar
 
 # .NET SDK for `dotnet add package` install snippets. The Microsoft apt
 # feed serves a .deb that wires up the package source for us.
-RUN curl -fsSL https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb \
+RUN curl -fsSL --retry 5 --retry-all-errors --retry-delay 5 \
+        https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb \
         -o /tmp/packages-microsoft-prod.deb \
  && dpkg -i /tmp/packages-microsoft-prod.deb \
  && rm /tmp/packages-microsoft-prod.deb \
@@ -104,8 +114,8 @@ RUN curl -fsSL https://packages.microsoft.com/config/debian/12/packages-microsof
 RUN apt-get update \
  && apt-get install -y --no-install-recommends openjdk-17-jdk-headless \
  && rm -rf /var/lib/apt/lists/*
-ENV GRADLE_VERSION=8.10.2
-RUN curl -fsSL "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
+RUN . /versions/toolchains.env && curl -fsSL --retry 5 --retry-all-errors --retry-delay 5 \
+        "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
         -o /tmp/gradle.zip \
  && unzip -q /tmp/gradle.zip -d /opt \
  && ln -s "/opt/gradle-${GRADLE_VERSION}/bin/gradle" /usr/local/bin/gradle \
