@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.24.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.24.0...snippets/v0.24.1) (2026-08-24)
+
+
+### Bug Fixes
+
+* **snippets:** use withReasons in js-client-sdk v4 evaluation reasons snippet ([#579](https://github.com/launchdarkly/sdk-meta/issues/579)) ([ca6de52](https://github.com/launchdarkly/sdk-meta/commit/ca6de52b9ede314560247e03183f81d7ec44a4fd))
+
 ## [0.24.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.23.0...snippets/v0.24.0) (2026-08-21)
 
 
