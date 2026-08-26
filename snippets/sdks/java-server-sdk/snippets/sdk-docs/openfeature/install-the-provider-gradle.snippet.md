@@ -10,5 +10,5 @@ validation:
 ---
 
 ```groovy
-implementation group: 'com.launchdarkly', name: 'launchdarkly-openfeature-serverprovider', version: '1.1.3'
+implementation group: 'com.launchdarkly', name: 'launchdarkly-openfeature-serverprovider', version: '1.2.0'
 ```
