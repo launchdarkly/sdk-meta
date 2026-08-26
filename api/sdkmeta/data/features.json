@@ -371,6 +371,11 @@
       "deprecated": null,
       "introduced": "1.1",
       "removed": null
+    },
+    "webProxy": {
+      "deprecated": null,
+      "introduced": "3.11",
+      "removed": null
     }
   },
   "cpp-server-sdk": {
@@ -407,7 +412,7 @@
     "fileDataSource": {
       "deprecated": null,
       "introduced": "2.6",
-      "removed": null
+      "removed": "3.0"
     },
     "hooks": {
       "deprecated": null,
@@ -457,7 +462,7 @@
     "testDataSource": {
       "deprecated": null,
       "introduced": "2.6",
-      "removed": null
+      "removed": "3.0"
     },
     "track": {
       "deprecated": null,
