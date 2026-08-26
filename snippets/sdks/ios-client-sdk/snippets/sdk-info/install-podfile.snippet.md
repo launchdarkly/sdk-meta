@@ -14,6 +14,6 @@ validation:
 ```ruby
 use_frameworks!
 target 'YourTargetName' do
-  pod 'LaunchDarkly', '~> 11.3'
+  pod 'LaunchDarkly', '~> 11.5'
 end
 ```
