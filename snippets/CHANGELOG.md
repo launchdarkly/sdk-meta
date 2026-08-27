@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.25.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.24.1...snippets/v0.25.0) (2026-08-27)
+
+
+### Features
+
+* **snippets:** add per-hook evaluation exposure dedupe snippets ([#557](https://github.com/launchdarkly/sdk-meta/issues/557)) ([3513fb2](https://github.com/launchdarkly/sdk-meta/commit/3513fb221eac26e10c0c3c7a3c08e823b2eb5dd1))
+* **snippets:** add sdk-info install/init snippets for the 16 SDKs the app's setup flow lacks ([#604](https://github.com/launchdarkly/sdk-meta/issues/604)) ([6e9155d](https://github.com/launchdarkly/sdk-meta/commit/6e9155d2173844805290d38308426ea778a80194))
+
 ## [0.24.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.24.0...snippets/v0.24.1) (2026-08-24)
 
 
