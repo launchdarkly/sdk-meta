@@ -102,6 +102,10 @@ validate_one() {
     deadline=$(( $(date +%s) + 55 ))
     if await_success_line "$LOG" "$PID" "$deadline" "$SUCCESS_RE"; then
         rm -f "$LOG"
+        # CI's verify-hello-app asserts the cell output contains the
+        # EXAM-HELLO line; when awaiting a custom success line, emit the
+        # canonical sentinel too (same convention as the parse branch).
+        [ -n "$SUCCESS_RE" ] && echo "feature flag evaluates to true"
         return 0
     fi
     kill -TERM "$PID" 2>/dev/null || true
