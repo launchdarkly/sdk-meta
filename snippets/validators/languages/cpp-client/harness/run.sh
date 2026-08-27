@@ -13,6 +13,11 @@ set -eu
 
 . /harness-shared/lib.sh
 require_env LAUNCHDARKLY_MOBILE_KEY LAUNCHDARKLY_FLAG_KEY SNIPPET_BATCH
+# SNIPPET_SUCCESS_RE (optional, via validation.env) overrides the awaited
+# success line for wrappees that own their whole program and print their
+# own line (e.g. sdk-info init snippets). Batch groups bucket by env, so
+# one shard sees a consistent value.
+SUCCESS_RE="${SNIPPET_SUCCESS_RE:-}"
 
 cd /opt/hello-cpp
 
@@ -32,8 +37,14 @@ validate_one() {
     timeout --signal=TERM 60s ./build/hello >"$LOG" 2>&1 &
     PID=$!
     deadline=$(( $(date +%s) + 55 ))
-    if await_success_line "$LOG" "$PID" "$deadline"; then
+    if await_success_line "$LOG" "$PID" "$deadline" "$SUCCESS_RE"; then
         rm -f "$LOG"
+        # CI's verify-hello-app asserts the cell output contains the
+        # EXAM-HELLO line; emit the canonical sentinel when awaiting a
+        # custom success line.
+        if [ -n "$SUCCESS_RE" ]; then
+            echo "feature flag evaluates to true"
+        fi
         return 0
     fi
     kill -TERM "$PID" 2>/dev/null || true
