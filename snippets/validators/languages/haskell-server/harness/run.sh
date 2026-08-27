@@ -11,11 +11,18 @@
 #   - parse: a clean `cabal build` is the success condition (the module
 #     defines its own main that would reach a real database if run).
 #   - runtime: build then `cabal run` and await the success line.
+#
+# SNIPPET_SUCCESS_RE (optional, via validation.env) overrides the awaited
+# success line for runtime checks. Haskell wrappees own their whole module
+# including `main`, so unlike the .NET init-runner no scaffold can append
+# an EXAM-HELLO trailer after the body; init snippets instead declare the
+# success line their own program prints.
 set -eu
 
 . /harness-shared/lib.sh
 require_env LAUNCHDARKLY_SDK_KEY LAUNCHDARKLY_FLAG_KEY SNIPPET_BATCH
 CHECK="${SNIPPET_CHECK:-runtime}"
+SUCCESS_RE="${SNIPPET_SUCCESS_RE:-}"
 
 cd /opt/hello-haskell
 
@@ -93,7 +100,7 @@ validate_one() {
     timeout --signal=TERM 60s cabal run hello-haskell-exe >"$LOG" 2>&1 &
     PID=$!
     deadline=$(( $(date +%s) + 55 ))
-    if await_success_line "$LOG" "$PID" "$deadline"; then
+    if await_success_line "$LOG" "$PID" "$deadline" "$SUCCESS_RE"; then
         rm -f "$LOG"
         return 0
     fi

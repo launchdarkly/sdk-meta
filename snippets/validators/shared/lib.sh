@@ -53,25 +53,31 @@ run_batch() {
     return "$_vb_fail"
 }
 
-# await_success_line <log-file> <pid> <deadline-epoch>
-# Returns 0 once the log file contains the EXAM-HELLO success line, or 1
-# when the deadline elapses (or the program exits before matching).
+# await_success_line <log-file> <pid> <deadline-epoch> [success-regex]
+# Returns 0 once the log file contains the success line, or 1 when the
+# deadline elapses (or the program exits before matching).
 #
-# The success regex is intentionally lenient on framing — different SDK
-# hello-worlds quote the flag key differently ("sample-feature",
+# The default success regex is intentionally lenient on framing — different
+# SDK hello-worlds quote the flag key differently ("sample-feature",
 # 'sample-feature', sample-feature) and Python prints `True` while every
 # other language prints `true`. The phrase `feature flag evaluates to
 # [Tt]rue` is the one canonical fragment all of them emit on a successful
 # init+evaluation against the EXAM-HELLO `sample-feature` flag.
+#
+# The optional fourth argument overrides the regex for wrappees that own
+# their whole program (so no scaffold can append the EXAM-HELLO trailer)
+# and instead print their own success line — e.g. init snippets whose
+# body defines `main`. An empty fourth argument means the default.
 await_success_line() {
     log=$1
     pid=$2
     deadline=$3
+    success_re=${4:-"feature flag evaluates to [Tt]rue"}
     while [ "$(date +%s)" -lt "$deadline" ]; do
-        if grep -E "feature flag evaluates to [Tt]rue" "$log" >/dev/null 2>&1; then
+        if grep -E "$success_re" "$log" >/dev/null 2>&1; then
             kill -TERM "$pid" 2>/dev/null || true
             wait "$pid" 2>/dev/null || true
-            grep -E "feature flag evaluates to [Tt]rue" "$log" | head -1
+            grep -E "$success_re" "$log" | head -1
             echo "validator: ok"
             return 0
         fi
@@ -85,9 +91,9 @@ await_success_line() {
     # return immediately, where the write may not have flushed when we
     # grepped. Do one final grep before giving up so that race doesn't read
     # as a failure.
-    if grep -E "feature flag evaluates to [Tt]rue" "$log" >/dev/null 2>&1; then
+    if grep -E "$success_re" "$log" >/dev/null 2>&1; then
         wait "$pid" 2>/dev/null || true
-        grep -E "feature flag evaluates to [Tt]rue" "$log" | head -1
+        grep -E "$success_re" "$log" | head -1
         echo "validator: ok"
         return 0
     fi
