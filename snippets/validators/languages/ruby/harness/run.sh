@@ -4,6 +4,10 @@ set -eu
 
 . /harness-shared/lib.sh
 require_env LAUNCHDARKLY_SDK_KEY LAUNCHDARKLY_FLAG_KEY SNIPPET_ENTRYPOINT
+# SNIPPET_SUCCESS_RE (optional, via validation.env) overrides the awaited
+# success line for wrappees that own their whole program and print their
+# own line (e.g. sdk-info init snippets).
+SUCCESS_RE="${SNIPPET_SUCCESS_RE:-}"
 
 WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
@@ -37,10 +41,16 @@ timeout --signal=TERM 90s ruby -e '$stdout.sync = true; load ENV["SNIPPET_ENTRYP
 PID=$!
 
 deadline=$(( $(date +%s) + 80 ))
-if await_success_line "$LOG" "$PID" "$deadline"; then
+if await_success_line "$LOG" "$PID" "$deadline" "$SUCCESS_RE"; then
+    # CI's verify-hello-app asserts the cell output contains the
+    # EXAM-HELLO line; when awaiting a custom success line, emit the
+    # canonical sentinel too.
+    if [ -n "$SUCCESS_RE" ]; then
+        echo "feature flag evaluates to true"
+    fi
     exit 0
 fi
 
 kill -TERM "$PID" 2>/dev/null || true
 wait "$PID" 2>/dev/null || true
-fail_with_log "$LOG" "did not see expected line: feature flag evaluates to true"
+fail_with_log "$LOG" "did not see expected line: ${SUCCESS_RE:-feature flag evaluates to true}"

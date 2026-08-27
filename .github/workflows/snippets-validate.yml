@@ -179,11 +179,16 @@ jobs:
           - { sdk: haskell-server-sdk,  runs-on: ubuntu-latest, key-type: server }
           - { sdk: rust-server-sdk,     runs-on: ubuntu-latest, key-type: server }
 
+          # The (sdk-info) sibling rows below each group-filtered
+          # (sdk-docs) row validate the sdk-info install/init snippets
+          # gonfalon consumes; the group filter on the original rows
+          # would otherwise skip them.
           # Erlang sdk-docs gained bindings via erlang-syntax-only in
           # the multi-check rollout. No LD key needed for the
           # syntax-only scaffold; passing `server` for harness env
           # parity with the existing server-side rows.
           - { sdk: erlang-server-sdk,   runs-on: ubuntu-latest, key-type: server, label: erlang-server-sdk (sdk-docs), group: sdk-docs }
+          - { sdk: erlang-server-sdk,   runs-on: ubuntu-latest, key-type: server, label: erlang-server-sdk (sdk-info), group: sdk-info }
 
           # Apex sdk-docs: the apex validator runs prettier-plugin-apex's
           # apex-anonymous parser over each staged fragment — the same
@@ -191,19 +196,24 @@ jobs:
           # `prettier --check "**/*.cls"` step. Pure offline parse check:
           # no Salesforce scratch org, no LD env.
           - { sdk: apex-server-sdk,     runs-on: ubuntu-latest, key-type: none, label: apex-server-sdk (sdk-docs), group: sdk-docs }
+          - { sdk: apex-server-sdk,     runs-on: ubuntu-latest, key-type: none, label: apex-server-sdk (sdk-info), group: sdk-info }
 
           # Roku sdk-docs: roku-client validator runs the RokuCommunity
           # brighterscript Lexer + Parser on each staged .brs file.
           # No Roku device, no LD env — pure parse check.
           - { sdk: roku-client-sdk,     runs-on: ubuntu-latest, key-type: none, label: roku-client-sdk (sdk-docs), group: sdk-docs }
+          - { sdk: roku-client-sdk,     runs-on: ubuntu-latest, key-type: none, label: roku-client-sdk (sdk-info), group: sdk-info }
 
           # Edge SDKs (config feature-docs): the edge-ts validator runs
           # the TypeScript compiler's transpileModule over each staged
           # fragment — syntax-only, no module resolution or type-check.
           # No edge runtime, no LD env — pure parse check.
           - { sdk: cloudflare-server-sdk,     runs-on: ubuntu-latest, key-type: none, label: cloudflare-server-sdk (sdk-docs), group: sdk-docs }
+          - { sdk: cloudflare-server-sdk,     runs-on: ubuntu-latest, key-type: none, label: cloudflare-server-sdk (sdk-info), group: sdk-info }
           - { sdk: vercel-server-sdk,         runs-on: ubuntu-latest, key-type: none, label: vercel-server-sdk (sdk-docs), group: sdk-docs }
+          - { sdk: vercel-server-sdk,         runs-on: ubuntu-latest, key-type: none, label: vercel-server-sdk (sdk-info), group: sdk-info }
           - { sdk: akamai-server-edgekv-sdk,  runs-on: ubuntu-latest, key-type: none, label: akamai-server-edgekv-sdk (sdk-docs), group: sdk-docs }
+          - { sdk: akamai-server-edgekv-sdk,  runs-on: ubuntu-latest, key-type: none, label: akamai-server-edgekv-sdk (sdk-info), group: sdk-info }
           - { sdk: fastly-server-sdk,         runs-on: ubuntu-latest, key-type: none, label: fastly-server-sdk (sdk-docs), group: sdk-docs }
     steps:
       - uses: actions/checkout@v4
