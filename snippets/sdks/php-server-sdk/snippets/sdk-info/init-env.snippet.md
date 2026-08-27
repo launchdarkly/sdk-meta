@@ -9,6 +9,8 @@ validation:
   runtime: php
   requirements: |
     launchdarkly/server-sdk
+    guzzlehttp/guzzle
+    kevinrob/guzzle-cache-middleware
   env:
     SNIPPET_SUCCESS_RE: SDK successfully initialized
 ---

@@ -14,6 +14,8 @@ validation:
   runtime: php
   requirements: |
     launchdarkly/server-sdk
+    guzzlehttp/guzzle
+    kevinrob/guzzle-cache-middleware
   placeholders:
     YOUR_SDK_KEY: LAUNCHDARKLY_SDK_KEY
   env:
