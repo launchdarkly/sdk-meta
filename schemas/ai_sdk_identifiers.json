@@ -16,8 +16,8 @@
         },
         "language": {
           "type": "string",
-          "description": "The value reported as aiSdkLanguage, for example 'python'.",
-          "pattern": "^[a-z]+$"
+          "description": "The value reported as aiSdkLanguage, for example 'python'. Derived by lowercasing a language the SDK declares, so it may contain characters such as '+' or '#' (for example 'c++', 'c#').",
+          "pattern": "^[a-z0-9+#.-]+$"
         }
       },
       "required": [

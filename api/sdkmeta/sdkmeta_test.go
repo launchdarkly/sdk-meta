@@ -1,6 +1,8 @@
 package sdkmeta
 
 import (
+	"regexp"
+	"strings"
 	"testing"
 	"time"
 
@@ -165,4 +167,22 @@ func TestAISDKIdentifierMapResolveSDKID(t *testing.T) {
 		assert.False(t, found)
 		assert.Empty(t, id)
 	})
+}
+
+// Language values in ai_sdk_identifiers.json are produced by lowercasing an SDK's
+// declared language, so every value in the language vocabulary must survive the
+// schema's pattern. C#, C++, and Objective-C are the ones that catch a naive [a-z]+.
+func TestAISDKIdentifierLanguagePattern(t *testing.T) {
+	pattern := regexp.MustCompile(`^[a-z0-9+#.-]+$`)
+	seen := map[string]bool{}
+	for _, languages := range Languages {
+		for _, language := range languages {
+			seen[language] = true
+		}
+	}
+	require.NotEmpty(t, seen)
+	for language := range seen {
+		assert.Regexp(t, pattern, strings.ToLower(language),
+			"lowercased %q must match the ai_sdk_identifiers language pattern", language)
+	}
 }
