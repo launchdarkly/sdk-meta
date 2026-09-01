@@ -89,18 +89,19 @@ export namespace UserAgentHelpers {
      * 
      * @param identifier - The wrapper name or user agent string to search for
      * @returns The SDK name if found, undefined if not found
+     *
+     * Use resolveSDKID when you need more than a display name.
      */
     export const getSDKNameByWrapperOrUserAgent = (identifier: string): string | undefined => {
-        const sdkId = getSDKIDByWrapperOrUserAgent(identifier);
+        const sdkId = resolveSDKID(identifier);
         return sdkId === undefined ? undefined : Names[sdkId];
     }
 
     /**
-     * Attempts to find an SDK ID by checking wrapper names and user agents.
-     * First checks wrapper names, then user agents, in alphabetical order by SDK ID.
+     * Finds the SDK ID that reports the given wrapper name or user agent.
+     * Wrapper names are checked first, then user agents, in alphabetical order by SDK ID.
      *
-     * Prefer this over getSDKNameByWrapperOrUserAgent when you need more than a display
-     * name. The ID is the key for Names, Types, Repos, and Releases.
+     * The ID is the key for Names, Types, Repos, and Releases.
      *
      * Some identifiers are reported by more than one SDK. For example both akamai-base
      * and akamai-edgekv report "AkamaiEdgeSDK". In that case the first SDK ID in
@@ -109,7 +110,7 @@ export namespace UserAgentHelpers {
      * @param identifier - The wrapper name or user agent string to search for
      * @returns The SDK ID if found, undefined if not found
      */
-    export const getSDKIDByWrapperOrUserAgent = (identifier: string): string | undefined => {
+    export const resolveSDKID = (identifier: string): string | undefined => {
         // Sort the entries by SDK ID to ensure consistent ordering.
         const sortedEntries = Object.entries(UserAgents).sort(([a], [b]) => a.localeCompare(b));
 
@@ -165,7 +166,7 @@ export namespace AISDKHelpers {
      * @param language - The value reported as aiSdkLanguage
      * @returns The SDK ID if found, undefined if not found
      */
-    export const resolveAISDK = (name: string, language: string): string | undefined => {
+    export const resolveSDKID = (name: string, language: string): string | undefined => {
         // Sort the entries by SDK ID to ensure consistent ordering.
         const sortedEntries = Object.entries(AISDKIdentifiers).sort(([a], [b]) => a.localeCompare(b));
 
