@@ -21,9 +21,12 @@ type metadataV1 struct {
 	Path         string   `json:"path"`
 	UserAgents   []string `json:"userAgents"`
 	WrapperNames []string `json:"wrapperNames"`
-	Type         string   `json:"type"`
-	Languages    []string `json:"languages"`
-	Features     map[string]struct {
+	// AiSdkIdentifiers are the (name, language) pairs an AI SDK reports in the
+	// $ld:ai:sdk:info event. The name alone is not unique across SDKs.
+	AiSdkIdentifiers []aiSdkIdentifier `json:"aiSdkIdentifiers"`
+	Type             string            `json:"type"`
+	Languages        []string          `json:"languages"`
+	Features         map[string]struct {
 		Introduced string  `json:"introduced"`
 		Deprecated *string `json:"deprecated"`
 		Removed    *string `json:"removed"`
@@ -45,6 +48,11 @@ func (m *metadataV1) effectivePrefixes() []string {
 		prefixes = []string{""}
 	}
 	return prefixes
+}
+
+type aiSdkIdentifier struct {
+	Name     string `json:"name"`
+	Language string `json:"language"`
 }
 
 type metadataCollection struct {
@@ -158,9 +166,10 @@ func run(args *args) error {
 			}
 			return nil
 		},
-		"features":     insertFeatures,
-		"userAgents":   insertUserAgents,
-		"wrapperNames": insertWrapperNames,
+		"features":         insertFeatures,
+		"userAgents":       insertUserAgents,
+		"wrapperNames":     insertWrapperNames,
+		"aiSdkIdentifiers": insertAiSdkIdentifiers,
 	}
 
 	if !args.offline {
@@ -316,6 +325,28 @@ func insertUserAgents(tx *sql.Tx, id string, metadata *metadataV1) error {
 
 	for _, userAgent := range metadata.UserAgents {
 		if _, err := stmt.Exec(id, userAgent); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func insertAiSdkIdentifiers(tx *sql.Tx, id string, metadata *metadataV1) error {
+	if len(metadata.AiSdkIdentifiers) == 0 {
+		return nil
+	}
+	stmt, err := tx.Prepare("INSERT INTO sdk_ai_sdk_identifiers (id, name, language) VALUES (?, ?, ?) ON CONFLICT DO NOTHING")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	for _, identifier := range metadata.AiSdkIdentifiers {
+		if identifier.Name == "" || identifier.Language == "" {
+			return fmt.Errorf("aiSdkIdentifiers entry for %s requires both name and language", id)
+		}
+		if _, err := stmt.Exec(id, identifier.Name, identifier.Language); err != nil {
 			return err
 		}
 	}

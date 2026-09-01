@@ -51,6 +51,10 @@ const (
 	ServerSideType Type = "server-side"
 	// EdgeType is an SDK that runs in an edge deployment scenario.
 	EdgeType Type = "edge"
+	// AIType is an SDK that is primarily focused on AI/ML use cases.
+	AIType Type = "ai"
+	// OpenFeatureProviderType is an OpenFeature provider.
+	OpenFeatureProviderType Type = "open-feature-provider"
 	// RelayType is Relay Proxy.
 	RelayType Type = "relay"
 )
@@ -112,8 +116,8 @@ var userAgentsJSON []byte
 
 // SDKUserAgentMap contains user agent and wrapper information for an SDK
 type SDKUserAgentMap struct {
-	UserAgents    []string `json:"userAgents,omitempty"`
-	WrapperNames  []string `json:"wrapperNames,omitempty"`
+	UserAgents   []string `json:"userAgents,omitempty"`
+	WrapperNames []string `json:"wrapperNames,omitempty"`
 }
 
 // UserAgents is a map of SDK IDs to their user agent and wrapper information
@@ -123,6 +127,24 @@ var UserAgents map[string]SDKUserAgentMap
 // then user agents, in alphabetical order by SDK ID. Returns the SDK name and true if found,
 // empty string and false if not found.
 func GetSDKNameByWrapperOrUserAgent(identifier string) (string, bool) {
+	sdkID, ok := GetSDKIDByWrapperOrUserAgent(identifier)
+	if !ok {
+		return "", false
+	}
+	return Names[sdkID], true
+}
+
+// GetSDKIDByWrapperOrUserAgent attempts to find an SDK ID by first checking wrapper names,
+// then user agents, in alphabetical order by SDK ID. Returns the SDK ID and true if found,
+// empty string and false if not found.
+//
+// Prefer this over GetSDKNameByWrapperOrUserAgent when you need more than a display name.
+// The ID is the key for Names, Types, Repos, and Releases.
+//
+// Some identifiers are reported by more than one SDK. For example both akamai-base and
+// akamai-edgekv report "AkamaiEdgeSDK". In that case the first SDK ID in alphabetical
+// order is returned.
+func GetSDKIDByWrapperOrUserAgent(identifier string) (string, bool) {
 	// Get sorted SDK IDs to ensure consistent ordering
 	var sdkIDs []string
 	for sdkID := range UserAgents {
@@ -135,7 +157,7 @@ func GetSDKNameByWrapperOrUserAgent(identifier string) (string, bool) {
 		info := UserAgents[sdkID]
 		for _, wrapper := range info.WrapperNames {
 			if wrapper == identifier {
-				return Names[sdkID], true
+				return sdkID, true
 			}
 		}
 	}
@@ -145,7 +167,53 @@ func GetSDKNameByWrapperOrUserAgent(identifier string) (string, bool) {
 		info := UserAgents[sdkID]
 		for _, agent := range info.UserAgents {
 			if agent == identifier {
-				return Names[sdkID], true
+				return sdkID, true
+			}
+		}
+	}
+
+	return "", false
+}
+
+//go:embed data/ai_sdk_identifiers.json
+var aiSdkIdentifiersJSON []byte
+
+// AISDKIdentifier is one (name, language) pair that an AI SDK reports about itself
+// in the $ld:ai:sdk:info custom event.
+type AISDKIdentifier struct {
+	// Name is the value reported as aiSdkName. This is the package name.
+	Name string `json:"name"`
+	// Language is the value reported as aiSdkLanguage, for example "python".
+	Language string `json:"language"`
+}
+
+// AISDKIdentifiers is a map of SDK IDs to the identifiers those AI SDKs report.
+//
+// An AI SDK wraps a client that the caller supplies, so it sends no user agent of its
+// own. It reports itself in a custom event instead. Historical names are kept so that
+// older deployments still resolve.
+var AISDKIdentifiers map[string][]AISDKIdentifier
+
+// ResolveAISDK finds the SDK ID for an AI SDK from the aiSdkName and aiSdkLanguage it
+// reports in the $ld:ai:sdk:info event. Returns the SDK ID and true if found, empty
+// string and false if not found.
+//
+// Both arguments are required. The name alone is not unique: the Python and Ruby AI
+// SDKs both report "launchdarkly-server-sdk-ai".
+//
+// The returned ID is the key for Names, Types, Repos, and Releases.
+func ResolveAISDK(name string, language string) (string, bool) {
+	// Get sorted SDK IDs to ensure consistent ordering
+	var sdkIDs []string
+	for sdkID := range AISDKIdentifiers {
+		sdkIDs = append(sdkIDs, sdkID)
+	}
+	sort.Strings(sdkIDs)
+
+	for _, sdkID := range sdkIDs {
+		for _, identifier := range AISDKIdentifiers[sdkID] {
+			if identifier.Name == name && identifier.Language == language {
+				return sdkID, true
 			}
 		}
 	}
@@ -167,4 +235,5 @@ func init() {
 	panicOnError(json.Unmarshal(releasesJSON, &Releases))
 	panicOnError(json.Unmarshal(popularityJSON, &Popularity))
 	panicOnError(json.Unmarshal(userAgentsJSON, &UserAgents))
+	panicOnError(json.Unmarshal(aiSdkIdentifiersJSON, &AISDKIdentifiers))
 }

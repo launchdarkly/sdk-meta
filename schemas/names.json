@@ -5,15 +5,16 @@
   "description": "List of SDK friendly names",
   "type": "object",
   "$defs": {
-    "SDKName" : {
-      "type" : "string",
-      "description" : "The human-readable display name of an SDK",
-      "pattern" : "^[-+A-Za-z. ]+$"
+    "SDKName": {
+      "type": "string",
+      "description": "The human-readable display name of an SDK",
+      "pattern": "^[-+A-Za-z. ]+$"
     }
   },
-  "patternProperties" : {
-    "^[a-z-]+$" : {
-      "$ref" : "#/$defs/SDKName"
+  "patternProperties": {
+    "^[a-z-]+$": {
+      "$ref": "#/$defs/SDKName"
     }
-  }
+  },
+  "additionalProperties": false
 }

@@ -36,6 +36,11 @@ sqlite3 -json metadata.sqlite3 "SELECT * from sdk_popularity;" |
 sqlite3 -json metadata.sqlite3 "SELECT id, userAgent as value, 'userAgents' as type FROM sdk_user_agents UNION ALL SELECT id, wrapper as value, 'wrapperNames' as type FROM sdk_wrappers;" |
   jq -S 'reduce .[] as $item ({}; .[$item.id] = (.[$item.id] // {}) + { ($item.type): ((.[$item.id][$item.type] // []) + [$item.value]) })' > products/user_agents.json
 
+# Generate AI SDK identifiers. Each AI SDK reports a (name, language) pair in the
+# $ld:ai:sdk:info custom event. The name alone is not unique, so both are kept.
+sqlite3 -json metadata.sqlite3 "SELECT id, name, language FROM sdk_ai_sdk_identifiers;" |
+  jq -S -n 'reduce (inputs[]?) as $item ({}; .[$item.id] += [{name: $item.name, language: $item.language}])' > products/ai_sdk_identifiers.json
+
 ./scripts/eols.sh metadata.sqlite3  |
   jq -n 'reduce inputs[] as $input ({}; .[$input.id] += [$input | del(.id)])' > products/releases.json
 
