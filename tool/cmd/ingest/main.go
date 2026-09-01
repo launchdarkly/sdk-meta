@@ -21,12 +21,12 @@ type metadataV1 struct {
 	Path         string   `json:"path"`
 	UserAgents   []string `json:"userAgents"`
 	WrapperNames []string `json:"wrapperNames"`
-	// AiSdkIdentifiers are the (name, language) pairs an AI SDK reports in the
-	// $ld:ai:sdk:info event. The name alone is not unique across SDKs.
-	AiSdkIdentifiers []aiSdkIdentifier `json:"aiSdkIdentifiers"`
-	Type             string            `json:"type"`
-	Languages        []string          `json:"languages"`
-	Features         map[string]struct {
+	// AiSdkNames are the package names an AI SDK reports as aiSdkName in the
+	// $ld:ai:sdk:info event. Include historical names so older releases resolve.
+	AiSdkNames []string `json:"aiSdkNames"`
+	Type       string   `json:"type"`
+	Languages  []string `json:"languages"`
+	Features   map[string]struct {
 		Introduced string  `json:"introduced"`
 		Deprecated *string `json:"deprecated"`
 		Removed    *string `json:"removed"`
@@ -48,11 +48,6 @@ func (m *metadataV1) effectivePrefixes() []string {
 		prefixes = []string{""}
 	}
 	return prefixes
-}
-
-type aiSdkIdentifier struct {
-	Name     string `json:"name"`
-	Language string `json:"language"`
 }
 
 type metadataCollection struct {
@@ -166,10 +161,10 @@ func run(args *args) error {
 			}
 			return nil
 		},
-		"features":         insertFeatures,
-		"userAgents":       insertUserAgents,
-		"wrapperNames":     insertWrapperNames,
-		"aiSdkIdentifiers": insertAiSdkIdentifiers,
+		"features":     insertFeatures,
+		"userAgents":   insertUserAgents,
+		"wrapperNames": insertWrapperNames,
+		"aiSdkNames":   insertAiSdkNames,
 	}
 
 	if !args.offline {
@@ -332,21 +327,21 @@ func insertUserAgents(tx *sql.Tx, id string, metadata *metadataV1) error {
 	return nil
 }
 
-func insertAiSdkIdentifiers(tx *sql.Tx, id string, metadata *metadataV1) error {
-	if len(metadata.AiSdkIdentifiers) == 0 {
+func insertAiSdkNames(tx *sql.Tx, id string, metadata *metadataV1) error {
+	if len(metadata.AiSdkNames) == 0 {
 		return nil
 	}
-	stmt, err := tx.Prepare("INSERT INTO sdk_ai_sdk_identifiers (id, name, language) VALUES (?, ?, ?) ON CONFLICT DO NOTHING")
+	stmt, err := tx.Prepare("INSERT INTO sdk_ai_sdk_names (id, name) VALUES (?, ?) ON CONFLICT DO NOTHING")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
-	for _, identifier := range metadata.AiSdkIdentifiers {
-		if identifier.Name == "" || identifier.Language == "" {
-			return fmt.Errorf("aiSdkIdentifiers entry for %s requires both name and language", id)
+	for _, name := range metadata.AiSdkNames {
+		if name == "" {
+			return fmt.Errorf("aiSdkNames entry for %s must not be empty", id)
 		}
-		if _, err := stmt.Exec(id, identifier.Name, identifier.Language); err != nil {
+		if _, err := stmt.Exec(id, name); err != nil {
 			return err
 		}
 	}

@@ -75,14 +75,14 @@ CREATE TABLE sdk_wrappers (
     wrapper TEXT
 );
 
--- Identifiers an AI SDK reports about itself in the $ld:ai:sdk:info custom event.
--- The package name alone is not unique: the Python and Ruby AI SDKs both report
--- "launchdarkly-server-sdk-ai". The language is required to tell them apart.
-CREATE TABLE sdk_ai_sdk_identifiers (
+-- Package names an AI SDK reports as aiSdkName in the $ld:ai:sdk:info custom event.
+-- The name alone is not unique: the Python and Ruby AI SDKs both report
+-- "launchdarkly-server-sdk-ai". Products pair each name with the SDK's languages
+-- so that aiSdkLanguage can tell them apart.
+CREATE TABLE sdk_ai_sdk_names (
     id TEXT NOT NULL,
     name TEXT NOT NULL,
-    language TEXT NOT NULL,
-    PRIMARY KEY (id, name, language)
+    PRIMARY KEY (id, name)
 );
 
 INSERT INTO sdk_popularity (id, popularity) VALUES

@@ -36,9 +36,11 @@ sqlite3 -json metadata.sqlite3 "SELECT * from sdk_popularity;" |
 sqlite3 -json metadata.sqlite3 "SELECT id, userAgent as value, 'userAgents' as type FROM sdk_user_agents UNION ALL SELECT id, wrapper as value, 'wrapperNames' as type FROM sdk_wrappers;" |
   jq -S 'reduce .[] as $item ({}; .[$item.id] = (.[$item.id] // {}) + { ($item.type): ((.[$item.id][$item.type] // []) + [$item.value]) })' > products/user_agents.json
 
-# Generate AI SDK identifiers. Each AI SDK reports a (name, language) pair in the
-# $ld:ai:sdk:info custom event. The name alone is not unique, so both are kept.
-sqlite3 -json metadata.sqlite3 "SELECT id, name, language FROM sdk_ai_sdk_identifiers;" |
+# Generate AI SDK identifiers. An AI SDK reports a package name and a language in the
+# $ld:ai:sdk:info custom event. The name alone is not unique, so each name is paired with
+# every language the SDK declares. These are the pairs we accept, not a claim about which
+# the SDK emits: an SDK that declares two languages accepts either.
+sqlite3 -json metadata.sqlite3 "SELECT n.id, n.name, lower(l.language) AS language FROM sdk_ai_sdk_names n JOIN sdk_languages l ON l.id = n.id;" |
   jq -S -n 'reduce (inputs[]?) as $item ({}; .[$item.id] += [{name: $item.name, language: $item.language}])' > products/ai_sdk_identifiers.json
 
 ./scripts/eols.sh metadata.sqlite3  |
