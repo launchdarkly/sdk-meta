@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://launchdarkly.com/sdk-meta/ai_sdk_identifiers.json",
+  "title": "AI SDK Identifiers",
+  "description": "Identifiers accepted for AI SDKs. An AI SDK has no user agent of its own because it wraps a caller-supplied client. It reports a package name and a language in the $ld:ai:sdk:info custom event instead. The name is not unique across SDKs, so each name is paired with every language the SDK declares.",
+  "type": "object",
+  "$defs": {
+    "AISDKIdentifier": {
+      "type": "object",
+      "description": "One (name, language) pair accepted for an AI SDK. Historical names are retained so that older deployments still resolve.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The value reported as aiSdkName. This is the package name, for example '@launchdarkly/server-sdk-ai'.",
+          "pattern": "^[@A-Za-z0-9._/-]+$"
+        },
+        "language": {
+          "type": "string",
+          "description": "The value reported as aiSdkLanguage, for example 'python'. Derived by lowercasing a language the SDK declares, so it may contain characters such as '+' or '#' (for example 'c++', 'c#').",
+          "pattern": "^[a-z0-9+#.-]+$"
+        }
+      },
+      "required": [
+        "name",
+        "language"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^[a-z-]+$": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/AISDKIdentifier"
+      }
+    }
+  },
+  "additionalProperties": false
+}

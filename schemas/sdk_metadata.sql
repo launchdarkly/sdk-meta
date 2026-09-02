@@ -75,6 +75,16 @@ CREATE TABLE sdk_wrappers (
     wrapper TEXT
 );
 
+-- Package names an AI SDK reports as aiSdkName in the $ld:ai:sdk:info custom event.
+-- The name alone is not unique: the Python and Ruby AI SDKs both report
+-- "launchdarkly-server-sdk-ai". Products pair each name with the SDK's languages
+-- so that aiSdkLanguage can tell them apart.
+CREATE TABLE sdk_ai_sdk_names (
+    id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    PRIMARY KEY (id, name)
+);
+
 INSERT INTO sdk_popularity (id, popularity) VALUES
     ('react-client-sdk', 1),
     ('node-server', 2),

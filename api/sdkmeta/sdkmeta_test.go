@@ -1,6 +1,8 @@
 package sdkmeta
 
 import (
+	"regexp"
+	"strings"
 	"testing"
 	"time"
 
@@ -24,7 +26,7 @@ func TestProductSanityChecks(t *testing.T) {
 	t.Run("types", func(t *testing.T) {
 		assert.Equal(t, ServerSideType, Types["node-server"])
 	})
-	
+
 	t.Run("popularity", func(t *testing.T) {
 		assert.Equal(t, 2, Popularity["node-server"])
 	})
@@ -101,4 +103,86 @@ func TestUserAgentsAndWrappers(t *testing.T) {
 		assert.False(t, found)
 		assert.Empty(t, name)
 	})
+}
+
+func TestUserAgentMapResolveSDKID(t *testing.T) {
+	t.Run("finds SDK ID by user agent", func(t *testing.T) {
+		id, found := UserAgents.ResolveSDKID("NodeJSClient")
+		assert.True(t, found)
+		assert.Equal(t, "node-server", id)
+	})
+
+	t.Run("finds SDK ID by wrapper name", func(t *testing.T) {
+		id, found := UserAgents.ResolveSDKID("ElectronClient")
+		assert.True(t, found)
+		assert.Equal(t, "electron", id)
+	})
+
+	t.Run("returns the ID that Names is keyed by", func(t *testing.T) {
+		id, found := UserAgents.ResolveSDKID("RokuClient")
+		require.True(t, found)
+		assert.Equal(t, "roku", id)
+		assert.Equal(t, "Roku SDK", Names[id])
+	})
+
+	t.Run("returns false for an unknown identifier", func(t *testing.T) {
+		id, found := UserAgents.ResolveSDKID("NotARealClient")
+		assert.False(t, found)
+		assert.Empty(t, id)
+	})
+
+	t.Run("agrees with GetSDKNameByWrapperOrUserAgent", func(t *testing.T) {
+		for _, identifier := range []string{"NodeJSClient", "ElectronClient", "GoClient"} {
+			id, foundID := UserAgents.ResolveSDKID(identifier)
+			name, foundName := GetSDKNameByWrapperOrUserAgent(identifier)
+			require.Equal(t, foundID, foundName)
+			assert.Equal(t, Names[id], name)
+		}
+	})
+}
+
+func TestAISDKIdentifierMapResolveSDKID(t *testing.T) {
+	t.Run("every identifier resolves to a known SDK", func(t *testing.T) {
+		for sdkID, identifiers := range AISDKIdentifiers {
+			assert.Contains(t, Names, sdkID, "AI SDK %s is missing from names", sdkID)
+			assert.Equal(t, AIType, Types[sdkID], "AI SDK %s should be typed ai", sdkID)
+			for _, identifier := range identifiers {
+				resolved, found := AISDKIdentifiers.ResolveSDKID(identifier.Name, identifier.Language)
+				assert.True(t, found)
+				assert.Equal(t, sdkID, resolved)
+			}
+		}
+	})
+
+	t.Run("returns false for an unknown name", func(t *testing.T) {
+		id, found := AISDKIdentifiers.ResolveSDKID("not-a-real-package", "python")
+		assert.False(t, found)
+		assert.Empty(t, id)
+	})
+
+	t.Run("language is required to disambiguate", func(t *testing.T) {
+		// The Python and Ruby AI SDKs report the same package name, so a lookup
+		// without the correct language must not resolve.
+		id, found := AISDKIdentifiers.ResolveSDKID("launchdarkly-server-sdk-ai", "")
+		assert.False(t, found)
+		assert.Empty(t, id)
+	})
+}
+
+// Language values in ai_sdk_identifiers.json are produced by lowercasing an SDK's
+// declared language, so every value in the language vocabulary must survive the
+// schema's pattern. C#, C++, and Objective-C are the ones that catch a naive [a-z]+.
+func TestAISDKIdentifierLanguagePattern(t *testing.T) {
+	pattern := regexp.MustCompile(`^[a-z0-9+#.-]+$`)
+	seen := map[string]bool{}
+	for _, languages := range Languages {
+		for _, language := range languages {
+			seen[language] = true
+		}
+	}
+	require.NotEmpty(t, seen)
+	for language := range seen {
+		assert.Regexp(t, pattern, strings.ToLower(language),
+			"lowercased %q must match the ai_sdk_identifiers language pattern", language)
+	}
 }

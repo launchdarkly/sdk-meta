@@ -28,3 +28,5 @@ runTest ./schemas/releases.json ./products/releases.json
 runTest ./schemas/features.json ./products/features.json
 runTest ./schemas/feature_info.json ./products/feature_info.json
 runTest ./schemas/popularity.json ./products/popularity.json
+runTest ./schemas/user_agents.json ./products/user_agents.json
+runTest ./schemas/ai_sdk_identifiers.json ./products/ai_sdk_identifiers.json

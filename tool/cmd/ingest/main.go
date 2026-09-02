@@ -21,9 +21,12 @@ type metadataV1 struct {
 	Path         string   `json:"path"`
 	UserAgents   []string `json:"userAgents"`
 	WrapperNames []string `json:"wrapperNames"`
-	Type         string   `json:"type"`
-	Languages    []string `json:"languages"`
-	Features     map[string]struct {
+	// AiSdkNames are the package names an AI SDK reports as aiSdkName in the
+	// $ld:ai:sdk:info event. Include historical names so older releases resolve.
+	AiSdkNames []string `json:"aiSdkNames"`
+	Type       string   `json:"type"`
+	Languages  []string `json:"languages"`
+	Features   map[string]struct {
 		Introduced string  `json:"introduced"`
 		Deprecated *string `json:"deprecated"`
 		Removed    *string `json:"removed"`
@@ -161,6 +164,7 @@ func run(args *args) error {
 		"features":     insertFeatures,
 		"userAgents":   insertUserAgents,
 		"wrapperNames": insertWrapperNames,
+		"aiSdkNames":   insertAiSdkNames,
 	}
 
 	if !args.offline {
@@ -316,6 +320,28 @@ func insertUserAgents(tx *sql.Tx, id string, metadata *metadataV1) error {
 
 	for _, userAgent := range metadata.UserAgents {
 		if _, err := stmt.Exec(id, userAgent); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func insertAiSdkNames(tx *sql.Tx, id string, metadata *metadataV1) error {
+	if len(metadata.AiSdkNames) == 0 {
+		return nil
+	}
+	stmt, err := tx.Prepare("INSERT INTO sdk_ai_sdk_names (id, name) VALUES (?, ?) ON CONFLICT DO NOTHING")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	for _, name := range metadata.AiSdkNames {
+		if name == "" {
+			return fmt.Errorf("aiSdkNames entry for %s must not be empty", id)
+		}
+		if _, err := stmt.Exec(id, name); err != nil {
 			return err
 		}
 	}

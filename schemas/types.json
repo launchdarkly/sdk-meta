@@ -5,15 +5,23 @@
   "description": "List of SDK types",
   "type": "object",
   "$defs": {
-    "SDKType" : {
-      "type" : "string",
-       "description" : "The primary deployment strategy for a LaunchDarkly SDK",
-       "enum" : ["client-side", "server-side", "edge", "ai", "relay", "open-feature-provider"]
+    "SDKType": {
+      "type": "string",
+      "description": "The primary deployment strategy for a LaunchDarkly SDK",
+      "enum": [
+        "client-side",
+        "server-side",
+        "edge",
+        "ai",
+        "relay",
+        "open-feature-provider"
+      ]
     }
   },
-  "patternProperties" : {
-    "^[a-z-]+$" : {
-      "$ref" : "#/$defs/SDKType"
-      }
+  "patternProperties": {
+    "^[a-z-]+$": {
+      "$ref": "#/$defs/SDKType"
     }
-  }
+  },
+  "additionalProperties": false
+}

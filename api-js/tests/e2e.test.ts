@@ -1,4 +1,4 @@
-import { Names, Repos, Types, Type, Popularity, Languages, Releases, ReleaseHelpers } from '../src/SDKMeta';
+import { Names, Repos, Types, Type, Popularity, Languages, Releases, ReleaseHelpers, AISDKIdentifiers, AISDKHelpers } from '../src/SDKMeta';
 import { UserAgents, UserAgentHelpers } from '../src/SDKMeta';
 
 test('names', () => {
@@ -106,5 +106,53 @@ describe('UserAgentHelpers.getSDKNameByWrapperOrUserAgent', () => {
     test('finds edge SDK by user agent', () => {
         const name = UserAgentHelpers.getSDKNameByWrapperOrUserAgent('CloudflareEdgeSDK');
         expect(name).toBe('Cloudflare SDK');
+    });
+});
+
+describe('UserAgentHelpers.resolveSDKID', () => {
+    it('finds SDK ID by user agent', () => {
+        expect(UserAgentHelpers.resolveSDKID('NodeJSClient')).toBe('node-server');
+    });
+
+    it('finds SDK ID by wrapper name', () => {
+        expect(UserAgentHelpers.resolveSDKID('ElectronClient')).toBe('electron');
+    });
+
+    it('returns the ID that Names is keyed by', () => {
+        const sdkId = UserAgentHelpers.resolveSDKID('RokuClient');
+        expect(sdkId).toBe('roku');
+        expect(Names[sdkId!]).toBe('Roku SDK');
+    });
+
+    it('returns undefined for unknown identifier', () => {
+        expect(UserAgentHelpers.resolveSDKID('NotARealClient')).toBeUndefined();
+    });
+
+    it('agrees with getSDKNameByWrapperOrUserAgent', () => {
+        for (const identifier of ['NodeJSClient', 'ElectronClient', 'GoClient']) {
+            const sdkId = UserAgentHelpers.resolveSDKID(identifier);
+            expect(UserAgentHelpers.getSDKNameByWrapperOrUserAgent(identifier)).toBe(Names[sdkId!]);
+        }
+    });
+});
+
+describe('AISDKHelpers.resolveSDKID', () => {
+    it('resolves every registered identifier back to its SDK', () => {
+        for (const [sdkId, identifiers] of Object.entries(AISDKIdentifiers)) {
+            expect(Names[sdkId]).toBeDefined();
+            expect(Types[sdkId]).toBe(Type.AI);
+            for (const identifier of identifiers) {
+                expect(AISDKHelpers.resolveSDKID(identifier.name, identifier.language)).toBe(sdkId);
+            }
+        }
+    });
+
+    it('returns undefined for an unknown name', () => {
+        expect(AISDKHelpers.resolveSDKID('not-a-real-package', 'python')).toBeUndefined();
+    });
+
+    it('requires the language to disambiguate', () => {
+        // The Python and Ruby AI SDKs report the same package name.
+        expect(AISDKHelpers.resolveSDKID('launchdarkly-server-sdk-ai', '')).toBeUndefined();
     });
 });
