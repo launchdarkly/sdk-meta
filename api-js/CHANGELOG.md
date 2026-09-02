@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0](https://github.com/launchdarkly/sdk-meta/compare/api-js/v0.4.0...api-js/v0.5.0) (2026-09-02)
+
+
+### Features
+
+* Add AI SDK identifier registry and ID-returning lookups ([#607](https://github.com/launchdarkly/sdk-meta/issues/607)) ([d038dc1](https://github.com/launchdarkly/sdk-meta/commit/d038dc18765ce331bca3477ef23dd65cda10eac3))
+
+
+### Bug Fixes
+
+* **metadata:** ingest new data and regenerate products ([#606](https://github.com/launchdarkly/sdk-meta/issues/606)) ([5fb82cb](https://github.com/launchdarkly/sdk-meta/commit/5fb82cb6cd472247e6225e9967c0bab296a2bfab))
+
 ## [0.4.0](https://github.com/launchdarkly/sdk-meta/compare/api-js/v0.3.33...api-js/v0.4.0) (2026-08-27)
 
 
