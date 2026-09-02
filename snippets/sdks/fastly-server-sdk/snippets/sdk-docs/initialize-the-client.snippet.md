@@ -14,12 +14,16 @@ const KV_STORE_NAME = 'launchdarkly';
 const EVENTS_BACKEND_NAME = 'launchdarkly';
 const store = new KVStore(KV_STORE_NAME);
 
+addEventListener('fetch', (event: FetchEvent) => {
+  event.respondWith(handleRequest(event));
+});
+
 async function handleRequest(event: FetchEvent) {
   const ldClient = init('example-client-side-id', store, {
     eventsBackendName: EVENTS_BACKEND_NAME,
   });
 
-  await ldClient.waitForInitialization();
+  await ldClient.waitForInitialization({ timeoutSeconds: 5 });
 
   // The rest of your handler code goes here
 }

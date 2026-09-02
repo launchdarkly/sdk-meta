@@ -12,10 +12,11 @@ validation:
 ```ts
 import type { LDContext } from '@launchdarkly/js-server-sdk-common';
 
+// ldClient is the LDClient instance created in the previous step
 const ldContext: LDContext = {
   kind: 'org',
   key: 'example-organization-key',
   someAttribute: 'example-attribute-value',
-}
-const flagValue = await ldClient.variation('example-flag-key', ldContext, false)
+};
+const flagValue = await ldClient.variation('example-flag-key', ldContext, false);
 ```
