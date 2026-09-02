@@ -1,1 +1,46 @@
-{}
+{
+  "dotnet-server-sdk-ai": [
+    {
+      "language": "c#",
+      "name": "LaunchDarkly.ServerSdk.Ai"
+    }
+  ],
+  "go-server-sdk-ai": [
+    {
+      "language": "go",
+      "name": "go-server-sdk-ai"
+    },
+    {
+      "language": "go",
+      "name": "go-server-sdk/ldai"
+    }
+  ],
+  "java-server-sdk-ai": [
+    {
+      "language": "java",
+      "name": "launchdarkly-java-server-sdk-ai"
+    }
+  ],
+  "python-server-sdk-ai": [
+    {
+      "language": "python",
+      "name": "launchdarkly-server-sdk-ai"
+    }
+  ],
+  "ruby-server-sdk-ai": [
+    {
+      "language": "ruby",
+      "name": "launchdarkly-server-sdk-ai"
+    }
+  ],
+  "server-ai": [
+    {
+      "language": "javascript",
+      "name": "@launchdarkly/server-sdk-ai"
+    },
+    {
+      "language": "typescript",
+      "name": "@launchdarkly/server-sdk-ai"
+    }
+  ]
+}
