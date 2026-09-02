@@ -60,9 +60,15 @@
   "android": [
     {
       "major": 5,
+      "minor": 16,
+      "date": "2026-08-27T17:03:49Z",
+      "eol": null
+    },
+    {
+      "major": 5,
       "minor": 15,
       "date": "2026-08-17T19:53:19Z",
-      "eol": null
+      "eol": "2027-08-27T00:00:00Z"
     },
     {
       "major": 5,
@@ -1886,9 +1892,15 @@
   "java-server-sdk": [
     {
       "major": 7,
+      "minor": 16,
+      "date": "2026-09-01T13:40:17Z",
+      "eol": null
+    },
+    {
+      "major": 7,
       "minor": 15,
       "date": "2026-07-21T15:53:03Z",
-      "eol": null
+      "eol": "2027-09-01T00:00:00Z"
     },
     {
       "major": 7,
@@ -3122,9 +3134,15 @@
   "python-server-sdk": [
     {
       "major": 9,
+      "minor": 17,
+      "date": "2026-08-28T20:52:41Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 16,
       "date": "2026-06-08T15:06:56Z",
-      "eol": null
+      "eol": "2027-08-28T00:00:00Z"
     },
     {
       "major": 9,
@@ -3413,6 +3431,26 @@
       "minor": 0,
       "date": "2016-08-10T22:41:51Z",
       "eol": "2017-08-23T00:00:00Z"
+    }
+  ],
+  "python-server-sdk-ai": [
+    {
+      "major": 1,
+      "minor": 2,
+      "date": "2026-07-17T18:15:38Z",
+      "eol": null
+    },
+    {
+      "major": 1,
+      "minor": 1,
+      "date": "2026-06-05T21:19:43Z",
+      "eol": "2027-07-17T00:00:00Z"
+    },
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-05-19T05:02:58Z",
+      "eol": "2027-06-05T00:00:00Z"
     }
   ],
   "react-client-sdk": [
@@ -4668,9 +4706,15 @@
   "swift-client-sdk": [
     {
       "major": 11,
+      "minor": 6,
+      "date": "2026-08-27T21:08:54Z",
+      "eol": null
+    },
+    {
+      "major": 11,
       "minor": 5,
       "date": "2026-08-14T22:35:29Z",
-      "eol": null
+      "eol": "2027-08-27T00:00:00Z"
     },
     {
       "major": 11,

@@ -36,6 +36,9 @@
   "dotnet-server-sdk": [
     "C#"
   ],
+  "dotnet-server-sdk-ai": [
+    "C#"
+  ],
   "electron": [
     "JavaScript",
     "TypeScript"
@@ -54,10 +57,16 @@
   "go-server-sdk": [
     "Go"
   ],
+  "go-server-sdk-ai": [
+    "Go"
+  ],
   "haskell-server-sdk": [
     "Haskell"
   ],
   "java-server-sdk": [
+    "Java"
+  ],
+  "java-server-sdk-ai": [
     "Java"
   ],
   "js-client-sdk": [
@@ -81,6 +90,9 @@
   "python-server-sdk": [
     "Python"
   ],
+  "python-server-sdk-ai": [
+    "Python"
+  ],
   "react-client-sdk": [
     "JavaScript",
     "TypeScript"
@@ -96,6 +108,9 @@
     "BrightScript"
   ],
   "ruby-server-sdk": [
+    "Ruby"
+  ],
+  "ruby-server-sdk-ai": [
     "Ruby"
   ],
   "rust-server-sdk": [

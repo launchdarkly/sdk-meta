@@ -29,6 +29,9 @@
   "dotnet-server-sdk": {
     "github": "launchdarkly/dotnet-core"
   },
+  "dotnet-server-sdk-ai": {
+    "github": "launchdarkly/dotnet-core"
+  },
   "electron": {
     "github": "launchdarkly/electron-client-sdk"
   },
@@ -44,10 +47,16 @@
   "go-server-sdk": {
     "github": "launchdarkly/go-server-sdk"
   },
+  "go-server-sdk-ai": {
+    "github": "launchdarkly/go-server-sdk-ai"
+  },
   "haskell-server-sdk": {
     "github": "launchdarkly/haskell-server-sdk"
   },
   "java-server-sdk": {
+    "github": "launchdarkly/java-core"
+  },
+  "java-server-sdk-ai": {
     "github": "launchdarkly/java-core"
   },
   "js-client-sdk": {
@@ -68,6 +77,9 @@
   "python-server-sdk": {
     "github": "launchdarkly/python-server-sdk"
   },
+  "python-server-sdk-ai": {
+    "github": "launchdarkly/python-server-sdk-ai"
+  },
   "react-client-sdk": {
     "github": "launchdarkly/js-core"
   },
@@ -82,6 +94,9 @@
   },
   "ruby-server-sdk": {
     "github": "launchdarkly/ruby-server-sdk"
+  },
+  "ruby-server-sdk-ai": {
+    "github": "launchdarkly/ruby-server-sdk-ai"
   },
   "rust-server-sdk": {
     "github": "launchdarkly/rust-server-sdk"

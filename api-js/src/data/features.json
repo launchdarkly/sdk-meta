@@ -594,6 +594,33 @@
       "removed": null
     }
   },
+  "dotnet-server-sdk-ai": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.11",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.12",
+      "removed": null
+    },
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiJudgeConfig": {
+      "deprecated": null,
+      "introduced": "0.11",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
   "electron": {
     "allFlags": {
       "deprecated": null,
@@ -989,6 +1016,33 @@
       "removed": null
     }
   },
+  "go-server-sdk-ai": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.10",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.10",
+      "removed": null
+    },
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiJudgeConfig": {
+      "deprecated": null,
+      "introduced": "0.8",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
   "haskell-server-sdk": {
     "allFlags": {
       "deprecated": null,
@@ -1210,6 +1264,33 @@
     "webProxy": {
       "deprecated": null,
       "introduced": "1.0",
+      "removed": null
+    }
+  },
+  "java-server-sdk-ai": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.2",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.2",
+      "removed": null
+    },
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.2",
+      "removed": null
+    },
+    "aiJudgeConfig": {
+      "deprecated": null,
+      "introduced": "0.2",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.2",
       "removed": null
     }
   },
@@ -1768,6 +1849,33 @@
       "removed": null
     }
   },
+  "python-server-sdk-ai": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.10",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.13",
+      "removed": null
+    },
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiJudgeConfig": {
+      "deprecated": null,
+      "introduced": "0.11",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
   "react-client-sdk": {
     "allFlags": {
       "deprecated": null,
@@ -2146,6 +2254,18 @@
       "removed": null
     }
   },
+  "ruby-server-sdk-ai": {
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
   "rust-server-sdk": {
     "allFlags": {
       "deprecated": null,
@@ -2239,6 +2359,11 @@
       "introduced": "0.11",
       "removed": null
     },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.17",
+      "removed": null
+    },
     "aiCompletionConfig": {
       "deprecated": null,
       "introduced": "0.1",
@@ -2250,21 +2375,6 @@
       "removed": null
     },
     "aiTrackMetrics": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "contexts": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "experimentation": {
-      "deprecated": null,
-      "introduced": "0.1",
-      "removed": null
-    },
-    "privateAttrs": {
       "deprecated": null,
       "introduced": "0.1",
       "removed": null

@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "sdks": {
+    "ruby-server-sdk-ai": {
+      "name": "Ruby Server AI SDK",
+      "type": "ai",
+      "languages": ["Ruby"],
+      "aiSdkNames": ["launchdarkly-server-sdk-ai"],
+      "features": {
+        "aiCompletionConfig": { "introduced": "0.1" },
+        "aiTrackMetrics":     { "introduced": "0.1" }
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "sdks": {
+    "go-server-sdk-ai": {
+      "name": "Go Server AI SDK",
+      "type": "ai",
+      "languages": ["Go"],
+      "aiSdkNames": ["go-server-sdk-ai", "go-server-sdk/ldai"],
+      "features": {
+        "aiAgentConfig":      { "introduced": "0.10" },
+        "aiAgentGraph":       { "introduced": "0.10" },
+        "aiCompletionConfig": { "introduced": "0.1" },
+        "aiJudgeConfig":      { "introduced": "0.8" },
+        "aiTrackMetrics":     { "introduced": "0.1" }
+      }
+    }
+  }
+}
