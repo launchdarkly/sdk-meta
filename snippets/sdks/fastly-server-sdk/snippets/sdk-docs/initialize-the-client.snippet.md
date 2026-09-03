@@ -18,13 +18,14 @@ addEventListener('fetch', (event: FetchEvent) => {
   event.respondWith(handleRequest(event));
 });
 
-async function handleRequest(event: FetchEvent) {
+async function handleRequest(event: FetchEvent): Promise<Response> {
   const ldClient = init('example-client-side-id', store, {
     eventsBackendName: EVENTS_BACKEND_NAME,
   });
 
-  await ldClient.waitForInitialization({ timeoutSeconds: 5 });
+  await ldClient.waitForInitialization({ timeout: 5 });
 
   // The rest of your handler code goes here
+  return new Response('OK'); // Replace with your actual response logic
 }
 ```
