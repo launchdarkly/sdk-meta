@@ -5,15 +5,16 @@ kind: scaffold
 lang: python
 file: main.py
 description: |
-  Async variant of python-syntax-only. It parses the wrappee body without
-  running it, and it allows a top-level `await` (through
-  ast.PyCF_ALLOW_TOP_LEVEL_AWAIT). Use it for async snippets whose runtime
-  context cannot run in the validator — the async client needs a running
-  event loop and a real SDK key. It catches SyntaxError, indentation bugs,
-  and malformed strings, but NOT ImportError or AttributeError on API calls.
+  Lite validator that parses the wrappee body without executing it, and
+  allows a top-level `await` (through ast.PyCF_ALLOW_TOP_LEVEL_AWAIT). Use
+  for async snippets whose runtime context can't be reproduced in the
+  validator — they need a running event loop and a real SDK key. Catches
+  SyntaxError, indentation bugs, and malformed strings — but NOT ImportError
+  or AttributeError on API calls. Pair this with full execution validation
+  elsewhere when the runtime is available.
 
-  Implementation: the wrappee body goes inside a single-quoted raw
-  triple-string. A wrappee body that contains a literal triple-quote would
+  Implementation: the wrappee body is embedded inside a single-quoted raw
+  triple-string. A wrappee body containing a literal triple-quote would
   break this scaffold; none of the docs snippets we ship today do.
 inputs:
   body:
