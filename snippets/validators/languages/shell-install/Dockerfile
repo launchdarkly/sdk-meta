@@ -62,9 +62,9 @@ ENV GOFLAGS=-mod=mod
 # yarn 1 is the classic line that every install snippet uses.
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 RUN . /versions/npm.env && npm install -g npm@"$NPM_VERSION" \
- && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
+ && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\nmin-release-age-exclude[]=highlight.run\n' > /root/.npmrc
 RUN mkdir -p /root/.config/pnpm \
- && printf "minimumReleaseAge: 4320\nminimumReleaseAgeExclude:\n  - '@launchdarkly/*'\n  - 'launchdarkly-*'\n" > /root/.config/pnpm/config.yaml
+ && printf "minimumReleaseAge: 4320\nminimumReleaseAgeExclude:\n  - '@launchdarkly/*'\n  - 'launchdarkly-*'\n  - 'highlight.run'\n" > /root/.config/pnpm/config.yaml
 RUN . /versions/npm.env && corepack enable \
  && corepack prepare pnpm@"$PNPM_VERSION" --activate \
  && corepack prepare yarn@"$YARN_VERSION" --activate

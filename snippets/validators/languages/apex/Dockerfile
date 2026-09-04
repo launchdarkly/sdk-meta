@@ -16,7 +16,7 @@ FROM ${NODE_BOOKWORM_SLIM_IMAGE}
 
 COPY shared/versions/npm.env /versions/npm.env
 RUN . /versions/npm.env && npm install -g npm@"$NPM_VERSION" \
- && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
+ && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\nmin-release-age-exclude[]=highlight.run\n' > /root/.npmrc
 
 # prettier-plugin-apex's apex-ast-serializer requires Java 11+. The
 # bookworm default JRE is 17, which it runs under cleanly.

@@ -3,7 +3,7 @@ FROM ${PLAYWRIGHT_IMAGE}
 
 COPY shared/versions/npm.env /versions/npm.env
 RUN . /versions/npm.env && npm install -g npm@"$NPM_VERSION" \
- && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
+ && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\nmin-release-age-exclude[]=highlight.run\n' > /root/.npmrc
 
 # Pre-bake a minimal tsdown project with the LD JavaScript browser SDK
 # installed. Per-validate cycles drop src/app.ts and index.html from the
