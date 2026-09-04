@@ -115,6 +115,7 @@ INSERT INTO sdk_type_info (type, description) VALUES
                                               ('client-side', 'Primarily used for user-facing application.'),
                                               ('edge', 'Primarily used to delivery flag payloads to edge services.'),
                                               ('ai', 'Used for AI/ML integrations.'),
+                                              ('ai-provider', 'A provider integration for an AI SDK, such as an OpenAI or Anthropic handler.'),
                                               ('open-feature-provider', 'Used for OpenFeature providers.'),
                                               ('relay', 'Special case for Relay Proxy.'),
                                               ('server-side', 'Primarily used for server-side applications.');

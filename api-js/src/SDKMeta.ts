@@ -16,6 +16,8 @@ export enum Type {
     Edge = "edge",
     // AI is an SDK that is primarily focused on AI/ML use cases.
     AI = "ai",
+    // AIProvider is a provider integration for an AI SDK, such as an OpenAI or Anthropic handler.
+    AIProvider = "ai-provider",
     // OpenFeatureProvider is an OpenFeature provider.
     OpenFeatureProvider = "open-feature-provider",
     // Relay is Relay Proxy.

@@ -53,6 +53,9 @@ const (
 	EdgeType Type = "edge"
 	// AIType is an SDK that is primarily focused on AI/ML use cases.
 	AIType Type = "ai"
+	// AIProviderType is a provider integration for an AI SDK, such as an OpenAI or
+	// Anthropic handler.
+	AIProviderType Type = "ai-provider"
 	// OpenFeatureProviderType is an OpenFeature provider.
 	OpenFeatureProviderType Type = "open-feature-provider"
 	// RelayType is Relay Proxy.
