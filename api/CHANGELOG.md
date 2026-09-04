@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.7.0](https://github.com/launchdarkly/sdk-meta/compare/api/v0.6.0...api/v0.7.0) (2026-09-04)
+
+
+### Features
+
+* Add ai-provider SDK type ([#614](https://github.com/launchdarkly/sdk-meta/issues/614)) ([d5235cc](https://github.com/launchdarkly/sdk-meta/commit/d5235cc4544733120d7467f5a816cabba88c68e9))
+
+
+### Bug Fixes
+
+* **metadata:** ingest new data and regenerate products ([#615](https://github.com/launchdarkly/sdk-meta/issues/615)) ([fe09c1f](https://github.com/launchdarkly/sdk-meta/commit/fe09c1f9ce939c262cc2b99e448ecdc96f65398a))
+* **metadata:** ingest new data and regenerate products ([#620](https://github.com/launchdarkly/sdk-meta/issues/620)) ([890b671](https://github.com/launchdarkly/sdk-meta/commit/890b67130df78dd1fa5fc94842e81867ab68a7e6))
+
 ## [0.6.0](https://github.com/launchdarkly/sdk-meta/compare/api/v0.5.0...api/v0.6.0) (2026-09-02)
 
 
