@@ -9,7 +9,6 @@ validation:
 ---
 
 ```python
-from ldclient import Context
 from ldclient.async_client import AsyncLDClient
 from ldclient.async_config import AsyncConfig
 ```

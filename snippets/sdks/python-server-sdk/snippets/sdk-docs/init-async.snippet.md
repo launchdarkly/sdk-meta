@@ -9,8 +9,6 @@ validation:
 ---
 
 ```python
-# The async client is experimental. It is not recommended for production use,
-# and its API may change or be removed in a future release.
 client = AsyncLDClient(AsyncConfig("YOUR_SDK_KEY"))
 await client.start()
 
