@@ -5,7 +5,7 @@ kind: reference
 lang: typescript
 description: BasicLogger debug-level configuration example for Fastly.
 validation:
-  scaffold: fastly-server-sdk/scaffolds/fastly-syntax-only
+  scaffold: fastly-server-sdk/scaffolds/edge-fastly-toplevel
 
 ---
 

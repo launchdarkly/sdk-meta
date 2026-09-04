@@ -10,7 +10,7 @@ validation:
 ---
 
 ```ts
-import type { LDContext } from '@launchdarkly/js-server-sdk-common';
+import type { LDContext } from '@launchdarkly/fastly-server-sdk';
 
 // ldClient is the LDClient instance created in the previous step
 const ldContext: LDContext = {

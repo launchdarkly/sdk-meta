@@ -5,7 +5,7 @@ kind: reference
 lang: typescript
 description: SDK configuration example for Fastly.
 validation:
-  scaffold: fastly-server-sdk/scaffolds/fastly-syntax-only
+  scaffold: fastly-server-sdk/scaffolds/edge-fastly-toplevel
 
 ---
 

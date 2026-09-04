@@ -10,8 +10,8 @@ validation:
 
 ```js
   import { createClient } from '@launchdarkly/js-client-sdk';
-  import { Observability } from '@launchdarkly/observability';
-  import { SessionReplay } from '@launchdarkly/session-replay';
+  import Observability from '@launchdarkly/observability';
+  import SessionReplay from '@launchdarkly/session-replay';
 
   // Create client
   const client = createClient('example-client-side-id', context, options);
