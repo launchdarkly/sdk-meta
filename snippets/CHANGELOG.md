@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.26.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.25.0...snippets/v0.26.0) (2026-09-04)
+
+
+### Features
+
+* Add async docs snippets for the Python server SDK ([#617](https://github.com/launchdarkly/sdk-meta/issues/617)) ([4a028b0](https://github.com/launchdarkly/sdk-meta/commit/4a028b0e01f700c4d5ce5bd4d7f0532018544cef))
+
+
+### Bug Fixes
+
+* Exclude highlight.run from the npm and pnpm release-age cooldown ([#619](https://github.com/launchdarkly/sdk-meta/issues/619)) ([0f18ea7](https://github.com/launchdarkly/sdk-meta/commit/0f18ea789f6fcbda6278c03b4ba42d4be48a8a31))
+* **snippets:** updates code snippets to match docs update ([#618](https://github.com/launchdarkly/sdk-meta/issues/618)) ([43a8991](https://github.com/launchdarkly/sdk-meta/commit/43a8991829938a61fb7ddeeeee957557e0d479b5))
+
 ## [0.25.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.24.1...snippets/v0.25.0) (2026-08-27)
 
 
