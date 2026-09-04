@@ -3,7 +3,7 @@ FROM ${NODE_BOOKWORM_IMAGE}
 
 COPY shared/versions/npm.env /versions/npm.env
 RUN . /versions/npm.env && npm install -g npm@"$NPM_VERSION" \
- && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\n' > /root/.npmrc
+ && printf 'min-release-age=3\nmin-release-age-exclude[]=@launchdarkly/*\nmin-release-age-exclude[]=launchdarkly-*\nmin-release-age-exclude[]=highlight.run\n' > /root/.npmrc
 
 # React Native's jest setup pulls in a long tail of transitive deps;
 # pre-bake them so per-validate cycles only re-run jest with the
