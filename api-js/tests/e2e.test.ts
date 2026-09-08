@@ -1,5 +1,6 @@
 import { Names, Repos, Types, Type, Popularity, Languages, Releases, ReleaseHelpers, AISDKIdentifiers, AISDKHelpers } from '../src/SDKMeta';
 import { UserAgents, UserAgentHelpers } from '../src/SDKMeta';
+import rawSdkTypes from '../src/data/types.json';
 
 test('names', () => {
     expect(Names['node-server']).toBe('Node.js Server SDK');
@@ -140,7 +141,7 @@ describe('AISDKHelpers.resolveSDKID', () => {
     it('resolves every registered identifier back to its SDK', () => {
         for (const [sdkId, identifiers] of Object.entries(AISDKIdentifiers)) {
             expect(Names[sdkId]).toBeDefined();
-            expect(Types[sdkId]).toBe(Type.AI);
+            expect([Type.AI, Type.AIProvider]).toContain(Types[sdkId]);
             for (const identifier of identifiers) {
                 expect(AISDKHelpers.resolveSDKID(identifier.name, identifier.language)).toBe(sdkId);
             }
@@ -154,5 +155,16 @@ describe('AISDKHelpers.resolveSDKID', () => {
     it('requires the language to disambiguate', () => {
         // The Python and Ruby AI SDKs report the same package name.
         expect(AISDKHelpers.resolveSDKID('launchdarkly-server-sdk-ai', '')).toBeUndefined();
+    });
+});
+
+describe('Type vocabulary', () => {
+    // Types coerces an unrecognized value to Type.Unknown, so the raw data is what
+    // reveals a type that shipped without an enum member.
+    it('every type in the data has an enum member', () => {
+        const raw: Record<string, string> = rawSdkTypes;
+        for (const [sdkId, value] of Object.entries(raw)) {
+            expect(Object.values(Type)).toContain(value);
+        }
     });
 });
