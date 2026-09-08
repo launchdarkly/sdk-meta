@@ -110,7 +110,8 @@
   },
   "python-server-sdk": {
     "userAgents": [
-      "PythonClient"
+      "PythonClient",
+      "PythonAsyncClient"
     ]
   },
   "react-client-sdk": {
