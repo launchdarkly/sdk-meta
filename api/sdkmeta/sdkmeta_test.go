@@ -145,7 +145,8 @@ func TestAISDKIdentifierMapResolveSDKID(t *testing.T) {
 	t.Run("every identifier resolves to a known SDK", func(t *testing.T) {
 		for sdkID, identifiers := range AISDKIdentifiers {
 			assert.Contains(t, Names, sdkID, "AI SDK %s is missing from names", sdkID)
-			assert.Equal(t, AIType, Types[sdkID], "AI SDK %s should be typed ai", sdkID)
+			assert.Contains(t, []Type{AIType, AIProviderType}, Types[sdkID],
+				"AI SDK %s must be an AI type", sdkID)
 			for _, identifier := range identifiers {
 				resolved, found := AISDKIdentifiers.ResolveSDKID(identifier.Name, identifier.Language)
 				assert.True(t, found)
@@ -184,5 +185,22 @@ func TestAISDKIdentifierLanguagePattern(t *testing.T) {
 	for language := range seen {
 		assert.Regexp(t, pattern, strings.ToLower(language),
 			"lowercased %q must match the ai_sdk_identifiers language pattern", language)
+	}
+}
+
+// A type that reaches the data without an exported constant is invisible to
+// consumers: they compare against constants and never match.
+func TestTypesHaveConstants(t *testing.T) {
+	constants := map[Type]bool{
+		ClientSideType:          true,
+		ServerSideType:          true,
+		EdgeType:                true,
+		AIType:                  true,
+		AIProviderType:          true,
+		RelayType:               true,
+		OpenFeatureProviderType: true,
+	}
+	for sdkID, sdkType := range Types {
+		assert.True(t, constants[sdkType], "type %q on %s has no exported constant", sdkType, sdkID)
 	}
 }
