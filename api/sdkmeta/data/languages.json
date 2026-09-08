@@ -69,6 +69,38 @@
   "java-server-sdk-ai": [
     "Java"
   ],
+  "js-ai-claude-agents": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "js-ai-claude-messages": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "js-ai-langchain-agents": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "js-ai-langchain-messages": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "js-ai-node": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "js-ai-openai-agents": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "js-ai-openai-messages": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "js-ai-server": [
+    "JavaScript",
+    "TypeScript"
+  ],
   "js-client-sdk": [
     "JavaScript",
     "TypeScript"
@@ -86,6 +118,30 @@
   ],
   "php-server-sdk": [
     "PHP"
+  ],
+  "python-ai": [
+    "Python"
+  ],
+  "python-ai-claude-agents": [
+    "Python"
+  ],
+  "python-ai-claude-messages": [
+    "Python"
+  ],
+  "python-ai-langchain-agents": [
+    "Python"
+  ],
+  "python-ai-langchain-messages": [
+    "Python"
+  ],
+  "python-ai-openai-agents": [
+    "Python"
+  ],
+  "python-ai-openai-messages": [
+    "Python"
+  ],
+  "python-ai-server": [
+    "Python"
   ],
   "python-server-sdk": [
     "Python"

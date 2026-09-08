@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "sdks": {
+    "js-ai-server": {
+      "name": "JavaScript AI SDK",
+      "type": "ai",
+      "path": "packages/client",
+      "languages": ["JavaScript", "TypeScript"],
+      "aiSdkNames": ["@launchdarkly/ai-server"],
+      "releases": { "tag-prefix": "@launchdarkly/ai-server-" },
+      "features": {
+        "aiAgentConfig": { "introduced": "0.1" },
+        "aiAgentGraph": { "introduced": "0.1" },
+        "aiCompletionConfig": { "introduced": "0.1" },
+        "aiJudgeConfig": { "introduced": "0.1" },
+        "aiTrackMetrics": { "introduced": "0.1" }
+      }
+    },
+    "js-ai-node": {
+      "name": "JavaScript AI SDK for Node.js",
+      "type": "ai",
+      "path": "packages/ai-node",
+      "languages": ["JavaScript", "TypeScript"],
+      "aiSdkNames": ["@launchdarkly/ai-node"],
+      "releases": { "tag-prefix": "@launchdarkly/ai-node-" },
+      "features": {
+        "aiAgentConfig": { "introduced": "0.1" },
+        "aiAgentGraph": { "introduced": "0.1" },
+        "aiCompletionConfig": { "introduced": "0.1" },
+        "aiJudgeConfig": { "introduced": "0.1" },
+        "aiTrackMetrics": { "introduced": "0.1" }
+      }
+    },
+    "js-ai-openai-messages": {
+      "name": "JavaScript AI SDK for OpenAI Messages",
+      "type": "ai-provider",
+      "path": "packages/openai-messages",
+      "languages": ["JavaScript", "TypeScript"],
+      "aiSdkNames": ["@launchdarkly/ai-openai-messages"],
+      "releases": { "tag-prefix": "@launchdarkly/ai-openai-messages-" },
+      "features": {
+        "aiCompletionConfig": { "introduced": "0.1" }
+      }
+    },
+    "js-ai-openai-agents": {
+      "name": "JavaScript AI SDK for OpenAI Agents",
+      "type": "ai-provider",
+      "path": "packages/openai-agents",
+      "languages": ["JavaScript", "TypeScript"],
+      "aiSdkNames": ["@launchdarkly/ai-openai-agents"],
+      "releases": { "tag-prefix": "@launchdarkly/ai-openai-agents-" },
+      "features": {
+        "aiAgentConfig": { "introduced": "0.1" },
+        "aiAgentGraph": { "introduced": "0.1" },
+        "aiTrackMetrics": { "introduced": "0.1" }
+      }
+    },
+    "js-ai-claude-messages": {
+      "name": "JavaScript AI SDK for Claude Messages",
+      "type": "ai-provider",
+      "path": "packages/claude-messages",
+      "languages": ["JavaScript", "TypeScript"],
+      "aiSdkNames": ["@launchdarkly/ai-claude-messages"],
+      "releases": { "tag-prefix": "@launchdarkly/ai-claude-messages-" },
+      "features": {
+        "aiCompletionConfig": { "introduced": "0.1" }
+      }
+    },
+    "js-ai-claude-agents": {
+      "name": "JavaScript AI SDK for Claude Agents",
+      "type": "ai-provider",
+      "path": "packages/claude-agents",
+      "languages": ["JavaScript", "TypeScript"],
+      "aiSdkNames": ["@launchdarkly/ai-claude-agents"],
+      "releases": { "tag-prefix": "@launchdarkly/ai-claude-agents-" },
+      "features": {
+        "aiAgentConfig": { "introduced": "0.1" },
+        "aiAgentGraph": { "introduced": "0.1" },
+        "aiTrackMetrics": { "introduced": "0.1" }
+      }
+    },
+    "js-ai-langchain-messages": {
+      "name": "JavaScript AI SDK for LangChain Messages",
+      "type": "ai-provider",
+      "path": "packages/langchain-messages",
+      "languages": ["JavaScript", "TypeScript"],
+      "aiSdkNames": ["@launchdarkly/ai-langchain-messages"],
+      "releases": { "tag-prefix": "@launchdarkly/ai-langchain-messages-" },
+      "features": {
+        "aiCompletionConfig": { "introduced": "0.1" }
+      }
+    },
+    "js-ai-langchain-agents": {
+      "name": "JavaScript AI SDK for LangChain Agents",
+      "type": "ai-provider",
+      "path": "packages/langchain-agents",
+      "languages": ["JavaScript", "TypeScript"],
+      "aiSdkNames": ["@launchdarkly/ai-langchain-agents"],
+      "releases": { "tag-prefix": "@launchdarkly/ai-langchain-agents-" },
+      "features": {
+        "aiAgentConfig": { "introduced": "0.1" },
+        "aiAgentGraph": { "introduced": "0.1" },
+        "aiTrackMetrics": { "introduced": "0.1" }
+      }
+    }
+  }
+}

@@ -59,6 +59,30 @@
   "java-server-sdk-ai": {
     "github": "launchdarkly/java-core"
   },
+  "js-ai-claude-agents": {
+    "github": "launchdarkly/js-ai-sdk"
+  },
+  "js-ai-claude-messages": {
+    "github": "launchdarkly/js-ai-sdk"
+  },
+  "js-ai-langchain-agents": {
+    "github": "launchdarkly/js-ai-sdk"
+  },
+  "js-ai-langchain-messages": {
+    "github": "launchdarkly/js-ai-sdk"
+  },
+  "js-ai-node": {
+    "github": "launchdarkly/js-ai-sdk"
+  },
+  "js-ai-openai-agents": {
+    "github": "launchdarkly/js-ai-sdk"
+  },
+  "js-ai-openai-messages": {
+    "github": "launchdarkly/js-ai-sdk"
+  },
+  "js-ai-server": {
+    "github": "launchdarkly/js-ai-sdk"
+  },
   "js-client-sdk": {
     "github": "launchdarkly/js-client-sdk"
   },
@@ -73,6 +97,30 @@
   },
   "php-server-sdk": {
     "github": "launchdarkly/php-server-sdk"
+  },
+  "python-ai": {
+    "github": "launchdarkly/python-ai-sdk"
+  },
+  "python-ai-claude-agents": {
+    "github": "launchdarkly/python-ai-sdk"
+  },
+  "python-ai-claude-messages": {
+    "github": "launchdarkly/python-ai-sdk"
+  },
+  "python-ai-langchain-agents": {
+    "github": "launchdarkly/python-ai-sdk"
+  },
+  "python-ai-langchain-messages": {
+    "github": "launchdarkly/python-ai-sdk"
+  },
+  "python-ai-openai-agents": {
+    "github": "launchdarkly/python-ai-sdk"
+  },
+  "python-ai-openai-messages": {
+    "github": "launchdarkly/python-ai-sdk"
+  },
+  "python-ai-server": {
+    "github": "launchdarkly/python-ai-sdk"
   },
   "python-server-sdk": {
     "github": "launchdarkly/python-server-sdk"
