@@ -6,6 +6,8 @@ on:
 env:
   DB_NAME: metadata.sqlite3
   METADATA_DIR: metadata
+  SQLITE_TOOLS_URL: https://sqlite.org/2026/sqlite-tools-linux-x64-3530400.zip
+  SQLITE_TOOLS_SHA256: 7a6f4d1720e4bc13faa3d934bfce37b816a496c0a2480deacd64cfd8be6cf224
 jobs:
   crawl:
     runs-on: ubuntu-latest
@@ -17,10 +19,23 @@ jobs:
       - uses: actions/setup-go@v5
         with:
             go-version: 1.22
+            cache-dependency-path: tool/go.sum
+      - name: Cache sqldiff
+        id: sqldiff
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/bin/sqldiff
+          key: sqldiff-${{ runner.os }}-${{ env.SQLITE_TOOLS_SHA256 }}
       - name: Install sqldiff
+        if: steps.sqldiff.outputs.cache-hit != 'true'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y sqlite3-tools
+          set -euo pipefail
+          mkdir -p ~/.local/bin
+          curl -fsSL --retry 5 --retry-all-errors -o /tmp/sqlite-tools.zip "$SQLITE_TOOLS_URL"
+          echo "$SQLITE_TOOLS_SHA256  /tmp/sqlite-tools.zip" | sha256sum -c -
+          unzip -oj /tmp/sqlite-tools.zip sqldiff -d ~/.local/bin
+      - name: Put sqldiff on PATH
+        run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - name: Crawl repos
         id: crawl
         env:
