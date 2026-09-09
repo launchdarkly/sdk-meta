@@ -11,5 +11,5 @@ validation:
 
 ```shell
 go get github.com/launchdarkly/go-server-sdk/v7
-go get github.com/launchdarkly/go-server-sdk/ldai
+go get github.com/launchdarkly/go-server-sdk-ai
 ```
