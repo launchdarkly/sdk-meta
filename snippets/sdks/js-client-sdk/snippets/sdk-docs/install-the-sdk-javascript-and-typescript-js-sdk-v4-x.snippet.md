@@ -15,8 +15,8 @@ description: "JavaScript and TypeScript, JS SDK v4.x in section \"Install the SD
 const LDClient = require('@launchdarkly/js-client-sdk');
 
 // Using ES2015 modules (modern JavaScript environments and most bundlers)
-import LDClient from '@launchdarkly/js-client-sdk';
+import * as LDClient from '@launchdarkly/js-client-sdk';
 
 // Using TypeScript (same as ES modules, with type support)
-import LDClient from '@launchdarkly/js-client-sdk';
+import * as LDClient from '@launchdarkly/js-client-sdk';
 ```

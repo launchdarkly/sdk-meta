@@ -5,7 +5,7 @@ kind: reference
 lang: typescript
 description: Anonymous context example for Cloudflare.
 validation:
-  scaffold: cloudflare-server-sdk/scaffolds/cloudflare-syntax-only
+  scaffold: cloudflare-server-sdk/scaffolds/edge-cloudflare-toplevel
 ---
 
 ```typescript

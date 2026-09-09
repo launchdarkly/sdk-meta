@@ -3,16 +3,16 @@ id: fastly-server-sdk/sdk-docs/features/logging/logging
 sdk: fastly-server-sdk
 kind: reference
 lang: typescript
-description: BasicLogger debug-level configuration example for Fastly.
+description: basicLogger debug-level configuration example for Fastly.
 validation:
-  scaffold: fastly-server-sdk/scaffolds/fastly-syntax-only
+  scaffold: fastly-server-sdk/scaffolds/edge-fastly-toplevel
 
 ---
 
 ```typescript
-import { BasicLogger, LDOptions } from '@launchdarkly/fastly-server-sdk';
+import { basicLogger, LDOptions } from '@launchdarkly/fastly-server-sdk';
 
 const options: LDOptions = {
-  logger: new BasicLogger({ level: 'debug', }),
+  logger: basicLogger({ level: 'debug' }),
 };
 ```

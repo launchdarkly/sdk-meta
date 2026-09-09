@@ -5,13 +5,13 @@ kind: reference
 lang: typescript
 description: SDK configuration example for Fastly.
 validation:
-  scaffold: fastly-server-sdk/scaffolds/fastly-syntax-only
+  scaffold: fastly-server-sdk/scaffolds/edge-fastly-toplevel
 
 ---
 
 ```ts
 import { KVStore } from 'fastly:kv-store';
-import { init, LDOptions } from '@launchdarkly/fastly-server-sdk';
+import { init } from '@launchdarkly/fastly-server-sdk';
 
 const KV_STORE_NAME = 'launchdarkly';
 const EVENTS_BACKEND_NAME = 'launchdarkly';

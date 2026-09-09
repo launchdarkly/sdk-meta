@@ -5,7 +5,7 @@ kind: reference
 lang: typescript
 description: Anonymous context example for Vercel.
 validation:
-  scaffold: vercel-server-sdk/scaffolds/vercel-syntax-only
+  scaffold: vercel-server-sdk/scaffolds/edge-vercel-toplevel
 ---
 
 ```typescript

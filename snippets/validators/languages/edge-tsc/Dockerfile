@@ -19,6 +19,11 @@ RUN . /versions/npm.env && npm install -g npm@"$NPM_VERSION" \
 
 # Pin so the validator is reproducible; bump for newer TS syntax support.
 ARG EDGE_TSC_TYPESCRIPT_VERSION
+ARG LD_AKAMAI_EDGEKV_SDK_VERSION
+ARG LD_CLOUDFLARE_SDK_VERSION
+ARG LD_FASTLY_SDK_VERSION
+ARG LD_VERCEL_SDK_VERSION
+ARG LD_JS_SERVER_SDK_COMMON_VERSION
 
 WORKDIR /opt/edge-tsc
 # --legacy-peer-deps: the four edge SDKs pin overlapping ranges of the
@@ -28,11 +33,11 @@ WORKDIR /opt/edge-tsc
 RUN npm init -y >/dev/null 2>&1 \
     && npm install --no-audit --no-fund --no-progress --legacy-peer-deps \
         typescript@${EDGE_TSC_TYPESCRIPT_VERSION} \
-        @launchdarkly/akamai-server-edgekv-sdk \
-        @launchdarkly/cloudflare-server-sdk \
-        @launchdarkly/fastly-server-sdk \
-        @launchdarkly/vercel-server-sdk \
-        @launchdarkly/js-server-sdk-common \
+        @launchdarkly/akamai-server-edgekv-sdk@${LD_AKAMAI_EDGEKV_SDK_VERSION} \
+        @launchdarkly/cloudflare-server-sdk@${LD_CLOUDFLARE_SDK_VERSION} \
+        @launchdarkly/fastly-server-sdk@${LD_FASTLY_SDK_VERSION} \
+        @launchdarkly/vercel-server-sdk@${LD_VERCEL_SDK_VERSION} \
+        @launchdarkly/js-server-sdk-common@${LD_JS_SERVER_SDK_COMMON_VERSION} \
         @vercel/edge-config \
         @cloudflare/workers-types \
         @fastly/js-compute \

@@ -5,11 +5,11 @@ kind: reference
 lang: typescript
 description: Anonymous context example for Akamai.
 validation:
-  scaffold: akamai-server-edgekv-sdk/scaffolds/akamai-syntax-only
+  scaffold: akamai-server-edgekv-sdk/scaffolds/edge-akamai-toplevel
 ---
 
 ```typescript
-import { LDContext } from '@launchdarkly/akamai-edgeworker-sdk-common';
+import type { LDContext } from '@launchdarkly/akamai-server-edgekv-sdk';
 
 const anonymousContext: LDContext = { kind: 'user', key: 'example-user-key', anonymous: true };
 ```

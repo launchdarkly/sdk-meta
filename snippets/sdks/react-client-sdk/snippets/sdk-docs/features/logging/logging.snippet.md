@@ -10,7 +10,7 @@ validation:
 ---
 
 ```javascript
-import { basicLogger } from 'launchdarkly-js-client-sdk';
+import { basicLogger, withLDProvider } from 'launchdarkly-react-client-sdk';
 
 export default withLDProvider({
   clientSideID: 'example-client-side-id',
