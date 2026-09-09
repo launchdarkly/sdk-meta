@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.7.1](https://github.com/launchdarkly/sdk-meta/compare/api/v0.7.0...api/v0.7.1) (2026-09-09)
+
+
+### Bug Fixes
+
+* Assert the AI type family and cover the type vocabulary ([#625](https://github.com/launchdarkly/sdk-meta/issues/625)) ([f467e52](https://github.com/launchdarkly/sdk-meta/commit/f467e520de14a2590b64c07037e6f92427b759a1))
+* **metadata:** ingest new data and regenerate products ([#622](https://github.com/launchdarkly/sdk-meta/issues/622)) ([3674c66](https://github.com/launchdarkly/sdk-meta/commit/3674c6684733c7740dd44b0c6ef10e87df100512))
+* **metadata:** ingest new data and regenerate products ([#624](https://github.com/launchdarkly/sdk-meta/issues/624)) ([9e6a1d7](https://github.com/launchdarkly/sdk-meta/commit/9e6a1d70b764bff0ee3e9e20bb1a402e61333e94))
+
 ## [0.7.0](https://github.com/launchdarkly/sdk-meta/compare/api/v0.6.0...api/v0.7.0) (2026-09-04)
 
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.26.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.26.0...snippets/v0.26.1) (2026-09-09)
+
+
+### Bug Fixes
+
+* **snippets:** Import JS SDK types from each SDK's own package ([#626](https://github.com/launchdarkly/sdk-meta/issues/626)) ([18a3b33](https://github.com/launchdarkly/sdk-meta/commit/18a3b334591510721798aaaaad391bd48db85822))
+* **snippets:** Tidy up the async docs snippets ([#621](https://github.com/launchdarkly/sdk-meta/issues/621)) ([5830060](https://github.com/launchdarkly/sdk-meta/commit/58300607a4214c2aecc05012403d478cae1f7f04))
+* **snippets:** unbreak erlang and haskell validator image builds ([#629](https://github.com/launchdarkly/sdk-meta/issues/629)) ([eea593f](https://github.com/launchdarkly/sdk-meta/commit/eea593f6f922778e81c95dd62d9f6b5de8a58b12))
+
 ## [0.26.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.25.0...snippets/v0.26.0) (2026-09-04)
 
 
