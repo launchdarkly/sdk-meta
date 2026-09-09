@@ -2,7 +2,10 @@ ARG HASKELL_IMAGE
 FROM ${HASKELL_IMAGE}
 
 # launchdarkly-server-sdk's transitive deps need libpcre + zlib + openssl.
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# bullseye-security no longer publishes a fresh Release file, so apt must not
+# treat the expired metadata as fatal.
+RUN apt-get -o Acquire::Check-Valid-Until=false update \
+    && apt-get install -y --no-install-recommends \
         libpcre3-dev zlib1g-dev libssl-dev \
         ca-certificates \
     && rm -rf /var/lib/apt/lists/*
