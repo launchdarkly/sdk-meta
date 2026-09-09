@@ -1,14 +1,26 @@
-ARG HASKELL_IMAGE
-FROM ${HASKELL_IMAGE}
+ARG DEBIAN_BOOKWORM_SLIM_IMAGE
+FROM ${DEBIAN_BOOKWORM_SLIM_IMAGE}
 
-# launchdarkly-server-sdk's transitive deps need libpcre + zlib + openssl.
-# bullseye-security no longer publishes a fresh Release file, so apt must not
-# treat the expired metadata as fatal.
-RUN apt-get -o Acquire::Check-Valid-Until=false update \
-    && apt-get install -y --no-install-recommends \
+# launchdarkly-server-sdk-redis-hedis pins bytestring < 0.12, so this validator
+# needs GHC 9.6, whose only official haskell image variant is EOL bullseye;
+# ghcup installs the same toolchain onto a supported base instead.
+ARG GHC_VERSION
+ARG CABAL_VERSION
+ENV PATH=/root/.ghcup/bin:$PATH
+
+# launchdarkly-server-sdk's transitive deps need libpcre + zlib + openssl;
+# the rest is what ghcup's GHC bindist requires.
+RUN apt-get update && apt-get install -y --no-install-recommends \
         libpcre3-dev zlib1g-dev libssl-dev \
-        ca-certificates \
+        ca-certificates curl gcc g++ make libgmp-dev libnuma-dev \
+        libtinfo-dev xz-utils \
     && rm -rf /var/lib/apt/lists/*
+
+RUN curl -sSLf https://get-ghcup.haskell.org | \
+        BOOTSTRAP_HASKELL_NONINTERACTIVE=1 \
+        BOOTSTRAP_HASKELL_MINIMAL=1 sh \
+    && ghcup install ghc "${GHC_VERSION}" --set \
+    && ghcup install cabal "${CABAL_VERSION}" --set
 
 # Pre-build a cabal project mirroring what the snippet's `stack new` flow
 # produces, so per-validate cycles only recompile the user's Main.hs.
