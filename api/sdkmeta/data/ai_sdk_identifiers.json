@@ -21,6 +21,134 @@
       "name": "launchdarkly-java-server-sdk-ai"
     }
   ],
+  "js-ai-claude-agents": [
+    {
+      "language": "javascript",
+      "name": "@launchdarkly/ai-claude-agents"
+    },
+    {
+      "language": "typescript",
+      "name": "@launchdarkly/ai-claude-agents"
+    }
+  ],
+  "js-ai-claude-messages": [
+    {
+      "language": "javascript",
+      "name": "@launchdarkly/ai-claude-messages"
+    },
+    {
+      "language": "typescript",
+      "name": "@launchdarkly/ai-claude-messages"
+    }
+  ],
+  "js-ai-langchain-agents": [
+    {
+      "language": "javascript",
+      "name": "@launchdarkly/ai-langchain-agents"
+    },
+    {
+      "language": "typescript",
+      "name": "@launchdarkly/ai-langchain-agents"
+    }
+  ],
+  "js-ai-langchain-messages": [
+    {
+      "language": "javascript",
+      "name": "@launchdarkly/ai-langchain-messages"
+    },
+    {
+      "language": "typescript",
+      "name": "@launchdarkly/ai-langchain-messages"
+    }
+  ],
+  "js-ai-node": [
+    {
+      "language": "javascript",
+      "name": "@launchdarkly/ai-node"
+    },
+    {
+      "language": "typescript",
+      "name": "@launchdarkly/ai-node"
+    }
+  ],
+  "js-ai-openai-agents": [
+    {
+      "language": "javascript",
+      "name": "@launchdarkly/ai-openai-agents"
+    },
+    {
+      "language": "typescript",
+      "name": "@launchdarkly/ai-openai-agents"
+    }
+  ],
+  "js-ai-openai-messages": [
+    {
+      "language": "javascript",
+      "name": "@launchdarkly/ai-openai-messages"
+    },
+    {
+      "language": "typescript",
+      "name": "@launchdarkly/ai-openai-messages"
+    }
+  ],
+  "js-ai-server": [
+    {
+      "language": "javascript",
+      "name": "@launchdarkly/ai-server"
+    },
+    {
+      "language": "typescript",
+      "name": "@launchdarkly/ai-server"
+    }
+  ],
+  "python-ai": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-python"
+    }
+  ],
+  "python-ai-claude-agents": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-claude-agents"
+    }
+  ],
+  "python-ai-claude-messages": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-claude-messages"
+    }
+  ],
+  "python-ai-langchain-agents": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-langchain-agents"
+    }
+  ],
+  "python-ai-langchain-messages": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-langchain-messages"
+    }
+  ],
+  "python-ai-openai-agents": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-openai-agents"
+    }
+  ],
+  "python-ai-openai-messages": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-openai-messages"
+    }
+  ],
+  "python-ai-server": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-server"
+    }
+  ],
   "python-server-sdk-ai": [
     {
       "language": "python",

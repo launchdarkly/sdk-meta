@@ -1294,6 +1294,132 @@
       "removed": null
     }
   },
+  "js-ai-claude-agents": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "js-ai-claude-messages": {
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "js-ai-langchain-agents": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "js-ai-langchain-messages": {
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "js-ai-node": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiJudgeConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "js-ai-openai-agents": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "js-ai-openai-messages": {
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "js-ai-server": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiJudgeConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
   "lua-server-sdk": {
     "allFlags": {
       "deprecated": null,
@@ -1694,6 +1820,132 @@
     "variationDetail": {
       "deprecated": null,
       "introduced": "3.4",
+      "removed": null
+    }
+  },
+  "python-ai": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiJudgeConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "python-ai-claude-agents": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "python-ai-claude-messages": {
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "python-ai-langchain-agents": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "python-ai-langchain-messages": {
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "python-ai-openai-agents": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "python-ai-openai-messages": {
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "python-ai-server": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiJudgeConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
       "removed": null
     }
   },
