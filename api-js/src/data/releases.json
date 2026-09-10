@@ -326,9 +326,15 @@
   "apex-server-sdk": [
     {
       "major": 1,
+      "minor": 6,
+      "date": "2026-09-09T16:55:49Z",
+      "eol": null
+    },
+    {
+      "major": 1,
       "minor": 5,
       "date": "2026-05-29T19:36:23Z",
-      "eol": null
+      "eol": "2027-09-09T00:00:00Z"
     },
     {
       "major": 1,
@@ -4358,9 +4364,15 @@
   "ruby-server-sdk": [
     {
       "major": 8,
+      "minor": 17,
+      "date": "2026-09-09T15:38:51Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 16,
       "date": "2026-09-02T21:45:51Z",
-      "eol": null
+      "eol": "2027-09-09T00:00:00Z"
     },
     {
       "major": 8,
