@@ -1,5 +1,5 @@
 {
-  "same-repo": true,
+  "same-repo": false,
   "version": 1,
   "sdks": {
     "vue": {}
