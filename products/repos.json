@@ -165,6 +165,6 @@
     "github": "launchdarkly/js-core"
   },
   "vue": {
-    "github": "launchdarkly/vue-client-sdk"
+    "github": "launchdarkly/js-core"
   }
 }

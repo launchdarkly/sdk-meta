@@ -2952,9 +2952,15 @@
   "php-server-sdk": [
     {
       "major": 6,
+      "minor": 9,
+      "date": "2026-09-11T20:50:42Z",
+      "eol": null
+    },
+    {
+      "major": 6,
       "minor": 8,
       "date": "2026-04-28T13:27:13Z",
-      "eol": null
+      "eol": "2027-09-11T00:00:00Z"
     },
     {
       "major": 6,
@@ -5165,10 +5171,16 @@
   ],
   "vue": [
     {
+      "major": 3,
+      "minor": 0,
+      "date": "2026-09-11T15:41:45Z",
+      "eol": null
+    },
+    {
       "major": 2,
       "minor": 5,
       "date": "2026-03-20T20:36:31Z",
-      "eol": null
+      "eol": "2027-09-11T00:00:00Z"
     },
     {
       "major": 2,
