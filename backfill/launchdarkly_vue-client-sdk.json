@@ -2,6 +2,10 @@
   "same-repo": false,
   "version": 1,
   "sdks": {
-    "vue": {}
+    "vue": {
+      "releases": {
+        "tag-prefixes": ["", "launchdarkly-vue-client-sdk-"]
+      }
+    }
   }
 }
