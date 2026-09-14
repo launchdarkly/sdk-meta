@@ -2801,6 +2801,11 @@
       "introduced": "1.0",
       "removed": null
     },
+    "fdv2": {
+      "deprecated": null,
+      "introduced": "3.0",
+      "removed": null
+    },
     "flagChanges": {
       "deprecated": null,
       "introduced": "1.0",
