@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.26.2](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.26.1...snippets/v0.26.2) (2026-09-15)
+
+
+### Bug Fixes
+
+* Point Go AI Configs snippets at go-server-sdk-ai ([#631](https://github.com/launchdarkly/sdk-meta/issues/631)) ([0fd6fba](https://github.com/launchdarkly/sdk-meta/commit/0fd6fbac1c57639cc297bb887422359d5016bdc6))
+
 ## [0.26.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.26.0...snippets/v0.26.1) (2026-09-09)
 
 
