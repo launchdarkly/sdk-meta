@@ -10,9 +10,10 @@ validation:
 ---
 
 ```go
-fallbackValue := ldai.NewConfig().Build() // by default, the Config is disabled
+defaultValue := ldai.NewAICompletionConfigDefault().Disabled() // used when the config can't be evaluated
 
-cfg, tracker := aiClient.Config("example-config-key", context, fallbackValue, map[string]interface{}{"exampleCustomVariable": "exampleCustomValue"})
+cfg := aiClient.CompletionConfig("example-config-key", context, defaultValue, map[string]interface{}{"exampleCustomVariable": "exampleCustomValue"})
+tracker := cfg.CreateTracker()
 
 if cfg.Enabled() {
 
