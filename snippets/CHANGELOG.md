@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.27.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.26.1...snippets/v0.27.0) (2026-09-18)
+
+
+### Features
+
+* **snippets:** Add Rust and C++ FDv2 snippets ([#650](https://github.com/launchdarkly/sdk-meta/issues/650)) ([931c9fe](https://github.com/launchdarkly/sdk-meta/commit/931c9fe83a2c0e9e3558c072dd580064e628e6a1))
+
+
+### Bug Fixes
+
+* Point Go AI Configs snippets at go-server-sdk-ai ([#631](https://github.com/launchdarkly/sdk-meta/issues/631)) ([0fd6fba](https://github.com/launchdarkly/sdk-meta/commit/0fd6fbac1c57639cc297bb887422359d5016bdc6))
+* **snippets:** repair android validator SDK version rewrite ([#645](https://github.com/launchdarkly/sdk-meta/issues/645)) ([4a44fe4](https://github.com/launchdarkly/sdk-meta/commit/4a44fe4626a50fc983af08c1792e04cd479f5d7b))
+
 ## [0.26.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.26.0...snippets/v0.26.1) (2026-09-09)
 
 
