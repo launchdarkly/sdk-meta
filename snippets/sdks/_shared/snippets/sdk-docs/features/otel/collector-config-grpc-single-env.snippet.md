@@ -22,10 +22,7 @@ exporters:
     endpoint: jaeger-all-in-one:4317
     tls:
       insecure: true
-
-  otlphttp:
-    endpoint: https://otel.observability.app.launchdarkly.com:4318
-  otlp:
+  otlp/launchdarkly:
     endpoint: https://otel.observability.app.launchdarkly.com:4317
 
 # The processors specify how the Collector processes the trace data.
@@ -75,13 +72,13 @@ service:
           filter/launchdarkly-spans,
           batch,
         ]
-      exporters: [otlphttp/launchdarkly]
+      exporters: [otlp/launchdarkly]
     metrics:
       receivers: [otlp]
       processors: [resource]
-      exporters: [otlphttp]
+      exporters: [otlp/launchdarkly]
     logs:
       receivers: [otlp]
       processors: [resource]
-      exporters: [otlphttp]
+      exporters: [otlp/launchdarkly]
 ```
