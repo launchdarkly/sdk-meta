@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.27.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.27.0...snippets/v0.27.1) (2026-09-21)
+
+
+### Bug Fixes
+
+* **snippets:** define the exporter the OTel collector traces pipeline uses ([#652](https://github.com/launchdarkly/sdk-meta/issues/652)) ([6fd3d73](https://github.com/launchdarkly/sdk-meta/commit/6fd3d73982c0eb1779c8faba992c854cb5085940))
+
 ## [0.27.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.26.1...snippets/v0.27.0) (2026-09-21)
 
 
