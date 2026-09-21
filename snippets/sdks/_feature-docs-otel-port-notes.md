@@ -37,6 +37,22 @@ column 0).
   `setTracerProvider(...)`, matching the structure of the Go and
   Python examples on the same page.
 
+- **Collector configs** (`_shared/.../collector-config-{http,grpc}-{multi,single}-env`):
+  all four `traces/ld` pipelines exported to `otlphttp/launchdarkly`,
+  which no tab defined, so every sample failed `otelcol validate` at
+  startup with `references exporter "otlphttp/launchdarkly" which is
+  not configured`. The gRPC multi-environment tab additionally pointed
+  its `metrics`/`logs` pipelines at an undefined `otlphttp`, and its
+  `otlp/launchdarkly` exporter used the HTTP port (4318) rather than
+  the gRPC port (4317). Each tab now defines exactly one LaunchDarkly
+  exporter named for its protocol — `otlphttp/launchdarkly` (4318) in
+  the HTTP tabs, `otlp/launchdarkly` (4317) in the gRPC tabs — and all
+  three pipelines reference it. Dropped the second, unreferenced
+  LaunchDarkly exporter each tab carried, which was what made the two
+  unnamed `otlphttp:`/`otlp:` entries easy to confuse for the named
+  one. Verified: all four now pass `otelcol-contrib validate`.
+  Reported as DOCS-4295.
+
 ## Validation routing added in this port
 
 - `validators/languages/jvm/harness/run.sh` — the synthesized pom now
