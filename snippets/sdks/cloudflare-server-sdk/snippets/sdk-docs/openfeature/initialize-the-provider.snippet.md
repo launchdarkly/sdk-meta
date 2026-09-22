@@ -10,7 +10,7 @@ validation:
 ---
 
 ```js
-const provider = new LaunchDarklyProvider('example-client-side-id', env.LD_KV);
+const provider = new LaunchDarklyProvider('example-client-side-id', env.LD_KV, { sendEvents: true });
 await OpenFeature.setProviderAndWait(provider);
 
 const client = OpenFeature.getClient();
