@@ -23,8 +23,6 @@ exporters:
     tls:
       insecure: true
   otlp/launchdarkly:
-    endpoint: https://otel.observability.app.launchdarkly.com:4318
-  otlp:
     endpoint: https://otel.observability.app.launchdarkly.com:4317
 
 # The processors specify how the Collector processes the trace data.
@@ -74,13 +72,13 @@ service:
           filter/launchdarkly-spans,
           batch,
         ]
-      exporters: [otlphttp/launchdarkly]
+      exporters: [otlp/launchdarkly]
     metrics:
       receivers: [otlp]
       processors: [resource]
-      exporters: [otlphttp]
+      exporters: [otlp/launchdarkly]
     logs:
       receivers: [otlp]
       processors: [resource]
-      exporters: [otlphttp]
+      exporters: [otlp/launchdarkly]
 ```

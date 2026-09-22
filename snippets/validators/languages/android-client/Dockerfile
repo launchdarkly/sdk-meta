@@ -76,7 +76,7 @@ WORKDIR /opt/hello-android
 # Also bump compileSdk/targetSdk to 35 because the v0.49.0
 # observability AAR transitively depends on androidx.core 1.16+,
 # which requires API 35.
-RUN sed -i "s|com.launchdarkly:launchdarkly-android-client-sdk:[0-9.]*|com.launchdarkly:launchdarkly-android-client-sdk:${LD_ANDROID_SDK_VERSION}|" app/build.gradle \
+RUN sed -i "s|com.launchdarkly:launchdarkly-android-client-sdk:[^']*|com.launchdarkly:launchdarkly-android-client-sdk:${LD_ANDROID_SDK_VERSION}|" app/build.gradle \
     && sed -i "s|compileSdk 34|compileSdk 35|; s|targetSdkVersion(34)|targetSdkVersion(35)|" app/build.gradle \
     && sed -i "/^dependencies {$/a\\    implementation 'com.launchdarkly:launchdarkly-observability-android:${LD_ANDROID_OBSERVABILITY_VERSION}'\\n    implementation 'com.jakewharton.timber:timber:5.0.1'\\n    testImplementation 'org.robolectric:robolectric:${ROBOLECTRIC_VERSION}'\\n    testImplementation 'junit:junit:4.13.2'\\n    testImplementation 'androidx.test:core:1.5.0'\\n    testImplementation 'androidx.test.ext:junit:1.1.5'" app/build.gradle
 
