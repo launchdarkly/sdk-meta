@@ -17,10 +17,8 @@ receivers:
 
 # The exporters specify how the collector sends data.
 exporters:
-  otlphttp:
+  otlphttp/launchdarkly:
     endpoint: https://otel.observability.app.launchdarkly.com:4318
-  otlp:
-    endpoint: https://otel.observability.app.launchdarkly.com:4317
 
 # The processors specify how the collector processes the trace data.
 # In this example, it drops spans that aren't needed for guarded rollouts.
@@ -74,9 +72,9 @@ service:
     metrics:
       receivers: [otlp]
       processors: [resource]
-      exporters: [otlphttp]
+      exporters: [otlphttp/launchdarkly]
     logs:
       receivers: [otlp]
       processors: [resource]
-      exporters: [otlphttp]
+      exporters: [otlphttp/launchdarkly]
 ```
