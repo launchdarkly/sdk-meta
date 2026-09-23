@@ -12,5 +12,5 @@ validation:
 ```go
 // Track your own token usage.
 
-tracker.TrackUsage(response.Usage);
+tracker.TrackTokens(response.Usage)
 ```
