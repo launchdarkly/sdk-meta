@@ -2544,6 +2544,11 @@
       "introduced": "1.0",
       "removed": null
     },
+    "fdv2": {
+      "deprecated": null,
+      "introduced": "3.3",
+      "removed": null
+    },
     "inlineContextCustomEvents": {
       "deprecated": null,
       "introduced": "2.6",
@@ -2592,6 +2597,11 @@
     "storingData": {
       "deprecated": null,
       "introduced": "1.0",
+      "removed": null
+    },
+    "testDataSource": {
+      "deprecated": null,
+      "introduced": "3.0",
       "removed": null
     },
     "track": {
