@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.27.2](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.27.1...snippets/v0.27.2) (2026-09-25)
+
+
+### Bug Fixes
+
+* **snippets:** adding openfeature cloudflare server snippets ([#651](https://github.com/launchdarkly/sdk-meta/issues/651)) ([cfd6779](https://github.com/launchdarkly/sdk-meta/commit/cfd6779c89c6f823b3cbada6440002911ad5299c))
+* Update Go AI SDK docs snippets to the current API ([#649](https://github.com/launchdarkly/sdk-meta/issues/649)) ([3a846de](https://github.com/launchdarkly/sdk-meta/commit/3a846de34640cb28b2b60275af659f7900acbd46))
+
 ## [0.27.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.27.0...snippets/v0.27.1) (2026-09-21)
 
 

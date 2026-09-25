@@ -13,4 +13,4 @@ package version
 //     any future case where the source literal lags goreleaser.
 //
 // Either path alone is sufficient; using both is belt-and-braces.
-var Version = "0.27.1" // x-release-please-version
+var Version = "0.27.2" // x-release-please-version
