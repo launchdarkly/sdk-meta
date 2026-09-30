@@ -309,7 +309,7 @@ jobs:
       - name: Report resolved SDK versions
         if: always()
         env:
-          LABEL: ${{ matrix.label }}
+          LABEL: ${{ matrix.label || matrix.sdk }}
         run: |
           # The keyed validate step only surfaces output on failure, so
           # echo the floating SDK families (shared/versions/sdks.env) that
