@@ -37,5 +37,6 @@ const options = {
   hooks: [new ExampleHook()]
 };
 
-const client = LDClient.initialize('example-client-side-id', options);
+const client = createClient('example-client-side-id', context, options);
+client.start();
 ```
