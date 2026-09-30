@@ -27,6 +27,8 @@
   "js-ai-openai-agents": "ai-provider",
   "js-ai-openai-messages": "ai-provider",
   "js-ai-server": "ai",
+  "js-ai-vercel-agents": "ai-provider",
+  "js-ai-vercel-messages": "ai-provider",
   "js-client-sdk": "client-side",
   "lua-server-sdk": "server-side",
   "node-client-sdk": "client-side",

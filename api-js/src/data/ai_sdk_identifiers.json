@@ -101,6 +101,26 @@
       "name": "@launchdarkly/ai-server"
     }
   ],
+  "js-ai-vercel-agents": [
+    {
+      "language": "javascript",
+      "name": "@launchdarkly/ai-vercel-agents"
+    },
+    {
+      "language": "typescript",
+      "name": "@launchdarkly/ai-vercel-agents"
+    }
+  ],
+  "js-ai-vercel-messages": [
+    {
+      "language": "javascript",
+      "name": "@launchdarkly/ai-vercel-messages"
+    },
+    {
+      "language": "typescript",
+      "name": "@launchdarkly/ai-vercel-messages"
+    }
+  ],
   "python-ai": [
     {
       "language": "python",
