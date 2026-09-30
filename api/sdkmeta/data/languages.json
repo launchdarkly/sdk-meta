@@ -101,6 +101,14 @@
     "JavaScript",
     "TypeScript"
   ],
+  "js-ai-vercel-agents": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "js-ai-vercel-messages": [
+    "JavaScript",
+    "TypeScript"
+  ],
   "js-client-sdk": [
     "JavaScript",
     "TypeScript"

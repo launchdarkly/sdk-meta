@@ -83,6 +83,12 @@
   "js-ai-server": {
     "github": "launchdarkly/js-ai-sdk"
   },
+  "js-ai-vercel-agents": {
+    "github": "launchdarkly/js-ai-sdk"
+  },
+  "js-ai-vercel-messages": {
+    "github": "launchdarkly/js-ai-sdk"
+  },
   "js-client-sdk": {
     "github": "launchdarkly/js-client-sdk"
   },
