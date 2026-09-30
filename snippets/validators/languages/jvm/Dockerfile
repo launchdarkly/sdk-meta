@@ -15,6 +15,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # assembly:single` from scratch every time (re-resolving plugins/deps and
 # building a fat jar); here we compile once warm and run via exec:java.
 WORKDIR /opt/hello-java
+ARG LD_JAVA_SERVER_SDK_VERSION
+ARG LD_JAVA_SERVER_SDK_OTEL_VERSION
+ARG LD_JAVA_REDIS_STORE_VERSION
+ARG LD_JAVA_DYNAMODB_STORE_VERSION
+ARG LD_JAVA_CONSUL_STORE_VERSION
+ARG LD_JAVA_OPENFEATURE_PROVIDER_VERSION
 RUN printf '%s\n' \
     '<?xml version="1.0" encoding="UTF-8"?>' \
     '<project xmlns="http://maven.apache.org/POM/4.0.0">' \
@@ -28,14 +34,14 @@ RUN printf '%s\n' \
     '    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>' \
     '  </properties>' \
     '  <dependencies>' \
-    '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-java-server-sdk</artifactId><version>7.17.1</version></dependency>' \
-    '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-java-server-sdk-otel</artifactId><version>0.2.0</version></dependency>' \
+    '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-java-server-sdk</artifactId><version>'"${LD_JAVA_SERVER_SDK_VERSION}"'</version></dependency>' \
+    '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-java-server-sdk-otel</artifactId><version>'"${LD_JAVA_SERVER_SDK_OTEL_VERSION}"'</version></dependency>' \
     '    <dependency><groupId>io.opentelemetry</groupId><artifactId>opentelemetry-sdk</artifactId><version>1.40.0</version></dependency>' \
-    '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-java-server-sdk-redis-store</artifactId><version>3.2.0</version></dependency>' \
-    '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-java-server-sdk-dynamodb-store</artifactId><version>5.0.0</version></dependency>' \
-    '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-java-server-sdk-consul-store</artifactId><version>5.0.0</version></dependency>' \
+    '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-java-server-sdk-redis-store</artifactId><version>'"${LD_JAVA_REDIS_STORE_VERSION}"'</version></dependency>' \
+    '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-java-server-sdk-dynamodb-store</artifactId><version>'"${LD_JAVA_DYNAMODB_STORE_VERSION}"'</version></dependency>' \
+    '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-java-server-sdk-consul-store</artifactId><version>'"${LD_JAVA_CONSUL_STORE_VERSION}"'</version></dependency>' \
     '    <dependency><groupId>dev.openfeature</groupId><artifactId>sdk</artifactId><version>1.22.1</version></dependency>' \
-    '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-openfeature-serverprovider</artifactId><version>1.2.1</version></dependency>' \
+    '    <dependency><groupId>com.launchdarkly</groupId><artifactId>launchdarkly-openfeature-serverprovider</artifactId><version>'"${LD_JAVA_OPENFEATURE_PROVIDER_VERSION}"'</version></dependency>' \
     '  </dependencies>' \
     '  <build><plugins>' \
     '    <plugin><groupId>org.codehaus.mojo</groupId><artifactId>exec-maven-plugin</artifactId><version>3.1.1</version></plugin>' \
