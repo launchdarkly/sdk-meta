@@ -1,0 +1,19 @@
+name: Set up Go
+description: Installs the latest supported Go version recorded in .github/variables/go-versions.env.
+inputs:
+  cache-dependency-path:
+    description: 'Passed through to actions/setup-go.'
+    required: false
+    default: ''
+runs:
+  using: composite
+  steps:
+    - name: Read Go version
+      id: go-version
+      shell: bash
+      run: grep -E '^latest=' "$GITHUB_WORKSPACE/.github/variables/go-versions.env" >> "$GITHUB_OUTPUT"
+
+    - uses: actions/setup-go@v5
+      with:
+        go-version: ${{ steps.go-version.outputs.latest }}
+        cache-dependency-path: ${{ inputs.cache-dependency-path }}
