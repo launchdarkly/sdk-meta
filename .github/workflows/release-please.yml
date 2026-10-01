@@ -51,7 +51,7 @@ jobs:
       # to exist; push it manually at the SHA the release points at. (api-js
       # releases are non-draft, so they auto-create their tag — no manual
       # push needed for that package.)
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: ${{ steps.release.outputs['snippets--release_created'] == 'true' }}
         with:
           ref: ${{ steps.release.outputs['snippets--sha'] }}
@@ -92,7 +92,7 @@ jobs:
     if: ${{ needs.release-please.outputs.package-api-js-released == 'true' }}
     steps:
       # Build from the release commit, which may be newer than `github.sha`.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.release-please.outputs.package-api-js-sha }}
       - uses: ./.github/actions/publish-npm
@@ -107,7 +107,7 @@ jobs:
       id-token: write
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/publish-npm
         with:
           prerelease: ${{ inputs.prerelease }}
@@ -130,11 +130,11 @@ jobs:
     env:
       TAG_NAME: ${{ needs.release-please.outputs.package-snippets-tag-name }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.release-please.outputs.package-snippets-tag-name }}
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: snippets/go.mod
 
@@ -183,7 +183,7 @@ jobs:
       # consumers verify with `gh attestation verify <archive>
       # --repo launchdarkly/sdk-meta`. No sidecar files to manage.
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
           subject-path: snippets/dist/*.tar.gz
 
