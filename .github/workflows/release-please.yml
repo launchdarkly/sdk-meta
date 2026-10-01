@@ -15,6 +15,12 @@ on:
         type: boolean
         required: true
 
+# Serialize runs so two pushes landing close together (e.g. a release PR merged
+# right after another PR) cannot both act on the same pending release PR.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   release-please:
     if: github.event_name == 'push'
@@ -24,6 +30,7 @@ jobs:
       pull-requests: write
     outputs:
       package-api-js-released: ${{ steps.release.outputs['api-js--release_created'] }}
+      package-api-js-sha: ${{ steps.release.outputs['api-js--sha'] }}
       package-snippets-released: ${{ steps.release.outputs['snippets--release_created'] }}
       package-snippets-tag-name: ${{ steps.release.outputs['snippets--tag_name'] }}
     steps:
@@ -46,6 +53,8 @@ jobs:
       # push needed for that package.)
       - uses: actions/checkout@v4
         if: ${{ steps.release.outputs['snippets--release_created'] == 'true' }}
+        with:
+          ref: ${{ steps.release.outputs['snippets--sha'] }}
 
       - name: Push snippets release tag
         if: ${{ steps.release.outputs['snippets--release_created'] == 'true' }}
@@ -82,7 +91,10 @@ jobs:
       contents: write
     if: ${{ needs.release-please.outputs.package-api-js-released == 'true' }}
     steps:
+      # Build from the release commit, which may be newer than `github.sha`.
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-please.outputs.package-api-js-sha }}
       - uses: ./.github/actions/publish-npm
         with:
           prerelease: 'false'
