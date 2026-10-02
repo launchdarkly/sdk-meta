@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func writeValidatorVersionFiles(t *testing.T, root string, images, npm, toolchains string) {
+func writeValidatorVersionFiles(t *testing.T, root string, images, npm, toolchains string, sdks ...string) {
 	t.Helper()
 	dir := filepath.Join(root, "shared", "versions")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
@@ -19,6 +19,7 @@ func writeValidatorVersionFiles(t *testing.T, root string, images, npm, toolchai
 		"images.env":     images,
 		"npm.env":        npm,
 		"toolchains.env": toolchains,
+		"sdks.env":       strings.Join(sdks, ""),
 	}
 	for name, contents := range files {
 		if err := os.WriteFile(filepath.Join(dir, name), []byte(contents), 0o644); err != nil {
@@ -33,19 +34,47 @@ func TestLoadValidatorVersions(t *testing.T) {
 		"# comment\n\nIMAGE=ubuntu:24.04\n",
 		"# comment\nNPM_VERSION=12\n",
 		"GO_VERSION=1.25.12\n",
+		"# comment\nLD_SDK_VERSION=npm:@launchdarkly/js-client-sdk@4\n",
 	)
 
-	got, err := loadValidatorVersions(root)
+	versions, err := loadValidatorVersions(root)
 	if err != nil {
 		t.Fatal(err)
 	}
+	got := versions.literals
 	want := map[string]string{
 		"IMAGE":       "ubuntu:24.04",
 		"NPM_VERSION": "12",
 		"GO_VERSION":  "1.25.12",
 	}
 	if !reflect.DeepEqual(got, want) {
-		t.Fatalf("loadValidatorVersions() = %#v, want %#v", got, want)
+		t.Fatalf("loadValidatorVersions() literals = %#v, want %#v", got, want)
+	}
+	spec := versions.sdks["LD_SDK_VERSION"]
+	if spec.Registry != "npm" || spec.Package != "@launchdarkly/js-client-sdk" || !reflect.DeepEqual(spec.Family, []int{4}) {
+		t.Fatalf("loadValidatorVersions() sdk spec = %#v", spec)
+	}
+}
+
+func TestLoadValidatorVersionsRejectsInvalidSDKSpec(t *testing.T) {
+	root := t.TempDir()
+	writeValidatorVersionFiles(t, root, "IMAGE=ubuntu:24.04\n", "NPM_VERSION=12\n", "GO_VERSION=1.25.12\n",
+		"LD_SDK_VERSION=4.10.3\n")
+
+	_, err := loadValidatorVersions(root)
+	if err == nil || !strings.Contains(err.Error(), "invalid SDK version spec") {
+		t.Fatalf("loadValidatorVersions() error = %v, want invalid-spec error", err)
+	}
+}
+
+func TestLoadValidatorVersionsRejectsDuplicateKeyInSDKFile(t *testing.T) {
+	root := t.TempDir()
+	writeValidatorVersionFiles(t, root, "IMAGE=ubuntu:24.04\n", "SHARED=12\n", "GO_VERSION=1.25.12\n",
+		"SHARED=npm:pkg@1\n")
+
+	_, err := loadValidatorVersions(root)
+	if err == nil || !strings.Contains(err.Error(), `duplicate validator version key "SHARED"`) {
+		t.Fatalf("loadValidatorVersions() error = %v, want duplicate-key error", err)
 	}
 }
 
@@ -110,7 +139,7 @@ func TestBuildImageFailsForMissingDeclaredArg(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err := buildImage(Config{ValidatorsDir: root}, &Runner{ImagePrefix: "test-validator"}, runnerDir, &bytes.Buffer{})
+	_, err := buildImage(Config{ValidatorsDir: root}, &Runner{ImagePrefix: "test-validator"}, runnerDir, &bytes.Buffer{})
 	if err == nil || !strings.Contains(err.Error(), "declares ARG MISSING but no version entry exists") {
 		t.Fatalf("buildImage() error = %v, want missing-ARG error", err)
 	}

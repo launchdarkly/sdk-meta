@@ -329,10 +329,7 @@ func (u *resolvedUnit) dispatch() error {
 
 	switch u.runner.Mode {
 	case "docker":
-		if err := buildImage(u.cfg, u.runner, u.runnerDir, os.Stdout); err != nil {
-			return err
-		}
-		tag, err := validatorImageTag(u.cfg.ValidatorsDir, u.runnerDir, u.runner.ImagePrefix)
+		tag, err := buildImage(u.cfg, u.runner, u.runnerDir, os.Stdout)
 		if err != nil {
 			return err
 		}
@@ -586,63 +583,109 @@ func checkStagePath(rel string) error {
 }
 
 // buildImage builds the validator's Dockerfile, tagged with a content hash
-// of the shared lib + runner dir so concurrent and repeat builds share the
-// cached image. Idempotent: a second call with the same inputs is a cache
-// hit. Build context is the entire `validators/` tree so each Dockerfile can
-// pull from `shared/` as well as its own `languages/<runtime>/` subtree.
-func buildImage(cfg Config, runner *Runner, runnerDir string, out io.Writer) error {
+// of the validator sources and the resolved build args, and returns the tag.
+// Idempotent: a second call with the same inputs is a cache hit, while a new
+// SDK release inside a floating family changes the tag and forces a rebuild.
+// Build context is the entire `validators/` tree so each Dockerfile can pull
+// from `shared/` as well as its own `languages/<runtime>/` subtree.
+func buildImage(cfg Config, runner *Runner, runnerDir string, out io.Writer) (string, error) {
 	dockerfile := filepath.Join(runnerDir, "Dockerfile")
 	if _, err := os.Stat(dockerfile); err != nil {
-		return fmt.Errorf("validator Dockerfile not found at %s: %w", runnerDir, err)
+		return "", fmt.Errorf("validator Dockerfile not found at %s: %w", runnerDir, err)
 	}
-	versions, err := loadValidatorVersions(cfg.ValidatorsDir)
+	buildArgs, err := validatorBuildArgs(cfg.ValidatorsDir, dockerfile, out)
 	if err != nil {
-		return err
+		return "", err
 	}
-	argNames, err := dockerfileArgs(dockerfile)
+	tag, err := validatorImageTag(cfg.ValidatorsDir, runnerDir, runner.ImagePrefix, buildArgs)
 	if err != nil {
-		return err
-	}
-	tag, err := validatorImageTag(cfg.ValidatorsDir, runnerDir, runner.ImagePrefix)
-	if err != nil {
-		return err
+		return "", err
 	}
 	// `--progress=plain` keeps stdout tame (a one-line-per-step log
 	// rather than the interactive multi-line redraws) while leaving
 	// failure output visible — important for diagnosing apt/network
 	// failures inside the build that --quiet would otherwise swallow.
 	args := []string{"build", "--progress=plain"}
-	for _, name := range argNames {
-		value, ok := versions[name]
-		if !ok {
-			return fmt.Errorf("validator Dockerfile %s declares ARG %s but no version entry exists", dockerfile, name)
-		}
-		args = append(args, "--build-arg", name+"="+value)
+	for _, arg := range buildArgs {
+		args = append(args, "--build-arg", arg)
 	}
 	args = append(args, "-f", dockerfile, "-t", tag, cfg.ValidatorsDir)
 	build := exec.Command("docker", args...)
 	build.Stdout = out
 	build.Stderr = out
 	if err := build.Run(); err != nil {
-		return fmt.Errorf("docker build failed: %w", err)
+		return "", fmt.Errorf("docker build failed: %w", err)
 	}
-	return nil
+	return tag, nil
 }
 
-// loadValidatorVersions reads the three version categories used by validator
-// Dockerfiles. Values are kept as strings because some package constraints
-// intentionally contain a range, such as "^5.6.0".
-func loadValidatorVersions(validatorsDir string) (map[string]string, error) {
-	versions := make(map[string]string)
+// BuildArgs returns the NAME=value build args for a validator runtime's
+// Dockerfile, with floating SDK families resolved to exact releases. It backs
+// validators/build.sh so human builds use the same values as the CLI.
+func BuildArgs(validatorsDir, runtime string, out io.Writer) ([]string, error) {
+	dockerfile := filepath.Join(validatorsDir, "languages", runtime, "Dockerfile")
+	if _, err := os.Stat(dockerfile); err != nil {
+		return nil, fmt.Errorf("validator Dockerfile not found for runtime %q: %w", runtime, err)
+	}
+	return validatorBuildArgs(validatorsDir, dockerfile, out)
+}
+
+// validatorBuildArgs returns NAME=value pairs for each ARG the Dockerfile
+// declares. Literal pins pass through; sdks.env families are resolved against
+// their registry.
+func validatorBuildArgs(validatorsDir, dockerfile string, out io.Writer) ([]string, error) {
+	versions, err := loadValidatorVersions(validatorsDir)
+	if err != nil {
+		return nil, err
+	}
+	argNames, err := dockerfileArgs(dockerfile)
+	if err != nil {
+		return nil, err
+	}
+	var buildArgs []string
+	for _, name := range argNames {
+		if value, ok := versions.literals[name]; ok {
+			buildArgs = append(buildArgs, name+"="+value)
+			continue
+		}
+		spec, ok := versions.sdks[name]
+		if !ok {
+			return nil, fmt.Errorf("validator Dockerfile %s declares ARG %s but no version entry exists", dockerfile, name)
+		}
+		value, err := resolveSDKVersion(spec, out)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", name, err)
+		}
+		buildArgs = append(buildArgs, name+"="+value)
+	}
+	return buildArgs, nil
+}
+
+// validatorVersions holds the shared version entries: literal pins from
+// images.env, npm.env, and toolchains.env, and floating SDK families from
+// sdks.env.
+type validatorVersions struct {
+	literals map[string]string
+	sdks     map[string]sdkVersionSpec
+}
+
+const sdkVersionsFile = "shared/versions/sdks.env"
+
+// loadValidatorVersions reads the version categories used by validator
+// Dockerfiles. Literal values are kept as strings because some package
+// constraints intentionally contain a range, such as "^5.6.0".
+func loadValidatorVersions(validatorsDir string) (validatorVersions, error) {
+	versions := validatorVersions{literals: map[string]string{}, sdks: map[string]sdkVersionSpec{}}
 	for _, name := range []string{
 		"shared/versions/images.env",
 		"shared/versions/npm.env",
 		"shared/versions/toolchains.env",
+		sdkVersionsFile,
 	} {
 		path := filepath.Join(validatorsDir, name)
 		file, err := os.Open(path)
 		if err != nil {
-			return nil, fmt.Errorf("open validator versions file %s: %w", path, err)
+			return validatorVersions{}, fmt.Errorf("open validator versions file %s: %w", path, err)
 		}
 		scanner := bufio.NewScanner(file)
 		lineNo := 0
@@ -655,22 +698,33 @@ func loadValidatorVersions(validatorsDir string) (map[string]string, error) {
 			parts := strings.SplitN(line, "=", 2)
 			if len(parts) != 2 || strings.TrimSpace(parts[0]) == "" {
 				file.Close()
-				return nil, fmt.Errorf("invalid entry in validator versions file %s line %d", path, lineNo)
+				return validatorVersions{}, fmt.Errorf("invalid entry in validator versions file %s line %d", path, lineNo)
 			}
 			key := strings.TrimSpace(parts[0])
 			value := strings.TrimSpace(parts[1])
-			if _, exists := versions[key]; exists {
+			_, isLiteral := versions.literals[key]
+			_, isSDK := versions.sdks[key]
+			if isLiteral || isSDK {
 				file.Close()
-				return nil, fmt.Errorf("duplicate validator version key %q in %s", key, path)
+				return validatorVersions{}, fmt.Errorf("duplicate validator version key %q in %s", key, path)
 			}
-			versions[key] = value
+			if name != sdkVersionsFile {
+				versions.literals[key] = value
+				continue
+			}
+			spec, err := parseSDKVersionSpec(value)
+			if err != nil {
+				file.Close()
+				return validatorVersions{}, fmt.Errorf("%s line %d: %w", path, lineNo, err)
+			}
+			versions.sdks[key] = spec
 		}
 		if err := scanner.Err(); err != nil {
 			file.Close()
-			return nil, fmt.Errorf("read validator versions file %s: %w", path, err)
+			return validatorVersions{}, fmt.Errorf("read validator versions file %s: %w", path, err)
 		}
 		if err := file.Close(); err != nil {
-			return nil, fmt.Errorf("close validator versions file %s: %w", path, err)
+			return validatorVersions{}, fmt.Errorf("close validator versions file %s: %w", path, err)
 		}
 	}
 	return versions, nil
@@ -941,11 +995,11 @@ func checkRequirements(req string) error {
 	return nil
 }
 
-// validatorImageTag produces a Docker tag that's a content hash of both the
-// shared harness library AND the per-language validator directory. A change
-// in either place forces a rebuild; concurrent validate runs against the
-// same validator share the cached image.
-func validatorImageTag(validatorsDir, runnerDir, prefix string) (string, error) {
+// validatorImageTag produces a Docker tag that's a content hash of the shared
+// harness library, the per-language validator directory, and the resolved
+// build args. A change in any of them forces a rebuild; concurrent validate
+// runs against the same validator share the cached image.
+func validatorImageTag(validatorsDir, runnerDir, prefix string, buildArgs []string) (string, error) {
 	h := sha256.New()
 	for _, sub := range []string{"shared", ""} {
 		// "" means "the runner dir itself"; otherwise sub is rooted at validatorsDir.
@@ -975,6 +1029,9 @@ func validatorImageTag(validatorsDir, runnerDir, prefix string) (string, error) 
 		if err != nil {
 			return "", err
 		}
+	}
+	for _, arg := range buildArgs {
+		fmt.Fprintf(h, "build-arg\x00%s\x00", arg)
 	}
 	return prefix + ":" + hex.EncodeToString(h.Sum(nil))[:16], nil
 }
