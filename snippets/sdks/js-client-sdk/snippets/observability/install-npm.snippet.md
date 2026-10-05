@@ -10,7 +10,7 @@ validation:
 ---
 
 ```shell
-npm install launchdarkly-js-client-sdk
+npm install @launchdarkly/js-client-sdk
 npm install @launchdarkly/session-replay
 npm install @launchdarkly/observability
 ```
