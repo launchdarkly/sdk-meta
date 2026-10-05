@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.27.3](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.27.2...snippets/v0.27.3) (2026-10-05)
+
+
+### Bug Fixes
+
+* **snippets:** migrate js-client-sdk observability snippets to v4 SDK ([#672](https://github.com/launchdarkly/sdk-meta/issues/672)) ([74fd00a](https://github.com/launchdarkly/sdk-meta/commit/74fd00ab34137f58c46d3063ab889a97c2ab129e))
+
 ## [0.27.2](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.27.1...snippets/v0.27.2) (2026-09-25)
 
 
