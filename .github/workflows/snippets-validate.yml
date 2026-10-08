@@ -306,6 +306,25 @@ jobs:
           go run ./cmd/snippets validate $args \
             --sdks=./sdks --validators=./validators 2>&1 | tee /tmp/validate.log
 
+      - name: Report resolved SDK versions
+        if: always()
+        env:
+          LABEL: ${{ matrix.label || matrix.sdk }}
+        run: |
+          # The keyed validate step only surfaces output on failure, so
+          # echo the floating SDK families (shared/versions/sdks.env) that
+          # this cell resolved and tested against.
+          [ -f /tmp/validate.log ] || exit 0
+          resolved=$(grep '^resolved ' /tmp/validate.log || true)
+          [ -n "$resolved" ] || exit 0
+          echo "$resolved"
+          {
+            echo "### Resolved SDK versions: ${LABEL}"
+            echo '```'
+            echo "$resolved"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Record result
         if: always()
         env:
