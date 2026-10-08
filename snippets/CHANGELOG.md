@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.28.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.27.3...snippets/v0.28.0) (2026-10-08)
+
+
+### Features
+
+* **snippets:** float validator SDK pins on their major version ([#671](https://github.com/launchdarkly/sdk-meta/issues/671)) ([ab71184](https://github.com/launchdarkly/sdk-meta/commit/ab7118429f046be6fc151543359f4338f6f1a051))
+
+
+### Bug Fixes
+
+* **snippets:** use the result-based identify in the iOS Swift identify example ([#678](https://github.com/launchdarkly/sdk-meta/issues/678)) ([3352b92](https://github.com/launchdarkly/sdk-meta/commit/3352b9212d33342ae69007db071a25309d8ff5b8))
+
 ## [0.27.3](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.27.2...snippets/v0.27.3) (2026-10-05)
 
 
