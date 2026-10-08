@@ -15,6 +15,4 @@ description: "Cartfile in section \"Use Carthage\""
 
 ```swift
 github "launchdarkly/ios-client" ~> 11.0
-// optional observability plugin, requires iOS SDK v9.14+
-github "launchdarkly/swift-launchdarkly-observability" ~> 1.0
 ```
