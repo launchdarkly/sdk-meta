@@ -41,16 +41,18 @@ func runBatches(cfg Config, units []*resolvedUnit) error {
 		// shape there. Docker groups keep the worker pool (each shard is an
 		// isolated container).
 		effJobs := jobs
+		tag := ""
 		if g[0].runner.Mode == "native" {
 			effJobs = 1
 		} else {
 			fmt.Printf("--- building %s validator image (%d snippets, %d-way) ---\n",
 				g[0].runtime, len(g), min(jobs, len(g)))
-			if err := buildImage(cfg, g[0].runner, g[0].runnerDir, os.Stdout); err != nil {
+			var err error
+			if tag, err = buildImage(cfg, g[0].runner, g[0].runnerDir, os.Stdout); err != nil {
 				return err
 			}
 		}
-		if err := runGroup(cfg, g, effJobs); err != nil {
+		if err := runGroup(cfg, g, effJobs, tag); err != nil {
 			return err
 		}
 	}
@@ -100,7 +102,7 @@ func canonicalEnv(m map[string]string) string {
 // logs stay readable. The first non-nil shard error is returned (after all
 // shards finish, since fail-fast across an already-running batch buys
 // nothing).
-func runGroup(cfg Config, g []*resolvedUnit, jobs int) error {
+func runGroup(cfg Config, g []*resolvedUnit, jobs int, tag string) error {
 	nShards := min(jobs, len(g))
 	shards := make([][]*resolvedUnit, nShards)
 	for i, u := range g {
@@ -114,7 +116,7 @@ func runGroup(cfg Config, g []*resolvedUnit, jobs int) error {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			errs[i] = runShard(cfg, shards[i], &outs[i])
+			errs[i] = runShard(cfg, shards[i], tag, &outs[i])
 		}(i)
 	}
 	wg.Wait()
@@ -137,7 +139,7 @@ func runGroup(cfg Config, g []*resolvedUnit, jobs int) error {
 // relpath is the path under /snippet (or $SNIPPET_DIR) to the snippet's
 // entry file (`<index>/<entrypoint>`). The harness loops over these in a
 // single warm workspace and exits non-zero if any snippet fails.
-func runShard(cfg Config, units []*resolvedUnit, out io.Writer) error {
+func runShard(cfg Config, units []*resolvedUnit, tag string, out io.Writer) error {
 	if len(units) == 0 {
 		return nil
 	}
@@ -170,10 +172,6 @@ func runShard(cfg Config, units []*resolvedUnit, out io.Writer) error {
 
 	switch first.runner.Mode {
 	case "docker":
-		tag, err := validatorImageTag(cfg.ValidatorsDir, first.runnerDir, first.runner.ImagePrefix)
-		if err != nil {
-			return err
-		}
 		return runContainerBatch(tag, batchDir, first.env, first.extraEnv, out)
 	case "native":
 		return runNativeBatch(first.runnerDir, batchDir, first.env, first.extraEnv, out)
