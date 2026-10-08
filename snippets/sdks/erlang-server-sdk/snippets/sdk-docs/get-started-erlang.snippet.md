@@ -14,6 +14,6 @@ description: "Erlang in section \"Get started\""
 
 ```erlang
 {deps, [
-  {ldclient, "3.11.3", {pkg, launchdarkly_server_sdk}}
+  {ldclient, "3.12.0", {pkg, launchdarkly_server_sdk}}
 ]}.
 ```
