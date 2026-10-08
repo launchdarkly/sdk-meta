@@ -14,7 +14,7 @@ validation:
 ```ruby
 use_frameworks!
 target 'YourTargetName' do
-  pod 'LaunchDarkly', '~> 11.6'
+  pod 'LaunchDarkly', '~> 11.0'
   # optional observability plugin, requires iOS SDK v11.5+
   pod 'LaunchDarklyObservability', '~> 0.56'
 end

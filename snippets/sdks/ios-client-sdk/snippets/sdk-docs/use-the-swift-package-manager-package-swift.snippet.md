@@ -14,7 +14,7 @@ validation:
 ```swift
 //...
     dependencies: [
-        .package(url: "https://github.com/launchdarkly/ios-client-sdk.git", .upToNextMinor(from: "11.6.2")),
+        .package(url: "https://github.com/launchdarkly/ios-client-sdk.git", .upToNextMajor(from: "11.0.0")),
         // optional observability plugin, requires iOS SDK v11.5+
         .package(url: "https://github.com/launchdarkly/swift-launchdarkly-observability.git", .upToNextMajor(from: "0.56.0")),
     ],
