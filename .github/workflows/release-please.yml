@@ -134,9 +134,7 @@ jobs:
         with:
           ref: ${{ needs.release-please.outputs.package-snippets-tag-name }}
 
-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-        with:
-          go-version-file: snippets/go.mod
+      - uses: ./.github/actions/setup-go
 
       # The plain semver (e.g. `v0.2.0`) — used for the binary's embedded
       # version stamp and for archive naming. The full prefixed TAG_NAME
