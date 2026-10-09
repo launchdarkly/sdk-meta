@@ -70,46 +70,22 @@ jobs:
           ./scripts/generate-products.sh
       - name: Create PR
         if: steps.generate.outcome == 'success'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: metadata-update
-          TITLE: "fix(metadata): ingest new data and regenerate products"
-          CHANGES: ${{ steps.diff.outputs.changes }}
-        run: |
-          set -euo pipefail
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git checkout -B "$BRANCH"
-          git add -- "$DB_NAME" "$METADATA_DIR" products api/sdkmeta/data api-js/src/data
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
-          git commit -m "$TITLE"
-
-          if git fetch --depth=1 origin "$BRANCH" 2>/dev/null && git diff --quiet FETCH_HEAD HEAD; then
-            echo "Branch $BRANCH is already up to date."
-          else
-            git push --force origin "HEAD:refs/heads/$BRANCH"
-          fi
-
-          {
-            echo 'Metadata has changed. Ensure that the changes obey patch semantics (data added or modified in a non-breaking'
-            echo 'way), as upstream services may consume these changes automatically.'
-            echo '```'
-            printf '%s\n' "$CHANGES"
-            echo '```'
-          } > pr-body.md
-          # GitHub rejects PR bodies over 65536 characters.
-          if [ "$(wc -c < pr-body.md)" -gt 60000 ]; then
-            { head -c 60000 pr-body.md; printf '\n```\n\n_Diff truncated; see the workflow run log for the full output._\n'; } > pr-body.trunc.md
-            mv pr-body.trunc.md pr-body.md
-          fi
-
-          pr=$(gh pr list --head "$BRANCH" --base main --state open --json number,isCrossRepository \
-            --jq '[.[] | select(.isCrossRepository | not)][0].number // empty')
-          if [ -n "$pr" ]; then
-            gh pr edit "$pr" --title "$TITLE" --body-file pr-body.md
-          else
-            gh pr create --head "$BRANCH" --base main --title "$TITLE" --body-file pr-body.md
-          fi
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          add-paths: |
+            ${{ env.DB_NAME }}
+            ${{ env.METADATA_DIR }}
+            products
+            api/sdkmeta/data
+            api-js/src/data
+          branch: "metadata-update"
+          title: "fix(metadata): ingest new data and regenerate products"
+          commit-message: "fix(metadata): ingest new data and regenerate products"
+          body: |
+            Metadata has changed. Ensure that the changes obey patch semantics (data added or modified in a non-breaking
+            way), as upstream services may consume these changes automatically. 
+            ```
+            ${{ steps.diff.outputs.changes }}
+            ``` 
