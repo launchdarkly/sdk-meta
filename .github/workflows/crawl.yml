@@ -106,7 +106,8 @@ jobs:
             mv pr-body.trunc.md pr-body.md
           fi
 
-          pr=$(gh pr list --head "$BRANCH" --base main --state open --json number --jq '.[0].number // empty')
+          pr=$(gh pr list --head "$BRANCH" --base main --state open --json number,isCrossRepository \
+            --jq '[.[] | select(.isCrossRepository | not)][0].number // empty')
           if [ -n "$pr" ]; then
             gh pr edit "$pr" --title "$TITLE" --body-file pr-body.md
           else
