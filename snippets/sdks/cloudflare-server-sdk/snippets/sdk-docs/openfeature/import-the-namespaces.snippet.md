@@ -6,7 +6,7 @@ lang: javascript
 file: cloudflare-server-sdk/sdk-docs/openfeature/import-the-namespaces.mjs
 description: "Cloudflare OpenFeature provider in section \"Install the provider\" (imports)"
 validation:
-  scaffold: cloudflare-server-sdk/scaffolds/cloudflare-syntax-only
+  scaffold: cloudflare-server-sdk/scaffolds/openfeature-cloudflare-toplevel
 ---
 
 ```js
