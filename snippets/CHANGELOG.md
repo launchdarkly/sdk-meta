@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.29.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.28.0...snippets/v0.29.0) (2026-10-14)
+
+
+### Features
+
+* Add PHP web proxy snippets ([#692](https://github.com/launchdarkly/sdk-meta/issues/692)) ([cbdd7a8](https://github.com/launchdarkly/sdk-meta/commit/cbdd7a8a99835f59fab5573db666eb686a62e8fb))
+
 ## [0.28.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.27.3...snippets/v0.28.0) (2026-10-08)
 
 
