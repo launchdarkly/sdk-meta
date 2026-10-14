@@ -72,11 +72,3 @@ byte-equality-verified through marker hashes, which is the strongest
 check available for a fragment without a runtime success-line. Same
 blocker as the `proxy-env-*` fragments documented in
 `_sdk-docs-port-notes.md`.
-
-## Additions after the port
-
-- **PHP** (`php-server-sdk/.../webproxy/web-proxy`, `web-proxy-auth`,
-  `web-proxy-auth-windows`): three new blocks for the `http_proxy`
-  option (php-server-sdk 6.10.0 and later). Bound to
-  `php-server-sdk/scaffolds/php-syntax-only`. No content corrections
-  and no new scaffolds.
