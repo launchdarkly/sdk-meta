@@ -4,7 +4,7 @@ sdk: apex-server-sdk
 kind: reference
 lang: batch
 description: Windows HTTPS_PROXY environment variable for the Apex bridge.
-# TODO(validate): bare shell export/set commands; not a package-manager install, no harness fits. See _feature-docs-webproxy-port-notes.md.
+# TODO(validate): bare shell export/set commands; not a package-manager install, no harness fits.
 ---
 
 ```batch

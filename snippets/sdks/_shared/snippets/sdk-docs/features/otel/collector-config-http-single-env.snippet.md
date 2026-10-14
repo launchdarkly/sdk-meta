@@ -3,7 +3,7 @@ id: sdk-docs/features/otel/collector-config-http-single-env
 kind: reference
 lang: yaml
 description: OpenTelemetry collector configuration sending traces to LaunchDarkly over HTTP (one environment).
-# TODO(validate): no yaml validator runtime exists yet, and _shared snippets carry no sdk: field for a CI row to select. See _feature-docs-otel-port-notes.md.
+# TODO(validate): no yaml validator runtime exists yet, and _shared snippets carry no sdk: field for a CI row to select.
 ---
 
 ```yaml

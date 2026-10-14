@@ -18,8 +18,7 @@ description: |
   reference them as if pre-existing won't compile through this
   scaffold; in practice the v3 fragments either declare those
   themselves or the build catches the issue. v2.x fragments may
-  need additional stubs on `_AnyClient` — see
-  `_sdk-docs-port-notes.md`.
+  need additional stubs on `_AnyClient`.
 inputs:
   body:
     type: string

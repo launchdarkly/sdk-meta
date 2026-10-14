@@ -444,10 +444,6 @@ go test ./...
 
 Conventional Commits with `snippets` scope: `feat(snippets): …`, `fix(snippets): …`, `chore(snippets): …`, `docs(snippets): …`. The release-please config drives `snippets/CHANGELOG.md` and the `snippets/vX.Y.Z` release from these.
 
-### Port-notes files
-
-When porting snippets from gonfalon, drop a `<sdk>/PORT-NOTES.md` (or per-snippet sibling notes) so the next agent has a paper trail of what changed and why. Don't litter the snippet bodies themselves with porting commentary — describe behavior in code comments, history in the notes file.
-
 ### When the existing validator can't validate a snippet
 
 Every snippet that can be validated MUST be wired up. Routes when the obvious scaffold doesn't fit:

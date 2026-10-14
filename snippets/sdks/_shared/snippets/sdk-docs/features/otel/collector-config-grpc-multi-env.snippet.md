@@ -3,7 +3,7 @@ id: sdk-docs/features/otel/collector-config-grpc-multi-env
 kind: reference
 lang: yaml
 description: OpenTelemetry collector configuration sending traces to LaunchDarkly over gRPC (multiple environments).
-# TODO(validate): no yaml validator runtime exists yet, and _shared snippets carry no sdk: field for a CI row to select. See _feature-docs-otel-port-notes.md.
+# TODO(validate): no yaml validator runtime exists yet, and _shared snippets carry no sdk: field for a CI row to select.
 ---
 
 ```yaml
