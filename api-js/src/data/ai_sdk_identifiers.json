@@ -163,6 +163,12 @@
       "name": "launchdarkly-ai-openai-messages"
     }
   ],
+  "python-ai-opencode-agents": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-opencode-agents"
+    }
+  ],
   "python-ai-server": [
     {
       "language": "python",

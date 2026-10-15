@@ -148,6 +148,9 @@
   "python-ai-openai-messages": [
     "Python"
   ],
+  "python-ai-opencode-agents": [
+    "Python"
+  ],
   "python-ai-server": [
     "Python"
   ],

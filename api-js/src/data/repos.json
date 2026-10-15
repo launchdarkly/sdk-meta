@@ -125,6 +125,9 @@
   "python-ai-openai-messages": {
     "github": "launchdarkly/python-ai-sdk"
   },
+  "python-ai-opencode-agents": {
+    "github": "launchdarkly/python-ai-sdk"
+  },
   "python-ai-server": {
     "github": "launchdarkly/python-ai-sdk"
   },

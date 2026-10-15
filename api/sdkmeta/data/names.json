@@ -41,6 +41,7 @@
   "python-ai-langchain-messages": "LangChain Messages AI SDK for Python",
   "python-ai-openai-agents": "OpenAI Agents AI SDK for Python",
   "python-ai-openai-messages": "OpenAI Messages AI SDK for Python",
+  "python-ai-opencode-agents": "OpenCode Agents AI SDK for Python",
   "python-ai-server": "Core AI SDK for Python",
   "python-server-sdk": "Python Server SDK",
   "python-server-sdk-ai": "Python Server AI SDK",
