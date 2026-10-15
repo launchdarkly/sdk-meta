@@ -1946,6 +1946,18 @@
       "removed": null
     }
   },
+  "python-ai-opencode-agents": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
   "python-ai-server": {
     "aiAgentConfig": {
       "deprecated": null,

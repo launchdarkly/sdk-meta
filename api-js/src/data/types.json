@@ -41,6 +41,7 @@
   "python-ai-langchain-messages": "ai-provider",
   "python-ai-openai-agents": "ai-provider",
   "python-ai-openai-messages": "ai-provider",
+  "python-ai-opencode-agents": "ai-provider",
   "python-ai-server": "ai",
   "python-server-sdk": "server-side",
   "python-server-sdk-ai": "ai",
