@@ -4,7 +4,7 @@ sdk: go-server-sdk
 kind: reference
 lang: bash
 description: Mac/Linux HTTPS_PROXY environment variable for the Go SDK.
-# TODO(validate): bare shell export/set commands; not a package-manager install, no harness fits. See _feature-docs-webproxy-port-notes.md.
+# TODO(validate): bare shell export/set commands; not a package-manager install, no harness fits.
 ---
 
 ```bash

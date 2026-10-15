@@ -9,7 +9,7 @@ description: "React Native SDK v10 in section \"Install the SDK\""
 # whereas the react-native-syntax-only scaffold writes a single App.js.
 # The harness needs a separate parse-only mode (or the scaffold needs
 # to output the App.tsx + src/welcome.tsx pair) before sdk-docs
-# fragments can validate. See _sdk-docs-port-notes.md.
+# fragments can validate.
 validation:
   scaffold: react-native-client-sdk/scaffolds/react-native-syntax-only
 ---
