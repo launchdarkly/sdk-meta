@@ -14,6 +14,7 @@
   "erlang-server-sdk": "Erlang Server SDK",
   "fastly": "Fastly Edge SDK",
   "flutter-client-sdk": "Flutter Client SDK",
+  "go-ai": "Go AI SDK",
   "go-server-sdk": "Go Server SDK",
   "go-server-sdk-ai": "Go Server AI SDK",
   "haskell-server-sdk": "Haskell Server SDK",

@@ -54,6 +54,9 @@
   "flutter-client-sdk": [
     "Dart"
   ],
+  "go-ai": [
+    "Go"
+  ],
   "go-server-sdk": [
     "Go"
   ],

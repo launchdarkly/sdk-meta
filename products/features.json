@@ -869,6 +869,33 @@
       "removed": null
     }
   },
+  "go-ai": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiJudgeConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
   "go-server-sdk": {
     "allFlags": {
       "deprecated": null,
