@@ -5,6 +5,12 @@
       "name": "LaunchDarkly.ServerSdk.Ai"
     }
   ],
+  "go-ai": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk"
+    }
+  ],
   "go-server-sdk-ai": [
     {
       "language": "go",

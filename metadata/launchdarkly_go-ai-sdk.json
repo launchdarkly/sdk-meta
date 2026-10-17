@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "sdks": {
+    "go-ai": {
+      "name": "Go AI SDK",
+      "type": "ai",
+      "path": ".",
+      "languages": [
+        "Go"
+      ],
+      "aiSdkNames": [
+        "github.com/launchdarkly/go-ai-sdk"
+      ],
+      "releases": {
+        "tag-prefix": "v"
+      },
+      "features": {
+        "aiAgentConfig": {
+          "introduced": "0.1"
+        },
+        "aiAgentGraph": {
+          "introduced": "0.1"
+        },
+        "aiCompletionConfig": {
+          "introduced": "0.1"
+        },
+        "aiJudgeConfig": {
+          "introduced": "0.1"
+        },
+        "aiTrackMetrics": {
+          "introduced": "0.1"
+        }
+      }
+    }
+  }
+}

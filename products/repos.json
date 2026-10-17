@@ -44,6 +44,9 @@
   "flutter-client-sdk": {
     "github": "launchdarkly/flutter-client-sdk"
   },
+  "go-ai": {
+    "github": "launchdarkly/go-ai-sdk"
+  },
   "go-server-sdk": {
     "github": "launchdarkly/go-server-sdk"
   },

@@ -14,6 +14,7 @@
   "erlang-server-sdk": "server-side",
   "fastly": "edge",
   "flutter-client-sdk": "client-side",
+  "go-ai": "ai",
   "go-server-sdk": "server-side",
   "go-server-sdk-ai": "ai",
   "haskell-server-sdk": "server-side",
