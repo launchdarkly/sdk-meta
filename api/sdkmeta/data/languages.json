@@ -54,6 +54,33 @@
   "flutter-client-sdk": [
     "Dart"
   ],
+  "go-ai-bedrock-agents": [
+    "Go"
+  ],
+  "go-ai-bedrock-messages": [
+    "Go"
+  ],
+  "go-ai-claude-agents": [
+    "Go"
+  ],
+  "go-ai-claude-messages": [
+    "Go"
+  ],
+  "go-ai-langchain-agents": [
+    "Go"
+  ],
+  "go-ai-langchain-messages": [
+    "Go"
+  ],
+  "go-ai-openai-agents": [
+    "Go"
+  ],
+  "go-ai-openai-messages": [
+    "Go"
+  ],
+  "go-ai-server": [
+    "Go"
+  ],
   "go-server-sdk": [
     "Go"
   ],

@@ -5,6 +5,60 @@
       "name": "LaunchDarkly.ServerSdk.Ai"
     }
   ],
+  "go-ai-bedrock-agents": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/bedrockagents"
+    }
+  ],
+  "go-ai-bedrock-messages": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/bedrockmessages"
+    }
+  ],
+  "go-ai-claude-agents": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/claudeagents"
+    }
+  ],
+  "go-ai-claude-messages": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/claudemessages"
+    }
+  ],
+  "go-ai-langchain-agents": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/langchainagents"
+    }
+  ],
+  "go-ai-langchain-messages": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/langchainmessages"
+    }
+  ],
+  "go-ai-openai-agents": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/openaiagents"
+    }
+  ],
+  "go-ai-openai-messages": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/openaimessages"
+    }
+  ],
+  "go-ai-server": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/aiserver"
+    }
+  ],
   "go-server-sdk-ai": [
     {
       "language": "go",

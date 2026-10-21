@@ -44,6 +44,33 @@
   "flutter-client-sdk": {
     "github": "launchdarkly/flutter-client-sdk"
   },
+  "go-ai-bedrock-agents": {
+    "github": "launchdarkly/go-ai-sdk"
+  },
+  "go-ai-bedrock-messages": {
+    "github": "launchdarkly/go-ai-sdk"
+  },
+  "go-ai-claude-agents": {
+    "github": "launchdarkly/go-ai-sdk"
+  },
+  "go-ai-claude-messages": {
+    "github": "launchdarkly/go-ai-sdk"
+  },
+  "go-ai-langchain-agents": {
+    "github": "launchdarkly/go-ai-sdk"
+  },
+  "go-ai-langchain-messages": {
+    "github": "launchdarkly/go-ai-sdk"
+  },
+  "go-ai-openai-agents": {
+    "github": "launchdarkly/go-ai-sdk"
+  },
+  "go-ai-openai-messages": {
+    "github": "launchdarkly/go-ai-sdk"
+  },
+  "go-ai-server": {
+    "github": "launchdarkly/go-ai-sdk"
+  },
   "go-server-sdk": {
     "github": "launchdarkly/go-server-sdk"
   },

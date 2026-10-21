@@ -869,6 +869,129 @@
       "removed": null
     }
   },
+  "go-ai-bedrock-agents": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "go-ai-bedrock-messages": {
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "go-ai-claude-agents": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "go-ai-claude-messages": {
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "go-ai-langchain-agents": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "go-ai-langchain-messages": {
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "go-ai-openai-agents": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "go-ai-openai-messages": {
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "go-ai-server": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiJudgeConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
   "go-server-sdk": {
     "allFlags": {
       "deprecated": null,
