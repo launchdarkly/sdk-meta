@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.30.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.29.0...snippets/v0.30.0) (2026-10-22)
+
+
+### Features
+
+* **snippets:** add sdk-info observability variants for react, js, and vue ([#700](https://github.com/launchdarkly/sdk-meta/issues/700)) ([83b28c9](https://github.com/launchdarkly/sdk-meta/commit/83b28c917df9a5a08cba3aa60e2a12b08a9f9aeb))
+
 ## [0.29.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.28.0...snippets/v0.29.0) (2026-10-14)
 
 
