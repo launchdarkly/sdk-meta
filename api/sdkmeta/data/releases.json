@@ -60,9 +60,15 @@
   "android": [
     {
       "major": 5,
+      "minor": 17,
+      "date": "2026-10-16T16:39:43Z",
+      "eol": null
+    },
+    {
+      "major": 5,
       "minor": 16,
       "date": "2026-08-27T17:03:49Z",
-      "eol": null
+      "eol": "2027-10-16T00:00:00Z"
     },
     {
       "major": 5,
@@ -370,9 +376,15 @@
   "browser": [
     {
       "major": 4,
+      "minor": 13,
+      "date": "2026-10-16T17:07:41Z",
+      "eol": null
+    },
+    {
+      "major": 4,
       "minor": 12,
       "date": "2026-10-14T18:52:25Z",
-      "eol": null
+      "eol": "2027-10-16T00:00:00Z"
     },
     {
       "major": 4,
@@ -1612,9 +1624,15 @@
   "go-server-sdk": [
     {
       "major": 7,
+      "minor": 20,
+      "date": "2026-10-21T22:00:51Z",
+      "eol": null
+    },
+    {
+      "major": 7,
       "minor": 19,
       "date": "2026-10-07T18:08:14Z",
-      "eol": null
+      "eol": "2027-10-21T00:00:00Z"
     },
     {
       "major": 7,
@@ -2606,9 +2624,15 @@
   "node-client-sdk": [
     {
       "major": 4,
+      "minor": 3,
+      "date": "2026-10-16T17:07:24Z",
+      "eol": null
+    },
+    {
+      "major": 4,
       "minor": 2,
       "date": "2026-10-14T18:52:06Z",
-      "eol": null
+      "eol": "2027-10-16T00:00:00Z"
     },
     {
       "major": 4,
@@ -2710,9 +2734,15 @@
   "node-server": [
     {
       "major": 9,
+      "minor": 15,
+      "date": "2026-10-16T17:07:26Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 14,
       "date": "2026-10-01T14:43:18Z",
-      "eol": null
+      "eol": "2027-10-16T00:00:00Z"
     },
     {
       "major": 9,
@@ -3024,9 +3054,15 @@
   "php-server-sdk": [
     {
       "major": 6,
+      "minor": 11,
+      "date": "2026-10-21T19:01:25Z",
+      "eol": null
+    },
+    {
+      "major": 6,
       "minor": 10,
       "date": "2026-10-14T17:40:05Z",
-      "eol": null
+      "eol": "2027-10-21T00:00:00Z"
     },
     {
       "major": 6,
@@ -3734,9 +3770,21 @@
   "react-native": [
     {
       "major": 10,
+      "minor": 23,
+      "date": "2026-10-16T17:07:21Z",
+      "eol": null
+    },
+    {
+      "major": 10,
+      "minor": 22,
+      "date": "2026-10-15T14:53:56Z",
+      "eol": "2027-10-16T00:00:00Z"
+    },
+    {
+      "major": 10,
       "minor": 21,
       "date": "2026-10-14T18:52:04Z",
-      "eol": null
+      "eol": "2027-10-15T00:00:00Z"
     },
     {
       "major": 10,
@@ -4472,9 +4520,15 @@
   "ruby-server-sdk": [
     {
       "major": 8,
+      "minor": 19,
+      "date": "2026-10-15T15:23:35Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 18,
       "date": "2026-09-16T14:38:23Z",
-      "eol": null
+      "eol": "2027-10-15T00:00:00Z"
     },
     {
       "major": 8,

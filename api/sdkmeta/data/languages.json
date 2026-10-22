@@ -54,6 +54,33 @@
   "flutter-client-sdk": [
     "Dart"
   ],
+  "go-ai-bedrock-agents": [
+    "Go"
+  ],
+  "go-ai-bedrock-messages": [
+    "Go"
+  ],
+  "go-ai-claude-agents": [
+    "Go"
+  ],
+  "go-ai-claude-messages": [
+    "Go"
+  ],
+  "go-ai-langchain-agents": [
+    "Go"
+  ],
+  "go-ai-langchain-messages": [
+    "Go"
+  ],
+  "go-ai-openai-agents": [
+    "Go"
+  ],
+  "go-ai-openai-messages": [
+    "Go"
+  ],
+  "go-ai-server": [
+    "Go"
+  ],
   "go-server-sdk": [
     "Go"
   ],
@@ -85,6 +112,14 @@
     "JavaScript",
     "TypeScript"
   ],
+  "js-ai-litellm-agents": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "js-ai-litellm-messages": [
+    "JavaScript",
+    "TypeScript"
+  ],
   "js-ai-node": [
     "JavaScript",
     "TypeScript"
@@ -98,6 +133,10 @@
     "TypeScript"
   ],
   "js-ai-server": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "js-ai-typesafe": [
     "JavaScript",
     "TypeScript"
   ],
@@ -142,6 +181,12 @@
   "python-ai-langchain-messages": [
     "Python"
   ],
+  "python-ai-litellm-agents": [
+    "Python"
+  ],
+  "python-ai-litellm-messages": [
+    "Python"
+  ],
   "python-ai-openai-agents": [
     "Python"
   ],
@@ -152,6 +197,15 @@
     "Python"
   ],
   "python-ai-server": [
+    "Python"
+  ],
+  "python-ai-typesafe": [
+    "Python"
+  ],
+  "python-ai-vercel-agents": [
+    "Python"
+  ],
+  "python-ai-vercel-messages": [
     "Python"
   ],
   "python-server-sdk": [

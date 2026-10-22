@@ -5,6 +5,60 @@
       "name": "LaunchDarkly.ServerSdk.Ai"
     }
   ],
+  "go-ai-bedrock-agents": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/bedrockagents"
+    }
+  ],
+  "go-ai-bedrock-messages": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/bedrockmessages"
+    }
+  ],
+  "go-ai-claude-agents": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/claudeagents"
+    }
+  ],
+  "go-ai-claude-messages": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/claudemessages"
+    }
+  ],
+  "go-ai-langchain-agents": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/langchainagents"
+    }
+  ],
+  "go-ai-langchain-messages": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/langchainmessages"
+    }
+  ],
+  "go-ai-openai-agents": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/openaiagents"
+    }
+  ],
+  "go-ai-openai-messages": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/openaimessages"
+    }
+  ],
+  "go-ai-server": [
+    {
+      "language": "go",
+      "name": "github.com/launchdarkly/go-ai-sdk/aiserver"
+    }
+  ],
   "go-server-sdk-ai": [
     {
       "language": "go",
@@ -61,6 +115,26 @@
       "name": "@launchdarkly/ai-langchain-messages"
     }
   ],
+  "js-ai-litellm-agents": [
+    {
+      "language": "javascript",
+      "name": "@launchdarkly/ai-litellm-agents"
+    },
+    {
+      "language": "typescript",
+      "name": "@launchdarkly/ai-litellm-agents"
+    }
+  ],
+  "js-ai-litellm-messages": [
+    {
+      "language": "javascript",
+      "name": "@launchdarkly/ai-litellm-messages"
+    },
+    {
+      "language": "typescript",
+      "name": "@launchdarkly/ai-litellm-messages"
+    }
+  ],
   "js-ai-node": [
     {
       "language": "javascript",
@@ -99,6 +173,16 @@
     {
       "language": "typescript",
       "name": "@launchdarkly/ai-server"
+    }
+  ],
+  "js-ai-typesafe": [
+    {
+      "language": "javascript",
+      "name": "@launchdarkly/ai-typesafe"
+    },
+    {
+      "language": "typescript",
+      "name": "@launchdarkly/ai-typesafe"
     }
   ],
   "js-ai-vercel-agents": [
@@ -151,6 +235,18 @@
       "name": "launchdarkly-ai-langchain-messages"
     }
   ],
+  "python-ai-litellm-agents": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-litellm-agents"
+    }
+  ],
+  "python-ai-litellm-messages": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-litellm-messages"
+    }
+  ],
   "python-ai-openai-agents": [
     {
       "language": "python",
@@ -173,6 +269,24 @@
     {
       "language": "python",
       "name": "launchdarkly-ai-server"
+    }
+  ],
+  "python-ai-typesafe": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-typesafe"
+    }
+  ],
+  "python-ai-vercel-agents": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-vercel-agents"
+    }
+  ],
+  "python-ai-vercel-messages": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-vercel-messages"
     }
   ],
   "python-server-sdk-ai": [
