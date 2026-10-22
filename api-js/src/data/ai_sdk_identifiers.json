@@ -115,6 +115,26 @@
       "name": "@launchdarkly/ai-langchain-messages"
     }
   ],
+  "js-ai-litellm-agents": [
+    {
+      "language": "javascript",
+      "name": "@launchdarkly/ai-litellm-agents"
+    },
+    {
+      "language": "typescript",
+      "name": "@launchdarkly/ai-litellm-agents"
+    }
+  ],
+  "js-ai-litellm-messages": [
+    {
+      "language": "javascript",
+      "name": "@launchdarkly/ai-litellm-messages"
+    },
+    {
+      "language": "typescript",
+      "name": "@launchdarkly/ai-litellm-messages"
+    }
+  ],
   "js-ai-node": [
     {
       "language": "javascript",
@@ -153,6 +173,16 @@
     {
       "language": "typescript",
       "name": "@launchdarkly/ai-server"
+    }
+  ],
+  "js-ai-typesafe": [
+    {
+      "language": "javascript",
+      "name": "@launchdarkly/ai-typesafe"
+    },
+    {
+      "language": "typescript",
+      "name": "@launchdarkly/ai-typesafe"
     }
   ],
   "js-ai-vercel-agents": [
@@ -205,6 +235,18 @@
       "name": "launchdarkly-ai-langchain-messages"
     }
   ],
+  "python-ai-litellm-agents": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-litellm-agents"
+    }
+  ],
+  "python-ai-litellm-messages": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-litellm-messages"
+    }
+  ],
   "python-ai-openai-agents": [
     {
       "language": "python",
@@ -227,6 +269,24 @@
     {
       "language": "python",
       "name": "launchdarkly-ai-server"
+    }
+  ],
+  "python-ai-typesafe": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-typesafe"
+    }
+  ],
+  "python-ai-vercel-agents": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-vercel-agents"
+    }
+  ],
+  "python-ai-vercel-messages": [
+    {
+      "language": "python",
+      "name": "launchdarkly-ai-vercel-messages"
     }
   ],
   "python-server-sdk-ai": [
