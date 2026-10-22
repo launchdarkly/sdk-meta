@@ -1465,6 +1465,30 @@
       "removed": null
     }
   },
+  "js-ai-litellm-agents": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "js-ai-litellm-messages": {
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
   "js-ai-node": {
     "aiAgentConfig": {
       "deprecated": null,
@@ -1538,6 +1562,13 @@
       "removed": null
     },
     "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "js-ai-typesafe": {
+    "aiJudgeConfig": {
       "deprecated": null,
       "introduced": "0.1",
       "removed": null
@@ -2045,6 +2076,30 @@
       "removed": null
     }
   },
+  "python-ai-litellm-agents": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "python-ai-litellm-messages": {
+    "aiCompletionConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
   "python-ai-openai-agents": {
     "aiAgentConfig": {
       "deprecated": null,
@@ -2103,6 +2158,37 @@
       "removed": null
     },
     "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "python-ai-typesafe": {
+    "aiJudgeConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "python-ai-vercel-agents": {
+    "aiAgentConfig": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiAgentGraph": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    },
+    "aiTrackMetrics": {
+      "deprecated": null,
+      "introduced": "0.1",
+      "removed": null
+    }
+  },
+  "python-ai-vercel-messages": {
+    "aiCompletionConfig": {
       "deprecated": null,
       "introduced": "0.1",
       "removed": null
