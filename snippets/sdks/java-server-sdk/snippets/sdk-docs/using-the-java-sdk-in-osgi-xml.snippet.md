@@ -4,7 +4,8 @@ sdk: java-server-sdk
 kind: reference
 lang: xml
 description: "XML in section \"Using the Java SDK in OSGi\""
-# TODO(validate): declarative XML <dependency> block; not executable Java. See _sdk-docs-port-notes.md.
+# TODO(validate): body mixes a Maven <dependency> block and a Gradle string, so it is not well-formed XML.
+# To validate the XML part with the xml runtime, move the Gradle line to a separate snippet.
 ---
 
 ```xml
