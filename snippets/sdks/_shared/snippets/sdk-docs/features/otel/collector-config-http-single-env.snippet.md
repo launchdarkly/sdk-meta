@@ -4,6 +4,7 @@ kind: reference
 lang: yaml
 description: OpenTelemetry collector configuration sending traces to LaunchDarkly over HTTP (one environment).
 # TODO(validate): no yaml validator runtime exists yet, and _shared snippets carry no sdk: field for a CI row to select.
+# To validate, add a yaml parse harness (or otelcol validate) and CLI support for snippets with no sdk: field.
 ---
 
 ```yaml

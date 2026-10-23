@@ -4,7 +4,8 @@ sdk: ios-client-sdk
 kind: reference
 lang: objective-c
 description: "iOS SDK v8.x (Objective-C) in section \"Initialize the client\""
-# TODO(validate): .
+# TODO(validate): no Objective-C scaffold exists, and the body uses the v8 LDConfig initializer with no
+# autoEnvAttributes:, which the pinned SDK 11.x does not have. Needs an Objective-C scaffold and a v8 pin.
 ---
 
 ```objectivec

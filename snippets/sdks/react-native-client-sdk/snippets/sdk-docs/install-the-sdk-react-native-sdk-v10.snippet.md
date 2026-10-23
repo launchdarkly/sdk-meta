@@ -4,12 +4,6 @@ sdk: react-native-client-sdk
 kind: reference
 lang: typescript
 description: "React Native SDK v10 in section \"Install the SDK\""
-# TODO(validate): react-native validator harness expects a 2-file shape
-# (App.tsx + src/welcome.tsx) baked into the prebuilt jest project,
-# whereas the react-native-syntax-only scaffold writes a single App.js.
-# The harness needs a separate parse-only mode (or the scaffold needs
-# to output the App.tsx + src/welcome.tsx pair) before sdk-docs
-# fragments can validate.
 validation:
   scaffold: react-native-client-sdk/scaffolds/react-native-syntax-only
 ---
