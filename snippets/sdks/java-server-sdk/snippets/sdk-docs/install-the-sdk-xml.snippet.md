@@ -12,6 +12,6 @@ description: "XML in section \"Install the SDK\""
 <dependency>
   <groupId>com.launchdarkly</groupId>
   <artifactId>launchdarkly-java-server-sdk</artifactId>
-  <version>7.17.2</version>
+  <version>7.17.3</version>
 </dependency>
 ```
