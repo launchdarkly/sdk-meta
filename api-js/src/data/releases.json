@@ -2630,9 +2630,15 @@
   "node-client-sdk": [
     {
       "major": 4,
+      "minor": 4,
+      "date": "2026-10-27T20:41:33Z",
+      "eol": null
+    },
+    {
+      "major": 4,
       "minor": 3,
       "date": "2026-10-16T17:07:24Z",
-      "eol": null
+      "eol": "2027-10-27T00:00:00Z"
     },
     {
       "major": 4,
@@ -2740,9 +2746,15 @@
   "node-server": [
     {
       "major": 9,
+      "minor": 16,
+      "date": "2026-10-27T20:41:35Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 15,
       "date": "2026-10-16T17:07:26Z",
-      "eol": null
+      "eol": "2027-10-27T00:00:00Z"
     },
     {
       "major": 9,
