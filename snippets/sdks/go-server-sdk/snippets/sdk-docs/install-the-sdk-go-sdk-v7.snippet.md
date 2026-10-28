@@ -27,7 +27,7 @@ import (
     "github.com/launchdarkly/go-server-sdk/v7/ldplugins"
 
     // observability-sdk/go is the observability plugin - here we are aliasing it to "ldobserve"
-    // this package requires go-server-sdk/v7 version 7.11 or later
+    // this package requires go-server-sdk/v7 version 7.13.1 or later
     ldobserve "github.com/launchdarkly/observability-sdk/go"
 )
 ```
