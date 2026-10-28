@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.30.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.30.0...snippets/v0.30.1) (2026-10-28)
+
+
+### Bug Fixes
+
+* **snippets:** correct Go observability plugin minimum SDK version ([#708](https://github.com/launchdarkly/sdk-meta/issues/708)) ([30a2e67](https://github.com/launchdarkly/sdk-meta/commit/30a2e6785502ed384a6eba396a587a4e68830efe))
+
 ## [0.30.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.29.0...snippets/v0.30.0) (2026-10-22)
 
 
