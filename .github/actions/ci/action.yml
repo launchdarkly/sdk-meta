@@ -19,9 +19,8 @@ runs:
         ./scripts/ci/check-json-schemas.sh
 
     - name: Set up Go
-      uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+      uses: ./.github/actions/setup-go
       with:
-        go-version-file: tool/go.mod
         cache-dependency-path: |
           tool/go.sum
           api/go.sum
