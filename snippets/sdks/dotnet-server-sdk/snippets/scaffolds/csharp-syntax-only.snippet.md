@@ -36,6 +36,7 @@ validation:
     LaunchDarkly.ServerSdk.Redis
     LaunchDarkly.ServerSdk.DynamoDB
     LaunchDarkly.ServerSdk.Consul
+    YamlDotNet
 ---
 
 ```csharp
