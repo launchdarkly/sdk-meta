@@ -9,6 +9,8 @@ validation:
 ---
 
 ```java
+import com.launchdarkly.sdk.*;
+
 EvaluationDetail<Boolean> detail =
     client.boolVariationDetail("my-boolean-flag-key", context, false);
 if (detail.getReason().isOverrideAffected()) {
