@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.31.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.30.1...snippets/v0.31.0) (2026-11-04)
+
+
+### Features
+
+* **snippets:** add flag override snippets for the Go SDK ([#715](https://github.com/launchdarkly/sdk-meta/issues/715)) ([c58ab7e](https://github.com/launchdarkly/sdk-meta/commit/c58ab7e157b0b12cfffa43293b39b059e9d12112))
+* **snippets:** add flag override snippets for the Node.js (server-side) SDK ([#716](https://github.com/launchdarkly/sdk-meta/issues/716)) ([f4887ca](https://github.com/launchdarkly/sdk-meta/commit/f4887ca3fca547c714c297beaf8ba0cbfd00a237))
+* **snippets:** add shared flag override file examples ([#714](https://github.com/launchdarkly/sdk-meta/issues/714)) ([d692d5e](https://github.com/launchdarkly/sdk-meta/commit/d692d5ea3234e8d2ba019ac3373679c314180dc6))
+
 ## [0.30.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.30.0...snippets/v0.30.1) (2026-10-28)
 
 
