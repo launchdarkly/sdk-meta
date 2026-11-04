@@ -1,0 +1,212 @@
+{
+  "version": 1,
+  "sdks": {
+    "go-ai-server": {
+      "name": "Go AI SDK",
+      "type": "ai",
+      "path": "aiserver",
+      "languages": [
+        "Go"
+      ],
+      "aiSdkNames": [
+        "github.com/launchdarkly/go-ai-sdk/aiserver"
+      ],
+      "releases": {
+        "tag-prefix": "v"
+      },
+      "features": {
+        "aiAgentConfig": {
+          "introduced": "0.1"
+        },
+        "aiAgentGraph": {
+          "introduced": "0.1"
+        },
+        "aiCompletionConfig": {
+          "introduced": "0.1"
+        },
+        "aiJudgeConfig": {
+          "introduced": "0.1"
+        },
+        "aiTrackMetrics": {
+          "introduced": "0.1"
+        }
+      }
+    },
+    "go-ai-bedrock-agents": {
+      "name": "Go AI SDK for Bedrock Agents",
+      "type": "ai-provider",
+      "path": "bedrockagents",
+      "languages": [
+        "Go"
+      ],
+      "aiSdkNames": [
+        "github.com/launchdarkly/go-ai-sdk/bedrockagents"
+      ],
+      "releases": {
+        "tag-prefix": "v"
+      },
+      "features": {
+        "aiAgentConfig": {
+          "introduced": "0.1"
+        },
+        "aiAgentGraph": {
+          "introduced": "0.1"
+        },
+        "aiTrackMetrics": {
+          "introduced": "0.1"
+        }
+      }
+    },
+    "go-ai-bedrock-messages": {
+      "name": "Go AI SDK for Bedrock Messages",
+      "type": "ai-provider",
+      "path": "bedrockmessages",
+      "languages": [
+        "Go"
+      ],
+      "aiSdkNames": [
+        "github.com/launchdarkly/go-ai-sdk/bedrockmessages"
+      ],
+      "releases": {
+        "tag-prefix": "v"
+      },
+      "features": {
+        "aiCompletionConfig": {
+          "introduced": "0.1"
+        }
+      }
+    },
+    "go-ai-claude-agents": {
+      "name": "Go AI SDK for Claude Agents",
+      "type": "ai-provider",
+      "path": "claudeagents",
+      "languages": [
+        "Go"
+      ],
+      "aiSdkNames": [
+        "github.com/launchdarkly/go-ai-sdk/claudeagents"
+      ],
+      "releases": {
+        "tag-prefix": "v"
+      },
+      "features": {
+        "aiAgentConfig": {
+          "introduced": "0.1"
+        },
+        "aiAgentGraph": {
+          "introduced": "0.1"
+        },
+        "aiTrackMetrics": {
+          "introduced": "0.1"
+        }
+      }
+    },
+    "go-ai-claude-messages": {
+      "name": "Go AI SDK for Claude Messages",
+      "type": "ai-provider",
+      "path": "claudemessages",
+      "languages": [
+        "Go"
+      ],
+      "aiSdkNames": [
+        "github.com/launchdarkly/go-ai-sdk/claudemessages"
+      ],
+      "releases": {
+        "tag-prefix": "v"
+      },
+      "features": {
+        "aiCompletionConfig": {
+          "introduced": "0.1"
+        }
+      }
+    },
+    "go-ai-langchain-agents": {
+      "name": "Go AI SDK for LangChain Agents",
+      "type": "ai-provider",
+      "path": "langchainagents",
+      "languages": [
+        "Go"
+      ],
+      "aiSdkNames": [
+        "github.com/launchdarkly/go-ai-sdk/langchainagents"
+      ],
+      "releases": {
+        "tag-prefix": "v"
+      },
+      "features": {
+        "aiAgentConfig": {
+          "introduced": "0.1"
+        },
+        "aiAgentGraph": {
+          "introduced": "0.1"
+        },
+        "aiTrackMetrics": {
+          "introduced": "0.1"
+        }
+      }
+    },
+    "go-ai-langchain-messages": {
+      "name": "Go AI SDK for LangChain Messages",
+      "type": "ai-provider",
+      "path": "langchainmessages",
+      "languages": [
+        "Go"
+      ],
+      "aiSdkNames": [
+        "github.com/launchdarkly/go-ai-sdk/langchainmessages"
+      ],
+      "releases": {
+        "tag-prefix": "v"
+      },
+      "features": {
+        "aiCompletionConfig": {
+          "introduced": "0.1"
+        }
+      }
+    },
+    "go-ai-openai-agents": {
+      "name": "Go AI SDK for OpenAI Agents",
+      "type": "ai-provider",
+      "path": "openaiagents",
+      "languages": [
+        "Go"
+      ],
+      "aiSdkNames": [
+        "github.com/launchdarkly/go-ai-sdk/openaiagents"
+      ],
+      "releases": {
+        "tag-prefix": "v"
+      },
+      "features": {
+        "aiAgentConfig": {
+          "introduced": "0.1"
+        },
+        "aiAgentGraph": {
+          "introduced": "0.1"
+        },
+        "aiTrackMetrics": {
+          "introduced": "0.1"
+        }
+      }
+    },
+    "go-ai-openai-messages": {
+      "name": "Go AI SDK for OpenAI Messages",
+      "type": "ai-provider",
+      "path": "openaimessages",
+      "languages": [
+        "Go"
+      ],
+      "aiSdkNames": [
+        "github.com/launchdarkly/go-ai-sdk/openaimessages"
+      ],
+      "releases": {
+        "tag-prefix": "v"
+      },
+      "features": {
+        "aiCompletionConfig": {
+          "introduced": "0.1"
+        }
+      }
+    }
+  }
+}

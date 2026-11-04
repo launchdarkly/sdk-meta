@@ -60,9 +60,21 @@
   "android": [
     {
       "major": 5,
+      "minor": 18,
+      "date": "2026-11-02T15:01:04Z",
+      "eol": null
+    },
+    {
+      "major": 5,
+      "minor": 17,
+      "date": "2026-10-16T16:39:43Z",
+      "eol": "2027-11-02T00:00:00Z"
+    },
+    {
+      "major": 5,
       "minor": 16,
       "date": "2026-08-27T17:03:49Z",
-      "eol": null
+      "eol": "2027-10-16T00:00:00Z"
     },
     {
       "major": 5,
@@ -370,9 +382,33 @@
   "browser": [
     {
       "major": 4,
+      "minor": 14,
+      "date": "2026-11-02T18:35:21Z",
+      "eol": null
+    },
+    {
+      "major": 4,
+      "minor": 13,
+      "date": "2026-10-16T17:07:41Z",
+      "eol": "2027-11-02T00:00:00Z"
+    },
+    {
+      "major": 4,
+      "minor": 12,
+      "date": "2026-10-14T18:52:25Z",
+      "eol": "2027-10-16T00:00:00Z"
+    },
+    {
+      "major": 4,
+      "minor": 11,
+      "date": "2026-10-01T14:43:28Z",
+      "eol": "2027-10-14T00:00:00Z"
+    },
+    {
+      "major": 4,
       "minor": 10,
       "date": "2026-08-26T19:16:14Z",
-      "eol": null
+      "eol": "2027-10-01T00:00:00Z"
     },
     {
       "major": 4,
@@ -1284,9 +1320,15 @@
   "erlang-server-sdk": [
     {
       "major": 3,
+      "minor": 12,
+      "date": "2026-10-08T21:35:49Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 11,
       "date": "2026-06-17T18:07:44Z",
-      "eol": null
+      "eol": "2027-10-08T00:00:00Z"
     },
     {
       "major": 3,
@@ -1594,9 +1636,27 @@
   "go-server-sdk": [
     {
       "major": 7,
+      "minor": 21,
+      "date": "2026-10-22T22:28:25Z",
+      "eol": null
+    },
+    {
+      "major": 7,
+      "minor": 20,
+      "date": "2026-10-21T22:00:51Z",
+      "eol": "2027-10-22T00:00:00Z"
+    },
+    {
+      "major": 7,
+      "minor": 19,
+      "date": "2026-10-07T18:08:14Z",
+      "eol": "2027-10-21T00:00:00Z"
+    },
+    {
+      "major": 7,
       "minor": 18,
       "date": "2026-09-25T16:45:06Z",
-      "eol": null
+      "eol": "2027-10-07T00:00:00Z"
     },
     {
       "major": 7,
@@ -2281,6 +2341,110 @@
       "eol": "2017-08-10T00:00:00Z"
     }
   ],
+  "js-ai-claude-agents": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:31Z",
+      "eol": null
+    }
+  ],
+  "js-ai-claude-messages": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:32Z",
+      "eol": null
+    }
+  ],
+  "js-ai-langchain-agents": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:36Z",
+      "eol": null
+    }
+  ],
+  "js-ai-langchain-messages": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:37Z",
+      "eol": null
+    }
+  ],
+  "js-ai-litellm-agents": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:43Z",
+      "eol": null
+    }
+  ],
+  "js-ai-litellm-messages": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:44Z",
+      "eol": null
+    }
+  ],
+  "js-ai-node": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:28Z",
+      "eol": null
+    }
+  ],
+  "js-ai-openai-agents": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:34Z",
+      "eol": null
+    }
+  ],
+  "js-ai-openai-messages": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:35Z",
+      "eol": null
+    }
+  ],
+  "js-ai-server": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:27Z",
+      "eol": null
+    }
+  ],
+  "js-ai-typesafe": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:41Z",
+      "eol": null
+    }
+  ],
+  "js-ai-vercel-agents": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:39Z",
+      "eol": null
+    }
+  ],
+  "js-ai-vercel-messages": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:40Z",
+      "eol": null
+    }
+  ],
   "js-client-sdk": [
     {
       "major": 3,
@@ -2582,9 +2746,27 @@
   "node-client-sdk": [
     {
       "major": 4,
+      "minor": 4,
+      "date": "2026-10-27T20:41:33Z",
+      "eol": null
+    },
+    {
+      "major": 4,
+      "minor": 3,
+      "date": "2026-10-16T17:07:24Z",
+      "eol": "2027-10-27T00:00:00Z"
+    },
+    {
+      "major": 4,
+      "minor": 2,
+      "date": "2026-10-14T18:52:06Z",
+      "eol": "2027-10-16T00:00:00Z"
+    },
+    {
+      "major": 4,
       "minor": 1,
       "date": "2026-08-26T19:16:13Z",
-      "eol": null
+      "eol": "2027-10-14T00:00:00Z"
     },
     {
       "major": 4,
@@ -2680,9 +2862,27 @@
   "node-server": [
     {
       "major": 9,
+      "minor": 16,
+      "date": "2026-10-27T20:41:35Z",
+      "eol": null
+    },
+    {
+      "major": 9,
+      "minor": 15,
+      "date": "2026-10-16T17:07:26Z",
+      "eol": "2027-10-27T00:00:00Z"
+    },
+    {
+      "major": 9,
+      "minor": 14,
+      "date": "2026-10-01T14:43:18Z",
+      "eol": "2027-10-16T00:00:00Z"
+    },
+    {
+      "major": 9,
       "minor": 13,
       "date": "2026-07-28T14:55:47Z",
-      "eol": null
+      "eol": "2027-10-01T00:00:00Z"
     },
     {
       "major": 9,
@@ -2988,9 +3188,21 @@
   "php-server-sdk": [
     {
       "major": 6,
+      "minor": 11,
+      "date": "2026-10-21T19:01:25Z",
+      "eol": null
+    },
+    {
+      "major": 6,
+      "minor": 10,
+      "date": "2026-10-14T17:40:05Z",
+      "eol": "2027-10-21T00:00:00Z"
+    },
+    {
+      "major": 6,
       "minor": 9,
       "date": "2026-09-11T20:50:42Z",
-      "eol": null
+      "eol": "2027-10-14T00:00:00Z"
     },
     {
       "major": 6,
@@ -3191,12 +3403,130 @@
       "eol": "2017-08-10T00:00:00Z"
     }
   ],
+  "python-ai": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:35Z",
+      "eol": null
+    }
+  ],
+  "python-ai-claude-agents": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:36Z",
+      "eol": null
+    }
+  ],
+  "python-ai-claude-messages": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:37Z",
+      "eol": null
+    }
+  ],
+  "python-ai-langchain-agents": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:46Z",
+      "eol": null
+    }
+  ],
+  "python-ai-langchain-messages": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:47Z",
+      "eol": null
+    }
+  ],
+  "python-ai-litellm-agents": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:41Z",
+      "eol": null
+    }
+  ],
+  "python-ai-litellm-messages": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:45Z",
+      "eol": null
+    }
+  ],
+  "python-ai-openai-agents": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:39Z",
+      "eol": null
+    }
+  ],
+  "python-ai-openai-messages": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:42Z",
+      "eol": null
+    }
+  ],
+  "python-ai-opencode-agents": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:48Z",
+      "eol": null
+    }
+  ],
+  "python-ai-server": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:33Z",
+      "eol": null
+    }
+  ],
+  "python-ai-typesafe": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:50Z",
+      "eol": null
+    }
+  ],
+  "python-ai-vercel-agents": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:40Z",
+      "eol": null
+    }
+  ],
+  "python-ai-vercel-messages": [
+    {
+      "major": 1,
+      "minor": 0,
+      "date": "2026-10-30T21:39:43Z",
+      "eol": null
+    }
+  ],
   "python-server-sdk": [
+    {
+      "major": 9,
+      "minor": 19,
+      "date": "2026-11-02T18:01:02Z",
+      "eol": null
+    },
     {
       "major": 9,
       "minor": 18,
       "date": "2026-09-25T22:52:49Z",
-      "eol": null
+      "eol": "2027-11-02T00:00:00Z"
     },
     {
       "major": 9,
@@ -3522,9 +3852,15 @@
   "react-client-sdk": [
     {
       "major": 4,
+      "minor": 2,
+      "date": "2026-11-03T16:17:20Z",
+      "eol": null
+    },
+    {
+      "major": 4,
       "minor": 1,
       "date": "2026-06-02T14:02:26Z",
-      "eol": null
+      "eol": "2027-11-03T00:00:00Z"
     },
     {
       "major": 4,
@@ -3692,9 +4028,27 @@
   "react-native": [
     {
       "major": 10,
+      "minor": 23,
+      "date": "2026-10-16T17:07:21Z",
+      "eol": null
+    },
+    {
+      "major": 10,
+      "minor": 22,
+      "date": "2026-10-15T14:53:56Z",
+      "eol": "2027-10-16T00:00:00Z"
+    },
+    {
+      "major": 10,
+      "minor": 21,
+      "date": "2026-10-14T18:52:04Z",
+      "eol": "2027-10-15T00:00:00Z"
+    },
+    {
+      "major": 10,
       "minor": 20,
       "date": "2026-08-26T19:16:12Z",
-      "eol": null
+      "eol": "2027-10-14T00:00:00Z"
     },
     {
       "major": 10,
@@ -3987,10 +4341,22 @@
   ],
   "relay-proxy": [
     {
+      "major": 9,
+      "minor": 0,
+      "date": "2026-10-30T21:38:46Z",
+      "eol": null
+    },
+    {
+      "major": 8,
+      "minor": 23,
+      "date": "2026-10-06T15:46:44Z",
+      "eol": "2027-10-30T00:00:00Z"
+    },
+    {
       "major": 8,
       "minor": 22,
       "date": "2026-09-17T13:46:23Z",
-      "eol": null
+      "eol": "2027-10-06T00:00:00Z"
     },
     {
       "major": 8,
@@ -4418,9 +4784,15 @@
   "ruby-server-sdk": [
     {
       "major": 8,
+      "minor": 19,
+      "date": "2026-10-15T15:23:35Z",
+      "eol": null
+    },
+    {
+      "major": 8,
       "minor": 18,
       "date": "2026-09-16T14:38:23Z",
-      "eol": null
+      "eol": "2027-10-15T00:00:00Z"
     },
     {
       "major": 8,
@@ -4802,9 +5174,15 @@
   "swift-client-sdk": [
     {
       "major": 11,
+      "minor": 7,
+      "date": "2026-10-08T14:12:08Z",
+      "eol": null
+    },
+    {
+      "major": 11,
       "minor": 6,
       "date": "2026-08-27T21:08:54Z",
-      "eol": null
+      "eol": "2027-10-08T00:00:00Z"
     },
     {
       "major": 11,

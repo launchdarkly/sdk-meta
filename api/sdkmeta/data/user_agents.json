@@ -165,8 +165,10 @@
   "swift-client-sdk": {
     "userAgents": [
       "iOS",
+      "iPadOS",
       "macOS",
       "tvOS",
+      "visionOS",
       "watchOS"
     ]
   },

@@ -114,6 +114,17 @@
         "aiCompletionConfig": { "introduced": "0.1" }
       }
     },
+    "js-ai-typesafe": {
+      "name": "JavaScript AI SDK for TypeSafe",
+      "type": "ai-provider",
+      "path": "packages/typesafe",
+      "languages": ["JavaScript", "TypeScript"],
+      "aiSdkNames": ["@launchdarkly/ai-typesafe"],
+      "releases": { "tag-prefix": "@launchdarkly/ai-typesafe-" },
+      "features": {
+        "aiJudgeConfig": { "introduced": "0.1" }
+      }
+    },
     "js-ai-vercel-agents": {
       "name": "JavaScript AI SDK for Vercel Agents",
       "type": "ai-provider",
@@ -121,6 +132,30 @@
       "languages": ["JavaScript", "TypeScript"],
       "aiSdkNames": ["@launchdarkly/ai-vercel-agents"],
       "releases": { "tag-prefix": "@launchdarkly/ai-vercel-agents-" },
+      "features": {
+        "aiAgentConfig": { "introduced": "0.1" },
+        "aiAgentGraph": { "introduced": "0.1" },
+        "aiTrackMetrics": { "introduced": "0.1" }
+      }
+    },
+    "js-ai-litellm-messages": {
+      "name": "JavaScript AI SDK for LiteLLM Messages",
+      "type": "ai-provider",
+      "path": "packages/litellm-messages",
+      "languages": ["JavaScript", "TypeScript"],
+      "aiSdkNames": ["@launchdarkly/ai-litellm-messages"],
+      "releases": { "tag-prefix": "@launchdarkly/ai-litellm-messages-" },
+      "features": {
+        "aiCompletionConfig": { "introduced": "0.1" }
+      }
+    },
+    "js-ai-litellm-agents": {
+      "name": "JavaScript AI SDK for LiteLLM Agents",
+      "type": "ai-provider",
+      "path": "packages/litellm-agents",
+      "languages": ["JavaScript", "TypeScript"],
+      "aiSdkNames": ["@launchdarkly/ai-litellm-agents"],
+      "releases": { "tag-prefix": "@launchdarkly/ai-litellm-agents-" },
       "features": {
         "aiAgentConfig": { "introduced": "0.1" },
         "aiAgentGraph": { "introduced": "0.1" },

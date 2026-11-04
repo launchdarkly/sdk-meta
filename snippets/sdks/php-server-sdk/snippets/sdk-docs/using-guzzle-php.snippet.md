@@ -10,7 +10,7 @@ description: "PHP in section \"Using Guzzle\""
 # fence is retagged as shell (and the body adjusted to drop the
 # leading `php` prefix so shell-install can sniff `composer`), or
 # (b) a php-or-shell-composer scaffold is added. Tracked for the
-# follow-up snippet-bugs PR — see _sdk-docs-port-notes.md.
+# follow-up snippet-bugs PR.
 ---
 
 ```php

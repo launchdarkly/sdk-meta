@@ -72,6 +72,11 @@ usage:
       to one snippet group (the middle segment of the snippet id), which is
       how CI splits one SDK across multiple matrix rows.
 
+  snippets validator-build-args [--validators=./validators] <runtime>
+      Print the NAME=value Docker build args for a validator runtime, one per
+      line, with floating SDK families from shared/versions/sdks.env resolved
+      to exact releases. Used by validators/build.sh.
+
   snippets version
       Print the snippets generator version.
 `
@@ -88,6 +93,8 @@ func main() {
 		runVerify(os.Args[2:])
 	case "validate":
 		runValidate(os.Args[2:])
+	case "validator-build-args":
+		runValidatorBuildArgs(os.Args[2:])
 	case "version":
 		fmt.Println(version.Version)
 	case "-h", "--help", "help":
@@ -221,4 +228,22 @@ func runValidate(args []string) {
 		os.Exit(1)
 	}
 	fmt.Println("ok")
+}
+
+func runValidatorBuildArgs(args []string) {
+	fset := flag.NewFlagSet("validator-build-args", flag.ExitOnError)
+	validators := fset.String("validators", "./validators", "path to the validators/ directory")
+	_ = fset.Parse(args)
+	if fset.NArg() != 1 {
+		fmt.Fprintf(os.Stderr, "validator-build-args: exactly one runtime is required\n")
+		os.Exit(2)
+	}
+	buildArgs, err := validate.BuildArgs(*validators, fset.Arg(0), os.Stderr)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "validator-build-args failed: %v\n", err)
+		os.Exit(1)
+	}
+	for _, arg := range buildArgs {
+		fmt.Println(arg)
+	}
 }

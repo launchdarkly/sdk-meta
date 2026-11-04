@@ -6,7 +6,7 @@ lang: javascript
 file: cloudflare-server-sdk/sdk-docs/openfeature/construct-a-context-user.mjs
 description: "Cloudflare OpenFeature provider in section \"Construct a context\" (user)"
 validation:
-  scaffold: cloudflare-server-sdk/scaffolds/cloudflare-syntax-only
+  scaffold: cloudflare-server-sdk/scaffolds/openfeature-cloudflare-eval
 ---
 
 ```js

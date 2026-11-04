@@ -4,7 +4,8 @@ sdk: ios-client-sdk
 kind: reference
 lang: objective-c
 description: "iOS SDK v9.x (Objective-C) in section \"Initialize the client\""
-# TODO(validate): . See _sdk-docs-port-notes.md.
+# TODO(validate): swift-syntax-only compiles Swift only. To validate, add an Objective-C scaffold
+# (or a harness branch on lang:) and a project.yml with an Objective-C target.
 ---
 
 ```objectivec

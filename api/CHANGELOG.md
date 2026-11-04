@@ -1,5 +1,59 @@
 # Changelog
 
+## [0.7.12](https://github.com/launchdarkly/sdk-meta/compare/api/v0.7.11...api/v0.7.12) (2026-11-04)
+
+
+### Bug Fixes
+
+* **metadata:** ingest new data and regenerate products ([#712](https://github.com/launchdarkly/sdk-meta/issues/712)) ([961ce00](https://github.com/launchdarkly/sdk-meta/commit/961ce00a90ee7e16c5c1e2fee8c52ea4e5f5e796))
+* **metadata:** ingest new data and regenerate products ([#721](https://github.com/launchdarkly/sdk-meta/issues/721)) ([17d99cb](https://github.com/launchdarkly/sdk-meta/commit/17d99cb7c75a6be98769c52c928d54e26aaf8e57))
+* **metadata:** ingest new data and regenerate products ([#722](https://github.com/launchdarkly/sdk-meta/issues/722)) ([2f542df](https://github.com/launchdarkly/sdk-meta/commit/2f542df16fbae82d091e3bb2f29caa61d07fcfb9))
+
+## [0.7.11](https://github.com/launchdarkly/sdk-meta/compare/api/v0.7.10...api/v0.7.11) (2026-10-28)
+
+
+### Bug Fixes
+
+* **metadata:** ingest new data and regenerate products ([#704](https://github.com/launchdarkly/sdk-meta/issues/704)) ([6d633b7](https://github.com/launchdarkly/sdk-meta/commit/6d633b7c506b225503df81d7f4a2329bd68e5781))
+
+## [0.7.10](https://github.com/launchdarkly/sdk-meta/compare/api/v0.7.9...api/v0.7.10) (2026-10-26)
+
+
+### Bug Fixes
+
+* **metadata:** ingest new data and regenerate products ([#702](https://github.com/launchdarkly/sdk-meta/issues/702)) ([2b85c9d](https://github.com/launchdarkly/sdk-meta/commit/2b85c9d262deda6fb8b308fb0af19a3eefa7ea4d))
+
+## [0.7.9](https://github.com/launchdarkly/sdk-meta/compare/api/v0.7.8...api/v0.7.9) (2026-10-22)
+
+
+### Bug Fixes
+
+* **metadata:** ingest new data and regenerate products ([#695](https://github.com/launchdarkly/sdk-meta/issues/695)) ([16d3942](https://github.com/launchdarkly/sdk-meta/commit/16d3942209cc14b18983113ce854631c77192692))
+* **metadata:** ingest new data and regenerate products ([#697](https://github.com/launchdarkly/sdk-meta/issues/697)) ([d806005](https://github.com/launchdarkly/sdk-meta/commit/d806005871a6b87c299080d84ff9811da32c38c3))
+* **metadata:** ingest new data and regenerate products ([#699](https://github.com/launchdarkly/sdk-meta/issues/699)) ([d8c97f9](https://github.com/launchdarkly/sdk-meta/commit/d8c97f9642000129e554d0459112ab9ebcd51fc9))
+
+## [0.7.8](https://github.com/launchdarkly/sdk-meta/compare/api/v0.7.7...api/v0.7.8) (2026-10-14)
+
+
+### Bug Fixes
+
+* **metadata:** ingest new data and regenerate products ([#691](https://github.com/launchdarkly/sdk-meta/issues/691)) ([b547fca](https://github.com/launchdarkly/sdk-meta/commit/b547fca9cfb9230eb5fd3d9b4a387aa2d6e98e5b))
+
+## [0.7.7](https://github.com/launchdarkly/sdk-meta/compare/api/v0.7.6...api/v0.7.7) (2026-10-13)
+
+
+### Bug Fixes
+
+* **metadata:** ingest new data and regenerate products ([#688](https://github.com/launchdarkly/sdk-meta/issues/688)) ([c99b5a0](https://github.com/launchdarkly/sdk-meta/commit/c99b5a073cc3f5aaa4a142481f82771a17bb25eb))
+
+## [0.7.6](https://github.com/launchdarkly/sdk-meta/compare/api/v0.7.5...api/v0.7.6) (2026-09-30)
+
+
+### Bug Fixes
+
+* **metadata:** ingest new data and regenerate products ([#659](https://github.com/launchdarkly/sdk-meta/issues/659)) ([35d5222](https://github.com/launchdarkly/sdk-meta/commit/35d5222d11920abe3da2aa00a2c09f7e2ba11b9c))
+* **metadata:** ingest new data and regenerate products ([#661](https://github.com/launchdarkly/sdk-meta/issues/661)) ([6c1ba7d](https://github.com/launchdarkly/sdk-meta/commit/6c1ba7d07e4b07a7b83ebbf8d43bb21abd1817a9))
+
 ## [0.7.5](https://github.com/launchdarkly/sdk-meta/compare/api/v0.7.4...api/v0.7.5) (2026-09-25)
 
 

@@ -1,5 +1,45 @@
 # Changelog
 
+## [0.30.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.30.0...snippets/v0.30.1) (2026-10-28)
+
+
+### Bug Fixes
+
+* **snippets:** correct Go observability plugin minimum SDK version ([#708](https://github.com/launchdarkly/sdk-meta/issues/708)) ([30a2e67](https://github.com/launchdarkly/sdk-meta/commit/30a2e6785502ed384a6eba396a587a4e68830efe))
+
+## [0.30.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.29.0...snippets/v0.30.0) (2026-10-22)
+
+
+### Features
+
+* **snippets:** add sdk-info observability variants for react, js, and vue ([#700](https://github.com/launchdarkly/sdk-meta/issues/700)) ([83b28c9](https://github.com/launchdarkly/sdk-meta/commit/83b28c917df9a5a08cba3aa60e2a12b08a9f9aeb))
+
+## [0.29.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.28.0...snippets/v0.29.0) (2026-10-14)
+
+
+### Features
+
+* Add PHP web proxy snippets ([#692](https://github.com/launchdarkly/sdk-meta/issues/692)) ([cbdd7a8](https://github.com/launchdarkly/sdk-meta/commit/cbdd7a8a99835f59fab5573db666eb686a62e8fb))
+
+## [0.28.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.27.3...snippets/v0.28.0) (2026-10-08)
+
+
+### Features
+
+* **snippets:** float validator SDK pins on their major version ([#671](https://github.com/launchdarkly/sdk-meta/issues/671)) ([ab71184](https://github.com/launchdarkly/sdk-meta/commit/ab7118429f046be6fc151543359f4338f6f1a051))
+
+
+### Bug Fixes
+
+* **snippets:** use the result-based identify in the iOS Swift identify example ([#678](https://github.com/launchdarkly/sdk-meta/issues/678)) ([3352b92](https://github.com/launchdarkly/sdk-meta/commit/3352b9212d33342ae69007db071a25309d8ff5b8))
+
+## [0.27.3](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.27.2...snippets/v0.27.3) (2026-10-05)
+
+
+### Bug Fixes
+
+* **snippets:** migrate js-client-sdk observability snippets to v4 SDK ([#672](https://github.com/launchdarkly/sdk-meta/issues/672)) ([74fd00a](https://github.com/launchdarkly/sdk-meta/commit/74fd00ab34137f58c46d3063ab889a97c2ab129e))
+
 ## [0.27.2](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.27.1...snippets/v0.27.2) (2026-09-25)
 
 

@@ -24,6 +24,8 @@ ARG LD_CLOUDFLARE_SDK_VERSION
 ARG LD_FASTLY_SDK_VERSION
 ARG LD_VERCEL_SDK_VERSION
 ARG LD_JS_SERVER_SDK_COMMON_VERSION
+ARG LD_OPENFEATURE_CLOUDFLARE_VERSION
+ARG OPENFEATURE_SERVER_SDK_VERSION
 
 WORKDIR /opt/edge-tsc
 # --legacy-peer-deps: the four edge SDKs pin overlapping ranges of the
@@ -38,6 +40,8 @@ RUN npm init -y >/dev/null 2>&1 \
         @launchdarkly/fastly-server-sdk@${LD_FASTLY_SDK_VERSION} \
         @launchdarkly/vercel-server-sdk@${LD_VERCEL_SDK_VERSION} \
         @launchdarkly/js-server-sdk-common@${LD_JS_SERVER_SDK_COMMON_VERSION} \
+        @launchdarkly/openfeature-cloudflare-server@${LD_OPENFEATURE_CLOUDFLARE_VERSION} \
+        @openfeature/server-sdk@${OPENFEATURE_SERVER_SDK_VERSION} \
         @vercel/edge-config \
         @cloudflare/workers-types \
         @fastly/js-compute \

@@ -10,7 +10,7 @@ validation:
 ---
 
 ```javascript
-import LDClient from 'launchdarkly-js-client-sdk'
+import { createClient } from '@launchdarkly/js-client-sdk'
 import Observability, { LDObserve } from '@launchdarkly/observability'
 import SessionReplay, { LDRecord } from '@launchdarkly/session-replay'
 ```

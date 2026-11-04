@@ -13,7 +13,7 @@ validation:
 
 ```javascript
 const context = { kind: 'user', key: 'EXAMPLE_CONTEXT_KEY' };
-const client = LDClient.initialize('SDK_KEY', context, {
+const client = createClient('SDK_KEY', context, {
   // … your existing config, if relevant
   plugins: [
     new Observability({
@@ -28,4 +28,5 @@ const client = LDClient.initialize('SDK_KEY', context, {
     })
   ],
 });
+client.start();
 ```

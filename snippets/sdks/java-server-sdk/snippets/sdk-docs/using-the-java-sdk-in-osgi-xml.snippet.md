@@ -4,7 +4,8 @@ sdk: java-server-sdk
 kind: reference
 lang: xml
 description: "XML in section \"Using the Java SDK in OSGi\""
-# TODO(validate): declarative XML <dependency> block; not executable Java. See _sdk-docs-port-notes.md.
+# TODO(validate): body mixes a Maven <dependency> block and a Gradle string, so it is not well-formed XML.
+# To validate the XML part with the xml runtime, move the Gradle line to a separate snippet.
 ---
 
 ```xml
@@ -12,10 +13,10 @@ description: "XML in section \"Using the Java SDK in OSGi\""
 <dependency>
    <groupId>com.launchdarkly</groupId>
    <artifactId>launchdarkly-java-server-sdk</artifactId>
-   <version>7.17.1</version>
+   <version>7.17.3</version>
    <classifier>all</classifier>
 </dependency>
 
 <!-- or in Gradle -->
-"com.launchdarkly:launchdarkly-java-server-sdk:7.17.1:all"
+"com.launchdarkly:launchdarkly-java-server-sdk:7.17.3:all"
 ```

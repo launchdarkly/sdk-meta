@@ -10,7 +10,7 @@ validation:
 ---
 
 ```shell
-yarn add launchdarkly-js-client-sdk
+yarn add @launchdarkly/js-client-sdk
 yarn add @launchdarkly/session-replay
 yarn add @launchdarkly/observability
 ```

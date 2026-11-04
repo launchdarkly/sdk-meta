@@ -6,7 +6,7 @@ lang: javascript
 file: cloudflare-server-sdk/sdk-docs/openfeature/evaluate-a-context.mjs
 description: "Cloudflare OpenFeature provider in section \"Evaluate a context\""
 validation:
-  scaffold: cloudflare-server-sdk/scaffolds/cloudflare-syntax-only
+  scaffold: cloudflare-server-sdk/scaffolds/openfeature-cloudflare-eval
 ---
 
 ```js

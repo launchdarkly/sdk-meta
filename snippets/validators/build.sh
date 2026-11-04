@@ -26,19 +26,12 @@ if [[ -z "$image_prefix" ]]; then
     exit 1
 fi
 
-source "$validators_dir/shared/versions/images.env"
-source "$validators_dir/shared/versions/npm.env"
-source "$validators_dir/shared/versions/toolchains.env"
-
+# The snippets CLI resolves floating SDK families in shared/versions/sdks.env
+# to exact releases, matching what `snippets validate` builds with.
 build_args=()
-while IFS= read -r name; do
-    [[ -z "$name" ]] && continue
-    if [[ ! -v "$name" ]]; then
-        echo "validator Dockerfile declares ARG $name but no version entry exists" >&2
-        exit 1
-    fi
-    build_args+=(--build-arg "$name=${!name}")
-done < <(sed -nE 's/^[[:space:]]*ARG[[:space:]]+([A-Za-z_][A-Za-z0-9_]*)(=.*)?[[:space:]]*$/\1/p' "$dockerfile" | sort -u)
+while IFS= read -r arg; do
+    build_args+=(--build-arg "$arg")
+done < <(cd "$validators_dir/.." && go run ./cmd/snippets validator-build-args --validators="$validators_dir" "$runtime")
 
 docker build --progress=plain \
     -f "$dockerfile" \

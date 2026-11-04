@@ -11,7 +11,7 @@ validation:
 ```go
 client, _ := ld.MakeCustomClient("YOUR_SDK_KEY",
   ld.Config{
-    // optional observability plugin, requires Go SDK v7.11+
+    // optional observability plugin, requires Go SDK v7.13.1+
     Plugins: []ldplugins.Plugin{
       ldobserve.NewObservabilityPlugin(),
     },

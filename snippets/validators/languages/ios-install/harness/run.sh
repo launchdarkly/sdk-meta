@@ -97,7 +97,7 @@ EOF
         cat > make_project.rb <<'EOF'
 require 'xcodeproj'
 project = Xcodeproj::Project.new('YourTargetName.xcodeproj')
-target = project.new_target(:application, 'YourTargetName', :ios, '13.0')
+target = project.new_target(:application, 'YourTargetName', :ios, '15.0')
 project.save
 EOF
         if ! ruby -rxcodeproj make_project.rb >project.log 2>&1; then

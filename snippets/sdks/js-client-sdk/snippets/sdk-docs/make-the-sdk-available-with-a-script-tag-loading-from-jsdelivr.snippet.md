@@ -6,7 +6,7 @@ lang: html
 description: "Loading from jsDelivr in section \"Make the SDK available with a script tag\""
 # TODO(validate): HTML <script src="…"> tag, not JS code; the
 # js-syntax-only scaffold writes the body as TypeScript and tsdown
-# rejects raw HTML. See _sdk-docs-port-notes.md.
+# rejects raw HTML.
 ---
 
 ```html
