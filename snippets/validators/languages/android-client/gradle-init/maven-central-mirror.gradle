@@ -1,0 +1,14 @@
+// Serve mavenCentral() from Google's Maven Central mirror instead of
+// repo.maven.apache.org. No upstream fallback: dynamic version ranges
+// list versions from every repository, so a rate-limited upstream would
+// still fail resolution.
+def mirrorUrl = 'https://maven-central.storage-download.googleapis.com/maven2/'
+def upstreamHosts = ['repo.maven.apache.org', 'repo1.maven.org']
+
+settingsEvaluated { settings ->
+    [settings.pluginManagement.repositories, settings.dependencyResolutionManagement.repositories].each { repos ->
+        repos.withType(MavenArtifactRepository).matching { upstreamHosts.contains(it.url.host) }.configureEach {
+            it.url = mirrorUrl
+        }
+    }
+}
