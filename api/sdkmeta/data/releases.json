@@ -3518,9 +3518,15 @@
   "python-server-sdk": [
     {
       "major": 9,
+      "minor": 20,
+      "date": "2026-11-05T22:48:00Z",
+      "eol": null
+    },
+    {
+      "major": 9,
       "minor": 19,
       "date": "2026-11-02T18:01:02Z",
-      "eol": null
+      "eol": "2027-11-05T00:00:00Z"
     },
     {
       "major": 9,
@@ -5174,9 +5180,15 @@
   "swift-client-sdk": [
     {
       "major": 11,
+      "minor": 8,
+      "date": "2026-11-05T22:08:56Z",
+      "eol": null
+    },
+    {
+      "major": 11,
       "minor": 7,
       "date": "2026-10-08T14:12:08Z",
-      "eol": null
+      "eol": "2027-11-05T00:00:00Z"
     },
     {
       "major": 11,
