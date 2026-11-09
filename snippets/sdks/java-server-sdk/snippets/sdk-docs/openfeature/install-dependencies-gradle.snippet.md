@@ -11,5 +11,5 @@ validation:
 
 ```groovy
 implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '[7.1.0, 8.0.0)'
-implementation 'dev.openfeature:sdk:[1.7.0,2.0.0)'
+implementation 'dev.openfeature:sdk:[1.16.0,2.0.0)'
 ```
