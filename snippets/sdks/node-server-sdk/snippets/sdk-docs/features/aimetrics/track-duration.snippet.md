@@ -15,5 +15,5 @@ validation:
 // Set duration to the time (in ms) that your AI model generation takes.
 // The duration may include network latency, depending on how you calculate it.
 
-aiConfig.tracker.trackDuration(duration);
+tracker.trackDuration(duration);
 ```

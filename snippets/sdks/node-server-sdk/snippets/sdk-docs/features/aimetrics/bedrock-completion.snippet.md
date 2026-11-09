@@ -10,7 +10,8 @@ validation:
 ---
 
 ```typescript
-const { tracker } = aiConfig;
+// Create a new tracker for each AI run
+const tracker = aiConfig.createTracker();
 
 if (aiConfig.enabled) {
 

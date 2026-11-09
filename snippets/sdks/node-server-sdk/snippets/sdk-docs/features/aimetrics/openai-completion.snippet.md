@@ -12,7 +12,8 @@ validation:
 ```typescript
 import { getAIMetricsFromResponse } from '@launchdarkly/server-sdk-ai-openai';
 
-const { tracker } = aiConfig;
+// Create a new tracker for each AI run
+const tracker = aiConfig.createTracker();
 
 if (aiConfig.enabled) {
 

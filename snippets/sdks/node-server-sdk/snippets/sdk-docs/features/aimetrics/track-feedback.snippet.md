@@ -15,6 +15,6 @@ import { LDFeedbackKind } from '@launchdarkly/server-sdk-ai';
 // Track your own output satisfaction rate.
 
 // Pass in LDFeedbackKind.Positive or LDFeedbackKind.Negative.
-aiConfig.tracker.trackFeedback({ kind: LDFeedbackKind.Positive });
+tracker.trackFeedback({ kind: LDFeedbackKind.Positive });
 
 ```

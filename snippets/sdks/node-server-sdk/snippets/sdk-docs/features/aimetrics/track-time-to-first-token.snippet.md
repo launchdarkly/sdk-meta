@@ -15,5 +15,5 @@ validation:
 // Pass in the time (in ms) until your first token is generated
 // This may include network latency, depending on how you calculate it
 
-aiConfig.tracker.trackTimeToFirstToken(1000);
+tracker.trackTimeToFirstToken(1000);
 ```

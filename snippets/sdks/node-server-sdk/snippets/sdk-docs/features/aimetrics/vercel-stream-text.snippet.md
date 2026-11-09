@@ -16,7 +16,8 @@ import {
   getAIMetricsFromStream,
 } from '@launchdarkly/server-sdk-ai-vercel';
 
-const { tracker } = aiConfig;
+// Create a new tracker for each AI run
+const tracker = aiConfig.createTracker();
 
 // Create a Vercel AI SDK model from the provider and model in aiConfig.
 // Install the Vercel AI SDK provider package, such as @ai-sdk/openai,
