@@ -10,19 +10,29 @@ validation:
 ---
 
 ```typescript
+import { generateText } from 'ai';
+import {
+  VercelRunnerFactory,
+  getAIMetricsFromResponse,
+} from '@launchdarkly/server-sdk-ai-vercel';
+
 const { tracker } = aiConfig;
 
-// Pass in the result of the Vercel AI SDK's generateText function.
-// When you call generateText, use details from the aiConfig,
-// mapped to the input format required for the Vercel AI SDK.
+// Create a Vercel AI SDK model from the provider and model in aiConfig.
+// Install the Vercel AI SDK provider package, such as @ai-sdk/openai,
+// for each provider that your config uses.
 //
-// CAUTION: The toVercelAISDK function may throw an exception
-// if a Vercel AI SDK model cannot be determined.
+// CAUTION: createVercelModel throws an exception if the provider
+// is not supported or its Vercel AI SDK package is not installed.
+const model = await VercelRunnerFactory.createVercelModel(aiConfig);
 
-const completion = await tracker.trackVercelAISDKGenerateTextMetrics(() =>
- generateText(
-    aiConfig.toVercelAISDK(vercelProvider, vercelProviderOptions)
-  )
-)
-
+// Pass in a function that calls the Vercel AI SDK's generateText function.
+// trackMetricsOf records the duration, token usage, and success or error.
+const completion = await tracker.trackMetricsOf(getAIMetricsFromResponse, () =>
+  generateText({
+    model,
+    messages: aiConfig.messages ?? [],
+    ...VercelRunnerFactory.mapParameters(aiConfig.model?.parameters),
+  }),
+);
 ```

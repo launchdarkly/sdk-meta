@@ -10,24 +10,26 @@ validation:
 ---
 
 ```typescript
+import { getAIMetricsFromResponse } from '@launchdarkly/server-sdk-ai-openai';
+
 const { tracker } = aiConfig;
 
 if (aiConfig.enabled) {
 
-  // Pass in the result of the OpenAI operation.
+  // Pass in a function that calls the OpenAI operation.
   // When you call the OpenAI operation, use details from aiConfig.
   // For instance, you can pass aiConfig.messages
   // and aiConfig.model to your specific OpenAI operation.
   //
-  // CAUTION: If the call inside of trackOpenAIMetrics throws an exception,
-  // the SDK will re-throw that exception
+  // CAUTION: If the call inside of trackMetricsOf throws an exception,
+  // the SDK records an error and re-throws that exception.
 
-  const completion = await tracker.trackOpenAIMetrics(async () =>
+  const completion = await tracker.trackMetricsOf(getAIMetricsFromResponse, async () =>
     client.chat.completions.create({
       messages: aiConfig.messages || [],
       model: aiConfig.model?.name || 'gpt-4',
       temperature: (aiConfig.model?.parameters?.temperature as number) ?? 0.5,
-      maxTokens: (aiConfig.model?.parameters?.maxTokens as number) ?? 4096,
+      max_tokens: (aiConfig.model?.parameters?.maxTokens as number) ?? 4096,
     }),
   );
 
