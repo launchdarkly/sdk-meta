@@ -530,9 +530,15 @@
   "cpp-client-sdk": [
     {
       "major": 3,
+      "minor": 13,
+      "date": "2026-11-09T19:14:36Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 12,
       "date": "2026-09-28T18:35:12Z",
-      "eol": null
+      "eol": "2027-11-09T00:00:00Z"
     },
     {
       "major": 3,
@@ -694,9 +700,15 @@
   "cpp-server-sdk": [
     {
       "major": 3,
+      "minor": 15,
+      "date": "2026-11-09T19:19:09Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 14,
       "date": "2026-09-28T18:41:02Z",
-      "eol": null
+      "eol": "2027-11-09T00:00:00Z"
     },
     {
       "major": 3,
@@ -3194,9 +3206,15 @@
   "php-server-sdk": [
     {
       "major": 6,
+      "minor": 12,
+      "date": "2026-11-09T18:44:28Z",
+      "eol": null
+    },
+    {
+      "major": 6,
       "minor": 11,
       "date": "2026-10-21T19:01:25Z",
-      "eol": null
+      "eol": "2027-11-09T00:00:00Z"
     },
     {
       "major": 6,
