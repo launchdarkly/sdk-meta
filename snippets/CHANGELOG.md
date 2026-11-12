@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.32.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.31.0...snippets/v0.32.0) (2026-11-12)
+
+
+### Features
+
+* **snippets:** add flag override snippets for the Python SDK ([#719](https://github.com/launchdarkly/sdk-meta/issues/719)) ([59aba1a](https://github.com/launchdarkly/sdk-meta/commit/59aba1a1ee95ee6ff0313864822d9ce38c6f44e7))
+* **snippets:** add flag override snippets for the Ruby SDK ([#720](https://github.com/launchdarkly/sdk-meta/issues/720)) ([92532b0](https://github.com/launchdarkly/sdk-meta/commit/92532b0eea4dd94c8d3bc7a23d6333f911f37145))
+* **snippets:** Add Go data saving mode snippets for the Amazon S3 data initializer ([#729](https://github.com/launchdarkly/sdk-meta/issues/729)) ([f1e5bb8](https://github.com/launchdarkly/sdk-meta/commit/f1e5bb8fb0148146e1e6cb30ea0a3bec84536a23))
+
+
+### Bug Fixes
+
+* **snippets:** replace removed Node AI SDK tracker methods in aimetrics snippets ([#732](https://github.com/launchdarkly/sdk-meta/issues/732)) ([ba7b5e5](https://github.com/launchdarkly/sdk-meta/commit/ba7b5e5e96fa07bc04ea1eb71d976624fcf8a062))
+
 ## [0.31.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.30.1...snippets/v0.31.0) (2026-11-04)
 
 
