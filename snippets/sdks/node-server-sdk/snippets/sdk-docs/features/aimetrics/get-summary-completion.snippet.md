@@ -10,7 +10,8 @@ validation:
 ---
 
 ```typescript
-const summary = aiConfig.tracker.getSummary();
+// Call getSummary on the tracker that recorded the AI run
+const summary = tracker.getSummary();
 
 // recorded metrics available in summary.durationMs, summary.feedback,
 // summary.tokens, summary.success, summary.timeToFirstTokenMs

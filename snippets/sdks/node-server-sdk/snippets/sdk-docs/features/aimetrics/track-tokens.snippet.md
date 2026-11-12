@@ -23,5 +23,5 @@ const tokens: LDTokenUsage = {
   total: 0,
 }
 
-aiConfig.tracker.trackTokens(tokens);
+tracker.trackTokens(tokens);
 ```

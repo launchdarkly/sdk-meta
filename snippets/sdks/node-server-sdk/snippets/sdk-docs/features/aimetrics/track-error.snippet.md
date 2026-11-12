@@ -12,5 +12,5 @@ validation:
 ```typescript
 // Track an unsuccessful generation event using cfg
 
-aiConfig.tracker.trackError()
+tracker.trackError()
 ```

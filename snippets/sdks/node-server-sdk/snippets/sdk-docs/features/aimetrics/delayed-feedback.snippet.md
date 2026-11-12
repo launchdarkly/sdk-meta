@@ -17,7 +17,8 @@ const aiConfig = await aiClient.completionConfig(
   defaultValue,
   variables
 );
-const trackData = aiConfig.tracker.getTrackData();
+const tracker = aiConfig.createTracker();
+const trackData = tracker.getTrackData();
 
 // Persist trackData together with the context
 

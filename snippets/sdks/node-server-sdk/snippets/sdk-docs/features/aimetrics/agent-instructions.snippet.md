@@ -12,11 +12,14 @@ validation:
 ```javascript
 if (agent.enabled) {
 
+  // Create a new tracker for each AI run
+  const tracker = agent.createTracker();
+
   // Retrieve instructions from the config and pass to your AI model
   const result = example_model_api(agent.instructions)
 
   // Track metrics from the result
-  agent.tracker.trackSuccess()
+  tracker.trackSuccess()
 
 } else {
 
