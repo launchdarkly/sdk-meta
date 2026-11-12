@@ -14,7 +14,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # scratch each time. The pre-restored package set is the superset of every
 # snippet's requirements (ServerSdk + Observability + ServerSdk.Ai +
 # ServerSdk.Redis + ServerSdk.Telemetry + ServerSdk.Consul +
-# ServerSdk.DynamoDB); extra references are harmless for
+# ServerSdk.DynamoDB + YamlDotNet, which flag override fragments use to
+# show a YAML parser); extra references are harmless for
 # snippets that use fewer, so the per-snippet requirements.txt is a no-op
 # against this baseline. The init scaffold stages its own
 # Microsoft.NET.Sdk.Web .csproj (which carries no package references), so for
@@ -38,6 +39,7 @@ RUN printf '%s\n' \
     && dotnet add package LaunchDarkly.ServerSdk.Telemetry \
     && dotnet add package LaunchDarkly.ServerSdk.Consul \
     && dotnet add package LaunchDarkly.ServerSdk.DynamoDB \
+    && dotnet add package YamlDotNet \
     && dotnet add package OpenFeature \
     && dotnet add package LaunchDarkly.OpenFeature.ServerProvider \
     && dotnet build -c Debug \
