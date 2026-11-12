@@ -91,6 +91,7 @@ android {
         unitTests {
             includeAndroidResources = true
             all {
+                systemProperty 'robolectric.dependency.repo.url', 'https://maven-central.storage-download.googleapis.com/maven2/'
                 testLogging {
                     events 'passed', 'failed', 'standardOut', 'standardError'
                     showStandardStreams = true
@@ -108,11 +109,36 @@ RUN mkdir -p app/src/test/java/com/launchdarkly/hello_android
 COPY languages/android-client/test/HelloAppTest.kt \
         app/src/test/java/com/launchdarkly/hello_android/HelloAppTest.kt
 
+# Maven Central rate-limits busy CI egress IPs with HTTP 429, which
+# fails plugin and dependency resolution. The init script serves
+# mavenCentral() from Google's Maven Central mirror, and the retry
+# properties give Gradle's built-in 429/5xx retry more attempts with a
+# longer exponential backoff.
+COPY languages/android-client/gradle-init/maven-central-mirror.gradle \
+        /root/.gradle/init.d/maven-central-mirror.gradle
+RUN printf '%s\n' \
+        'systemProp.org.gradle.internal.network.retry.max.attempts=6' \
+        'systemProp.org.gradle.internal.network.retry.initial.backOff=2000' \
+        >> /root/.gradle/gradle.properties
+
 # Pre-warm: pull deps and compile the baseline scaffold so the gradle
 # build cache + kotlin/java compile outputs are baked into the image.
 # Batch per-validate cycles then reset to this baseline and recompile
-# only the swapped snippet files against the warm cache.
-RUN ./gradlew --no-daemon dependencies --console=plain >/dev/null 2>&1 || true
+# only the swapped snippet files against the warm cache. Dependency
+# resolution is retried and fails the image build if it never succeeds;
+# otherwise every snippet in the batch would repeat the same failing
+# downloads.
+RUN n=0; \
+    until ./gradlew --no-daemon dependencies --console=plain >/tmp/prewarm.log 2>&1; do \
+        n=$((n + 1)); \
+        if [ "$n" -ge 3 ]; then \
+            tail -n 100 /tmp/prewarm.log; \
+            exit 1; \
+        fi; \
+        echo "gradle pre-warm failed (attempt ${n}/3); retrying in 30s..."; \
+        sleep 30; \
+    done; \
+    rm -f /tmp/prewarm.log
 RUN ./gradlew --no-daemon compileDebugKotlin compileDebugJavaWithJavac --console=plain >/dev/null 2>&1 || true
 
 WORKDIR /work
