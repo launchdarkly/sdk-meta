@@ -1,9 +1,9 @@
 ---
-id: node-server-sdk/sdk-docs/features/aimetrics/get-summary-completion
+id: node-server-sdk/sdk-docs/features/aimetrics/get-summary
 sdk: node-server-sdk
 kind: reference
 lang: typescript
-description: Retrieve automatically recorded metrics with getSummary in completion mode for the Node.js (server-side) AI SDK.
+description: Retrieve automatically recorded metrics with getSummary for the Node.js (server-side) AI SDK.
 validation:
   scaffold: node-server-sdk/scaffolds/node-syntax-only
 
