@@ -200,9 +200,6 @@
   "roku": {
     "github": "launchdarkly/roku-client-sdk"
   },
-  "ruby-server-sdk": {
-    "github": "launchdarkly/ruby-server-sdk"
-  },
   "ruby-server-sdk-ai": {
     "github": "launchdarkly/ruby-server-sdk-ai"
   },
