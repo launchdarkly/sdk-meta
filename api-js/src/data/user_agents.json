@@ -137,11 +137,6 @@
       "RokuClient"
     ]
   },
-  "ruby-server-sdk": {
-    "userAgents": [
-      "RubyClient"
-    ]
-  },
   "rust-server-sdk": {
     "userAgents": [
       "RustServerClient"
