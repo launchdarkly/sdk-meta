@@ -1,7 +1,7 @@
 name: Validate snippets
 
 # Runs the per-SDK validators in parallel. Each cell delegates to
-# `launchdarkly/gh-actions/actions/verify-hello-app@v2.0.1`, which is the
+# `launchdarkly/gh-actions/actions/verify-hello-app@verify-hello-app-v2.0.2`, which is the
 # same action the `hello-*` repos use to:
 #   - assume the configured AWS role via OIDC (`vars.AWS_ROLE_ARN_EXAMPLES`)
 #   - fetch the LaunchDarkly Sandbox account credentials from Secrets
@@ -266,7 +266,7 @@ jobs:
         # --snippet-skip flags from the env so empty values stay out
         # of the command line.
         if: matrix.key-type != 'none'
-        uses: launchdarkly/gh-actions/actions/verify-hello-app@verify-hello-app-v2.0.1
+        uses: launchdarkly/gh-actions/actions/verify-hello-app@verify-hello-app-v2.0.2
         env:
           MATRIX_SDK: ${{ matrix.sdk }}
           MATRIX_SNIPPET: ${{ matrix.snippet }}
