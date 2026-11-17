@@ -40,7 +40,7 @@ jobs:
       # draft — artifacts are uploaded to it later in this workflow, and the
       # release is flipped to published only after every artifact is in place.
       # That ordering is mandatory under immutable-releases policies.
-      - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 # v4.4.0
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         id: release
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -75,7 +75,7 @@ jobs:
       # Second call: open or update the rollup PR. Skip when we just created
       # a release — the next conventional-commit push will pick up the rollup
       # then.
-      - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 # v4.4.0
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         if: |
           steps.release.outputs['api-js--release_created'] != 'true' &&
           steps.release.outputs['snippets--release_created'] != 'true'
