@@ -38,6 +38,13 @@ type Runner struct {
 	// aggregate pass/fail). Validators that haven't been migrated leave
 	// this false and keep the one-invocation-per-snippet path.
 	Batch bool `yaml:"batch"`
+
+	// BuildCache opts a docker validator into a build cache that persists
+	// between CI runs. The only value is "gha", which stores the image layers
+	// in the GitHub Actions cache. The cache is used only when the
+	// SNIPPETS_BUILDX_BUILDER environment variable names a buildx builder.
+	// Otherwise the image builds with a plain `docker build`.
+	BuildCache string `yaml:"build-cache"`
 }
 
 func loadRunner(validatorsDir, runtime string) (*Runner, string, error) {
@@ -58,6 +65,12 @@ func loadRunner(validatorsDir, runtime string) (*Runner, string, error) {
 	}
 	if r.Mode == "docker" && r.ImagePrefix == "" {
 		return nil, "", fmt.Errorf("%s: mode=docker requires image-prefix", rp)
+	}
+	if r.BuildCache != "" && r.BuildCache != "gha" {
+		return nil, "", fmt.Errorf("%s: build-cache must be `gha` or empty, got %q", rp, r.BuildCache)
+	}
+	if r.BuildCache != "" && r.Mode != "docker" {
+		return nil, "", fmt.Errorf("%s: build-cache requires mode=docker", rp)
 	}
 	return &r, dir, nil
 }

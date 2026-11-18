@@ -167,6 +167,7 @@ image-prefix: sdk-snippets/python-validator   # docker mode only
 - `mode: native` — Go validator execs `harness/run.sh` on the host and passes `$SNIPPET_DIR` plus the LD env vars. Used by `ios-client` (xcodebuild + Simulator can't run in Linux). No `image-prefix`.
 - `runs-on` — hint for the CI matrix; the Go validator itself does not read it.
 - `image-prefix` — required for docker mode; local image tag.
+- `build-cache: gha` — optional, docker mode only. In CI, the image layers go to the GitHub Actions cache, one cache scope per runtime. The CLI uses the cache only when `SNIPPETS_BUILDX_BUILDER` names a buildx builder; otherwise, and on every local run, it does a plain `docker build`. Set it on validators whose image build is slow. The Haskell validators set it, because their `cabal build --only-dependencies` step takes about 7 minutes per image. A runtime that sets it needs the `build-cache: true` field on its CI matrix row and an entry in `.github/workflows/snippets-validator-cache.yml`.
 
 ### Dockerfile pattern
 
@@ -334,6 +335,8 @@ func resolveSDKsFS(sdksFlag string) fs.FS {
 
 ## CI: `.github/workflows/snippets-validate.yml`
 
+A pull request run can read Actions caches from main but not from other pull requests. `.github/workflows/snippets-validator-cache.yml` builds the `build-cache: gha` images with `snippets validator-build` on pushes to main and daily, so pull requests start with a warm cache.
+
 Triggers on PRs touching `snippets/**` or the workflow itself, plus `workflow_dispatch`. Concurrency group cancels prior runs on the same ref. Permissions: `id-token: write` (OIDC) and `contents: read`.
 
 One job `validate` with `fail-fast: false` and an `include:`-only matrix.
@@ -349,6 +352,7 @@ One job `validate` with `fail-fast: false` and an `include:`-only matrix.
 | `snippet_skip` | – | Exclude one bound snippet. Note: matrix key uses underscore; CLI flag uses `--snippet-skip` (dash). |
 | `group` | – | Restrict to one group (`sdk-info`, `sdk-docs`, ...). |
 | `label` | – | Overrides the job name. **Required** when multiple rows share an `sdk` so artifacts don't collide. |
+| `build-cache` | – | `true` sets up buildx and the Actions cache for validators whose `runner.yaml` sets `build-cache: gha`. |
 
 Job name renders as `${{ matrix.label || matrix.sdk }}`. Rows are grouped in the file by purpose: server-key SDKs, JS client, mobile-key dotnet, shell-install-only (dotnet-server-sdk with an unused `key-type: server`), client/mobile init-binding SDKs, the three iOS rows, the android row, and the sdk-docs-syntax-only block at the bottom.
 

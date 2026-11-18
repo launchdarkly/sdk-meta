@@ -77,6 +77,11 @@ usage:
       line, with floating SDK families from shared/versions/sdks.env resolved
       to exact releases. Used by validators/build.sh.
 
+  snippets validator-build [--validators=./validators] <runtime>
+      Build the Docker image for a validator runtime, the same way validate
+      does, and print its tag. Runs no snippets and needs no LaunchDarkly
+      keys. CI uses it to fill the validator build cache.
+
   snippets version
       Print the snippets generator version.
 `
@@ -95,6 +100,8 @@ func main() {
 		runValidate(os.Args[2:])
 	case "validator-build-args":
 		runValidatorBuildArgs(os.Args[2:])
+	case "validator-build":
+		runValidatorBuild(os.Args[2:])
 	case "version":
 		fmt.Println(version.Version)
 	case "-h", "--help", "help":
@@ -246,4 +253,20 @@ func runValidatorBuildArgs(args []string) {
 	for _, arg := range buildArgs {
 		fmt.Println(arg)
 	}
+}
+
+func runValidatorBuild(args []string) {
+	fset := flag.NewFlagSet("validator-build", flag.ExitOnError)
+	validators := fset.String("validators", "./validators", "path to the validators/ directory")
+	_ = fset.Parse(args)
+	if fset.NArg() != 1 {
+		fmt.Fprintf(os.Stderr, "validator-build: exactly one runtime is required\n")
+		os.Exit(2)
+	}
+	tag, err := validate.BuildImage(*validators, fset.Arg(0), os.Stderr)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "validator-build failed: %v\n", err)
+		os.Exit(1)
+	}
+	fmt.Println(tag)
 }

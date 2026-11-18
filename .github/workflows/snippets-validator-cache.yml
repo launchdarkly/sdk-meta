@@ -1,0 +1,63 @@
+name: Fill the snippet validator build cache
+
+# Builds the validator images whose runner.yaml sets `build-cache: gha`, and
+# stores their layers in the GitHub Actions cache. A pull request run can
+# read caches from main, but not from another pull request. This workflow
+# fills the cache on main, so a pull request does not rebuild the Haskell
+# dependencies from scratch.
+#
+# The daily run picks up new SDK releases from shared/versions/sdks.env, and
+# it keeps the cache from expiring after seven days without use.
+#
+# Keep the runtime list in sync with the runner.yaml files that set
+# `build-cache: gha`.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'snippets/validators/**'
+      - 'snippets/internal/validate/**'
+      - '.github/workflows/snippets-validator-cache.yml'
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: snippets-validator-cache-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: ${{ matrix.runtime }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        runtime: [haskell-server, haskell-server-v3]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: ./.github/actions/setup-go
+        with:
+          cache-dependency-path: snippets/go.sum
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+        with:
+          use: false
+
+      - name: Expose the Actions cache to buildx
+        uses: crazy-max/ghaction-github-runtime@04d248b84655b509d8c44dc1d6f990c879747487 # v4.0.0
+
+      - name: Build the validator image
+        env:
+          RUNTIME: ${{ matrix.runtime }}
+          SNIPPETS_BUILDX_BUILDER: ${{ steps.buildx.outputs.name }}
+        run: |
+          cd snippets
+          go run ./cmd/snippets validator-build --validators=./validators "$RUNTIME"

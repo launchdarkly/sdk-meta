@@ -601,15 +601,7 @@ func buildImage(cfg Config, runner *Runner, runnerDir string, out io.Writer) (st
 	if err != nil {
 		return "", err
 	}
-	// `--progress=plain` keeps stdout tame (a one-line-per-step log
-	// rather than the interactive multi-line redraws) while leaving
-	// failure output visible — important for diagnosing apt/network
-	// failures inside the build that --quiet would otherwise swallow.
-	args := []string{"build", "--progress=plain"}
-	for _, arg := range buildArgs {
-		args = append(args, "--build-arg", arg)
-	}
-	args = append(args, "-f", dockerfile, "-t", tag, cfg.ValidatorsDir)
+	args := dockerBuildCommand(runner, filepath.Base(runnerDir), dockerfile, tag, cfg.ValidatorsDir, buildArgs, os.Getenv(buildxBuilderEnv))
 	build := exec.Command("docker", args...)
 	build.Stdout = out
 	build.Stderr = out
@@ -617,6 +609,50 @@ func buildImage(cfg Config, runner *Runner, runnerDir string, out io.Writer) (st
 		return "", fmt.Errorf("docker build failed: %w", err)
 	}
 	return tag, nil
+}
+
+// buildxBuilderEnv names the environment variable that holds the buildx
+// builder for cached builds. CI sets it after docker/setup-buildx-action.
+const buildxBuilderEnv = "SNIPPETS_BUILDX_BUILDER"
+
+// dockerBuildCommand returns the docker arguments that build a validator
+// image. When the runner sets build-cache and builder is not empty, the
+// build uses that buildx builder and the GitHub Actions cache. Each runtime
+// has its own cache scope, so two validators do not replace each other's
+// cache. A failed cache export does not fail the build.
+func dockerBuildCommand(runner *Runner, runtime, dockerfile, tag, contextDir string, buildArgs []string, builder string) []string {
+	// `--progress=plain` keeps stdout tame (a one-line-per-step log
+	// rather than the interactive multi-line redraws) while leaving
+	// failure output visible — important for diagnosing apt/network
+	// failures inside the build that --quiet would otherwise swallow.
+	args := []string{"build", "--progress=plain"}
+	if runner.BuildCache == "gha" && builder != "" {
+		// A docker-container builder keeps the image in its own store.
+		// --load copies the image into the local Docker engine, where
+		// the validator runs it.
+		args = []string{"buildx", "build", "--builder", builder, "--load", "--progress=plain",
+			"--cache-from", "type=gha,scope=" + runtime,
+			"--cache-to", "type=gha,mode=max,ignore-error=true,scope=" + runtime,
+		}
+	}
+	for _, arg := range buildArgs {
+		args = append(args, "--build-arg", arg)
+	}
+	return append(args, "-f", dockerfile, "-t", tag, contextDir)
+}
+
+// BuildImage builds the Docker image for a validator runtime, the same way
+// `snippets validate` does, and returns its tag. CI uses it to fill the
+// build cache without running any snippets.
+func BuildImage(validatorsDir, runtime string, out io.Writer) (string, error) {
+	runner, runnerDir, err := loadRunner(validatorsDir, runtime)
+	if err != nil {
+		return "", err
+	}
+	if runner.Mode != "docker" {
+		return "", fmt.Errorf("validator runtime %q has mode=%s; only docker validators have an image", runtime, runner.Mode)
+	}
+	return buildImage(Config{ValidatorsDir: validatorsDir}, runner, runnerDir, out)
 }
 
 // BuildArgs returns the NAME=value build args for a validator runtime's
