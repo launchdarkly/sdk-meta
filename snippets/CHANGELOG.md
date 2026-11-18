@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.32.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.32.0...snippets/v0.32.1) (2026-11-18)
+
+
+### Bug Fixes
+
+* **snippets:** merge the identical Node AI get-summary snippets ([#738](https://github.com/launchdarkly/sdk-meta/issues/738)) ([c6989b1](https://github.com/launchdarkly/sdk-meta/commit/c6989b1aaf93386b432b98a9e6b134bf019c8515))
+
 ## [0.32.0](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.31.0...snippets/v0.32.0) (2026-11-12)
 
 
