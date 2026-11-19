@@ -13,10 +13,10 @@ description: "XML in section \"Using the Java SDK in OSGi\""
 <dependency>
    <groupId>com.launchdarkly</groupId>
    <artifactId>launchdarkly-java-server-sdk</artifactId>
-   <version>7.17.5</version>
+   <version>7.18.1</version>
    <classifier>all</classifier>
 </dependency>
 
 <!-- or in Gradle -->
-"com.launchdarkly:launchdarkly-java-server-sdk:7.17.5:all"
+"com.launchdarkly:launchdarkly-java-server-sdk:7.18.1:all"
 ```
