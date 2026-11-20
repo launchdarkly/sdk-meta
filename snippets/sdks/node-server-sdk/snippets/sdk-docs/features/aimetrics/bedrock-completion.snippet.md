@@ -5,7 +5,7 @@ kind: reference
 lang: typescript
 description: Record metrics from a Bedrock Converse command in completion mode for the Node.js (server-side) AI SDK.
 validation:
-  scaffold: node-server-sdk/scaffolds/node-syntax-only
+  scaffold: node-server-sdk/scaffolds/node-syntax-only-typescript
 
 ---
 
