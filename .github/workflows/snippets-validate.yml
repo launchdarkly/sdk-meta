@@ -282,7 +282,7 @@ jobs:
         # --snippet-skip flags from the env so empty values stay out
         # of the command line.
         if: matrix.key-type != 'none'
-        uses: launchdarkly/gh-actions/actions/verify-hello-app@verify-hello-app-v2.0.2
+        uses: launchdarkly/gh-actions/actions/verify-hello-app@verify-hello-app/v2
         env:
           MATRIX_SDK: ${{ matrix.sdk }}
           MATRIX_SNIPPET: ${{ matrix.snippet }}
