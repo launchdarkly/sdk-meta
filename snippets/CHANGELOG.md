@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.32.2](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.32.1...snippets/v0.32.2) (2026-11-23)
+
+
+### Bug Fixes
+
+* **snippets:** replace removed trackBedrockConverseMetrics in the Node AI Bedrock snippet ([#752](https://github.com/launchdarkly/sdk-meta/issues/752)) ([316b1ff](https://github.com/launchdarkly/sdk-meta/commit/316b1ff2c409ad362f1db631ac781d0a2ecb2c28))
+
 ## [0.32.1](https://github.com/launchdarkly/sdk-meta/compare/snippets/v0.32.0...snippets/v0.32.1) (2026-11-18)
 
 
