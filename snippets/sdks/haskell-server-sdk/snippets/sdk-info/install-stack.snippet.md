@@ -14,7 +14,7 @@ description: |
 ```yaml
 # stack.yaml
 extra-deps:
-- launchdarkly-server-sdk-4.6.2
+- launchdarkly-server-sdk-4.6.3
 
 # package.yaml
 dependencies:
