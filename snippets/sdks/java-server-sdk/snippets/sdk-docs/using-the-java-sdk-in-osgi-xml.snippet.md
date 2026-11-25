@@ -14,9 +14,8 @@ description: "XML in section \"Using the Java SDK in OSGi\""
    <groupId>com.launchdarkly</groupId>
    <artifactId>launchdarkly-java-server-sdk</artifactId>
    <version>7.19.0</version>
-   <classifier>all</classifier>
 </dependency>
 
 <!-- or in Gradle -->
-"com.launchdarkly:launchdarkly-java-server-sdk:7.19.0:all"
+"com.launchdarkly:launchdarkly-java-server-sdk:7.19.0"
 ```
