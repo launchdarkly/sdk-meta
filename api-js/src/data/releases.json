@@ -60,9 +60,15 @@
   "android": [
     {
       "major": 5,
+      "minor": 19,
+      "date": "2026-11-20T19:45:52Z",
+      "eol": null
+    },
+    {
+      "major": 5,
       "minor": 18,
       "date": "2026-11-02T15:01:04Z",
-      "eol": null
+      "eol": "2027-11-20T00:00:00Z"
     },
     {
       "major": 5,
@@ -1332,9 +1338,15 @@
   "erlang-server-sdk": [
     {
       "major": 3,
+      "minor": 13,
+      "date": "2026-11-20T19:22:25Z",
+      "eol": null
+    },
+    {
+      "major": 3,
       "minor": 12,
       "date": "2026-10-08T21:35:49Z",
-      "eol": null
+      "eol": "2027-11-20T00:00:00Z"
     },
     {
       "major": 3,
@@ -1466,9 +1478,21 @@
   "flutter-client-sdk": [
     {
       "major": 4,
+      "minor": 24,
+      "date": "2026-11-25T20:36:27Z",
+      "eol": null
+    },
+    {
+      "major": 4,
+      "minor": 23,
+      "date": "2026-11-23T18:46:41Z",
+      "eol": "2027-11-25T00:00:00Z"
+    },
+    {
+      "major": 4,
       "minor": 22,
       "date": "2026-11-12T20:33:18Z",
-      "eol": null
+      "eol": "2027-11-23T00:00:00Z"
     },
     {
       "major": 4,
@@ -2102,9 +2126,15 @@
   "java-server-sdk": [
     {
       "major": 7,
+      "minor": 19,
+      "date": "2026-11-20T20:56:30Z",
+      "eol": null
+    },
+    {
+      "major": 7,
       "minor": 18,
       "date": "2026-11-12T22:05:31Z",
-      "eol": null
+      "eol": "2027-11-20T00:00:00Z"
     },
     {
       "major": 7,
